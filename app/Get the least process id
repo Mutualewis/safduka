@@ -1,0 +1,15 @@
+Get the least process id
+
+get process results
+
+get all lots on that process
+
+get their breakdown 
+
+check if value ratio of breakdown = 1
+
+
+
+if not equals to 1, use breakdown value to compute ratios
+
+update breakdown with the new ratios

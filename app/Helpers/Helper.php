@@ -1,0 +1,555 @@
+<?php // Code within app\Helpers\Helper.php
+
+namespace Ngea\Helpers;
+use Ngea\Sale;
+use DB;
+
+class Helper
+{
+
+    public static function calculateDifferential($price, $hedge){
+    	$convert = 1.1023;
+    	$diff = $price/$convert - $hedge;
+    	return $diff;
+    }
+    public static function calculateTotalValue($weight, $price){
+    	$convert = 50;
+    	$total_value = $weight/$convert * $price;
+    	return $total_value;
+    }
+    public static function getSaleLotsArrivalLot($sale, $lot, $country, $season){
+
+
+        $query = Sale::leftJoin('country_ctr AS ctr', 'ctr.id', '=' ,'sale_sl.ctr_id')
+
+                 // ->leftJoin('country_ctr ctr' , 'ctr.id', '=' ,'sl.ctr_id')
+
+                 ->leftJoin('coffee_details_cfd AS cfd' , 'sale_sl.id', '=' ,'cfd.sl_id') 
+
+                 ->leftJoin('coffee_seasons_csn AS csn' , 'csn.id', '=' ,'cfd.csn_id')
+
+                 ->leftJoin('warehouses_region AS wrgn' , 'wrgn.wrid', '=' ,'cfd.wr_id')
+
+                 ->leftJoin('coffee_grade_cgrad AS cgrad' , 'cgrad.id', '=' ,'cfd.cgrad_id') 
+
+                 ->leftJoin('mill_ml AS ml' , 'ml.id', '=' ,'cfd.ml_id') 
+
+                 ->join('certifications AS crt' , 'crt.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('seller_slr AS slr' , 'slr.id', '=' ,'cfd.slr_id') 
+
+                 ->leftJoin('green_comments_grcm AS grcm' , 'grcm.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('qualty_details_qltyd AS qltyd' , 'qltyd.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('processing_prcss AS prcss' , 'prcss.id', '=' ,'qltyd.prcss_id') 
+
+                 ->leftJoin('screens_scr AS scr' , 'scr.id', '=' ,'qltyd.scr_id') 
+
+                 ->leftJoin('cup_score_cp AS cp' , 'cp.id', '=' ,'qltyd.cp_id') 
+
+                 ->leftJoin('raw_score_rw AS rw' , 'rw.id', '=' ,'qltyd.rw_id') 
+
+                 ->leftJoin('green AS grn' , 'grn.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('purchases_prc AS prc' , 'prc.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('coffee_buyers_cb AS cb' , 'cb.id', '=' ,'prc.cb_id') 
+
+                 ->leftJoin('basket_bs AS bs' , 'bs.id', '=' ,'prc.bs_id') 
+
+                 ->leftJoin('sale_status_sst AS sst' , 'sst.id', '=' ,'prc.sst_id') 
+
+                 ->leftJoin('invoices_inv AS inv' , 'inv.id', '=' ,'prc.inv_id') 
+
+                 ->leftJoin('users_usr AS inv_usr' , 'inv_usr.id', '=' ,'inv.inv_confirmedby') 
+
+                 ->leftJoin('payments_py AS py' , 'py.id', '=' ,'prc.py_id') 
+
+                 ->leftJoin('users_usr AS py_usr' , 'py_usr.id', '=' ,'py.py_confirmedby') 
+
+                 ->leftJoin('bric_br AS br' , 'br.id', '=' ,'prc.br_id') 
+
+                 ->leftJoin('users_usr AS br_usr' , 'br_usr.id', '=' ,'br.br_confirmedby') 
+
+                 ->leftJoin('warrants_war AS war' , 'war.id', '=' ,'prc.war_id') 
+
+                 ->leftJoin('release_instructions_rl AS rl' , 'rl.id', '=' ,'prc.rl_id') 
+
+                 ->leftJoin('transporters_trp AS trp' , 'trp.id', '=' ,'rl.trp_id') 
+
+                ->select('cfd.id AS id','cfd.sl_id AS slid','sale_sl.sl_no AS sale','sale_sl.sl_date AS date','sale_sl.ctr_id AS slctrid','ctr.ctr_name AS ctrname','sale_sl.sl_date + interval 7 day AS prompt_date','csn.csn_season AS csn_season','ml.ml_name AS ml_name','wrgn.rgn_name AS region','wrgn.wrid AS wrid','wrgn.wr_name AS warehouse','cfd.cfd_lot_no AS lot',DB::Raw('ifnull(prc.inv_outturn,cfd.cfd_outturn) AS outturn'),'slr.id AS slrid','slr.slr_initials AS seller',DB::Raw('ifnull(prc.inv_mark,cfd.cfd_grower_mark) AS mark'),'cgrad.cgrad_name AS grade'
+                    ,DB::Raw('ifnull(war.war_weight, ifnull(prc.inv_weight, cfd.cfd_weight)) AS weight'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) / 60)),cfd.cfd_bags) AS bags'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) % 60)),cfd.cfd_pockets) AS pockets'),'crt.crt_name AS cert','sale_sl.sl_hedge AS hedge','sale_sl.sl_month AS month', 'grcm.id is AS greencomments'
+                    ,'grn.qp_parameter AS green','cfd.cfd_dnt AS dnt','cfd.cfd_dnt AS touch','prcss.prcss_initial AS prcss_name','qltyd.qltyd_prcss_value AS qltyd_prcss_value','scr.scr_name AS scr_name','qltyd.qltyd_scr_value AS qltyd_scr_value','qltyd.qltyd_acidity AS acidity','qltyd.qltyd_body AS body','qltyd.qltyd_flavour AS flavour','cp.cp_quality AS cp_quality','cp.cp_score AS cp_score','rw.rw_score AS rw_score','rw.rw_quality AS rw_quality','qltyd.qltyd_comments AS final_comments','cb.id AS cbid','cb.cb_name AS buyer','prc.id AS prcid','prc.prc_price AS auc_price','prc.prc_confirmed_price AS price','inv.inv_no AS invoice','prc.inv_weight AS inv_weight','inv.inv_date AS invoice_date','inv_usr.usr_name AS invoice_confirmedby','py.py_no AS py_no','py.py_amount AS payment','py.py_date AS payment_date','py_usr.usr_name AS payment_confirmedby','br.br_no AS bric','br.br_date AS br_date','br_usr.usr_name AS br_confirmedby','bs.id AS bsid','bs.bs_code AS code','bs.bs_quality AS quality','war.war_no AS warrant_no','war.war_weight AS warrant_weight','war.war_date AS warrant_date','war.war_comments AS war_comments','sst.sst_name AS status','rl.rl_no AS rl_no','rl.rl_date AS rl_date','rl.rl_confirmedby AS rl_confirmedby','trp.trp_name AS trp_name', DB::Raw('TRUNCATE((prc.prc_confirmed_price/1.1023 - sale_sl.sl_hedge), 2) As differential') )
+                ->where('cb.bt_id', '1')->where('cfd.cfd_lot_no', $lot)->where('csn_season',$season)->whereNotNull('rl_no')->where('sale_sl.id', $sale)
+                ->groupBy('sale_sl.sl_no', 'cfd.cfd_lot_no', 'cfd.cfd_outturn', 'bs.bs_code');
+
+        return $query->first();
+    }
+
+
+
+    public static function getSaleLotsUsindCFDId($value){
+
+
+        $query = Sale::leftJoin('country_ctr AS ctr', 'ctr.id', '=' ,'sale_sl.ctr_id')
+
+                 // ->leftJoin('country_ctr ctr' , 'ctr.id', '=' ,'sl.ctr_id')
+
+                 ->leftJoin('coffee_details_cfd AS cfd' , 'sale_sl.id', '=' ,'cfd.sl_id') 
+
+                 ->leftJoin('coffee_seasons_csn AS csn' , 'csn.id', '=' ,'cfd.csn_id')
+
+                 ->leftJoin('warehouses_region AS wrgn' , 'wrgn.wrid', '=' ,'cfd.wr_id')
+
+                 ->leftJoin('coffee_grade_cgrad AS cgrad' , 'cgrad.id', '=' ,'cfd.cgrad_id') 
+
+                 ->leftJoin('mill_ml AS ml' , 'ml.id', '=' ,'cfd.ml_id') 
+
+                 ->join('certifications AS crt' , 'crt.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('seller_slr AS slr' , 'slr.id', '=' ,'cfd.slr_id') 
+
+                 ->leftJoin('green_comments_grcm AS grcm' , 'grcm.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('qualty_details_qltyd AS qltyd' , 'qltyd.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('processing_prcss AS prcss' , 'prcss.id', '=' ,'qltyd.prcss_id') 
+
+                 ->leftJoin('screens_scr AS scr' , 'scr.id', '=' ,'qltyd.scr_id') 
+
+                 ->leftJoin('cup_score_cp AS cp' , 'cp.id', '=' ,'qltyd.cp_id') 
+
+                 ->leftJoin('raw_score_rw AS rw' , 'rw.id', '=' ,'qltyd.rw_id') 
+
+                 ->leftJoin('green AS grn' , 'grn.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('purchases_prc AS prc' , 'prc.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('coffee_buyers_cb AS cb' , 'cb.id', '=' ,'prc.cb_id') 
+
+                 ->leftJoin('basket_bs AS bs' , 'bs.id', '=' ,'prc.bs_id') 
+
+                 ->leftJoin('sale_status_sst AS sst' , 'sst.id', '=' ,'prc.sst_id') 
+
+                 ->leftJoin('invoices_inv AS inv' , 'inv.id', '=' ,'prc.inv_id') 
+
+                 ->leftJoin('users_usr AS inv_usr' , 'inv_usr.id', '=' ,'inv.inv_confirmedby') 
+
+                 ->leftJoin('payments_py AS py' , 'py.id', '=' ,'prc.py_id') 
+
+                 ->leftJoin('users_usr AS py_usr' , 'py_usr.id', '=' ,'py.py_confirmedby') 
+
+                 ->leftJoin('bric_br AS br' , 'br.id', '=' ,'prc.br_id') 
+
+                 ->leftJoin('users_usr AS br_usr' , 'br_usr.id', '=' ,'br.br_confirmedby') 
+
+                 ->leftJoin('warrants_war AS war' , 'war.id', '=' ,'prc.war_id') 
+
+                 ->leftJoin('release_instructions_rl AS rl' , 'rl.id', '=' ,'prc.rl_id') 
+
+                 ->leftJoin('transporters_trp AS trp' , 'trp.id', '=' ,'rl.trp_id') 
+
+                 ->leftJoin('stock_st AS st' , 'st.prc_id', '=' ,'prc.id') 
+
+                 ->leftJoin('batch_btc AS bt' , 'bt.st_id', '=' ,'st.id') 
+
+                 ->leftJoin('stock_location_sloc AS sloc' , 'sloc.bt_id', '=' ,'bt.id')
+
+                 ->leftJoin('grn_gr AS gr' , 'gr.id', '=' ,'st.gr_id') 
+
+
+                ->select('cfd.id AS id','cfd.sl_id AS slid','sale_sl.sl_no AS sale','sale_sl.sl_date AS date','sale_sl.ctr_id AS slctrid','ctr.ctr_name AS ctrname','sale_sl.sl_date + interval 7 day AS prompt_date','csn.csn_season AS csn_season','ml.ml_name AS ml_name','wrgn.rgn_name AS region','wrgn.wrid AS wrid','wrgn.wr_name AS warehouse','cfd.cfd_lot_no AS lot',DB::Raw('ifnull(prc.inv_outturn,cfd.cfd_outturn) AS outturn'),'slr.id AS slrid','slr.slr_initials AS seller',DB::Raw('ifnull(prc.inv_mark,cfd.cfd_grower_mark) AS mark'),'cgrad.cgrad_name AS grade'
+                    ,DB::Raw('ifnull(war.war_weight, ifnull(prc.inv_weight, cfd.cfd_weight)) AS weight'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) / 60)),cfd.cfd_bags) AS bags'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) % 60)),cfd.cfd_pockets) AS pockets'),'crt.crt_name AS cert','sale_sl.sl_hedge AS hedge','sale_sl.sl_month AS month', 'grcm.id is AS greencomments'
+                    ,'grn.qp_parameter AS green','cfd.cfd_dnt AS dnt','cfd.cfd_dnt AS touch','prcss.prcss_initial AS prcss_name','qltyd.qltyd_prcss_value AS qltyd_prcss_value','scr.scr_name AS scr_name','qltyd.qltyd_scr_value AS qltyd_scr_value','qltyd.qltyd_acidity AS acidity','qltyd.qltyd_body AS body','qltyd.qltyd_flavour AS flavour','cp.cp_quality AS cp_quality','cp.cp_score AS cp_score','rw.rw_score AS rw_score','rw.rw_quality AS rw_quality','qltyd.qltyd_comments AS final_comments','cb.id AS cbid','cb.cb_name AS buyer','prc.id AS prcid','prc.prc_price AS auc_price','prc.prc_confirmed_price AS price','inv.inv_no AS invoice','prc.inv_weight AS inv_weight','inv.inv_date AS invoice_date','inv_usr.usr_name AS invoice_confirmedby','py.py_no AS py_no','py.py_amount AS payment','py.py_date AS payment_date','py_usr.usr_name AS payment_confirmedby','br.br_no AS bric','br.br_date AS br_date','br_usr.usr_name AS br_confirmedby','bs.id AS bsid','bs.bs_code AS code','bs.bs_quality AS quality','war.war_no AS warrant_no','war.war_weight AS warrant_weight','war.war_date AS warrant_date','war.war_comments AS war_comments','sst.sst_name AS status','rl.rl_no AS rl_no','rl.rl_date AS rl_date','rl.rl_confirmedby AS rl_confirmedby','trp.trp_name AS trp_name', DB::Raw('TRUNCATE((prc.prc_confirmed_price/1.1023 - sale_sl.sl_hedge), 2) As differential'), 'st.st_moisture', 'st.pkg_id', 'st.st_dispatch_net', 'st.st_gross', 'sloc.loc_row_id', 'sloc.loc_column_id', 'sloc.btc_zone', 'gr.gr_number', 'btc_packages' )
+                ->where('cfd.id', $value)
+                ->groupBy('sale_sl.sl_no', 'cfd.cfd_lot_no', 'cfd.cfd_outturn', 'bs.bs_code');
+
+        return $query->first();
+    }
+
+
+    public static function getSaleLotsArrivalOutturn($sale, $outturn, $country, $season){
+
+
+        $query = Sale::leftJoin('country_ctr AS ctr', 'ctr.id', '=' ,'sale_sl.ctr_id')
+
+                 // ->leftJoin('country_ctr ctr' , 'ctr.id', '=' ,'sl.ctr_id')
+
+                 ->leftJoin('coffee_details_cfd AS cfd' , 'sale_sl.id', '=' ,'cfd.sl_id') 
+
+                 ->leftJoin('coffee_seasons_csn AS csn' , 'csn.id', '=' ,'cfd.csn_id')
+
+                 ->leftJoin('warehouses_region AS wrgn' , 'wrgn.wrid', '=' ,'cfd.wr_id')
+
+                 ->leftJoin('coffee_grade_cgrad AS cgrad' , 'cgrad.id', '=' ,'cfd.cgrad_id') 
+
+                 ->leftJoin('mill_ml AS ml' , 'ml.id', '=' ,'cfd.ml_id') 
+
+                 ->join('certifications AS crt' , 'crt.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('seller_slr AS slr' , 'slr.id', '=' ,'cfd.slr_id') 
+
+                 ->leftJoin('green_comments_grcm AS grcm' , 'grcm.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('qualty_details_qltyd AS qltyd' , 'qltyd.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('processing_prcss AS prcss' , 'prcss.id', '=' ,'qltyd.prcss_id') 
+
+                 ->leftJoin('screens_scr AS scr' , 'scr.id', '=' ,'qltyd.scr_id') 
+
+                 ->leftJoin('cup_score_cp AS cp' , 'cp.id', '=' ,'qltyd.cp_id') 
+
+                 ->leftJoin('raw_score_rw AS rw' , 'rw.id', '=' ,'qltyd.rw_id') 
+
+                 ->leftJoin('green AS grn' , 'grn.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('purchases_prc AS prc' , 'prc.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('coffee_buyers_cb AS cb' , 'cb.id', '=' ,'prc.cb_id') 
+
+                 ->leftJoin('basket_bs AS bs' , 'bs.id', '=' ,'prc.bs_id') 
+
+                 ->leftJoin('sale_status_sst AS sst' , 'sst.id', '=' ,'prc.sst_id') 
+
+                 ->leftJoin('invoices_inv AS inv' , 'inv.id', '=' ,'prc.inv_id') 
+
+                 ->leftJoin('users_usr AS inv_usr' , 'inv_usr.id', '=' ,'inv.inv_confirmedby') 
+
+                 ->leftJoin('payments_py AS py' , 'py.id', '=' ,'prc.py_id') 
+
+                 ->leftJoin('users_usr AS py_usr' , 'py_usr.id', '=' ,'py.py_confirmedby') 
+
+                 ->leftJoin('bric_br AS br' , 'br.id', '=' ,'prc.br_id') 
+
+                 ->leftJoin('users_usr AS br_usr' , 'br_usr.id', '=' ,'br.br_confirmedby') 
+
+                 ->leftJoin('warrants_war AS war' , 'war.id', '=' ,'prc.war_id') 
+
+                 ->leftJoin('release_instructions_rl AS rl' , 'rl.id', '=' ,'prc.rl_id') 
+
+                 ->leftJoin('transporters_trp AS trp' , 'trp.id', '=' ,'rl.trp_id') 
+
+                ->select('cfd.id AS id','cfd.sl_id AS slid','sale_sl.sl_no AS sale','sale_sl.sl_date AS date','sale_sl.ctr_id AS slctrid','ctr.ctr_name AS ctrname','sale_sl.sl_date + interval 7 day AS prompt_date','csn.csn_season AS csn_season','ml.ml_name AS ml_name','wrgn.rgn_name AS region','wrgn.wrid AS wrid','wrgn.wr_name AS warehouse','cfd.cfd_lot_no AS lot',DB::Raw('ifnull(prc.inv_outturn,cfd.cfd_outturn) AS outturn'),'slr.id AS slrid','slr.slr_initials AS seller',DB::Raw('ifnull(prc.inv_mark,cfd.cfd_grower_mark) AS mark'),'cgrad.cgrad_name AS grade'
+                    ,DB::Raw('ifnull(war.war_weight, ifnull(prc.inv_weight, cfd.cfd_weight)) AS weight'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) / 60)),cfd.cfd_bags) AS bags'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) % 60)),cfd.cfd_pockets) AS pockets'),'crt.crt_name AS cert','sale_sl.sl_hedge AS hedge','sale_sl.sl_month AS month', 'grcm.id is AS greencomments'
+                    ,'grn.qp_parameter AS green','cfd.cfd_dnt AS dnt','cfd.cfd_dnt AS touch','prcss.prcss_initial AS prcss_name','qltyd.qltyd_prcss_value AS qltyd_prcss_value','scr.scr_name AS scr_name','qltyd.qltyd_scr_value AS qltyd_scr_value','qltyd.qltyd_acidity AS acidity','qltyd.qltyd_body AS body','qltyd.qltyd_flavour AS flavour','cp.cp_quality AS cp_quality','cp.cp_score AS cp_score','rw.rw_score AS rw_score','rw.rw_quality AS rw_quality','qltyd.qltyd_comments AS final_comments','cb.id AS cbid','cb.cb_name AS buyer','prc.id AS prcid','prc.prc_price AS auc_price','prc.prc_confirmed_price AS price','inv.inv_no AS invoice','prc.inv_weight AS inv_weight','inv.inv_date AS invoice_date','inv_usr.usr_name AS invoice_confirmedby','py.py_no AS py_no','py.py_amount AS payment','py.py_date AS payment_date','py_usr.usr_name AS payment_confirmedby','br.br_no AS bric','br.br_date AS br_date','br_usr.usr_name AS br_confirmedby','bs.id AS bsid','bs.bs_code AS code','bs.bs_quality AS quality','war.war_no AS warrant_no','war.war_weight AS warrant_weight','war.war_date AS warrant_date','war.war_comments AS war_comments','sst.sst_name AS status','rl.rl_no AS rl_no','rl.rl_date AS rl_date','rl.rl_confirmedby AS rl_confirmedby','trp.trp_name AS trp_name', DB::Raw('TRUNCATE((prc.prc_confirmed_price/1.1023 - sale_sl.sl_hedge), 2) As differential') )
+                ->where('cb.bt_id', '1')->where(DB::Raw('ifnull(prc.inv_outturn,cfd.cfd_outturn)'), $outturn)->where('csn_season',$season)->whereNotNull('rl_no')->where('sale_sl.id', $sale)
+                ->groupBy('sale_sl.sl_no', 'cfd.cfd_lot_no', 'cfd.cfd_outturn', 'bs.bs_code');
+
+        return $query->first();
+    }
+
+    public static function getSaleLotsArrivalListWithoutSale($country, $season){
+
+
+        $query = Sale::leftJoin('country_ctr AS ctr', 'ctr.id', '=' ,'sale_sl.ctr_id')
+
+                 // ->leftJoin('country_ctr ctr' , 'ctr.id', '=' ,'sl.ctr_id')
+
+                 ->leftJoin('coffee_details_cfd AS cfd' , 'sale_sl.id', '=' ,'cfd.sl_id') 
+
+                 ->leftJoin('coffee_seasons_csn AS csn' , 'csn.id', '=' ,'cfd.csn_id')
+
+                 ->leftJoin('warehouses_region AS wrgn' , 'wrgn.wrid', '=' ,'cfd.wr_id')
+
+                 ->leftJoin('coffee_grade_cgrad AS cgrad' , 'cgrad.id', '=' ,'cfd.cgrad_id') 
+
+                 ->leftJoin('mill_ml AS ml' , 'ml.id', '=' ,'cfd.ml_id') 
+
+                 ->join('certifications AS crt' , 'crt.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('seller_slr AS slr' , 'slr.id', '=' ,'cfd.slr_id') 
+
+                 ->leftJoin('green_comments_grcm AS grcm' , 'grcm.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('qualty_details_qltyd AS qltyd' , 'qltyd.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('processing_prcss AS prcss' , 'prcss.id', '=' ,'qltyd.prcss_id') 
+
+                 ->leftJoin('screens_scr AS scr' , 'scr.id', '=' ,'qltyd.scr_id') 
+
+                 ->leftJoin('cup_score_cp AS cp' , 'cp.id', '=' ,'qltyd.cp_id') 
+
+                 ->leftJoin('raw_score_rw AS rw' , 'rw.id', '=' ,'qltyd.rw_id') 
+
+                 ->leftJoin('green AS grn' , 'grn.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('purchases_prc AS prc' , 'prc.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('coffee_buyers_cb AS cb' , 'cb.id', '=' ,'prc.cb_id') 
+
+                 ->leftJoin('basket_bs AS bs' , 'bs.id', '=' ,'prc.bs_id') 
+
+                 ->leftJoin('sale_status_sst AS sst' , 'sst.id', '=' ,'prc.sst_id') 
+
+                 ->leftJoin('invoices_inv AS inv' , 'inv.id', '=' ,'prc.inv_id') 
+
+                 ->leftJoin('users_usr AS inv_usr' , 'inv_usr.id', '=' ,'inv.inv_confirmedby') 
+
+                 ->leftJoin('payments_py AS py' , 'py.id', '=' ,'prc.py_id') 
+
+                 ->leftJoin('users_usr AS py_usr' , 'py_usr.id', '=' ,'py.py_confirmedby') 
+
+                 ->leftJoin('bric_br AS br' , 'br.id', '=' ,'prc.br_id') 
+
+                 ->leftJoin('users_usr AS br_usr' , 'br_usr.id', '=' ,'br.br_confirmedby') 
+
+                 ->leftJoin('warrants_war AS war' , 'war.id', '=' ,'prc.war_id') 
+
+                 ->leftJoin('release_instructions_rl AS rl' , 'rl.id', '=' ,'prc.rl_id') 
+
+                 ->leftJoin('transporters_trp AS trp' , 'trp.id', '=' ,'rl.trp_id') 
+
+                 ->leftJoin('stock_st AS st' , 'st.prc_id', '=' ,'prc.id') 
+
+                 ->leftJoin('batch_btc AS bt' , 'bt.st_id', '=' ,'st.id') 
+
+                 ->leftJoin('stock_location_sloc AS sloc' , 'sloc.bt_id', '=' ,'bt.id') 
+
+                 ->leftJoin('grn_gr AS gr' , 'gr.id', '=' ,'st.gr_id') 
+
+                ->select('cfd.id AS id','cfd.sl_id AS slid','sale_sl.sl_no AS sale','sale_sl.sl_date AS date','sale_sl.ctr_id AS slctrid','ctr.ctr_name AS ctrname','sale_sl.sl_date + interval 7 day AS prompt_date','csn.csn_season AS csn_season','ml.ml_name AS ml_name','wrgn.rgn_name AS region','wrgn.wrid AS wrid','wrgn.wr_name AS warehouse','cfd.cfd_lot_no AS lot',DB::Raw('ifnull(prc.inv_outturn,cfd.cfd_outturn) AS outturn'),'slr.id AS slrid','slr.slr_initials AS seller',DB::Raw('ifnull(prc.inv_mark,cfd.cfd_grower_mark) AS mark'),'cgrad.cgrad_name AS grade'
+                    ,DB::Raw('ifnull(war.war_weight, ifnull(prc.inv_weight, cfd.cfd_weight)) AS weight'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) / 60)),cfd.cfd_bags) AS bags'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) % 60)),cfd.cfd_pockets) AS pockets'),'crt.crt_name AS cert','sale_sl.sl_hedge AS hedge','sale_sl.sl_month AS month', 'grcm.id is AS greencomments'
+                    ,'grn.qp_parameter AS green','cfd.cfd_dnt AS dnt','cfd.cfd_dnt AS touch','prcss.prcss_initial AS prcss_name','qltyd.qltyd_prcss_value AS qltyd_prcss_value','scr.scr_name AS scr_name','qltyd.qltyd_scr_value AS qltyd_scr_value','qltyd.qltyd_acidity AS acidity','qltyd.qltyd_body AS body','qltyd.qltyd_flavour AS flavour','cp.cp_quality AS cp_quality','cp.cp_score AS cp_score','rw.rw_score AS rw_score','rw.rw_quality AS rw_quality','qltyd.qltyd_comments AS final_comments','cb.id AS cbid','cb.cb_name AS buyer','prc.id AS prcid','prc.prc_price AS auc_price','prc.prc_confirmed_price AS price','inv.inv_no AS invoice','prc.inv_weight AS inv_weight','inv.inv_date AS invoice_date','inv_usr.usr_name AS invoice_confirmedby','py.py_no AS py_no','py.py_amount AS payment','py.py_date AS payment_date','py_usr.usr_name AS payment_confirmedby','br.br_no AS bric','br.br_date AS br_date','br_usr.usr_name AS br_confirmedby','bs.id AS bsid','bs.bs_code AS code','bs.bs_quality AS quality','war.war_no AS warrant_no','war.war_weight AS warrant_weight','war.war_date AS warrant_date','war.war_comments AS war_comments','sst.sst_name AS status','rl.rl_no AS rl_no','rl.rl_date AS rl_date','rl.rl_confirmedby AS rl_confirmedby','trp.trp_name AS trp_name', DB::Raw('TRUNCATE((prc.prc_confirmed_price/1.1023 - sale_sl.sl_hedge), 2) As differential'), 'st.st_moisture', 'st.pkg_id', 'st.st_dispatch_net', 'st.st_gross' , 'sloc.loc_row_id', 'sloc.loc_column_id', 'sloc.btc_zone', 'gr.gr_number', 'btc_packages')
+                ->where('cb.bt_id', '1')->where('csn_season',$season)->whereNotNull('rl_no')->where('sale_sl.ctr_id', $country)->whereNUll('st.st_net_weight')
+                ->groupBy('sale_sl.sl_no', 'cfd.cfd_lot_no', 'cfd.cfd_outturn', 'bs.bs_code');
+
+        return $query->get();
+    }
+
+    public static function getSaleLotsArrivalListWithSale($country, $season, $sale){
+
+
+        $query = Sale::leftJoin('country_ctr AS ctr', 'ctr.id', '=' ,'sale_sl.ctr_id')
+
+                 // ->leftJoin('country_ctr ctr' , 'ctr.id', '=' ,'sl.ctr_id')
+
+                 ->leftJoin('coffee_details_cfd AS cfd' , 'sale_sl.id', '=' ,'cfd.sl_id') 
+
+                 ->leftJoin('coffee_seasons_csn AS csn' , 'csn.id', '=' ,'cfd.csn_id')
+
+                 ->leftJoin('warehouses_region AS wrgn' , 'wrgn.wrid', '=' ,'cfd.wr_id')
+
+                 ->leftJoin('coffee_grade_cgrad AS cgrad' , 'cgrad.id', '=' ,'cfd.cgrad_id') 
+
+                 ->leftJoin('mill_ml AS ml' , 'ml.id', '=' ,'cfd.ml_id') 
+
+                 ->join('certifications AS crt' , 'crt.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('seller_slr AS slr' , 'slr.id', '=' ,'cfd.slr_id') 
+
+                 ->leftJoin('green_comments_grcm AS grcm' , 'grcm.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('qualty_details_qltyd AS qltyd' , 'qltyd.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('processing_prcss AS prcss' , 'prcss.id', '=' ,'qltyd.prcss_id') 
+
+                 ->leftJoin('screens_scr AS scr' , 'scr.id', '=' ,'qltyd.scr_id') 
+
+                 ->leftJoin('cup_score_cp AS cp' , 'cp.id', '=' ,'qltyd.cp_id') 
+
+                 ->leftJoin('raw_score_rw AS rw' , 'rw.id', '=' ,'qltyd.rw_id') 
+
+                 ->leftJoin('green AS grn' , 'grn.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('purchases_prc AS prc' , 'prc.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('coffee_buyers_cb AS cb' , 'cb.id', '=' ,'prc.cb_id') 
+
+                 ->leftJoin('basket_bs AS bs' , 'bs.id', '=' ,'prc.bs_id') 
+
+                 ->leftJoin('sale_status_sst AS sst' , 'sst.id', '=' ,'prc.sst_id') 
+
+                 ->leftJoin('invoices_inv AS inv' , 'inv.id', '=' ,'prc.inv_id') 
+
+                 ->leftJoin('users_usr AS inv_usr' , 'inv_usr.id', '=' ,'inv.inv_confirmedby') 
+
+                 ->leftJoin('payments_py AS py' , 'py.id', '=' ,'prc.py_id') 
+
+                 ->leftJoin('users_usr AS py_usr' , 'py_usr.id', '=' ,'py.py_confirmedby') 
+
+                 ->leftJoin('bric_br AS br' , 'br.id', '=' ,'prc.br_id') 
+
+                 ->leftJoin('users_usr AS br_usr' , 'br_usr.id', '=' ,'br.br_confirmedby') 
+
+                 ->leftJoin('warrants_war AS war' , 'war.id', '=' ,'prc.war_id') 
+
+                 ->leftJoin('release_instructions_rl AS rl' , 'rl.id', '=' ,'prc.rl_id') 
+
+                 ->leftJoin('transporters_trp AS trp' , 'trp.id', '=' ,'rl.trp_id') 
+
+                 ->leftJoin('stock_st AS st' , 'st.prc_id', '=' ,'prc.id') 
+
+                 ->leftJoin('batch_btc AS bt' , 'bt.st_id', '=' ,'st.id') 
+
+                 ->leftJoin('stock_location_sloc AS sloc' , 'sloc.bt_id', '=' ,'bt.id')
+
+                 ->leftJoin('grn_gr AS gr' , 'gr.id', '=' ,'st.gr_id') 
+
+                ->select('cfd.id AS id','cfd.sl_id AS slid','sale_sl.sl_no AS sale','sale_sl.sl_date AS date','sale_sl.ctr_id AS slctrid','ctr.ctr_name AS ctrname','sale_sl.sl_date + interval 7 day AS prompt_date','csn.csn_season AS csn_season','ml.ml_name AS ml_name','wrgn.rgn_name AS region','wrgn.wrid AS wrid','wrgn.wr_name AS warehouse','cfd.cfd_lot_no AS lot',DB::Raw('ifnull(prc.inv_outturn,cfd.cfd_outturn) AS outturn'),'slr.id AS slrid','slr.slr_initials AS seller',DB::Raw('ifnull(prc.inv_mark,cfd.cfd_grower_mark) AS mark'),'cgrad.cgrad_name AS grade'
+                    ,DB::Raw('ifnull(war.war_weight, ifnull(prc.inv_weight, cfd.cfd_weight)) AS weight'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) / 60)),cfd.cfd_bags) AS bags'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) % 60)),cfd.cfd_pockets) AS pockets'),'crt.crt_name AS cert','sale_sl.sl_hedge AS hedge','sale_sl.sl_month AS month', 'grcm.id is AS greencomments'
+                    ,'grn.qp_parameter AS green','cfd.cfd_dnt AS dnt','cfd.cfd_dnt AS touch','prcss.prcss_initial AS prcss_name','qltyd.qltyd_prcss_value AS qltyd_prcss_value','scr.scr_name AS scr_name','qltyd.qltyd_scr_value AS qltyd_scr_value','qltyd.qltyd_acidity AS acidity','qltyd.qltyd_body AS body','qltyd.qltyd_flavour AS flavour','cp.cp_quality AS cp_quality','cp.cp_score AS cp_score','rw.rw_score AS rw_score','rw.rw_quality AS rw_quality','qltyd.qltyd_comments AS final_comments','cb.id AS cbid','cb.cb_name AS buyer','prc.id AS prcid','prc.prc_price AS auc_price','prc.prc_confirmed_price AS price','inv.inv_no AS invoice','prc.inv_weight AS inv_weight','inv.inv_date AS invoice_date','inv_usr.usr_name AS invoice_confirmedby','py.py_no AS py_no','py.py_amount AS payment','py.py_date AS payment_date','py_usr.usr_name AS payment_confirmedby','br.br_no AS bric','br.br_date AS br_date','br_usr.usr_name AS br_confirmedby','bs.id AS bsid','bs.bs_code AS code','bs.bs_quality AS quality','war.war_no AS warrant_no','war.war_weight AS warrant_weight','war.war_date AS warrant_date','war.war_comments AS war_comments','sst.sst_name AS status','rl.rl_no AS rl_no','rl.rl_date AS rl_date','rl.rl_confirmedby AS rl_confirmedby','trp.trp_name AS trp_name', DB::Raw('TRUNCATE((prc.prc_confirmed_price/1.1023 - sale_sl.sl_hedge), 2) As differential'), 'st.st_moisture', 'st.pkg_id', 'st.st_dispatch_net', 'st.st_gross', 'sloc.loc_row_id', 'sloc.loc_column_id', 'sloc.btc_zone', 'gr.gr_number', 'btc_packages' )
+                ->where('cb.bt_id', '1')->where('csn_season',$season)->whereNotNull('rl_no')->where('sale_sl.id', $sale)->where('sale_sl.ctr_id', $country)->whereNUll('st.st_net_weight')
+                ->groupBy('sale_sl.sl_no', 'cfd.cfd_lot_no', 'cfd.cfd_outturn', 'bs.bs_code');
+
+        return $query->get();
+    }
+
+    public static function getSaleLotsArrivalListWithSaleWithSeller($country, $season, $sale, $seller){
+
+
+        $query = Sale::leftJoin('country_ctr AS ctr', 'ctr.id', '=' ,'sale_sl.ctr_id')
+
+                 // ->leftJoin('country_ctr ctr' , 'ctr.id', '=' ,'sl.ctr_id')
+
+                 ->leftJoin('coffee_details_cfd AS cfd' , 'sale_sl.id', '=' ,'cfd.sl_id') 
+
+                 ->leftJoin('coffee_seasons_csn AS csn' , 'csn.id', '=' ,'cfd.csn_id')
+
+                 ->leftJoin('warehouses_region AS wrgn' , 'wrgn.wrid', '=' ,'cfd.wr_id')
+
+                 ->leftJoin('coffee_grade_cgrad AS cgrad' , 'cgrad.id', '=' ,'cfd.cgrad_id') 
+
+                 ->leftJoin('mill_ml AS ml' , 'ml.id', '=' ,'cfd.ml_id') 
+
+                 ->join('certifications AS crt' , 'crt.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('seller_slr AS slr' , 'slr.id', '=' ,'cfd.slr_id') 
+
+                 ->leftJoin('green_comments_grcm AS grcm' , 'grcm.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('qualty_details_qltyd AS qltyd' , 'qltyd.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('processing_prcss AS prcss' , 'prcss.id', '=' ,'qltyd.prcss_id') 
+
+                 ->leftJoin('screens_scr AS scr' , 'scr.id', '=' ,'qltyd.scr_id') 
+
+                 ->leftJoin('cup_score_cp AS cp' , 'cp.id', '=' ,'qltyd.cp_id') 
+
+                 ->leftJoin('raw_score_rw AS rw' , 'rw.id', '=' ,'qltyd.rw_id') 
+
+                 ->leftJoin('green AS grn' , 'grn.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('purchases_prc AS prc' , 'prc.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('coffee_buyers_cb AS cb' , 'cb.id', '=' ,'prc.cb_id') 
+
+                 ->leftJoin('basket_bs AS bs' , 'bs.id', '=' ,'prc.bs_id') 
+
+                 ->leftJoin('sale_status_sst AS sst' , 'sst.id', '=' ,'prc.sst_id') 
+
+                 ->leftJoin('invoices_inv AS inv' , 'inv.id', '=' ,'prc.inv_id') 
+
+                 ->leftJoin('users_usr AS inv_usr' , 'inv_usr.id', '=' ,'inv.inv_confirmedby') 
+
+                 ->leftJoin('payments_py AS py' , 'py.id', '=' ,'prc.py_id') 
+
+                 ->leftJoin('users_usr AS py_usr' , 'py_usr.id', '=' ,'py.py_confirmedby') 
+
+                 ->leftJoin('bric_br AS br' , 'br.id', '=' ,'prc.br_id') 
+
+                 ->leftJoin('users_usr AS br_usr' , 'br_usr.id', '=' ,'br.br_confirmedby') 
+
+                 ->leftJoin('warrants_war AS war' , 'war.id', '=' ,'prc.war_id') 
+
+                 ->leftJoin('release_instructions_rl AS rl' , 'rl.id', '=' ,'prc.rl_id') 
+
+                 ->leftJoin('transporters_trp AS trp' , 'trp.id', '=' ,'rl.trp_id') 
+
+                 ->leftJoin('stock_st AS st' , 'st.prc_id', '=' ,'prc.id') 
+
+                 ->leftJoin('batch_btc AS bt' , 'bt.st_id', '=' ,'st.id') 
+
+                 ->leftJoin('stock_location_sloc AS sloc' , 'sloc.bt_id', '=' ,'bt.id') 
+
+                 ->leftJoin('grn_gr AS gr' , 'gr.id', '=' ,'st.gr_id')
+
+                ->select('cfd.id AS id','cfd.sl_id AS slid','sale_sl.sl_no AS sale','sale_sl.sl_date AS date','sale_sl.ctr_id AS slctrid','ctr.ctr_name AS ctrname','sale_sl.sl_date + interval 7 day AS prompt_date','csn.csn_season AS csn_season','ml.ml_name AS ml_name','wrgn.rgn_name AS region','wrgn.wrid AS wrid','wrgn.wr_name AS warehouse','cfd.cfd_lot_no AS lot',DB::Raw('ifnull(prc.inv_outturn,cfd.cfd_outturn) AS outturn'),'slr.id AS slrid','slr.slr_initials AS seller',DB::Raw('ifnull(prc.inv_mark,cfd.cfd_grower_mark) AS mark'),'cgrad.cgrad_name AS grade'
+                    ,DB::Raw('ifnull(war.war_weight, ifnull(prc.inv_weight, cfd.cfd_weight)) AS weight'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) / 60)),cfd.cfd_bags) AS bags'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) % 60)),cfd.cfd_pockets) AS pockets'),'crt.crt_name AS cert','sale_sl.sl_hedge AS hedge','sale_sl.sl_month AS month', 'grcm.id is AS greencomments'
+                    ,'grn.qp_parameter AS green','cfd.cfd_dnt AS dnt','cfd.cfd_dnt AS touch','prcss.prcss_initial AS prcss_name','qltyd.qltyd_prcss_value AS qltyd_prcss_value','scr.scr_name AS scr_name','qltyd.qltyd_scr_value AS qltyd_scr_value','qltyd.qltyd_acidity AS acidity','qltyd.qltyd_body AS body','qltyd.qltyd_flavour AS flavour','cp.cp_quality AS cp_quality','cp.cp_score AS cp_score','rw.rw_score AS rw_score','rw.rw_quality AS rw_quality','qltyd.qltyd_comments AS final_comments','cb.id AS cbid','cb.cb_name AS buyer','prc.id AS prcid','prc.prc_price AS auc_price','prc.prc_confirmed_price AS price','inv.inv_no AS invoice','prc.inv_weight AS inv_weight','inv.inv_date AS invoice_date','inv_usr.usr_name AS invoice_confirmedby','py.py_no AS py_no','py.py_amount AS payment','py.py_date AS payment_date','py_usr.usr_name AS payment_confirmedby','br.br_no AS bric','br.br_date AS br_date','br_usr.usr_name AS br_confirmedby','bs.id AS bsid','bs.bs_code AS code','bs.bs_quality AS quality','war.war_no AS warrant_no','war.war_weight AS warrant_weight','war.war_date AS warrant_date','war.war_comments AS war_comments','sst.sst_name AS status','rl.rl_no AS rl_no','rl.rl_date AS rl_date','rl.rl_confirmedby AS rl_confirmedby','trp.trp_name AS trp_name', DB::Raw('TRUNCATE((prc.prc_confirmed_price/1.1023 - sale_sl.sl_hedge), 2) As differential'), 'st.st_moisture', 'st.pkg_id', 'st.st_dispatch_net', 'st.st_gross', 'sloc.loc_row_id', 'sloc.loc_column_id', 'sloc.btc_zone', 'gr.gr_number', 'btc_packages' )
+                ->where('cb.bt_id', '1')->where('csn_season',$season)->whereNotNull('rl_no')->where('sale_sl.id', $sale)->where('sale_sl.ctr_id', $country)->whereNUll('st.st_net_weight')->where('slr.id', $seller)
+                ->groupBy('sale_sl.sl_no', 'cfd.cfd_lot_no', 'cfd.cfd_outturn', 'bs.bs_code');
+
+        return $query->get();
+    }
+
+
+    public static function getSaleLotsArrivalListWithoutSaleWithSeller($country, $season, $seller){
+
+
+        $query = Sale::leftJoin('country_ctr AS ctr', 'ctr.id', '=' ,'sale_sl.ctr_id')
+
+                 // ->leftJoin('country_ctr ctr' , 'ctr.id', '=' ,'sl.ctr_id')
+
+                 ->leftJoin('coffee_details_cfd AS cfd' , 'sale_sl.id', '=' ,'cfd.sl_id') 
+
+                 ->leftJoin('coffee_seasons_csn AS csn' , 'csn.id', '=' ,'cfd.csn_id')
+
+                 ->leftJoin('warehouses_region AS wrgn' , 'wrgn.wrid', '=' ,'cfd.wr_id')
+
+                 ->leftJoin('coffee_grade_cgrad AS cgrad' , 'cgrad.id', '=' ,'cfd.cgrad_id') 
+
+                 ->leftJoin('mill_ml AS ml' , 'ml.id', '=' ,'cfd.ml_id') 
+
+                 ->join('certifications AS crt' , 'crt.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('seller_slr AS slr' , 'slr.id', '=' ,'cfd.slr_id') 
+
+                 ->leftJoin('green_comments_grcm AS grcm' , 'grcm.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('qualty_details_qltyd AS qltyd' , 'qltyd.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('processing_prcss AS prcss' , 'prcss.id', '=' ,'qltyd.prcss_id') 
+
+                 ->leftJoin('screens_scr AS scr' , 'scr.id', '=' ,'qltyd.scr_id') 
+
+                 ->leftJoin('cup_score_cp AS cp' , 'cp.id', '=' ,'qltyd.cp_id') 
+
+                 ->leftJoin('raw_score_rw AS rw' , 'rw.id', '=' ,'qltyd.rw_id') 
+
+                 ->leftJoin('green AS grn' , 'grn.cfdid', '=' ,'cfd.id') 
+
+                 ->leftJoin('purchases_prc AS prc' , 'prc.cfd_id', '=' ,'cfd.id') 
+
+                 ->leftJoin('coffee_buyers_cb AS cb' , 'cb.id', '=' ,'prc.cb_id') 
+
+                 ->leftJoin('basket_bs AS bs' , 'bs.id', '=' ,'prc.bs_id') 
+
+                 ->leftJoin('sale_status_sst AS sst' , 'sst.id', '=' ,'prc.sst_id') 
+
+                 ->leftJoin('invoices_inv AS inv' , 'inv.id', '=' ,'prc.inv_id') 
+
+                 ->leftJoin('users_usr AS inv_usr' , 'inv_usr.id', '=' ,'inv.inv_confirmedby') 
+
+                 ->leftJoin('payments_py AS py' , 'py.id', '=' ,'prc.py_id') 
+
+                 ->leftJoin('users_usr AS py_usr' , 'py_usr.id', '=' ,'py.py_confirmedby') 
+
+                 ->leftJoin('bric_br AS br' , 'br.id', '=' ,'prc.br_id') 
+
+                 ->leftJoin('users_usr AS br_usr' , 'br_usr.id', '=' ,'br.br_confirmedby') 
+
+                 ->leftJoin('warrants_war AS war' , 'war.id', '=' ,'prc.war_id') 
+
+                 ->leftJoin('release_instructions_rl AS rl' , 'rl.id', '=' ,'prc.rl_id') 
+
+                 ->leftJoin('transporters_trp AS trp' , 'trp.id', '=' ,'rl.trp_id') 
+
+                 ->leftJoin('stock_st AS st' , 'st.prc_id', '=' ,'prc.id') 
+
+                 ->leftJoin('batch_btc AS bt' , 'bt.st_id', '=' ,'st.id') 
+
+                 ->leftJoin('stock_location_sloc AS sloc' , 'sloc.bt_id', '=' ,'bt.id')
+
+                 ->leftJoin('grn_gr AS gr' , 'gr.id', '=' ,'st.gr_id') 
+
+                ->select('cfd.id AS id','cfd.sl_id AS slid','sale_sl.sl_no AS sale','sale_sl.sl_date AS date','sale_sl.ctr_id AS slctrid','ctr.ctr_name AS ctrname','sale_sl.sl_date + interval 7 day AS prompt_date','csn.csn_season AS csn_season','ml.ml_name AS ml_name','wrgn.rgn_name AS region','wrgn.wrid AS wrid','wrgn.wr_name AS warehouse','cfd.cfd_lot_no AS lot',DB::Raw('ifnull(prc.inv_outturn,cfd.cfd_outturn) AS outturn'),'slr.id AS slrid','slr.slr_initials AS seller',DB::Raw('ifnull(prc.inv_mark,cfd.cfd_grower_mark) AS mark'),'cgrad.cgrad_name AS grade'
+                    ,DB::Raw('ifnull(war.war_weight, ifnull(prc.inv_weight, cfd.cfd_weight)) AS weight'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) / 60)),cfd.cfd_bags) AS bags'),DB::Raw('ifnull(floor((ifnull(war.war_weight,ifnull(prc.inv_weight,cfd.cfd_weight)) % 60)),cfd.cfd_pockets) AS pockets'),'crt.crt_name AS cert','sale_sl.sl_hedge AS hedge','sale_sl.sl_month AS month', 'grcm.id is AS greencomments'
+                    ,'grn.qp_parameter AS green','cfd.cfd_dnt AS dnt','cfd.cfd_dnt AS touch','prcss.prcss_initial AS prcss_name','qltyd.qltyd_prcss_value AS qltyd_prcss_value','scr.scr_name AS scr_name','qltyd.qltyd_scr_value AS qltyd_scr_value','qltyd.qltyd_acidity AS acidity','qltyd.qltyd_body AS body','qltyd.qltyd_flavour AS flavour','cp.cp_quality AS cp_quality','cp.cp_score AS cp_score','rw.rw_score AS rw_score','rw.rw_quality AS rw_quality','qltyd.qltyd_comments AS final_comments','cb.id AS cbid','cb.cb_name AS buyer','prc.id AS prcid','prc.prc_price AS auc_price','prc.prc_confirmed_price AS price','inv.inv_no AS invoice','prc.inv_weight AS inv_weight','inv.inv_date AS invoice_date','inv_usr.usr_name AS invoice_confirmedby','py.py_no AS py_no','py.py_amount AS payment','py.py_date AS payment_date','py_usr.usr_name AS payment_confirmedby','br.br_no AS bric','br.br_date AS br_date','br_usr.usr_name AS br_confirmedby','bs.id AS bsid','bs.bs_code AS code','bs.bs_quality AS quality','war.war_no AS warrant_no','war.war_weight AS warrant_weight','war.war_date AS warrant_date','war.war_comments AS war_comments','sst.sst_name AS status','rl.rl_no AS rl_no','rl.rl_date AS rl_date','rl.rl_confirmedby AS rl_confirmedby','trp.trp_name AS trp_name', DB::Raw('TRUNCATE((prc.prc_confirmed_price/1.1023 - sale_sl.sl_hedge), 2) As differential'), 'st.st_moisture', 'st.pkg_id', 'st.st_dispatch_net', 'st.st_gross', 'gr.gr_number' , 'btc_packages', 'sloc.loc_row_id', 'sloc.loc_column_id', 'sloc.btc_zone' )
+                ->where('cb.bt_id', '1')->where('csn_season',$season)->whereNotNull('rl_no')->where('sale_sl.ctr_id', $country)->whereNUll('st.st_net_weight')->where('slr.id', $seller)
+                ->groupBy('sale_sl.sl_no', 'cfd.cfd_lot_no', 'cfd.cfd_outturn', 'bs.bs_code', 'sloc.loc_row_id', 'sloc.loc_column_id', 'sloc.btc_zone');
+
+        return $query->get();
+    }
+
+}
