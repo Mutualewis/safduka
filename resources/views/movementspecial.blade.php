@@ -155,7 +155,7 @@
 
 		            <div class="form-group col-md-4">
 		                <label>Warehouse</label>
-		                <select class="form-control" name="warehouse" onchange="this.form.submit()">
+		                <select class="form-control" id="warehouse" name="warehouse" onchange="this.form.submit()">
 		                	<option></option> 
 							@if (isset($Warehouse))
 										@foreach ($Warehouse->all() as $value)

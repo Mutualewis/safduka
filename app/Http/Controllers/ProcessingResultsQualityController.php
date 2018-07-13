@@ -52,6 +52,8 @@ use Ngea\User;
 use Ngea\Person;
 use Ngea\StockQuality;
 
+use Ngea\Sum_Process_Allocation;
+
 use Ngea\warehouses_region;
 use Yajra\Datatables\Datatables;
 
@@ -179,7 +181,7 @@ class ProcessingResultsQualityController extends Controller
 
         if (null !== Input::get('confirmresults')) {
             $process_results = ProcessResults::where('pr_id', $rfid)->get();
-            $process_allocation = ProcessAllocation::where('pr_id', $rfid)->get();
+            $process_allocation = Sum_Process_Allocation::where('pr_id', $rfid)->first();
             $total_kilos_processed = null;
             $total_kilos_allocated = null;
 
@@ -228,9 +230,8 @@ class ProcessingResultsQualityController extends Controller
                 $total_kilos_processed += $value->prts_weight;
             }
 
-            foreach ($process_allocation as $key => $value) {
-                $total_kilos_allocated += $value->pall_allocated_weight;
-            }
+            $total_kilos_allocated = $process_allocation->allocated_weight;
+            
 
             $threshold_name = "Processing";
 
