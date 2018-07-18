@@ -493,9 +493,9 @@ public function CalculateProcessResultsRate($ref_no, $processingType, $service, 
         $rateid=$rate_details->id;
         $servicename=$rate_details->service;
        
-        if($rateid==11){
+       // if($rateid==11){
             $packages = (int)$descpackages;
-        }
+       // }
         $charge = $rate*$packages;
         //get rate charges and insert team
         $processing_rate_details = processcharges::where('ref_no', '=',  $ref_no)->where('prcgs_rate_id', '=',  $rateid)->first();
