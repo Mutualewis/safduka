@@ -266,7 +266,8 @@
 								<td width="250px" align="left">
 									Weighing 
 									<?php
-										echo number_format((number_format($total_bags, 0, '', ',') * 60), 2, '.', ',');
+										$weighing = $total_bags*60;
+										echo number_format($weighing, 2, '.', ',');
 									?>
 									Kilos Nett
 								</td>
@@ -320,7 +321,7 @@
 
 										// $total_weight = ($valueg->weight_total/$sum_total) * $approved_weight;
 
-										$bags = number_format($bags, 0, '', ',');
+										//$bags = number_format($bags, 0, '', ',');
 
 										if ($bags >= 1) {
 
@@ -333,7 +334,7 @@
 											$count += 1;
 											
 											$total_value += $valueg->price * ($total_weight/50);
-
+											
 											echo "<tr>";
 												echo "<td align='left'>CC". $valueg->br_no."</td>";
 												echo "<td align='left'>". number_format($bags, 0, '', ',') ." </td>";

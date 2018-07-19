@@ -3711,6 +3711,7 @@ class PurchaseController extends Controller
                             $coffee_basket=(int)$coffee_basket;
                             if ($wrhse != null) {
                                 $sale_lots  = sale_lots::whereIn('slid', $saleid)->whereIn('slrid', Input::get('seller'))->whereIn('cbid', Input::get('coffee_buyer'))->whereNotNull('warrant_no')->where('wrid', $wrhse)->where('bsid', $coffee_basket)->orderBy('sale')->whereNull('rl_no')->orderBy('lot')->get();
+
                                 $sale_lots_released = sale_lots::where('slid', $saleid)->whereIn('slrid', Input::get('seller'))->whereIn('cbid', Input::get('coffee_buyer'))->whereNotNull('warrant_no')->whereNotNull('rl_no')->where('wrid', $wrhse)->where('rl_no', $release_no)->orderBy('sale')->orderBy('lot')->get();
                             } else {
                                  $sale_lots  = sale_lots::whereIn('slid', $saleid)->whereIn('slrid', Input::get('seller'))->whereIn('cbid', Input::get('coffee_buyer'))->where('bsid', $coffee_basket)->whereNotNull('warrant_no')->whereNull('rl_no')->orderBy('sale')->orderBy('lot')->get();
@@ -3791,6 +3792,7 @@ class PurchaseController extends Controller
                             $coffee_basket=(int)$coffee_basket;
                             if ($wrhse != null) {
                                 $sale_lots  = sale_lots::whereIn('slrid', Input::get('seller'))->whereIn('cbid', Input::get('coffee_buyer'))->whereNotNull('warrant_no')->where('wrid', $wrhse)->where('bsid', $coffee_basket)->orderBy('sale')->whereNull('rl_no')->orderBy('lot')->get();
+
                                 $sale_lots_released = sale_lots::whereIn('slrid', Input::get('seller'))->whereIn('cbid', Input::get('coffee_buyer'))->whereNotNull('warrant_no')->whereNotNull('rl_no')->where('wrid', $wrhse)->where('rl_no', $release_no)->orderBy('sale')->orderBy('lot')->get();
                             } else {
                                  $sale_lots  = sale_lots::whereIn('slrid', Input::get('seller'))->whereIn('cbid', Input::get('coffee_buyer'))->where('bsid', $coffee_basket)->whereNotNull('warrant_no')->whereNull('rl_no')->orderBy('sale')->orderBy('lot')->get();
@@ -3800,6 +3802,7 @@ class PurchaseController extends Controller
                         }else{
                             if ($wrhse != null) {
                                 $sale_lots  = sale_lots::whereIn('slid', $saleid)->whereIn('slrid', Input::get('seller'))->whereIn('cbid', Input::get('coffee_buyer'))->whereNotNull('warrant_no')->where('wrid', $wrhse)->orderBy('sale')->whereNull('rl_no')->orderBy('lot')->get();
+
                                 $sale_lots_released = sale_lots::whereIn('slid', $saleid)->whereIn('slrid', Input::get('seller'))->whereIn('cbid', Input::get('coffee_buyer'))->whereNotNull('warrant_no')->whereNotNull('rl_no')->where('wrid', $wrhse)->where('rl_no', $release_no)->orderBy('sale')->orderBy('lot')->get();
                             } else {
 

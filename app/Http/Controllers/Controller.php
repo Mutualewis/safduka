@@ -48,7 +48,7 @@ class Controller extends BaseController
 
 	        Mail::send(['text'=>'maildiscrepancy'], $data, function($message) {
 
-	            $message->to('isaac.muchomba@nkg.coffee', 'Discrepancy-')->subject('Discrepancy');
+	            $message->to('lewis.mutua@nkg.coffee', 'Discrepancy-')->subject('Discrepancy');
 
 	            $message->from('lewis.mutua@nkg.coffee','Ibero Database');
 

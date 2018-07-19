@@ -331,7 +331,7 @@ class ProcessingResultsQualityController extends Controller
 
                             $previous_stock_breakdown = StockBreakdown::where('st_id', $valuest->id)->whereNull('cn_id')->get();    
 
-                            $stock_details_exist = Stock::where('gr_id', $stock_single_lots->gr_id)->where('st_outturn', $stock_single_lots->st_outturn)->where('cgrad_id', $stock_single_lots->cgrad_id)->where('prt_id', $stock_single_lots->prt_id)->first();   
+                            $stock_details_exist = Stock::where('gr_id', $stock_single_lots->gr_id)->where('st_outturn', $stock_single_lots->st_outturn)->where('cgrad_id', $stock_single_lots->cgrad_id)->where('prt_id', $stock_single_lots->prt_id)->where('st_net_weight', $stock_net)->first();   
 
                             $stid = null;     
 

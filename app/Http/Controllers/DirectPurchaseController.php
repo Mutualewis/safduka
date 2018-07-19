@@ -789,7 +789,7 @@ class DirectPurchaseController extends Controller {
 
                     if ($request->has('seller') && Input::get('seller') != null) {
 
-                        $sale_lots = direct_sale::selectRaw('*,GROUP_CONCAT(DISTINCT grade) sum_grades, sum(bags) sum_bags, sum(pockets) sum_pockets,  sum(weight) sum_weight, sum(price*weight) sum_price, count(*) count ')->where('slctrid', $cid)->where('csn_season', $saleSeasonName)->where('status', 'confirmed')->where('slrid', Input::get('seller'))->whereNull('invoice')->groupBy('sale')->get();
+                        $sale_lots = direct_sale::selectRaw('*,GROUP_CONCAT(DISTINCT grade) sum_grades, sum(bags) sum_bags, sum(pockets) sum_pockets,  sum(weight) sum_weight, sum(price*weight) sum_price, count(*) count ')->where('slctrid', $cid)->where('csn_season', $saleSeasonName)->where('status', 'confirmed')->where('slrid', Input::get('seller'))->whereNull('invoice')->whereNotNull('bric')->groupBy('sale')->get();
 
 
                     }                    

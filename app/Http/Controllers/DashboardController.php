@@ -88,7 +88,7 @@ class DashboardController extends Controller
         //                     ->orderBy('ssm1.wr_name');
         $user_data = Auth::user();
 
-        $user = $user_data->id;
+        $user = $user_data->per_id;
 
         $dprt_id = Person::where('id', $user)->first();
 
@@ -118,7 +118,7 @@ class DashboardController extends Controller
     {
         $user_data = Auth::user();
 
-        $user = $user_data->id;
+        $user = $user_data->per_id;
 
         $dprt_id = Person::where('id', $user)->first();
 
@@ -148,7 +148,7 @@ class DashboardController extends Controller
     {
         $user_data = Auth::user();
 
-        $user = $user_data->id;
+        $user = $user_data->per_id;
 
         $dprt_id = Person::where('id', $user)->first();
 
@@ -179,7 +179,7 @@ class DashboardController extends Controller
     {
         $user_data = Auth::user();
 
-        $user = $user_data->id;
+        $user = $user_data->per_id;
 
         $dprt_id = Person::where('id', $user)->first();
 
@@ -209,7 +209,7 @@ class DashboardController extends Controller
     {
         $user_data = Auth::user();
 
-        $user = $user_data->id;
+        $user = $user_data->per_id;
 
         $dprt_id = Person::where('id', $user)->first();
 

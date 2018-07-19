@@ -613,7 +613,7 @@ class WarehouseController extends Controller {
 			            	            	
 		            // }
 
-					$stock_details_exist = Stock::where('gr_id', $grnid)->where('st_outturn', $st_outturn)->where('cgrad_id', $st_grid)->where('prc_id', $prdetails->id)->first(); 
+					$stock_details_exist = Stock::where('gr_id', $grnid)->where('st_outturn', $st_outturn)->where('cgrad_id', $st_grid)->where('prc_id', $prdetails->id)->whereNull('st_partial_delivery')->first(); 
 
 					$hedge = $prdetails->prc_hedge;
 

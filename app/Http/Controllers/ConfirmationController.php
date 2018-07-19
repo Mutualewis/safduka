@@ -849,17 +849,13 @@ class ConfirmationController extends Controller {
 
         $filename= 'SALE '.$sale_name.' '.$timestamp;
 
-        $info=Excel::create($filename, function($excel) use($sale_lots,$sale, $lotscount) {
-
-        
+        $info=Excel::create($filename, function($excel) use($sale_lots,$sale, $lotscount) {        
 
             	$excel->sheet('SALE'.$sale, function($sheet) use($sale_lots,$lotscount) {
 
+               		$sheet->cell('A1', function($cell) {$cell->setValue('DATE');
 
-
-
-                $sheet->cell('A1', function($cell) {$cell->setValue('DATE');
-});
+				});
 
 $sheet->cell('B1', function($cell) {$cell->setValue('CROP');
 });
@@ -954,76 +950,76 @@ score'); });
                 foreach ($sale_lots as $salelot) {
 
                     $sheet->cell('A'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->date); });
+					{$cell->setValue($salelot->date); });
 
                     $sheet->cell('B'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->csn_season); });
+					{$cell->setValue($salelot->csn_season); });
 
                     $sheet->cell('C'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->sale); });
+					{$cell->setValue($salelot->sale); });
 
                     $sheet->cell('D'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->seller); });
+					{$cell->setValue($salelot->seller); });
 
                     $sheet->cell('E'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->lot); });
+					{$cell->setValue($salelot->lot); });
 
                     $sheet->cell('F'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->outturn); });
+					{$cell->setValue($salelot->outturn); });
 
                     $sheet->cell('G'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->mark); });
+					{$cell->setValue($salelot->mark); });
 
                     $sheet->cell('H'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->warehouse); });
+					{$cell->setValue($salelot->warehouse); });
 
                     $sheet->cell('I'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->grade); });
+					{$cell->setValue($salelot->grade); });
 
                     $sheet->cell('J'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->bags); });
+					{$cell->setValue($salelot->bags); });
 
                     $sheet->cell('K'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->pockets); });
+					{$cell->setValue($salelot->pockets); });
 
                     $sheet->cell('L'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->weight); });
+					{$cell->setValue($salelot->weight); });
 
                     $sheet->cell('M'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->cert); });
+					{$cell->setValue($salelot->cert); });
 
                     $sheet->cell('N'.$i, function($cell) use($salelot)
-{$cell->setValue(''); });
+					{$cell->setValue(''); });
 
                     $sheet->cell('O'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->green); });
+					{$cell->setValue($salelot->green); });
 
                     $sheet->cell('P'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->prcss_name); });
+					{$cell->setValue($salelot->prcss_name); });
 
                     $sheet->cell('Q'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->qltyd_prcss_value); });
+					{$cell->setValue($salelot->qltyd_prcss_value); });
 
                     $sheet->cell('R'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->qltyd_scr_value); });
+					{$cell->setValue($salelot->qltyd_scr_value); });
 
                     $sheet->cell('S'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->acidity); });
+					{$cell->setValue($salelot->acidity); });
 
                     $sheet->cell('T'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->body); });
+					{$cell->setValue($salelot->body); });
 
                     $sheet->cell('U'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->flavour); });
+					{$cell->setValue($salelot->flavour); });
 
                     $sheet->cell('V'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->final_comments); });
+					{$cell->setValue($salelot->final_comments); });
 
                     $sheet->cell('W'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->rw_score); });
+					{$cell->setValue($salelot->rw_score); });
 
                     $sheet->cell('X'.$i, function($cell) use($salelot)
-{$cell->setValue($salelot->cp_score); });
+					{$cell->setValue($salelot->cp_score); });
 
                     
 

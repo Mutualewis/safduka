@@ -34,7 +34,7 @@ use Ngea\Sum_Bric_Summary;
 use Ngea\Sum_Stock_Code;
 use Ngea\Sum_of_Sales_Contract;
 use Ngea\Long_Short;
-
+use Excel;
 
 
 
@@ -456,6 +456,7 @@ class StocksPerGridController extends Controller {
 
 
         $final_array =  $this->left_join_array($long_short, $query, 'code');
+
         foreach ($final_array as $keyfa => $valuefa) {
             foreach ($valuefa as $keyfav => $valuefav) {
                 $new_value = substr($keyfav, 0, strpos($keyfav, '_', strpos($keyfav, '_')+1));
@@ -499,7 +500,7 @@ class StocksPerGridController extends Controller {
 
         foreach ($long_short as $key => $value) {
             foreach ($value as $keyk => $valuev) {
-                if ($keyk != 'stock_bags' && $keyk != 'code' && $keyk != 'long_code' && $keyk != 'bs_quality' && $keyk != 'allocated_bags' && $keyk != 'value' && $keyk != 'breakdown_diff'&& $keyk != 'bric_diff'&& $keyk != 'stock_diff') {
+                if ($keyk != 'stock_bags' && $keyk != 'code' && $keyk != 'long_code' && $keyk != 'bs_quality' && $keyk != 'allocated_bags' && $keyk != 'value' && $keyk != 'bric_diff' && $keyk != 'stock_diff') {
                     
                     $new_value = substr($keyk, 0, strpos($keyk, '_', strpos($keyk, '_')+1));
                     if (!in_array($new_value, $months)) {
@@ -538,12 +539,11 @@ class StocksPerGridController extends Controller {
         $cfg = [
             'src' => 'Ngea\Long_Short_Complete',
             'columns' => [
-                'long_code',
+                'long_code' ,
                 'bs_quality',
                 'stock_bags',
                 'allocated_bags',
                 'value',
-                'breakdown_diff',
                 'bric_diff',
                 'stock_diff',
 
@@ -567,6 +567,31 @@ class StocksPerGridController extends Controller {
 
 
     public function downloadLongShort (Request $request){
+
+        $long_short=null;
+
+        $timestamp=date('m d Y H i s');
+
+        $filename= 'Long_Short_ '.$timestamp;        
+
+        $long_short = Long_Short_Complete::get();
+
+        $count=count($long_short);
+
+        $info=Excel::create($filename, function($excel) use($long_short) {        
+
+               $excel->sheet('sheet 1', function($sheet) use($long_short){
+
+                $sheet->fromArray($long_short);
+                
+               });
+
+        })->export('xlsx');
+
+
+
+        // print_r($long_short);
+
 
 
 //         $meta = [
@@ -671,7 +696,7 @@ class StocksPerGridController extends Controller {
         foreach($left AS $k => $v){
             $final[$k] = $v;
             foreach($v AS $k1 => $v1){
-                if ($k1 != 'stock_bags' && $k1 != 'code' && $k1 != 'long_code' && $k1 != 'bs_quality' && $k1 != 'allocated_bags' && $k1 != 'value' && $k1 != 'breakdown_diff'&& $k1 != 'bric_diff'&& $k1 != 'stock_diff') {
+                if ($k1 != 'stock_bags' && $k1 != 'code' && $k1 != 'long_code' && $k1 != 'bs_quality' && $k1 != 'allocated_bags' && $k1 != 'value' && $k1 != 'bric_diff' && $k1 != 'stock_diff') {
                     $sum_unallocated += $v1;
                 }
 
@@ -721,7 +746,6 @@ class StocksPerGridController extends Controller {
             $table->string('stock_bags');
             $table->string('allocated_bags');
             $table->string('value');
-            $table->string('breakdown_diff');
             $table->string('bric_diff');
             $table->string('stock_diff');
 
