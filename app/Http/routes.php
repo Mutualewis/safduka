@@ -611,6 +611,9 @@ Route::group(['middleware' => 'auth'], function()
 
 	Route::get('/processrates/printStuffingWithRate/{ref}/{service}/{team}', ['as'=>'processrates.printstuffingwithrate','uses'=>'RatesController@printStuffingWithRate']);
 
+	Route::get('/warehousechargereport', 'RatesController@WarehouseChargesResults');
+
+	Route::get('warehousechargerates/getreport', ['as'=>'warehousechargerates.getreport','uses'=>'RatesController@getWarehouseCharges']);
 
 
 });

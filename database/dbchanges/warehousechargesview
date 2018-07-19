@@ -1,0 +1,94 @@
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `ngeatpmfkdb`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `ibero_dbKenya`.`grns_received_monthly_warehouse_days` AS
+    SELECT 
+        `gr`.`id` AS `id`,
+        `gr`.`gr_number` AS `gr_number`,
+        `wb`.`wb_ticket` AS `wb_ticket`,
+        `wb`.`wb_delivery_number` AS `wb_delivery_number`,
+        `wb`.`wb_vehicle_plate` AS `wb_vehicle_plate`,
+        `wb`.`wb_weight_in` AS `wb_weight_in`,
+        `wb`.`wb_weight_out` AS `wb_weight_out`,
+        `wb`.`wb_time_in` AS `wb_time_in`,
+        `wb`.`wb_time_out` AS `wb_time_out`,
+        `wb`.`wb_movement_permit` AS `wb_movement_permit`,
+        `wb`.`wb_driver_name` AS `wb_driver_name`,
+        `wb`.`wb_driver_id` AS `wb_driver_id`,
+        `wb`.`wb_dispatch_date` AS `wb_dispatch_date`,
+        `st`.`id` AS `stid`,
+        `st`.`st_dispatch_net` AS `st_dispatch_net`,
+        `st`.`st_gross` AS `st_gross`,
+        `st`.`st_tare` AS `st_tare`,
+        `st`.`st_moisture` AS `st_moisture`,
+        `st`.`st_net_weight` AS `st_net_weight`,
+        `st`.`st_bags` AS `st_bags`,
+        `st`.`st_pockets` AS `st_pockets`,
+        `st`.`id` AS `crd_id`,
+        `sl`.`sl_no` AS `sale`,
+        `csn`.`csn_season` AS `csn_season`,
+        `cfd`.`cfd_lot_no` AS `lot`,
+        `cfd`.`cfd_outturn` AS `outturn`,
+        `slr`.`slr_initials` AS `seller`,
+        `cfd`.`cfd_grower_mark` AS `mark`,
+        `cgrad`.`cgrad_name` AS `grade`,
+        `cfd`.`cfd_weight` AS `ott_weight`,
+        `cfd`.`cfd_bags` AS `ott_bags`,
+        `cfd`.`cfd_pockets` AS `ott_pockets`,
+        `prc`.`prc_confirmed_price` AS `prc_confirmed_price`,
+        `bs`.`bs_code` AS `code`,
+        `bs`.`bs_quality` AS `quality`,
+        `war`.`war_no` AS `warrant_no`,
+        `wr`.`wr_name` AS `wr_name`,
+        `wr`.`id` AS `wr_id`,
+        (`sl`.`sl_date` - INTERVAL 7 DAY) AS `prompt_date`,
+        (TO_DAYS(`wb`.`wb_dispatch_date`) - TO_DAYS((`sl`.`sl_date` - INTERVAL 7 DAY))) AS `storage_days`,
+        `wr_rts`.`storage_rate` AS `storage_rate`,
+        ROUND((((TO_DAYS(`wb`.`wb_dispatch_date`) - TO_DAYS((`sl`.`sl_date` - INTERVAL 7 DAY))) * `wr_rts`.`storage_rate`) * (`cfd`.`cfd_bags` + (CASE
+                    WHEN (`cfd`.`cfd_pockets` > 0) THEN 1
+                    ELSE 0
+                END))),
+                2) AS `storage_charges`,
+        `wr_rts`.`handling_bag_rate` AS `handling_bag_rate`,
+        ROUND((`wr_rts`.`handling_bag_rate` * (`cfd`.`cfd_bags` + (CASE
+                    WHEN (`cfd`.`cfd_pockets` > 0) THEN 1
+                    ELSE 0
+                END))),
+                2) AS `handling_charges`,
+        `wr_rts`.`warrant_rate` AS `warrant_rate`
+    FROM
+        ((((((((((((((((((((((((((((((`ibero_dbKenya`.`grn_gr` `gr`
+        LEFT JOIN `ibero_dbKenya`.`weighbridge_wb` `wb` ON ((`wb`.`id` = `gr`.`wb_id`)))
+        LEFT JOIN `ibero_dbKenya`.`stock_st` `st` ON ((`st`.`gr_id` = `gr`.`id`)))
+        LEFT JOIN `ibero_dbKenya`.`purchases_prc` `prc` ON ((`prc`.`id` = `st`.`prc_id`)))
+        LEFT JOIN `ibero_dbKenya`.`coffee_details_cfd` `cfd` ON ((`cfd`.`id` = `prc`.`cfd_id`)))
+        LEFT JOIN `ibero_dbKenya`.`sale_sl` `sl` ON ((`sl`.`id` = `cfd`.`sl_id`)))
+        LEFT JOIN `ibero_dbKenya`.`coffee_seasons_csn` `csn` ON ((`csn`.`id` = `cfd`.`csn_id`)))
+        LEFT JOIN `ibero_dbKenya`.`warehouses_region` `wrgn` ON ((`wrgn`.`wrid` = `cfd`.`wr_id`)))
+        LEFT JOIN `ibero_dbKenya`.`coffee_grade_cgrad` `cgrad` ON ((`cgrad`.`id` = `cfd`.`cgrad_id`)))
+        LEFT JOIN `ibero_dbKenya`.`mill_ml` `ml` ON ((`ml`.`id` = `cfd`.`ml_id`)))
+        LEFT JOIN `ibero_dbKenya`.`seller_slr` `slr` ON ((`slr`.`id` = `cfd`.`slr_id`)))
+        LEFT JOIN `ibero_dbKenya`.`green_comments_grcm` `grcm` ON ((`grcm`.`cfd_id` = `cfd`.`id`)))
+        LEFT JOIN `ibero_dbKenya`.`qualty_details_qltyd` `qltyd` ON ((`qltyd`.`cfd_id` = `cfd`.`id`)))
+        LEFT JOIN `ibero_dbKenya`.`processing_prcss` `prcss` ON ((`prcss`.`id` = `qltyd`.`prcss_id`)))
+        LEFT JOIN `ibero_dbKenya`.`screens_scr` `scr` ON ((`scr`.`id` = `qltyd`.`scr_id`)))
+        LEFT JOIN `ibero_dbKenya`.`cup_score_cp` `cp` ON ((`cp`.`id` = `qltyd`.`cp_id`)))
+        LEFT JOIN `ibero_dbKenya`.`raw_score_rw` `rw` ON ((`rw`.`id` = `qltyd`.`rw_id`)))
+        LEFT JOIN `ibero_dbKenya`.`coffee_buyers_cb` `cb` ON ((`cb`.`id` = `prc`.`cb_id`)))
+        LEFT JOIN `ibero_dbKenya`.`basket_bs` `bs` ON ((`bs`.`id` = `prc`.`bs_id`)))
+        LEFT JOIN `ibero_dbKenya`.`sale_status_sst` `sst` ON ((`sst`.`id` = `prc`.`sst_id`)))
+        LEFT JOIN `ibero_dbKenya`.`invoices_inv` `inv` ON ((`inv`.`id` = `prc`.`inv_id`)))
+        LEFT JOIN `ibero_dbKenya`.`users_usr` `inv_usr` ON ((`inv_usr`.`id` = `inv`.`inv_confirmedby`)))
+        LEFT JOIN `ibero_dbKenya`.`payments_py` `py` ON ((`py`.`id` = `prc`.`py_id`)))
+        LEFT JOIN `ibero_dbKenya`.`users_usr` `py_usr` ON ((`py_usr`.`id` = `py`.`py_confirmedby`)))
+        LEFT JOIN `ibero_dbKenya`.`bric_br` `br` ON ((`br`.`id` = `prc`.`br_id`)))
+        LEFT JOIN `ibero_dbKenya`.`users_usr` `br_usr` ON ((`br_usr`.`id` = `br`.`br_confirmedby`)))
+        LEFT JOIN `ibero_dbKenya`.`warrants_war` `war` ON ((`war`.`id` = `prc`.`war_id`)))
+        LEFT JOIN `ibero_dbKenya`.`warehouse_wr` `wr` ON ((`wr`.`id` = `cfd`.`wr_id`)))
+        LEFT JOIN `ibero_dbKenya`.`wr_rates` `wr_rts` ON ((`wr`.`id` = `wr_rts`.`wr_id`)))
+        LEFT JOIN `ibero_dbKenya`.`release_instructions_rl` `rl` ON ((`rl`.`id` = `prc`.`rl_id`)))
+        LEFT JOIN `ibero_dbKenya`.`transporters_trp` `trp` ON ((`trp`.`id` = `rl`.`trp_id`)))
+    WHERE
+        (`sl`.`sltyp_id` = 1)
+    GROUP BY `cfd`.`sl_id` , `cfd`.`cfd_lot_no` , `cfd`.`cfd_outturn`

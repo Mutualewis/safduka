@@ -759,4 +759,15 @@ public function printStuffingWithRate($ref_no, $service, $team){
             return $pdf->stream($ref_no .' '.$servicename. ' stuffingrate.pdf');
 }
 
+public function WarehouseChargesResults (){
+    return View::make('warehousecharges', compact('id','teams'));
+} 
+public function getWarehouseCharges()
+{
+    $query= DB::table('grns_received_monthly_warehouse_days')
+            ->select('*');
+
+    return Datatables::of($query)->make(true);
+}
+
 }
