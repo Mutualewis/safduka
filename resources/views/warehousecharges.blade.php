@@ -19,6 +19,7 @@
             <th>Outturn Weight</th>
             <th>Outturn Pockets</th>
             <th>Warrant No</th>
+            <th>Sale Date</th> 
             <th>Prompt Date</th> 
             <th>Dispatch Date</th>     
             <th>Storage Days</th>
@@ -45,6 +46,7 @@
             <th>Outturn Weight</th>
             <th>Outturn Pockets</th>
             <th>Warrant No</th>
+            <th>Sale Date</th>
             <th>Prompt Date</th> 
             <th>Dispatch Date</th>     
             <th>Storage Days</th>
@@ -87,6 +89,7 @@ $(document).ready(function() {
             {data: 'ott_bags', name: 'ott_bags'},
             {data: 'ott_pockets', name: 'ott_pockets'},
             {data: 'warrant_no', name: 'warrant_no'},
+            {data: 'sl_date', name: 'sl_date'},
             {data: 'prompt_date', name: 'prompt_date'},
             {data: 'wb_dispatch_date', name: 'wb_dispatch_date'},
             {data: 'storage_days', name: 'storage_days'},
