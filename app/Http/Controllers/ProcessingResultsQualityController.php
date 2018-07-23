@@ -683,13 +683,45 @@ class ProcessingResultsQualityController extends Controller
 
                             }
 
+
+
+                            if ($sibvalue->stb_value == null || $sibvalue->stb_value == "0.0000000000") {
+
+                                if ($count_stocks_in_bulk > 1){
+
+                                    $temp_ratio = $sibvalue->stb_value_ratio;
+
+                                    if ($temp_ratio == null) {
+
+                                        $temp_ratio = 1;
+
+                                    }
+
+                                    $stb_store_ratio = ($bric_value/$total_bric_initial_value)*$temp_ratio;
+
+                                } else {
+
+                                    $stb_store_ratio = $sibvalue->stb_value_ratio;
+
+                                }
+
+                            } else {
+
+                                $stb_store_ratio = ($sibvalue->stb_value/$total_bric_initial_value);                              
+
+
+                            }
+                            
+                            $stb_value = $stb_store_ratio * $total_bric_initial_value; 
+
+
                            #$stb_store_ratio = ($psbvalue->stb_value/$stock_bric_value);
 
                            #$stb_value_ratio = ($stock_net/$stock_single_lots->st_net_weight) * ($psbvalue->stb_value)/$stock_bric_value;
 
                             // print_r($sibvalue->stb_value. "<br>" );                          
 
-                            $stb_value = $stb_value_ratio * $total_bric_initial_value; 
+                            // $stb_value = $stb_value_ratio * $total_bric_initial_value; 
 
                             // print_r($stb_value_ratio . "<br>" );
 
