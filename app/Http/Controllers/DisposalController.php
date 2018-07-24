@@ -48,6 +48,9 @@ use Ngea\Packaging;
 use Ngea\Stuffing;
 use Ngea\StuffingView;
 use Ngea\StockBreakdown;
+use Ngea\bric;
+use Ngea\ProcessResults;
+
 
 
 use  Ngea\Warehouse;
@@ -273,6 +276,7 @@ class DisposalController extends Controller {
         }
 
         $syrid = Input::get('shipyear');
+
         $complimentarycondition = Input::get('complimentarycondition');
 
         $weight = Input::get('weight');
@@ -612,6 +616,7 @@ class DisposalController extends Controller {
             }
 
             $stock_details = DB::table('stock_st AS st')
+                 ->select('*', 'st.id as stid')
                  ->leftJoin('process_allocations_pall AS pall ','st.id', '=', 'pall.st_id')
                  ->where('st.pr_id', $process_id)
                  ->orWhere('pall.pr_id', $process_id)
@@ -619,13 +624,118 @@ class DisposalController extends Controller {
 
             foreach ($stock_details as $key => $value) {
 
-                
-                
+                $stock_id = $value->stid;
+
+                if ($value->gr_id != null || $value->gr_id ==  1) {
+
+                    $grade = null;
+
+                    $basket = null;
+
+                    $bric = null;
+
+                    $grade_details = CoffeeGrade::where('id', $value->cgrad_id)->first();
+
+                    $basket_details = Basket::where('id', $value->bs_id)->first();
+
+                    $bric_details = Bric::where('id', $value->br_id)->first();
+
+                    if ($grade_details != null) {
+
+                        $grade = $grade_details->cgrad_name;
+                        
+                    }
+
+                    if ($basket_details != null) {
+
+                        $basket = $basket_details->bs_quality;
+                        
+                    }
+
+                    if ($bric_details != null) {
+
+                        $bric = $bric_details->br_no;
+                        
+                    }               
+
+                    $history[] = array('id' => $stock_id, 'outturn' => $value->st_outturn , 'grade' => $grade, 'mark' => $value->st_mark, "weight" => $value->st_net_weight, "price" => $value->st_price, "basket" => $basket, "bric" => $bric); 
+
+                } else {
+
+                    $temp_array = $this->getComposition($stock_id);
+
+                    array_push($history, $temp_array);
+
+                }                
+
             }
 
-            print_r($stock_details);
+            $title = $pr_instruction_number . ' History';
+
+            $info=Excel::create($title, function($excel) use($history) {        
+
+                   $excel->sheet('sheet 1', function($sheet) use($history){
+
+                    $sheet->fromArray($history);
+                    
+                   });
+
+            })->export('xlsx');
 
 
+            // $title = $pr_instruction_number . ' History';
+
+            // // For displaying filters description on header
+            // $meta = [
+            //     'Instruction' => $pr_instruction_number,
+            //     'Contract' => $contract
+            // ];
+
+            // // Do some querying..
+            // $queryBuilder = $history;
+
+            // // Set Column to be displayed
+            // $columns = [
+            //     'Outturn' => function($result) {
+            //         return $result->outturn;
+            //     },
+
+            //     'Grade' => function($result) {
+            //         return $result->grade;
+            //     },
+            //     'Mark' => function($result) {
+            //         return $result->mark;
+            //     },
+            //     'Weight' => function($result) {
+            //         return $result->weight_total;
+            //     },
+            //     'Price' => function($result) {
+            //         return $result->price;
+            //     },
+            //     'Basket' => function($result) {
+            //         return $result->basket;
+            //     },
+            //     'Bric' => function($result) {
+            //         return $result->bric;
+            //     }
+
+            // ];
+                
+            // return ExcelReport::of($title, $meta, $queryBuilder, $columns)
+            //     ->editColumns(['total_cost','total_col', 'total_diff'], [
+            //         'class' => 'hidden'
+            //     ])
+            //     ->setCss([
+            //         '.hidden' => 'display: none;'
+            //     ])
+
+            //     ->showTotal([
+            //         'Price' => 'point','Weight' => 'point'
+            //     ])
+            //     // ->groupBy('Seller')
+            //     // ->stream(); // or download('filename here..') to download pdf
+            //     ->download('history_'.$pr_instruction_number);
+              
         }  else if (NULL !== Input::get('printallocation')) {
 
 
@@ -843,6 +953,80 @@ class DisposalController extends Controller {
 
 
     }
+
+
+    public function getComposition($stock_id) {
+
+        $process_id = null;
+
+        $process_results_details = ProcessResults::where('st_id', $stock_id)->first();
+
+        if ($process_results_details != null) {
+
+            $process_id = $process_results_details->pr_id;
+        }
+
+        $history = array();
+
+        $stock_details = DB::table('stock_st AS st')
+             ->select('*', 'st.id as stid')
+             ->leftJoin('process_allocations_pall AS pall ','st.id', '=', 'pall.st_id')
+             ->where('st.pr_id', $process_id)
+             ->orWhere('pall.pr_id', $process_id)
+             ->get();
+
+        foreach ($stock_details as $key => $value) {
+
+            $stock_id = $value->stid;
+
+            if ($value->gr_id != null || $value->gr_id ==  1) {
+
+                $grade = null;
+
+                $basket = null;
+
+                $bric = null;
+
+                $grade_details = CoffeeGrade::where('id', $value->cgrad_id)->first();
+
+                $basket_details = Basket::where('id', $value->bs_id)->first();
+
+                $bric_details = Bric::where('id', $value->br_id)->first();
+
+                if ($grade_details != null) {
+
+                    $grade = $grade_details->cgrad_name;
+                    
+                }
+
+                if ($basket_details != null) {
+
+                    $basket = $basket_details->bs_quality;
+                    
+                }
+
+                if ($bric_details != null) {
+
+                    $bric = $bric_details->br_no;
+                    
+                }               
+
+                $history[] = array('id' => $stock_id, 'outturn' => $value->st_outturn , 'grade' => $grade, 'mark' => $value->st_mark, "weight" => $value->st_net_weight, "price" => $value->st_price, "basket" => $basket, "bric" => $bric); 
+
+            } else {
+
+                $temp_array = $this->getComposition($stock_id);
+
+                array_push($history, $temp_array);
+
+            }                
+
+        }
+
+        return $history;
+
+    }
+
     public function getShipmentNumber ($cid){
 
         $shipment_number = 0;
