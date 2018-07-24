@@ -599,13 +599,31 @@ class DisposalController extends Controller {
 
             }
 
+            $process_id;
+
+            $history = array();
+
             $process_details = Process::where('pr_instruction_number', $pr_instruction_number)->first();
 
             if ($process_details != null) {
-                # code...
+
+                $process_id = $process_details->id;
+
             }
 
-            print_r($contract);
+            $stock_details = DB::table('stock_st AS st')
+                 ->leftJoin('process_allocations_pall AS pall ','st.id', '=', 'pall.st_id')
+                 ->where('st.pr_id', $process_id)
+                 ->orWhere('pall.pr_id', $process_id)
+                 ->get();
+
+            foreach ($stock_details as $key => $value) {
+
+                
+                
+            }
+
+            print_r($stock_details);
 
 
         }  else if (NULL !== Input::get('printallocation')) {

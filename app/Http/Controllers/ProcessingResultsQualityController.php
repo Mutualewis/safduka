@@ -407,12 +407,12 @@ class ProcessingResultsQualityController extends Controller
 
                                     }
 
-                                    $stb_value = $stb_value_ratio * $stock_bric_value;
+                                    $stb_value = $psbvalue->stb_value_ratio * $stock_bric_value;
 
                                     $split_lot = 1 - ($stock_net/$stock_single_lots->st_net_weight);   
 
                                     StockBreakdown::insertGetId (
-                                         ['st_id' => $stid, 'br_id' => $bric_id, 'stb_value' => $stb_value ,  'stb_value_ratio' => $stb_store_ratio ,'stb_weight' => $stb_weight, 'stb_hedge' => $psbvalue->stb_hedge, 'bs_id' => $psbvalue->bs_id, 'ibs_id' => $psbvalue->ibs_id, 'stb_bulk_ratio' => $psbvalue->stb_bulk_ratio, 'stb_purchase_contract_ratio' => $psbvalue->psbvalue, 'cb_id' => $psbvalue->cb_id, 'cgr_id' => $psbvalue->cgr_id, 'prc_id' => $psbvalue->prc_id]);
+                                         ['st_id' => $stid, 'br_id' => $bric_id, 'stb_value' => $stb_value ,  'stb_value_ratio' => $psbvalue->stb_value_ratio ,'stb_weight' => $stb_weight, 'stb_hedge' => $psbvalue->stb_hedge, 'bs_id' => $psbvalue->bs_id, 'ibs_id' => $psbvalue->ibs_id, 'stb_bulk_ratio' => $psbvalue->stb_bulk_ratio, 'stb_purchase_contract_ratio' => $psbvalue->psbvalue, 'cb_id' => $psbvalue->cb_id, 'cgr_id' => $psbvalue->cgr_id, 'prc_id' => $psbvalue->prc_id]);
                                 }
                             }    
                             
