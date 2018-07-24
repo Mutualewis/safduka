@@ -178,7 +178,7 @@ class QualityController extends Controller {
     
     }
 
-    public function getLots($countryID, $saleSeason, $saleNumber, $seller, $cfd_id, $direction)
+    public function getLots($countryID, $saleSeason, $saleNumber, $seller, $cfd_id, $direction, $lot_number, $outt_number, $coffee_grade)
     {
 
     	if ($direction == 'null') {
@@ -207,8 +207,9 @@ class QualityController extends Controller {
 	            ->groupBy('cfd.id')
 	            ->first();
 
-
     	} else if ($direction == "Next") {
+
+    		$cfd_id = $cfd_id + 1;
 
 	        $sale_lots= DB::table('sale_sl AS sl')
 	            ->select('*', 'cfd.id as cfd_id', DB::Raw('GROUP_CONCAT(DISTINCT `crt`.`crt_name` SEPARATOR ",") as cert'), DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'))
@@ -231,11 +232,13 @@ class QualityController extends Controller {
 	            ->where('csn.id', $saleSeason)
 	            ->where('sl.id', $saleNumber)
 	            ->where('slr.id', $seller)
-	            ->where('cfd.id', '>', $cfd_id)
+	            ->where('cfd.id', $cfd_id)
 	            ->groupBy('cfd.id')
 	            ->first();
 
-    	}    else if ($direction == "Previous") {
+    	} else if ($direction == "Previous") {
+
+    		$cfd_id = $cfd_id - 1;
 
 	        $sale_lots= DB::table('sale_sl AS sl')
 	            ->select('*', 'cfd.id as cfd_id', DB::Raw('GROUP_CONCAT(DISTINCT `crt`.`crt_name` SEPARATOR ",") as cert'), DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'))
@@ -258,7 +261,34 @@ class QualityController extends Controller {
 	            ->where('csn.id', $saleSeason)
 	            ->where('sl.id', $saleNumber)
 	            ->where('slr.id', $seller)
-	            ->where('cfd.id', '<', $cfd_id)
+	            ->where('cfd.id', $cfd_id)
+	            ->groupBy('cfd.id')
+	            ->first();
+
+    	} else if ($direction == "Search") {
+
+	        $sale_lots= DB::table('sale_sl AS sl')
+	            ->select('*', 'cfd.id as cfd_id', DB::Raw('GROUP_CONCAT(DISTINCT `crt`.`crt_name` SEPARATOR ",") as cert'), DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'))
+	            ->leftJoin('country_ctr AS ctr', 'ctr.id', '=', 'sl.ctr_id')
+	            ->leftJoin('coffee_details_cfd AS cfd', 'sl.id', '=', 'cfd.sl_id')
+	            ->leftJoin('coffee_seasons_csn AS csn', 'csn.id', '=', 'cfd.csn_id')
+	            ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'cfd.cgrad_id')
+	            ->leftJoin('coffee_certification_ccrt AS ccrt', 'ccrt.cfd_id', '=', 'cfd.id')
+	            ->leftJoin('certification_crt AS crt', 'ccrt.crt_id', '=', 'crt.id')
+	            ->leftJoin('seller_slr AS slr', 'cfd.slr_id', '=', 'slr.id')
+	            ->leftJoin('green_comments_grcm AS grcm', 'grcm.cfd_id', '=', 'cfd.id')
+	            ->leftJoin('quality_parameters_qp AS qp', 'qp.id', '=', 'grcm.qp_id')
+	            ->leftJoin('qualty_details_qltyd AS qltyd', 'qltyd.cfd_id', '=', 'cfd.id')
+	            ->leftJoin('processing_prcss AS prcss', 'qltyd.prcss_id', '=', 'prcss.id')
+	            ->leftJoin('screens_scr AS scr', 'qltyd.scr_id', '=', 'scr.id')
+	            ->leftJoin('cup_score_cp AS cp', 'qltyd.cp_id', '=', 'cp.id')
+	            ->leftJoin('raw_score_rw AS rw', 'qltyd.rw_id', '=', 'rw.id')
+	            ->leftJoin('coffee_growers_cg AS cg', 'cfd.cg_id', '=', 'cg.id')
+	            ->where('ctr.id', $countryID)
+	            ->where('csn.id', $saleSeason)
+	            ->where('sl.id', $saleNumber)
+	            ->where('slr.id', $seller)
+	            ->where('cfd.cfd_lot_no', $lot_number)
 	            ->groupBy('cfd.id')
 	            ->first();
 

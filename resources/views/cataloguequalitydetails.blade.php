@@ -1066,8 +1066,6 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 						document.getElementById(res_rw).checked = true;
 					}
 
-			        
-
 
 					if (obj.qltyd_comments != null) {
 
@@ -1075,13 +1073,19 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 					} else {
 
-						document.getElementById('comments').value = 0;
+						document.getElementById('comments').value = 'empty';
 					}
 
 		
 				});	
 
 
+
+			} else {
+
+				document.getElementById('comments').value = 'empty';
+
+				document.getElementById('process').value =  0;
 
 			}
 
@@ -1172,13 +1176,41 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 				document.getElementById(res_cp).checked = true;
 			}
 
-	        document.getElementById('comments_cp').value = obj.qltyd_comments;
+			if (obj.qltyd_comments != null) {
 
-	        document.getElementById('acidity').value = obj.qltyd_acidity;
+				document.getElementById('comments_cp').value = obj.qltyd_comments; 
 
-	        document.getElementById('body').value = obj.qltyd_body;
+			} else {
 
-	        document.getElementById('flavour').value = obj.qltyd_flavour;
+				document.getElementById('comments_cp').value = 'empty';
+			}
+
+			if (obj.qltyd_acidity != null) {
+
+				document.getElementById('acidity').value = obj.qltyd_acidity; 
+
+			} else {
+
+				document.getElementById('acidity').value = 0;
+			}
+
+			if (obj.qltyd_body != null) {
+
+				document.getElementById('body').value = obj.qltyd_body; 
+
+			} else {
+
+				document.getElementById('body').value = 0;
+			}
+
+			if (obj.qltyd_flavour != null) {
+
+				document.getElementById('flavour').value = obj.qltyd_flavour; 
+
+			} else {
+
+				document.getElementById('flavour').value = 0;
+			}
 
 
         });	

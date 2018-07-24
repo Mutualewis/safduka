@@ -90,15 +90,15 @@ Route::group(['middleware' => 'auth'], function()
 	Route::post('/cataloguequalitydetailslist', 'QualityController@addQualityDetailsList'); 
 
 
-	Route::get('/cataloguequalitydetails/getLots/{countryID}/{saleSeason}/{saleNumber}/{seller}/{cfd_id}/{direction}/{lot_number}/{outt_number}/{coffee_grade}', ['as'=>'cataloguequalitydetails.getLots','uses'=>'DirectQualityController@getLots']); 
+	Route::get('/cataloguequalitydetails/getLots/{countryID}/{saleSeason}/{saleNumber}/{seller}/{cfd_id}/{direction}/{lot_number}/{outt_number}/{coffee_grade}', ['as'=>'cataloguequalitydetails.getLots','uses'=>'QualityController@getLots']); 
 
-	Route::get('/cataloguequalitydetails/saveGreen/{cfd_id}/{dnt}/{greensize}/{greencolor}/{greendefects}/{process_type}/{process_loss}/{raw}/{comments}', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'DirectQualityController@saveGreen']);
-
-
-	Route::get('/cataloguequalitydetails/saveScreen/{cfd_id}/{screen_size}/{screen}', ['as'=>'cataloguequalitydetails.saveScreen','uses'=>'DirectQualityController@saveScreen']);
+	Route::get('/cataloguequalitydetails/saveGreen/{cfd_id}/{dnt}/{greensize}/{greencolor}/{greendefects}/{process_type}/{process_loss}/{raw}/{comments}', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'QualityController@saveGreen']);
 
 
-	Route::get('/cataloguequalitydetails/saveCup/{cfd_id}/{cup}/{dnt_cp}/{acidity}/{body}/{flavour}/{comments_cp}', ['as'=>'cataloguequalitydetails.saveCup','uses'=>'DirectQualityController@saveCup']);
+	Route::get('/cataloguequalitydetails/saveScreen/{cfd_id}/{screen_size}/{screen}', ['as'=>'cataloguequalitydetails.saveScreen','uses'=>'QualityController@saveScreen']);
+
+
+	Route::get('/cataloguequalitydetails/saveCup/{cfd_id}/{cup}/{dnt_cp}/{acidity}/{body}/{flavour}/{comments_cp}', ['as'=>'cataloguequalitydetails.saveCup','uses'=>'QualityController@saveCup']);
 
 
 	Route::get('/directindividual' , 'DirectController@addToCatalogueForm'); 

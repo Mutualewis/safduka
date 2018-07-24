@@ -144,6 +144,7 @@ class ProcessingResultsQualityController extends Controller
         $user_data = Auth::user();
         $user      = $user_data->id;
         $isInBulk = false;
+        $stid = null;     
 
         if ($cid != null) {
             if ($prc != null) {
@@ -333,7 +334,6 @@ class ProcessingResultsQualityController extends Controller
 
                             $stock_details_exist = Stock::where('gr_id', $stock_single_lots->gr_id)->where('st_outturn', $stock_single_lots->st_outturn)->where('cgrad_id', $stock_single_lots->cgrad_id)->where('prt_id', $stock_single_lots->prt_id)->where('st_net_weight', $stock_net)->first();   
 
-                            $stid = null;     
 
                             if ($stock_details_exist == null) {                 
 
