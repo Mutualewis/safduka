@@ -340,8 +340,9 @@ class QualityController extends Controller {
 					Activity::log('Added quality for cfd_id'.$cfd_id. ' with process_type '. $process_type.' process '.$process_loss.' raw '.$raw. ' comments '.$comments);
 
 				}
+				
 
-				if ($dnt != NULL) {
+				if ($dnt != 'null') {
 
 					coffee_details::where('id', '=', $cfd_id)
 						->update(['cfd_dnt'=> "1"]);	
@@ -473,7 +474,7 @@ class QualityController extends Controller {
 
 		    	$qdetails = quality_details::where('cfd_id', $cfd_id)->first(); 
 
-				if ($dnt_cp != NULL) {
+				if ($dnt_cp != 'null') {
 
 					coffee_details::where('id', '=', $cfd_id)
 						->update(['cfd_dnt'=> "1"]);	

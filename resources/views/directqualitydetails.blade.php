@@ -314,7 +314,7 @@
 
 	        	</div>
 
-    			<input type="checkbox" id="dnt" name="dnt" value="0" >&nbsp&nbsp <strong style="font-size:35px; color:red;">Do Not Touch(DNT)</strong>
+    			<input type="checkbox" id="dnt" name="dnt" >&nbsp&nbsp <strong style="font-size:35px; color:red;">Do Not Touch(DNT)</strong>
 
 				<h3  data-toggle="collapse" data-target="#green">Green Comments </h3> 
 
@@ -758,7 +758,7 @@
 
 	        	</div>
 
-    			<input type="checkbox" id="dnt_cp" name="dnt_cp" value="0"  onchange="this.form.submit()">&nbsp&nbsp <strong style="font-size:25px; color:red;">Do Not Touch(DNT)</strong>
+    			<input type="checkbox" id="dnt_cp" name="dnt_cp"  onchange="this.form.submit()">&nbsp&nbsp <strong style="font-size:25px; color:red;">Do Not Touch(DNT)</strong>
 
 	        	<div class="row" >
 		            <div class="form-group col-md-6">

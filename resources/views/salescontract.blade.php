@@ -610,6 +610,13 @@
 
 				<div class="row">
 		            <div class="form-group col-md-12">
+		           		<button type="submit" name="printhistory" class="btn btn-lg btn-success btn-block">Download History</button>
+		            </div>
+		        </div>
+
+
+				<div class="row">
+		            <div class="form-group col-md-12">
 		           		<button type="submit" name="printallocation" class="btn btn-lg btn-success btn-block">Download Allocation</button>
 		            </div>
 		        </div>

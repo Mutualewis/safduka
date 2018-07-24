@@ -563,6 +563,51 @@ class DisposalController extends Controller {
             $pdf = PDF::loadView('pdf.processing_instructions_stuffed', compact('TO',  'ATTENTION', 'FROM', 'reference', 'ref_no', 'contractNumber', 'user',  'date', 'StockView', 'seasonName', 'person_fname', 'person_sname', 'process_type', 'process_instructions', 'process_other_instructions'));
             return $pdf->stream($ref_no . ' processing_instructions.pdf');
 
+        }  else if (NULL !== Input::get('printhistory')) {
+
+            $this->validate($request, ['country' => 'required',
+                                ]);
+            $pr_instruction_number = null;
+
+            $contract = Input::get('contract');
+
+            $sales_contract_summary = Sales_Contract_Summary::where('sct_number', $contract)->first();
+
+            if ($sales_contract_summary != null) {
+
+                $pr_instruction_number = $sales_contract_summary->pr_instruction_number;
+
+            }
+
+            if ($pr_instruction_number == null) {
+
+                $request->session()->flash('alert-warning', 'Contract has not been allocated!!');
+
+                $SalesContract = SalesContract::where('ctr_id', '=', $cid)->where('sct_number',  $contract)->first();
+
+                if ($SalesContract !== NULL){
+
+                    if ($clid == NULL) {
+
+                        $clid = $SalesContract->cl_id;
+
+                    }
+                }
+
+                return View::make('salescontract', compact('id',
+                    'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on', 'SalesContract', 'clid'));    
+
+            }
+
+            $process_details = Process::where('pr_instruction_number', $pr_instruction_number)->first();
+
+            if ($process_details != null) {
+                # code...
+            }
+
+            print_r($contract);
+
+
         }  else if (NULL !== Input::get('printallocation')) {
 
 
