@@ -191,9 +191,7 @@ class ArrivalQualityController extends Controller {
 
 		$CoffeeGrade = CoffeeGrade::all(['id','cgrad_name']);
 
-		$cid = Input::get('country');  
-
-    	$sale_lots = Awaiting_Quality_Analysis::where('ctr_id', $cid)->first(); 
+		$cid = Input::get('country');      	
 
 
 		$ot_season = Input::get('outt_season');  
@@ -256,46 +254,55 @@ class ArrivalQualityController extends Controller {
 		            'country' => 'required', 
 		        ]);
 
-			$weighbridgeTK = Input::get('weighbridgeTK');
-			
-			$outt_season = Input::get('outt_season');
-			
-			$cid = Input::get('country');
-			
-			$grn_number = Input::get('grn_number');
-    		
-    		$Season = Season::all(['id', 'csn_season']);
-    		
     		$country = country::all(['id', 'ctr_name', 'ctr_initial']);
 
-			return View::make('arrivalqualityinformationlist', compact('id', 
+    		$arrival_quality = Input::get('arrivalQuality');
+
+    		foreach ($arrival_quality as $key => $value) {
+
+    			$accept = Input::get('accept'.$value);
+
+    			$reject = Input::get('reject'.$value);
+
+    			if ($accept != null) {
+
+    				Stock::where('id', '=', $accept)
+			            ->update(['st_quality_check' => NULL]);
+
+    			} else if($reject != null){
+
+    				$stock_details = Stock::where('id', $reject)->first();
+
+    				if($stock_details != null) {
+
+    					$prc_id = $stock_details->prc_id;
+
+    					purchase::where('id', '=', $prc_id)
+			            ->update(['gr_id' => NULL]);
+
+    				}				
+
+					$stock_details_delete = Stock::findOrFail($reject);  
+
+					if ($stock_details_delete) {
+
+				    	$stock_details_delete->delete();
+
+					}
+
+    			}
+
+
+    		}
+
+    		$sale_lots = Awaiting_Quality_Analysis::where('ctr_id', $cid)->first(); 
+
+      		return View::make('arrivalqualityinformationlist', compact('id', 
 				'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'weighbridge_ticket', 'grnsview', 'batchview'));	
     	
-		} else	if (NULL !== Input::get('submitbatch')){
-
-		     	$this->validate($request, [
-			            'country' => 'required', 
-			        ]);
-
-				$weighbridgeTK = Input::get('weighbridgeTK');
-
-				$outt_season = Input::get('outt_season');
-
-				if ($outt_season == NULL || $weighbridgeTK == NULL) {
-
-					$Season = Season::all(['id', 'csn_season']);
-
-			    	$country = country::all(['id', 'ctr_name', 'ctr_initial']);
-
-					$request->session()->flash('alert-warning', 'Season and Weighbridge Ticket are Required!');
-
-					return View::make('arrivalinformation', compact('id', 
-						'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'grnsview', 'batchview'));					
-				}
-
-		
-	    	
 		} else {
+
+			$sale_lots = Awaiting_Quality_Analysis::where('ctr_id', $cid)->first(); 
 
 	    	$Season = Season::all(['id', 'csn_season']);
 

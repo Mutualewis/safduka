@@ -621,7 +621,7 @@ class WarehouseController extends Controller {
 
 					if ($stock_details_exist == null) {
 
-						$stid = Stock::insertGetId(['prc_id' => $prdetails->id,'gr_id' => $grnid,'st_dispatch_net' => $dispatch_kilograms, 'st_net_weight' => $net_weight ,'st_tare' => $tare, 'st_bags' => $bags, 'st_pockets' => $pockets, 'st_gross' => $delivery_kilograms, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'ctr_id' => $cid, 'bs_id' => $pr_bsid, 'ibs_id' => $pr_ibsid, 'prc_price' => $pr_price, 'st_price' => $br_price_pounds, 'st_value' => $br_value,  'st_diff' => $br_diffrential,  'br_id' => $pr_brid, 'sl_id' => $st_slid, 'cgrad_id' => $st_grid, 'st_name' => $st_name, 'st_outturn' => $st_outturn, 'st_mark' => $st_mark, 'csn_id' => $st_season, 'cb_id' => $cbid, 'st_packages' => $packages, 'st_partial_delivery' => $partial , 'st_value' => $prc_value , 'st_bric_value' => $bric_value , 'st_hedge' => $hedge ]);
+						$stid = Stock::insertGetId(['prc_id' => $prdetails->id,'gr_id' => $grnid,'st_dispatch_net' => $dispatch_kilograms, 'st_net_weight' => $net_weight ,'st_tare' => $tare, 'st_bags' => $bags, 'st_pockets' => $pockets, 'st_gross' => $delivery_kilograms, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'ctr_id' => $cid, 'bs_id' => $pr_bsid, 'ibs_id' => $pr_ibsid, 'prc_price' => $pr_price, 'st_price' => $br_price_pounds, 'st_value' => $br_value,  'st_diff' => $br_diffrential,  'br_id' => $pr_brid, 'sl_id' => $st_slid, 'cgrad_id' => $st_grid, 'st_name' => $st_name, 'st_outturn' => $st_outturn, 'st_mark' => $st_mark, 'csn_id' => $st_season, 'cb_id' => $cbid, 'st_packages' => $packages, 'st_partial_delivery' => $partial , 'st_value' => $prc_value , 'st_bric_value' => $bric_value , 'st_hedge' => $hedge , 'st_quality_check' => 1 ]);
 
 					}
 
@@ -1001,103 +1001,99 @@ class WarehouseController extends Controller {
 		$new_column = Input::get('new_column');
 		$new_zone = Input::get('zone');
 
-	if (NULL !== Input::get('instructmovement')){
-	     	 $this->validate($request, [
-		            'country' => 'required', 
-		        ]);
+		if (NULL !== Input::get('instructmovement')){
+		     	 $this->validate($request, [
+			            'country' => 'required', 
+			        ]);
 
-			$batchview_cf = NULL;
+				$batchview_cf = NULL;
 
-			$batchlocation = Input::get('batchlocation');
+				$batchlocation = Input::get('batchlocation');
 
-			if ($batchlocation == NULL) {
+				if ($batchlocation == NULL) {
+					$stlocdetails = NULL;
+					$stlocdetails = NULL;
+		    		$rw = Input::get('row');
+		    		$clm = Input::get('column');
+
+		    		$request->session()->flash('alert-warning', 'Please Select At List One Object!');
+
+			    	if (NULL != Input::get('warehouse') && NULL != Input::get('row') && NULL != Input::get('column') ) {
+			    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
+			    		$wrname = $wrname->wr_name;
+
+			    		$stlocdetails = StockLocationView::where('wr_name', $wrname)->where('loc_row', $rw)->where('loc_column', $clm)->leftJoin('sale_lots', 'sale_lots.prcid', '=', 'stock_locations.prc_id')->get();
+			    	}
+
+					return View::make('movementinstructions', compact('id', 
+						'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview', 'stlocdetails', 'rw', 'clm', 'new_wrhse', 'NewWarehouse', 'new_location'));		
+				}
+
+
+				foreach ($batchlocation as $key => $value) {
+					// $cdetails = sale_lots::where('id', $value)->first(); 
+					// $prcid = $cdetails->prcid;	
+					$new_zone = Input::get('newzone'.$value);
+					$batchview_cf = BatchView::where('stid', $value)->get();
+			        $locrowdetails = Location::where('wr_id', $wrhse)->where('loc_row', $new_rw)->first(); 
+			        $loccoldetails = Location::where('wr_id', $wrhse)->where('loc_column', $new_column)->first(); 
+
+			        $locrowid = $locrowdetails->id;
+			        $loccolid = $loccoldetails->id;
+
+
+			        foreach ($batchview_cf as $keybt => $valuebt) {
+						$btid = $valuebt->id;
+						Batch::where('id', '=', $btid)
+							->update(['btc_instructed_by' => $user]);	
+
+						$stlocid = InstructedStockLocation::insertGetId (
+						['bt_id' => $btid, 'loc_row_id' => $locrowid, 'loc_column_id' => $loccolid, 'btc_zone' => $new_zone]);
+						Activity::log('Inserted InstructedStockLocation information with bt_id '.$btid. ' locrowid '. $locrowid. ' loccolid '. $loccolid. ' zone '. $new_zone);
+			        }				
+
+
+
+
+
+
+
+				}
+
 				$stlocdetails = NULL;
 				$stlocdetails = NULL;
 	    		$rw = Input::get('row');
 	    		$clm = Input::get('column');
 
-	    		$request->session()->flash('alert-warning', 'Please Select At List One Object!');
+		    	if (NULL != Input::get('warehouse') && NULL != Input::get('row') && NULL != Input::get('column') ) {
+		    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
+		    		$wrname = $wrname->wr_name;
+
+
+		    		$stlocdetails = StockLocationView::where('wr_name', $wrname)->where('loc_row', $rw)->where('loc_column', $clm)->get();
+		    	}
+				return View::make('movementinstructions', compact('id', 
+					'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview', 'stlocdetails', 'new_wrhse', 'NewWarehouse', 'new_location'));	
+	    	
+			}  else {
+				$stlocdetails = NULL;
+				$stlocdetails = NULL;
+	    		$rw = Input::get('row');
+	    		$clm = Input::get('column');
+
 
 		    	if (NULL != Input::get('warehouse') && NULL != Input::get('row') && NULL != Input::get('column') ) {
 		    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
 		    		$wrname = $wrname->wr_name;
 
-		    		$stlocdetails = StockLocationView::where('wr_name', $wrname)->where('loc_row', $rw)->where('loc_column', $clm)->leftJoin('sale_lots', 'sale_lots.prcid', '=', 'stock_locations.prc_id')->get();
+		    		$stlocdetails = StockLocationView::where('wr_name', $wrname)->where('loc_row', $rw)->where('loc_column', $clm)->get();
 		    	}
 
 				return View::make('movementinstructions', compact('id', 
 					'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview', 'stlocdetails', 'rw', 'clm', 'new_wrhse', 'NewWarehouse', 'new_location'));		
-			}
-
-
-			foreach ($batchlocation as $key => $value) {
-				// $cdetails = sale_lots::where('id', $value)->first(); 
-				// $prcid = $cdetails->prcid;	
-				$new_zone = Input::get('newzone'.$value);
-				$batchview_cf = BatchView::where('stid', $value)->get();
-		        $locrowdetails = Location::where('wr_id', $wrhse)->where('loc_row', $new_rw)->first(); 
-		        $loccoldetails = Location::where('wr_id', $wrhse)->where('loc_column', $new_column)->first(); 
-
-		        $locrowid = $locrowdetails->id;
-		        $loccolid = $loccoldetails->id;
-
-
-		        foreach ($batchview_cf as $keybt => $valuebt) {
-					$btid = $valuebt->id;
-					Batch::where('id', '=', $btid)
-						->update(['btc_instructed_by' => $user]);	
-
-					$stlocid = InstructedStockLocation::insertGetId (
-					['bt_id' => $btid, 'loc_row_id' => $locrowid, 'loc_column_id' => $loccolid, 'btc_zone' => $new_zone]);
-					Activity::log('Inserted InstructedStockLocation information with bt_id '.$btid. ' locrowid '. $locrowid. ' loccolid '. $loccolid. ' zone '. $new_zone);
-		        }				
-
-
-
-
-
-
-
-			}
-
-			$stlocdetails = NULL;
-			$stlocdetails = NULL;
-    		$rw = Input::get('row');
-    		$clm = Input::get('column');
-
-	    	if (NULL != Input::get('warehouse') && NULL != Input::get('row') && NULL != Input::get('column') ) {
-	    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
-	    		$wrname = $wrname->wr_name;
-
-
-	    		$stlocdetails = StockLocationView::where('wr_name', $wrname)->where('loc_row', $rw)->where('loc_column', $clm)->get();
-	    	}
-			return View::make('movementinstructions', compact('id', 
-				'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview', 'stlocdetails', 'new_wrhse', 'NewWarehouse', 'new_location'));	
-    	
-		}  else {
-			$stlocdetails = NULL;
-			$stlocdetails = NULL;
-    		$rw = Input::get('row');
-    		$clm = Input::get('column');
-
-
-	    	if (NULL != Input::get('warehouse') && NULL != Input::get('row') && NULL != Input::get('column') ) {
-	    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
-	    		$wrname = $wrname->wr_name;
-
-	    		$stlocdetails = StockLocationView::where('wr_name', $wrname)->where('loc_row', $rw)->where('loc_column', $clm)->get();
-	    	}
-
-			return View::make('movementinstructions', compact('id', 
-				'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview', 'stlocdetails', 'rw', 'clm', 'new_wrhse', 'NewWarehouse', 'new_location'));		
  	   }
     
  	}
-
-
-
-
 
     public function movementConfirmationForm (Request $request){
     	$id = NULL;
@@ -1192,313 +1188,308 @@ class WarehouseController extends Controller {
 		$new_column = Input::get('new_column');
 		$new_zone = Input::get('zone');
 
-	if (NULL !== Input::get('confirmmovement')){
-	     	 $this->validate($request, [
-		            'country' => 'required', 
-		        ]);
+		if (NULL !== Input::get('confirmmovement')){
+		     	 $this->validate($request, [
+			            'country' => 'required', 
+			        ]);
 
-			$batchview_cf = NULL;
-			$batchlocation = Input::get('batchlocation');
-			$batch_kilograms = Input::get('batch_kilograms');
-			$diff_weight = NULL;
-			$diff_bags = NULL;
-			$diff_pkts = NULL;
-			$batchview_cf = NULL;
-			$previd = NULL;
-			$old_weight = NULL;
-			$old_bags = NULL;
-			$old_pkts = NULL;
-			$new_wr_row = NULL;
-			$new_wr_col = NULL;			
-			$old_wr_row = NULL;
-			$old_wr_col = NULL;
+				$batchview_cf = NULL;
+				$batchlocation = Input::get('batchlocation');
+				$batch_kilograms = Input::get('batch_kilograms');
+				$diff_weight = NULL;
+				$diff_bags = NULL;
+				$diff_pkts = NULL;
+				$batchview_cf = NULL;
+				$previd = NULL;
+				$old_weight = NULL;
+				$old_bags = NULL;
+				$old_pkts = NULL;
+				$new_wr_row = NULL;
+				$new_wr_col = NULL;			
+				$old_wr_row = NULL;
+				$old_wr_col = NULL;
 
-			if ($batchlocation == NULL) {
-				$stlocdetails = NULL;
-				$stlocdetails = NULL;
+				if ($batchlocation == NULL) {
+					$stlocdetails = NULL;
+					$stlocdetails = NULL;
 
-	    		$rw = Input::get('row');
-	    		$clm = Input::get('column');
+		    		$rw = Input::get('row');
+		    		$clm = Input::get('column');
 
-	    		$request->session()->flash('alert-warning', 'Please Select At List One Object!');
+		    		$request->session()->flash('alert-warning', 'Please Select At List One Object!');
 
-		    	if (NULL != Input::get('warehouse') && NULL != Input::get('row') && NULL != Input::get('column') ) {
-		    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
-		    		$wrname = $wrname->wr_name;
-		    		$stlocdetails = StockLocationView::where('wr_name', $wrname)->where('loc_row', $rw)->where('loc_column', $clm)->leftJoin('sale_lots', 'sale_lots.prcid', '=', 'stock_locations.prc_id')->get();
-		    	}
+			    	if (NULL != Input::get('warehouse') && NULL != Input::get('row') && NULL != Input::get('column') ) {
+			    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
+			    		$wrname = $wrname->wr_name;
+			    		$stlocdetails = StockLocationView::where('wr_name', $wrname)->where('loc_row', $rw)->where('loc_column', $clm)->leftJoin('sale_lots', 'sale_lots.prcid', '=', 'stock_locations.prc_id')->get();
+			    	}
 
-				return View::make('movementconfirmation', compact('id', 
-					'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview', 'stlocdetails', 'rw', 'clm', 'new_wrhse', 'NewWarehouse', 'new_location'));		
-			}
-
-
-			foreach ($batchlocation as $key => $value) {
-	     	 	// $batchview_cf = BatchView::where('id', $value)->first();
-	     	 	if ($batchlocation != NULL) {
-		     	 	$batchview_cf = BatchView::where('stid', $value)->get();
-					if ($batchview_cf != NULL) {
-
-			     	 	foreach ($batchview_cf as $keybt => $valuebt) {
-							//compute weights and add batches
-							$old_id = $valuebt->id;
-							$old_weight = $valuebt->btc_net_weight;
-							$instructed_weight = $valuebt->insloc_weight;
-							$old_bags = $valuebt->btc_bags;
-							$old_pkts = $valuebt->btc_pockets;
-							$old_pkgs = $valuebt->btc_packages;
-							$old_tare = $valuebt->btc_tare;
-							$old_net_weight = $valuebt->btc_net_weight;
+					return View::make('movementconfirmation', compact('id', 
+						'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview', 'stlocdetails', 'rw', 'clm', 'new_wrhse', 'NewWarehouse', 'new_location'));		
+				}
 
 
-							$stid = $valuebt->stid;
-							$previd = $valuebt->id;
-							if ($valuebt != NULL) {
-								$new_wr_id = Warehouse::where('wr_name', $valuebt->new_wr_name)->first();	
-								if ($new_wr_id != NULL) {
-									$new_wr_id = $new_wr_id->id;
+				foreach ($batchlocation as $key => $value) {
+		     	 	// $batchview_cf = BatchView::where('id', $value)->first();
+		     	 	if ($batchlocation != NULL) {
+			     	 	$batchview_cf = BatchView::where('stid', $value)->get();
+						if ($batchview_cf != NULL) {
+
+				     	 	foreach ($batchview_cf as $keybt => $valuebt) {
+								//compute weights and add batches
+								$old_id = $valuebt->id;
+								$old_weight = $valuebt->btc_net_weight;
+								$instructed_weight = $valuebt->insloc_weight;
+								$old_bags = $valuebt->btc_bags;
+								$old_pkts = $valuebt->btc_pockets;
+								$old_pkgs = $valuebt->btc_packages;
+								$old_tare = $valuebt->btc_tare;
+								$old_net_weight = $valuebt->btc_net_weight;
+
+
+								$stid = $valuebt->stid;
+								$previd = $valuebt->id;
+								if ($valuebt != NULL) {
+									$new_wr_id = Warehouse::where('wr_name', $valuebt->new_wr_name)->first();	
+									if ($new_wr_id != NULL) {
+										$new_wr_id = $new_wr_id->id;
+									}
+
+									$new_wr_row = $valuebt->new_loc_row;
+									$new_wr_col = $valuebt->new_loc_column;
+
+									$old_wr_row = $valuebt->loc_row;
+									$old_wr_col = $valuebt->loc_column;
+
+									$zone = $valuebt->new_zone;
+
+
+									if (null == $new_wr_id) {
+										$new_wr_id = Input::get('new_warehouse');
+									}
+									if (null == $new_wr_row) {
+										$new_wr_row = Input::get('row');
+									}
+									if (null == $new_wr_col) {
+										$new_wr_col = Input::get('column');
+									}
+									if (null == $zone || 0 == $zone) {
+										$zone = Input::get('zone');
+									}
+
+									$locrowdetails = Location::where('wr_id', $new_wr_id)->where('loc_row', $new_wr_row)->first(); 
+			       					$loccoldetails = Location::where('wr_id', $new_wr_id)->where('loc_column', $new_wr_col)->first(); 
+
+							        $locrowid = null;
+							        $loccolid = null;
+
+							        if (isset($locrowdetails->id)) {
+							        	$locrowid = $locrowdetails->id;
+							        }
+							        if (isset($loccoldetails->id)) {
+							     	   $loccolid = $loccoldetails->id;
+							        }
+
+
+
+									$diff_bags = ROUND($old_weight/60);
+									$diff_pkts = ROUND($old_weight%60);
+
+
+									$bt_no = NULL;
+
+									if ($old_weight == $instructed_weight || $instructed_weight == null) {
+										Batch::where('id', '=', $valuebt->id)
+										->update(['btc_ended_by' => $user]);
+									} else {
+										Batch::where('id', '=', $valuebt->id)
+											->update(['btc_ended_by' => $user, 'btc_net_weight' => $old_weight , 'btc_weight' => $old_weight]);									
+									}			
+
+									if ($instructed_weight != null) {
+										$diff_bags = ROUND($instructed_weight/60);
+										$diff_pkts = ROUND($instructed_weight%60);
+										$old_net_weight = $instructed_weight;
+
+										Batch::where('id', '=', $valuebt->id)
+										->update(['btc_weight' => ($old_weight-$instructed_weight),'btc_weight' => ($old_net_weight-$instructed_weight),  'btc_bags' => ROUND(($old_net_weight-$instructed_weight)/60), 'btc_pockets' => ROUND(($old_net_weight-$instructed_weight)%60)]);
+
+									}
+									$btid = Batch::insertGetId (
+											['btc_number' => $bt_no, 'st_id' => $stid, 'btc_weight' => $old_weight,'btc_packages' => $old_pkgs,  'btc_tare' => $old_tare , 'btc_net_weight' => $old_net_weight,  'btc_bags' => $diff_bags, 'btc_pockets' => $diff_pkts, 'btc_prev_id' => $previd]);
+											Activity::log('Inserted Batch information with btid '.$btid. ' diff_weight '. $diff_weight. ' bags '. $diff_bags. ' pockets '. $diff_pkts. ' stid '. $stid);
+							        
+
+
+									$stlocid = StockLocation::insertGetId (
+									['bt_id' => $btid, 'loc_row_id' => $locrowid, 'loc_column_id' => $loccolid, 'btc_zone' => $zone]);
+									Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $locrowid. ' loccolid '. $loccolid. ' zone '. $zone);
+
+
 								}
 
-								$new_wr_row = $valuebt->new_loc_row;
-								$new_wr_col = $valuebt->new_loc_column;
-
-								$old_wr_row = $valuebt->loc_row;
-								$old_wr_col = $valuebt->loc_column;
-
-								$zone = $valuebt->new_zone;
 
 
-								if (null == $new_wr_id) {
-									$new_wr_id = Input::get('new_warehouse');
-								}
-								if (null == $new_wr_row) {
-									$new_wr_row = Input::get('row');
-								}
-								if (null == $new_wr_col) {
-									$new_wr_col = Input::get('column');
-								}
-								if (null == $zone || 0 == $zone) {
-									$zone = Input::get('zone');
-								}
-
-								$locrowdetails = Location::where('wr_id', $new_wr_id)->where('loc_row', $new_wr_row)->first(); 
-		       					$loccoldetails = Location::where('wr_id', $new_wr_id)->where('loc_column', $new_wr_col)->first(); 
-
-						        $locrowid = null;
-						        $loccolid = null;
-
-						        if (isset($locrowdetails->id)) {
-						        	$locrowid = $locrowdetails->id;
-						        }
-						        if (isset($loccoldetails->id)) {
-						     	   $loccolid = $loccoldetails->id;
-						        }
-
-
-
-								$diff_bags = ROUND($old_weight/60);
-								$diff_pkts = ROUND($old_weight%60);
-
-
-								$bt_no = NULL;
-
-								if ($old_weight == $instructed_weight || $instructed_weight == null) {
-									Batch::where('id', '=', $valuebt->id)
-									->update(['btc_ended_by' => $user]);
-								} else {
-									Batch::where('id', '=', $valuebt->id)
-										->update(['btc_ended_by' => $user, 'btc_net_weight' => $old_weight , 'btc_weight' => $old_weight]);									
-								}			
-
-								if ($instructed_weight != null) {
-									$diff_bags = ROUND($instructed_weight/60);
-									$diff_pkts = ROUND($instructed_weight%60);
-									$old_net_weight = $instructed_weight;
-
-									Batch::where('id', '=', $valuebt->id)
-									->update(['btc_weight' => ($old_weight-$instructed_weight),'btc_weight' => ($old_net_weight-$instructed_weight),  'btc_bags' => ROUND(($old_net_weight-$instructed_weight)/60), 'btc_pockets' => ROUND(($old_net_weight-$instructed_weight)%60)]);
-
-								}
-								$btid = Batch::insertGetId (
-										['btc_number' => $bt_no, 'st_id' => $stid, 'btc_weight' => $old_weight,'btc_packages' => $old_pkgs,  'btc_tare' => $old_tare , 'btc_net_weight' => $old_net_weight,  'btc_bags' => $diff_bags, 'btc_pockets' => $diff_pkts, 'btc_prev_id' => $previd]);
-										Activity::log('Inserted Batch information with btid '.$btid. ' diff_weight '. $diff_weight. ' bags '. $diff_bags. ' pockets '. $diff_pkts. ' stid '. $stid);
-						        
-
-
-								$stlocid = StockLocation::insertGetId (
-								['bt_id' => $btid, 'loc_row_id' => $locrowid, 'loc_column_id' => $loccolid, 'btc_zone' => $zone]);
-								Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $locrowid. ' loccolid '. $loccolid. ' zone '. $zone);
-
-
-							}
-
-
+				     	 	}
 
 			     	 	}
-
 		     	 	}
-	     	 	}
 
 
-			}
+				}
 
-			// $diff_weight = $old_weight-$batch_kilograms;
+				// $diff_weight = $old_weight-$batch_kilograms;
 
-			// $otbid = NULL;	 
+				// $otbid = NULL;	 
 
-			// if ($diff_weight < 0) {
-			// 	$request->session()->flash('alert-warning', 'Verify your weights, bags and pockets!');
-			// 	return View::make('movementconfirmation', compact('id', 
-			// 		'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview'));				
-			// } else {
-			// 	$otbid = OutturnTotalBatch::insertGetId (
-			// 	['otb_weight' => $batch_kilograms,'otb_confirmed_by' => $user]);
-			// 	Activity::log('Inserted OutturnTotal information with batch_kilograms '.$batch_kilograms. ' user '. $user);	
+				// if ($diff_weight < 0) {
+				// 	$request->session()->flash('alert-warning', 'Verify your weights, bags and pockets!');
+				// 	return View::make('movementconfirmation', compact('id', 
+				// 		'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview'));				
+				// } else {
+				// 	$otbid = OutturnTotalBatch::insertGetId (
+				// 	['otb_weight' => $batch_kilograms,'otb_confirmed_by' => $user]);
+				// 	Activity::log('Inserted OutturnTotal information with batch_kilograms '.$batch_kilograms. ' user '. $user);	
 
-			// }
+				// }
 
-			// if ($diff_weight > 0 ) {
+				// if ($diff_weight > 0 ) {
 
-			// 	$bt_no = Batch::orderBy('btc_number', 'desc')->pluck('btc_number');
-			// 	foreach ($bt_no as $bt) {
-			// 	    $bt_no = $bt;
-			// 	}	
-			// 	if ($bt_no != NULL && is_numeric($bt_no)) {					
-			// 		$bt_no = $bt_no;
-			// 	} else {
-			// 		$bt_no = 1;
-			// 	}
+				// 	$bt_no = Batch::orderBy('btc_number', 'desc')->pluck('btc_number');
+				// 	foreach ($bt_no as $bt) {
+				// 	    $bt_no = $bt;
+				// 	}	
+				// 	if ($bt_no != NULL && is_numeric($bt_no)) {					
+				// 		$bt_no = $bt_no;
+				// 	} else {
+				// 		$bt_no = 1;
+				// 	}
 
-				// $diff_bags = ROUND($diff_weight/60);
-				// $diff_pkts = ROUND($diff_weight%60);
+					// $diff_bags = ROUND($diff_weight/60);
+					// $diff_pkts = ROUND($diff_weight%60);
 
+
+					// $btid = Batch::insertGetId (
+					// ['btc_number' => $bt_no, 'st_id' => $stid, 'btc_weight' => $diff_weight, 'btc_bags' => $diff_bags, 'btc_pockets' => $diff_pkts, 'otb_id' => $otbid, 'btc_prev_id' => $previd]);
+					// Activity::log('Inserted Batch information with btid '.$btid. ' diff_weight '. $diff_weight. ' bags '. $diff_bags. ' pockets '. $diff_pkts. ' stid '. $stid);
+
+
+
+
+
+			  //       $locrowdetails = Location::where('wr_id', $new_wr_id)->where('loc_row', $old_wr_row)->first(); 
+			  //       $loccoldetails = Location::where('wr_id', $new_wr_id)->where('loc_column', $old_wr_col)->first(); 
+
+			  //       // print_r($new_wr_id);
+
+			  //       $locrowid = $locrowdetails->id;
+			  //       $loccolid = $loccoldetails->id;
+
+
+					// $stlocid = StockLocation::insertGetId (
+					// ['bt_id' => $btid, 'loc_row_id' => $locrowid, 'loc_column_id' => $loccolid, 'btc_zone' => $zone]);
+					// Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $locrowid. ' loccolid '. $loccolid. ' zone '. $zone);
+
+				// } 
+
+				// $bt_no = Batch::orderBy('btc_number', 'desc')->pluck('btc_number');
+				// foreach ($bt_no as $bt) {
+				//     $bt_no = $bt;
+				// }	
+				// if ($bt_no != NULL && is_numeric($bt_no)) {					
+				// 	$bt_no = $bt_no;
+				// } else {
+				// 	$bt_no = 1;
+				// }
+
+				// $batch_kilograms = Input::get('batch_kilograms');
+				// $bags = ROUND($batch_kilograms/60);
+				// $pockets = ROUND($batch_kilograms%60);
 
 				// $btid = Batch::insertGetId (
-				// ['btc_number' => $bt_no, 'st_id' => $stid, 'btc_weight' => $diff_weight, 'btc_bags' => $diff_bags, 'btc_pockets' => $diff_pkts, 'otb_id' => $otbid, 'btc_prev_id' => $previd]);
-				// Activity::log('Inserted Batch information with btid '.$btid. ' diff_weight '. $diff_weight. ' bags '. $diff_bags. ' pockets '. $diff_pkts. ' stid '. $stid);
+				// ['btc_number' => $bt_no, 'st_id' => $stid, 'btc_weight' => $batch_kilograms, 'btc_bags' => $bags, 'btc_pockets' => $pockets, 'otb_id' => $otbid, 'btc_prev_id' => $previd]);
+				// Activity::log('Inserted Batch information with btid '.$btid. ' diff_weight '. $batch_kilograms. ' bags '. $bags. ' pockets '. $pockets. ' stid '. $stid);	
 
 
+				// // $new_wr_id = Warehouse::where('wr_name', $batchview_cf->new_wr_name)->first();	
+				// // $new_wr_id = $new_wr_id->id;
 
 
-
-		  //       $locrowdetails = Location::where('wr_id', $new_wr_id)->where('loc_row', $old_wr_row)->first(); 
-		  //       $loccoldetails = Location::where('wr_id', $new_wr_id)->where('loc_column', $old_wr_col)->first(); 
-
-		  //       // print_r($new_wr_id);
+		  //       $locrowdetails = Location::where('wr_id', $new_wr_id)->where('loc_row', $new_wr_row)->first(); 
+		  //       $loccoldetails = Location::where('wr_id', $new_wr_id)->where('loc_column', $new_wr_col)->first(); 
 
 		  //       $locrowid = $locrowdetails->id;
 		  //       $loccolid = $loccoldetails->id;
 
-
 				// $stlocid = StockLocation::insertGetId (
-				// ['bt_id' => $btid, 'loc_row_id' => $locrowid, 'loc_column_id' => $loccolid, 'btc_zone' => $zone]);
-				// Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $locrowid. ' loccolid '. $loccolid. ' zone '. $zone);
-
-			// } 
-
-			// $bt_no = Batch::orderBy('btc_number', 'desc')->pluck('btc_number');
-			// foreach ($bt_no as $bt) {
-			//     $bt_no = $bt;
-			// }	
-			// if ($bt_no != NULL && is_numeric($bt_no)) {					
-			// 	$bt_no = $bt_no;
-			// } else {
-			// 	$bt_no = 1;
-			// }
-
-			// $batch_kilograms = Input::get('batch_kilograms');
-			// $bags = ROUND($batch_kilograms/60);
-			// $pockets = ROUND($batch_kilograms%60);
-
-			// $btid = Batch::insertGetId (
-			// ['btc_number' => $bt_no, 'st_id' => $stid, 'btc_weight' => $batch_kilograms, 'btc_bags' => $bags, 'btc_pockets' => $pockets, 'otb_id' => $otbid, 'btc_prev_id' => $previd]);
-			// Activity::log('Inserted Batch information with btid '.$btid. ' diff_weight '. $batch_kilograms. ' bags '. $bags. ' pockets '. $pockets. ' stid '. $stid);	
-
-
-			// // $new_wr_id = Warehouse::where('wr_name', $batchview_cf->new_wr_name)->first();	
-			// // $new_wr_id = $new_wr_id->id;
-
-
-	  //       $locrowdetails = Location::where('wr_id', $new_wr_id)->where('loc_row', $new_wr_row)->first(); 
-	  //       $loccoldetails = Location::where('wr_id', $new_wr_id)->where('loc_column', $new_wr_col)->first(); 
-
-	  //       $locrowid = $locrowdetails->id;
-	  //       $loccolid = $loccoldetails->id;
-
-			// $stlocid = StockLocation::insertGetId (
-			// ['bt_id' => $btid, 'loc_row_id' => $locrowid, 'loc_column_id' => $loccolid, 'btc_zone' => $new_zone]);
-			// Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $locrowid. ' loccolid '. $loccolid. ' zone '. $new_zone);
-		
-
-
-
- 	 	
-	  //    	 foreach ($batchlocation as $key => $value) {
-	  //    	 	// $batchview_cf = BatchView::where('stid', $value)->get();
-			// 	if ($batchview_cf != NULL) {
-
-		 //     	 	foreach ($batchview_cf as $keybt => $valuebt) {
-		 //     	 		// print_r($user."<br>");
-		 //     	 		Batch::where('id', '=', $valuebt->id)
-			// 				->update(['btc_ended_by' => $user]);
-			// 		}
-
-			// 	}
-	 
-	  //    	 }	    
-
-			// $grnsview = GrnsView::where('stid', $stid)->first();
-			// $grnsview = GrnsView::where('stid', $stid)->get();
-			// $stlocdetails = NULL;
-			// $stlocdetails = NULL;
-   //  		$rw = Input::get('row');
-   //  		$clm = Input::get('column');
-
-	  //   	if (NULL != Input::get('warehouse') && NULL != Input::get('row') && NULL != Input::get('column') ) {
-	  //   		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
-	  //   		$wrname = $wrname->wr_name;
-
-	  //   		$stlocdetails = StockLocationView::where('wr_name', $wrname)->where('loc_row', $rw)->where('loc_column', $clm)->whereNotNull('btc_instructed_by')->get();
-	  //   	}
-
-
-	    	if (NULL != Input::get('warehouse') /*&& NULL != Input::get('row') && NULL != Input::get('column') */) {
-	    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
-	    		$wrname = $wrname->wr_name;
-
-	    		$stlocdetails = StockLocationView::where('wr_name', $wrname)/*->where('loc_row', $rw)->where('loc_column', $clm)*/->whereNotNull('btc_instructed_by')->get();
-	    	}
+				// ['bt_id' => $btid, 'loc_row_id' => $locrowid, 'loc_column_id' => $loccolid, 'btc_zone' => $new_zone]);
+				// Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $locrowid. ' loccolid '. $loccolid. ' zone '. $new_zone);
 			
-	    							
-			return View::make('movementconfirmation', compact('id', 
-				'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview', 'stlocdetails', 'new_wrhse', 'NewWarehouse', 'new_location'));	
-    	
-		}  else {
-			$stlocdetails = NULL;
-			$stlocdetails = NULL;
-    		$rw = Input::get('row');
-    		$clm = Input::get('column');
 
 
-	    	if (NULL != Input::get('warehouse') /*&& NULL != Input::get('row') && NULL != Input::get('column') */) {
-	    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
-	    		$wrname = $wrname->wr_name;
 
-	    		$stlocdetails = StockLocationView::where('wr_name', $wrname)/*->where('loc_row', $rw)->where('loc_column', $clm)*/->whereNotNull('btc_instructed_by')->get();
-	    	}
+	 	 	
+		  //    	 foreach ($batchlocation as $key => $value) {
+		  //    	 	// $batchview_cf = BatchView::where('stid', $value)->get();
+				// 	if ($batchview_cf != NULL) {
 
-			return View::make('movementconfirmation', compact('id', 
-				'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview', 'stlocdetails', 'rw', 'clm', 'new_wrhse', 'NewWarehouse', 'new_location'));		
+			 //     	 	foreach ($batchview_cf as $keybt => $valuebt) {
+			 //     	 		// print_r($user."<br>");
+			 //     	 		Batch::where('id', '=', $valuebt->id)
+				// 				->update(['btc_ended_by' => $user]);
+				// 		}
+
+				// 	}
+		 
+		  //    	 }	    
+
+				// $grnsview = GrnsView::where('stid', $stid)->first();
+				// $grnsview = GrnsView::where('stid', $stid)->get();
+				// $stlocdetails = NULL;
+				// $stlocdetails = NULL;
+	   //  		$rw = Input::get('row');
+	   //  		$clm = Input::get('column');
+
+		  //   	if (NULL != Input::get('warehouse') && NULL != Input::get('row') && NULL != Input::get('column') ) {
+		  //   		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
+		  //   		$wrname = $wrname->wr_name;
+
+		  //   		$stlocdetails = StockLocationView::where('wr_name', $wrname)->where('loc_row', $rw)->where('loc_column', $clm)->whereNotNull('btc_instructed_by')->get();
+		  //   	}
+
+
+		    	if (NULL != Input::get('warehouse') /*&& NULL != Input::get('row') && NULL != Input::get('column') */) {
+		    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
+		    		$wrname = $wrname->wr_name;
+
+		    		$stlocdetails = StockLocationView::where('wr_name', $wrname)/*->where('loc_row', $rw)->where('loc_column', $clm)*/->whereNotNull('btc_instructed_by')->get();
+		    	}
+				
+		    							
+				return View::make('movementconfirmation', compact('id', 
+					'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview', 'stlocdetails', 'new_wrhse', 'NewWarehouse', 'new_location'));	
+	    	
+			}  else {
+				$stlocdetails = NULL;
+				$stlocdetails = NULL;
+	    		$rw = Input::get('row');
+	    		$clm = Input::get('column');
+
+
+		    	if (NULL != Input::get('warehouse') /*&& NULL != Input::get('row') && NULL != Input::get('column') */) {
+		    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
+		    		$wrname = $wrname->wr_name;
+
+		    		$stlocdetails = StockLocationView::where('wr_name', $wrname)/*->where('loc_row', $rw)->where('loc_column', $clm)*/->whereNotNull('btc_instructed_by')->get();
+		    	}
+
+				return View::make('movementconfirmation', compact('id', 
+					'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview', 'stlocdetails', 'rw', 'clm', 'new_wrhse', 'NewWarehouse', 'new_location'));		
  	   }
     
  	}
 
-
-
-
-
-
-   public function stuffingForm (Request $request){
+    public function stuffingForm (Request $request){
 		$rates    = processrates::all(['id', 'service']);
 		$teams   = teams::all(['id', 'tms_grpname']);
 
@@ -1514,7 +1505,6 @@ class WarehouseController extends Controller {
         return View::make('stuffing', compact('id', 'Season', 'country', 'shipmentmonth','client', 'shipmentyear', 'rates', 'teams'));
 
     }
-
 
     public function stuffing (Request $request){
 		$rates    = processrates::all(['id', 'service']);
@@ -1822,9 +1812,7 @@ class WarehouseController extends Controller {
             return View::make('stuffing', compact('id', 'Season', 'country', 'shipmentmonth','client', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'cid', 'rates', 'teams'));
         }
 
-
     }
-
 
 	public function stuffing_delete($id)
 	{   

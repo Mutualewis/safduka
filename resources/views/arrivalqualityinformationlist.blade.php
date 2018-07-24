@@ -202,6 +202,9 @@
 										Lot
 									</th>
 									<th>
+										Sale
+									</th>
+									<th>
 										Outturn
 									</th>
 									<th>
@@ -213,9 +216,6 @@
 									<th>
 										Basket
 									</th>	
-									<th>
-										Release
-									</th>
 									<th>
 										Green
 									</th>
@@ -277,15 +277,17 @@
 	
 											echo "<tr>";											
 												echo "<td  align='left'>".$value->lot."</td>";
+												echo "<td  align='left'>".$value->sale."</td>";
 												echo "<td>".$value->outturn."</td>";												
 												echo "<td>".$value->grade."</td>";
 												echo "<td>".$value->weight."</td>";
-												echo "<td>".$value->code."</td>";					                	
+												echo "<td>".$value->code."</td>";			                	
 
-								                echo "<td>".$value->rl_no."</td>";
 								                echo "<td>".$value->green."</td>";
-												echo "<td align='center'><input name='partial$id' type='checkbox' value='1'></td>";
-												echo "<td align='center'><input name='partial$id' type='checkbox' value='1'></td>";
+												echo "<td align='center'><input name='accept$id' type='checkbox' value='$id'></td>";
+												echo "<td align='center'><input name='reject$id' type='checkbox' value='$id'></td>";
+
+												echo "<input type='hidden' name ='arrivalQuality[]' value='$id'>";
 
 											echo "</tr>";
 
@@ -298,10 +300,10 @@
 									?>
 									<td></td>
 									<td></td>
+									<td></td>
 								    <?php
 									    echo "<td>".$total." KGs</td>";
 									?>
-									<td></td>											
 									<td></td>
 									<td></td>
 									<td></td>
