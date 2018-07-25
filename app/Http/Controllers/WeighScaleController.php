@@ -289,9 +289,15 @@ class WeighScaleController extends Controller {
 
         $strPortName = NULL;
 
+        $grn_id = NULL;
+
         $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->first(); 
 
-        $grn_id = $grn_details->id;
+        if ($grn_details != null) {
+
+            $grn_id = $grn_details->id;
+
+        }        
 
         if (NULL !==  Input::get('updateGRN')) { 
 

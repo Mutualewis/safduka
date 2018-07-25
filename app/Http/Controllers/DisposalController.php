@@ -939,8 +939,6 @@ class DisposalController extends Controller {
 
         }
 
-        $history = array();
-
         $stock_details = null;
 
         if ($process_id != null) {
