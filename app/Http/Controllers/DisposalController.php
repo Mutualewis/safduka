@@ -627,6 +627,8 @@ class DisposalController extends Controller {
 
                 $stock_id = $value->stid;
 
+                $stock_outturn = $value->st_outturn;
+
                 if ($value->gr_id != null || $value->gr_id ==  1) {
 
                     $grade = null;
@@ -659,11 +661,11 @@ class DisposalController extends Controller {
                         
                     }               
 
-                    $history[] = array('ID' => $stock_id, 'OUTTURN' => $value->st_outturn , 'GRADE' => $grade, 'MARK' => $value->st_mark, "WEIGHT" => $value->st_net_weight, "PRICE" => $value->st_price, "BASKET" => $basket, "BRIC" => $bric); 
+                    $history[] = array('ID' => $stock_id, 'OUTTURN' => $stock_outturn , 'GRADE' => $grade, 'MARK' => $value->st_mark, "WEIGHT" => $value->st_net_weight, "PRICE" => $value->st_price, "BASKET" => $basket, "BRIC" => $bric); 
 
                 } else {
 
-                    $history = $this->getComposition($history, $stock_id);
+                    $history = $this->getComposition($history, $stock_id, $stock_outturn);
 
                 }                
 
@@ -915,7 +917,7 @@ class DisposalController extends Controller {
     }
 
 
-    public function getComposition($history, $stock_id) {
+    public function getComposition($history, $stock_id, $stock_outturn) {
 
         $process_id = null;
 
@@ -924,9 +926,20 @@ class DisposalController extends Controller {
         if ($process_results_details != null) {
 
             $process_id = $process_results_details->pr_id;
+
+        } else {
+
+            $process_details = Process::where('pr_instruction_number', $stock_outturn)->first();
+
+            if ($process_details != null) {
+
+                $process_id = $process_details->id;
+
+            }
+
         }
 
-        // $history = array();
+        $history = array();
 
         $stock_details = null;
 
@@ -957,6 +970,8 @@ class DisposalController extends Controller {
             foreach ($stock_details as $key => $value) {
 
                 $stock_id = $value->stid;
+
+                    $stock_outturn = $value->st_outturn;
 
                 if ($value->gr_id != null || $value->gr_id ==  1) {
 
@@ -994,7 +1009,7 @@ class DisposalController extends Controller {
 
                 } else {
 
-                    $history = $this->getComposition($history, $stock_id);
+                    $history = $this->getComposition($history, $stock_id, $stock_outturn);
 
                 }      
 
