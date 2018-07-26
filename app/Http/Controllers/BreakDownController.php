@@ -172,7 +172,9 @@ class BreakDownController extends Controller {
         // $stock_items = Stock::select('*')->get();
         // $stock_items = Stock::where('id', '7098')->orWhere('id', '7099')->orWhere('id', '7100')->orWhere('id', '6870')->orWhere('id', '6873')->orWhere('id', '6875')->orWhere('id', '6871')->orWhere('id', '6874')->orWhere('id', '6872')->orWhere('id', '7069')->orWhere('id', '7101')->orWhere('id', '7102')->orWhere('id', '6839')->get();
 
-        $stock_items = Stock::where('id', '5762')->orWhere('id', '7354')->orWhere('id', '7188')->orWhere('id', '6867')->orWhere('id', '7002')->orWhere('id', '7095')->orWhere('id', '7096')->orWhere('id', '7194')->orWhere('id', '7195')->orWhere('id', '6625')->orWhere('id', '6870')->get();
+        // $stock_items = Stock::where('id', '5762')->orWhere('id', '7354')->orWhere('id', '7188')->orWhere('id', '6867')->orWhere('id', '7002')->orWhere('id', '7095')->orWhere('id', '7096')->orWhere('id', '7194')->orWhere('id', '7195')->orWhere('id', '6625')->orWhere('id', '6870')->get();
+
+        $stock_items = Stock::where('id', '7677')->orWhere('id', '7678')->get();
 
 
 
@@ -317,8 +319,9 @@ class BreakDownController extends Controller {
 
             // $stock_items = Stock::whereNotNull('st_bric_value')->where('id', '5254')->get();
 
-            $stock_items = Stock::where('id', '5762')->orWhere('id', '7354')->orWhere('id', '7188')->orWhere('id', '6867')->orWhere('id', '7002')->orWhere('id', '7095')->orWhere('id', '7096')->orWhere('id', '7194')->orWhere('id', '7195')->orWhere('id', '6625')->orWhere('id', '6870')->get();
 
+            
+       $stock_items = Stock::where('id', '7677')->orWhere('id', '7678')->get();
 
 
             // $stock_items = Stock::whereNotNull('st_bric_value')->get();

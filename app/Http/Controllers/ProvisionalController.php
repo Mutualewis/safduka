@@ -106,7 +106,11 @@ class ProvisionalController extends Controller
         // } else {
         //     $cid = 1;
         // }
-        
+
+        if(session('maincountry')!=NULL){
+            $cid=session('maincountry');
+        }  
+
         $COUNTRY_INITIAL = country::where('id', $cid)->first();
         if ($COUNTRY_INITIAL !== NULL) {
             $COUNTRY_INITIAL = substr($COUNTRY_INITIAL->ctr_initial, 0, 1) ;
@@ -121,9 +125,6 @@ class ProvisionalController extends Controller
             $reference_no = strtoupper(Input::get('ref_no'));
 
         }
-
-
-
 
         return View::make('processingprovisional', compact('id',
             'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'certs', 'StockStatus', 'reference_no'));

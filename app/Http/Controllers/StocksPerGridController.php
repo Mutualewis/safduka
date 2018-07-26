@@ -514,54 +514,47 @@ class StocksPerGridController extends Controller {
             
         }
         
-
         $this->drop();
 
         $this->create($months);
 
+        $final_array = $months_value;        
 
-
-        $final_array = $months_value;
-
-        // print_r($final_array);
         DB::table('long_short_lsht')->truncate();
         
         DB::table('long_short_lsht')->insert(
             $final_array
         );
 
+        // $final_array = Long_Short_Complete::select('*');
 
+        // $cfg = [
+        //     'src' => 'Ngea\Long_Short_Complete',
+        //     'columns' => [
+        //         'long_code' ,
+        //         'bs_quality',
+        //         'stock_bags',
+        //         'allocated_bags',
+        //         'value',
+        //         'bric_diff',
+        //         'stock_diff',
 
-        $final_array = Long_Short_Complete::select('*');
-
-
-
-        $cfg = [
-            'src' => 'Ngea\Long_Short_Complete',
-            'columns' => [
-                'long_code' ,
-                'bs_quality',
-                'stock_bags',
-                'allocated_bags',
-                'value',
-                'bric_diff',
-                'stock_diff',
-
-            ]
-        ];
+        //     ]
+        // ];
         
+        // foreach ($months as $key => $value) {
+        //         if ($value != null) {
+        //             $cfg['columns'][] = strtolower(trim($value));
+        //         }
+        // }
 
-        foreach ($months as $key => $value) {
-                if ($value != null) {
-                    $cfg['columns'][] = strtolower(trim($value));
-                }
-        }
+        // $cfg['columns'][] = 'net_position';       
 
-        $cfg['columns'][] = 'net_position';
+        // $grid = Grids::make($cfg);
 
-        $grid = Grids::make($cfg);
+        $long_short_details = Long_Short_Complete::get();        
 
-        return View::make('stockslongshort', compact('id','grid', 'text', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification'));
+        return View::make('stockslongshort', compact('id','grid', 'months', 'text', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'long_short_details'));
 
     }
 
@@ -587,102 +580,6 @@ class StocksPerGridController extends Controller {
                });
 
         })->export('xlsx');
-
-
-
-        // print_r($long_short);
-
-
-
-//         $meta = [
-//             'Contract' => 'lewis'
-//         ];
-
-
-//         $query = Long_Short_Complete::select('*');
-
-//         $title = 'Long Short';
-
-//         // Do some querying..
-//         $queryBuilder = $query;
-
-//         $long_short = DB::select("CALL long_short_unallocated_months_procedure()");
-
-//         $long_short = json_decode(json_encode($long_short, true), true);
-
-//         $months = array(null);
-
-//         foreach ($long_short as $key => $value) {
-//             foreach ($value as $keyk => $valuev) {
-//                 if ($keyk != 'stock_bags' && $keyk != 'code' && $keyk != 'long_code' && $keyk != 'bs_quality' && $keyk != 'allocated_bags' && $keyk != 'value' && $keyk != 'diff') {
-                    
-//                     $new_value = substr($keyk, 0, strpos($keyk, '_', strpos($keyk, '_')+1));
-//                     if (!in_array($new_value, $months)) {
-
-//                         array_push($months, $new_value); 
-
-//                     }
-                                       
-//                 }
-//             }
-            
-//         }
-
-//         // Set Column to be displayed
-//         $columns = [
-//             'Basket' => function($result) {
-//                 return $result->long_code;
-//             },
-
-//             'Quality' => function($result) {
-//                 return $result->bs_quality;
-//             },
-//             'Stock' => function($result) {
-//                 return $result->stock_bags;
-//             },
-//             'Allocated' => function($result) {
-//                 return $result->allocated_bags;
-//             },
-//             'Value' => function($result) {
-//                 return $result->value;
-//             },
-//             'Diff' => function($result) {
-//                 return $result->diff;
-//             }
-
-//         ];
-
-//         // foreach ($months as $key => $value) {
-//         //         if ($value != null) {
-//         //             $columns[][] = strtolower(trim($value));
-//         //         }
-//         // }
-
-//         // $columns[][] = 'net_position';
-
-// print_r($columns);
-//         return ExcelReport::of($title, $meta, $queryBuilder, $columns)
-//             // ->editColumns(['total_cost','total_col', 'total_diff'], [
-//             //     'class' => 'hidden'
-//             // ])
-//             // ->setCss([
-//             //     '.hidden' => 'display: none;'
-//             // ])
-
-//             // ->editColumns(['Contract', 'Code', 'Invoice Number', 'Weight'], [
-//             //     'class' => 'right'
-//             // ])
-//             // ->showTotal([
-//             //     'Weight' => 'point','Value' => 'point'
-//             // ])
-//             // ->groupBy('Seller')
-//             // ->stream(); // or download('filename here..') to download pdf
-//             ->download('long_short_'.date("d-m-Y"));
-
-
-
-
-
     }
 
 

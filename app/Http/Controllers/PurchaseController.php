@@ -3426,14 +3426,15 @@ class PurchaseController extends Controller
                 Activity::log('Inserted release information with release no. ' . $release_no . ' date ' . $date . ' confirmed by ' . $user);
             }
             //refresh
-            for ($i = 0; $i < count($sale_lots); $i++) {
-                $pdetails = purchase::where('cfd_id', $sale_lots[$i]->id)->first();
-                $pid = $pdetails->id;
+            // for ($i = 0; $i < count($sale_lots); $i++) {
+            //     $pdetails = purchase::where('cfd_id', $sale_lots[$i]->id)->first();
+            //     $pid = $pdetails->id;
 
-                purchase::where('id', '=', $pid)
-                    ->update(['rl_id' => null]);
+            //     purchase::where('id', '=', $pid)
+            //         ->update(['rl_id' => null]);
 
-            }
+            // }
+            
             for ($i = 0; $i < count($tobereleased); $i++) {
                 $pdetails = purchase::where('cfd_id', $tobereleased[$i])->first();
                 $pid      = $pdetails->id;
