@@ -310,6 +310,12 @@ class QualityController extends Controller {
 
 		    	$qdetails = quality_details::where('cfd_id', $cfd_id)->first(); 
 
+				if ($comments == 'null') {
+
+					$comments = null;
+
+				}		    	
+
 		    	foreach ($process_type as $key => $value) {
 
 		    		$process_type = $value;
@@ -483,6 +489,12 @@ class QualityController extends Controller {
 
 					coffee_details::where('id', '=', $cfd_id)
 						->update(['cfd_dnt'=> null]);	
+
+				}
+
+				if ($comments_cp == 'null') {
+
+					$comments_cp = null;
 
 				}
 
@@ -706,10 +718,10 @@ class QualityController extends Controller {
 
 				
 				foreach ($dont as $key => $value) {
-					// coffee_details::where('id', '=', $key)
-					// 			->update(['cfd_dnt'=> "0"]);	
 
 					if ($value != NULL) {
+						
+						echo "<br>";
 						coffee_details::where('id', '=', $key)
 									->update(['cfd_dnt'=> "1"]);	
 
@@ -723,7 +735,11 @@ class QualityController extends Controller {
 						// 	quality_details::insert(
 						// 		['cfd_id' => $key,'cp_id' => $$value]);
 						// }						
-					}					
+					} else {
+
+						coffee_details::where('id', '=', $key)
+									->update(['cfd_dnt'=> "0"]);	
+					}				
 				}				
 			}	
 

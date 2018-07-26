@@ -317,6 +317,12 @@ class DirectQualityController extends Controller {
 
 		    	$qdetails = quality_details::where('cfd_id', $cfd_id)->first(); 
 
+				if ($comments == 'null') {
+
+					$comments = null;
+
+				}
+
 		    	foreach ($process_type as $key => $value) {
 
 		    		$process_type = $value;
@@ -489,6 +495,12 @@ class DirectQualityController extends Controller {
 
 					coffee_details::where('id', '=', $cfd_id)
 						->update(['cfd_dnt'=> null]);	
+
+				}
+
+				if ($comments_cp == 'null') {
+
+					$comments_cp = null;
 
 				}
 
@@ -794,6 +806,7 @@ class DirectQualityController extends Controller {
 					// 			->update(['cfd_dnt'=> "0"]);	
 
 					if ($value != NULL) {
+
 						coffee_details::where('id', '=', $key)
 									->update(['cfd_dnt'=> "1"]);	
 
@@ -806,8 +819,15 @@ class DirectQualityController extends Controller {
 						// } else {
 						// 	quality_details::insert(
 						// 		['cfd_id' => $key,'cp_id' => $$value]);
-						// }						
-					}					
+						// }		
+
+					} else {
+
+						coffee_details::where('id', '=', $key)
+									->update(['cfd_dnt'=> "0"]);	
+									
+					}		
+
 				}				
 			}	
 

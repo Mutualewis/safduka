@@ -1073,7 +1073,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 					} else {
 
-						document.getElementById('comments').value = 'empty';
+						document.getElementById('comments').value = null;
 					}
 
 		
@@ -1083,7 +1083,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			} else {
 
-				document.getElementById('comments').value = 'empty';
+				document.getElementById('comments').value = null;
 
 				document.getElementById('process').value =  0;
 
@@ -1182,7 +1182,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			} else {
 
-				document.getElementById('comments_cp').value = 'empty';
+				document.getElementById('comments_cp').value = null;
 			}
 
 			if (obj.qltyd_acidity != null) {
@@ -1305,7 +1305,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		    raw = JSON.stringify(raw);
 
-			if (document.getElementById("comments") != null) {
+			if (document.getElementById("comments").value != "") {
 
 				var comments = document.getElementById("comments").value;
 
@@ -1448,7 +1448,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		    raw = JSON.stringify(raw);
 
-			if (document.getElementById("comments") != null) {
+			if (document.getElementById("comments").value != "") {
 
 				var comments = document.getElementById("comments").value;
 
@@ -1590,7 +1590,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		    raw = JSON.stringify(raw);
 
-			if (document.getElementById("comments") != null) {
+			if (document.getElementById("comments").value != "") {
 
 				var comments = document.getElementById("comments").value;
 
@@ -1983,7 +1983,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			}
 
-			if (document.getElementById("comments_cp") != null) {
+			if (document.getElementById("comments_cp").value != "") {
 
 				var comments_cp = document.getElementById("comments_cp").value;
 
@@ -2098,7 +2098,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			}
 
-			if (document.getElementById("comments_cp") != null) {
+			if (document.getElementById("comments_cp").value != "") {
 
 				var comments_cp = document.getElementById("comments_cp").value;
 
@@ -2209,7 +2209,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			}
 
-			if (document.getElementById("comments_cp") != null) {
+			if (document.getElementById("comments_cp").value != "") {
 
 				var comments_cp = document.getElementById("comments_cp").value;
 
@@ -2276,7 +2276,6 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 				lot_number = 0;
 
 			}
-
 
 			var outt_number = null;
 
