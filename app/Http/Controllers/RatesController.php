@@ -478,6 +478,7 @@ public function CalculateProcessResultsRate($ref_no, $processingType, $service, 
     foreach($teams as $teamdata){
         $descpackages= $teamdata->description +$descpackages;
     }
+   // dump($teams);exit;
     $weight_in=0;
     $packages = DB::select('SELECT SUM(prts_packages) AS packages FROM process_results_prts where pr_id=:id LIMIT 1', ['id' => $ref_no]);
     $packages=$packages[0]->packages;

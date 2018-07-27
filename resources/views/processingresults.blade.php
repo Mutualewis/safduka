@@ -215,6 +215,7 @@
     <div class="col-md-5">
 	        <form role="form" method="POST" action="/processingresults" id="processingresultsform">
 	        	<input type="hidden" name="_token" value="{{ csrf_token() }}">
+				
             	<h3  data-toggle="collapse" data-target="#green">Instructions </h3>
             	 <!-- <label class="glyphicon glyphicon-menu-down"></label></h3>   -->
             	<!-- <div id='green' class='collapse in' > -->		
@@ -671,7 +672,7 @@
       </div>
       <div class="modal-body">
         
-		
+	  	<input type="hidden" name="teamcount" id="teamcount" value="1">
 		    <div class="form-group">
 			                <label>Service</label>
 			                <select class="form-control" name="service" id="service">
@@ -762,7 +763,8 @@ teams = JSON.parse(teams)
 	$( "#generatechargesbtn" ).click(function(event){
 		event.preventDefault();
 		$("#ratesModalCenter").modal();
-		teamcount = 0;	
+		var teamcount = 0;
+		$('#teamcount').val(teamcount)	
 	})
 	$( "#confirmProcessRateModalbtn" ).click(function(event){
 		event.preventDefault();
@@ -771,7 +773,10 @@ teams = JSON.parse(teams)
 
 	$( "#addteambtn" ).click(function(event){
 		event.preventDefault();
+		var teamcount = $('#teamcount').val();
+		console.log(teamcount)
 		teamcount=parseInt(teamcount)+1
+		$('#teamcount').val(teamcount)
 		var sel_head = '<div class="form-group">'+
 			                '<label>Team</label>'+
 			                '<select class="form-control" name="team_'+teamcount+'" id="team_'+teamcount+'">'+
@@ -799,13 +804,16 @@ teams = JSON.parse(teams)
 
 	$( "#rmteambtn" ).click(function(event){
 		event.preventDefault();
+		var teamcount = $('#teamcount').val();
+		xxxxxxxx
 		if(teamcount!=0){
 		$( "#teamdiv_"+teamcount).remove();
 		teamcount--;
 		}else{
 			bootbox.alert('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">At least one team is required</i></div>')
 		}
-		
+		$('#teamcount').val(teamcount)
+		console.log(teamcount)
 	})
 
 	function postConfirmMovement(){
@@ -814,6 +822,8 @@ teams = JSON.parse(teams)
 		var process_type = $('#process_type').val();
 		var service = $('#service').val();
 		var team = $('#team').val();
+		var teamcount = $('#teamcount').val();
+		console.log(teamcount)
 		var teamsdetail = []
 		for(i=0; i<=teamcount; i++){
 			var team =  $('#team_'+i).val()
@@ -855,6 +865,7 @@ teams = JSON.parse(teams)
 				confirmurl = confirmurl.replace(':service', service);
 				confirmurl = confirmurl.replace(':team', encodeURIComponent(JSON.stringify({ref_no: ref, process_type : process_type, service: service, teamsdetail: teamsdetail})));
 				console.log(confirmurl)
+				console.log(teamsdetail)
 				var dialog = bootbox.dialog({
 					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
   					backdrop: true,
