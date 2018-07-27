@@ -805,7 +805,6 @@ teams = JSON.parse(teams)
 	$( "#rmteambtn" ).click(function(event){
 		event.preventDefault();
 		var teamcount = $('#teamcount').val();
-		xxxxxxxx
 		if(teamcount!=0){
 		$( "#teamdiv_"+teamcount).remove();
 		teamcount--;
