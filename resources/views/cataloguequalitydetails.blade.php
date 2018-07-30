@@ -758,7 +758,7 @@
 
 	        	</div>
 
-    			<input type="checkbox" id="dnt_cp" name="dnt_cp"  onchange="this.form.submit()">&nbsp&nbsp <strong style="font-size:25px; color:red;">Do Not Touch(DNT)</strong>
+    			<input type="checkbox" id="dnt_cp" name="dnt_cp">&nbsp&nbsp <strong style="font-size:25px; color:red;">Do Not Touch(DNT)</strong>
 
 	        	<div class="row" >
 		            <div class="form-group col-md-6">
@@ -1940,7 +1940,8 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		    }).get();
 
 
-			var dont = document.getElementById("dnt");
+			var dont = document.getElementById("dnt_cp");
+
 
 			if (dont.checked) {
 
@@ -2055,7 +2056,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		    }).get();
 
 
-			var dont = document.getElementById("dnt");
+			var dont = document.getElementById("dnt_cp");
 
 			if (dont.checked) {
 
@@ -2123,6 +2124,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			url = url.replace(':flavour', flavour);
 
 			url = url.replace(':comments_cp', comments_cp);
+
 
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
@@ -2166,7 +2168,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		    }).get();
 
 
-			var dont = document.getElementById("dnt");
+			var dont = document.getElementById("dnt_cp");
 
 			if (dont.checked) {
 
@@ -2178,7 +2180,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			}
 
-
+			console.log(dnt_cp)
 			if (document.getElementById("acidity") != null) {
 
 				var acidity = document.getElementById("acidity").value;
@@ -2239,7 +2241,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 						
-    
+    	console.log(url)
 			$.ajax({
 				url: url,
 				dataType: 'json',

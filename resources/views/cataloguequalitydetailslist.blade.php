@@ -532,7 +532,7 @@ $(document).ready(function (){
 							var selectedAnalysis = analysed.toString();
 							var selectedAnalysisString = selectedAnalysis.split(',');
 							$.each(selectedAnalysisString, function(index, value) { 
-								selectedAnalysisArray.push(value);
+								selectedAnalysisArray.push(value.toString().trim());
 							});
 
 						} else {
@@ -550,7 +550,8 @@ $(document).ready(function (){
 						var extraAnalysisID = null; 
 						selectBody += "<option value=''>Not Set</option>"
 						for (var i = 0; i<greenSizes.length; i++) {
-							extraAnalysisID = greenSizes[i].id.toString();
+
+							extraAnalysisID = greenColors[i].id.toString().trim();
 
 							if (selectedAnalysisArray.indexOf(extraAnalysisID) >= 0) {
 								selectBody += "<option value='"+greenSizes[i].id+"' selected='selected'>"+"&nbsp"+greenSizes[i].qp_parameter+"</option>";
@@ -580,7 +581,7 @@ $(document).ready(function (){
 							var selectedAnalysis = analysed.toString();
 							var selectedAnalysisString = selectedAnalysis.split(',');
 							$.each(selectedAnalysisString, function(index, value) { 
-								selectedAnalysisArray.push(value);
+								selectedAnalysisArray.push(value.toString().trim());
 							});
 
 						} else {
@@ -595,9 +596,13 @@ $(document).ready(function (){
 
 						var selectBody = null;
 						var extraAnalysisID = null; 
+						selectedAnalysisArray = Object.values(selectedAnalysisArray);
+
 						selectBody += "<option value=''>Not Set</option>"
 						for (var i = 0; i<greenColors.length; i++) {
-							extraAnalysisID = greenColors[i].id.toString();
+
+							extraAnalysisID = greenColors[i].id.toString().trim();
+
 							if (selectedAnalysisArray.indexOf(extraAnalysisID) >= 0) {
 								selectBody += "<option value='"+greenColors[i].id+"' selected='selected'>"+"&nbsp"+greenColors[i].qp_parameter+"</option>";
 							} else {
@@ -626,7 +631,7 @@ $(document).ready(function (){
 							var selectedAnalysis = analysed.toString();
 							var selectedAnalysisString = selectedAnalysis.split(',');
 							$.each(selectedAnalysisString, function(index, value) { 
-								selectedAnalysisArray.push(value);
+								selectedAnalysisArray.push(value.toString().trim());
 							});
 
 						} else {
@@ -643,7 +648,7 @@ $(document).ready(function (){
 						var extraAnalysisID = null; 
 						selectBody += "<option value=''>&nbspNot Set</option>"
 						for (var i = 0; i<greenDeffects.length; i++) {
-							extraAnalysisID = greenDeffects[i].id.toString();
+							extraAnalysisID = greenDeffects[i].id.toString().trim();
 							if (selectedAnalysis.indexOf(extraAnalysisID) >= 0) {
 								selectBody += "<option value='"+greenDeffects[i].id+"' selected='selected'>"+"&nbsp"+greenDeffects[i].qp_parameter+"</option>";
 							} else {
