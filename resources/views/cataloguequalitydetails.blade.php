@@ -1144,6 +1144,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
         $.get(url, function(data, status){
 
             var obj = jQuery.parseJSON(data);
+            console.log(obj)
 
 		    document.getElementById('lot_number_cup').value = obj.cfd_lot_no;
 
@@ -1941,6 +1942,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 
 			var dont = document.getElementById("dnt");
+			console.log(dont)
 
 			if (dont.checked) {
 

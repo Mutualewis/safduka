@@ -134,7 +134,8 @@ class MovementController extends Controller {
 
 
 
-    public function movementSpecialForm (Request $request){
+    public function movementSpecialForm (Request $request) {
+
     	$id = NULL;
     	$Season = Season::all(['id', 'csn_season']);
     	$country = country::all(['id', 'ctr_name', 'ctr_initial']);
@@ -146,8 +147,7 @@ class MovementController extends Controller {
         $teams   = teams::all(['id', 'tms_grpname']);
 
     	$Warehouse = NULL;
-    	$Mill = NULL;
-    	
+    	$Mill = NULL;    	
     	$cid = NULL;
     	$csn_season = NULL;
     	$sale_cb_id = NULL;
@@ -254,9 +254,11 @@ class MovementController extends Controller {
 
 
 	if (NULL !== Input::get('instructmovement')){
-	     	 $this->validate($request, [
+
+	     	$this->validate($request, [
 		            'country' => 'required', 'reasonForMovement' => 'required', 'MovementType' => 'required', 'ref_no' => 'required',
 		        ]);
+
 			$ref_selected = Input::get('ref_no');
 			if ($ref_selected != null) {
 				$ref_no = $ref_selected;
