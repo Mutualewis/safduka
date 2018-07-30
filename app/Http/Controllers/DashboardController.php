@@ -134,8 +134,14 @@ class DashboardController extends Controller
 
         } else {
 
-            $GRNSReceivedSummary = GRNSSummary::select('*',DB::raw('gsm_buyer as buyer, round((gsm_weight)/60) as bags, round((gsm_weight_difference)/60) as bag_difference, round((gsm_percentage_weight_difference)/) as percentage_weight_difference'))
-                                ->whereRaw('Date(created_at) = CURDATE()');
+            // $GRNSReceivedSummary = GRNSSummary::select('*',DB::raw('gsm_buyer as buyer, round((gsm_weight)/60) as bags, round((gsm_weight_difference)/60) as bag_difference, round((gsm_percentage_weight_difference)/) as percentage_weight_difference'))
+            //                     ->whereRaw('Date(created_at) = CURDATE()')->get();
+
+
+            $GRNSReceivedSummary = GRNSSummary::select('*',DB::raw('gsm_buyer as buyer, round((gsm_weight)/60) as bags, round((gsm_weight_difference)/60) as bag_difference, round((gsm_percentage_weight_difference)) as percentage_weight_difference'))
+                                ->whereRaw('Date(created_at) = CURDATE()')->get();
+
+                                
 
         }
 
@@ -226,9 +232,13 @@ class DashboardController extends Controller
 
         } else {
             
+            // $ProcessingMonthlySummary = ProcessingSummary::select('*',DB::raw('prssm_buyer as buyer, round(sum(prssm_total_allocated)/60) as total_allocated, round(sum(prssm_results)/60) as results, round(sum(prssm_difference)/60) as difference'))
+            //                     ->whereRaw('Date(created_at) = CURDATE()')->get();
             $ProcessingMonthlySummary = ProcessingSummary::select('*',DB::raw('prssm_buyer as buyer, round(sum(prssm_total_allocated)/60) as total_allocated, round(sum(prssm_results)/60) as results, round(sum(prssm_difference)/60) as difference'))
+                                ->groupBy('prssm_buyer')                       
+                                ->groupBy('prssm_year')
+                                ->groupBy('prssm_month')
                                 ->whereRaw('Date(created_at) = CURDATE()')->get();
-
         }
 
 
