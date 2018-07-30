@@ -24,12 +24,13 @@ Route::group(['middleware' => 'auth'], function()
 
     Route::get('/home', array('as'=>'home', function()
 	{
-	return View('home');
+		return View('home');
 	}));
 
 	Route::get('/', function() {
 	    return View::make('home');
 	});
+
 	Route::get('home', function() {
 	    return View::make('home');
 	});
@@ -62,7 +63,7 @@ Route::group(['middleware' => 'auth'], function()
 
 	Route::get('/lot_delete/{id}', 'AuctionController@lot_delete'); 
 
-	Route::get('/catalogueupload', 'AuctionController@catalogueUploadForm'); 
+	Route::get('/catalogueupload', 'AuctiocataloguequalitydetailsnController@catalogueUploadForm'); 
 	Route::post('/catalogueupload', 'AuctionController@uploadCatalogue'); 
 
 	Route::get('downloadExcelCatalogue/{type}', 'AuctionController@downloadExcelCatalogue');
@@ -225,6 +226,14 @@ Route::group(['middleware' => 'auth'], function()
 
 	Route::get('/movementspecial', 'MovementController@movementSpecialForm'); 
 	Route::post('/movementspecial', 'MovementController@movementSpecial'); 
+
+
+	Route::get('/movementindividual', 'MovementIndividualController@movementIndividualForm'); 
+	Route::post('/movementindividual', 'MovementIndividualController@movementIndividual'); 
+
+	Route::get('/movementindividual/getLots/{countryID}/{warehouse}/{new_row}/{new_column}', ['as'=>'movementindividual.getLots','uses'=>'MovementIndividualController@getLots']); 
+
+
 
 	Route::get('/manageindividual', 'IndividualController@manageIndividualForm'); 
 	Route::post('/manageindividual', 'IndividualController@manageIndividual'); 

@@ -12,6 +12,9 @@ use Mail;
 
 use Ngea\Thresholds;
 
+use Ngea\InstructedLocationRef;
+
+
 class Controller extends BaseController
 {
     use AuthorizesRequests, AuthorizesResources, DispatchesJobs, ValidatesRequests;
@@ -56,12 +59,35 @@ class Controller extends BaseController
 
     	}
 
-
-
-
-
     }
 
+    public function generateRef () {
+
+        $ref_no = null;
+
+        $ref_no = InstructedLocationRef::whereNotNull('ilf_number')->orderBy('ilf_number', 'asc')->pluck('ilf_number');     
+
+        if ($ref_no->first() == null) {
+
+            $ref_no = null;
+
+        } else {
+
+            foreach ($ref_no as $ref) {
+
+                $ref_no = $ref;
+
+                preg_match_all('!\d+!', $ref, $ref_no);
+
+                $ref_no = implode(' ', $ref_no[0]);
+
+            }
+
+            $ref_no = sprintf("%04d", ($ref_no + 1));
+        }
+
+        return $ref_no;
+    }
 
     
 }

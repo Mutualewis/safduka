@@ -758,7 +758,7 @@
 
 	        	</div>
 
-    			<input type="checkbox" id="dnt_cp" name="dnt_cp">&nbsp&nbsp <strong style="font-size:25px; color:red;">Do Not Touch(DNT)</strong>
+    			<input type="checkbox" id="dnt_cp" name="dnt_cp"  onchange="this.form.submit()">&nbsp&nbsp <strong style="font-size:25px; color:red;">Do Not Touch(DNT)</strong>
 
 	        	<div class="row" >
 		            <div class="form-group col-md-6">
@@ -1144,6 +1144,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
         $.get(url, function(data, status){
 
             var obj = jQuery.parseJSON(data);
+            console.log(obj)
 
 		    document.getElementById('lot_number_cup').value = obj.cfd_lot_no;
 
@@ -1940,8 +1941,8 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		    }).get();
 
 
-			var dont = document.getElementById("dnt_cp");
-
+			var dont = document.getElementById("dnt");
+			console.log(dont)
 
 			if (dont.checked) {
 
@@ -2056,7 +2057,118 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		    }).get();
 
 
-			var dont = document.getElementById("dnt_cp");
+			var dont = document.getElementById("dnt");
+
+			if (dont.checked) {
+
+				var dnt_cp = document.getElementById("dnt_cp").value;
+
+			} else {
+
+				var dnt_cp = null;
+
+			}
+
+
+			if (document.getElementById("acidity") != null) {
+
+				var acidity = document.getElementById("acidity").value;
+
+			} else {
+
+				var acidity = null;
+
+			}
+
+			if (document.getElementById("body") != null) {
+
+				var body = document.getElementById("body").value;
+
+			} else {
+
+				var body = null;
+
+			}
+
+			if (document.getElementById("flavour") != null) {
+
+				var flavour = document.getElementById("flavour").value;
+
+			} else {
+
+				var flavour = null;
+
+			}
+
+			if (document.getElementById("comments_cp").value != "") {
+
+				var comments_cp = document.getElementById("comments_cp").value;
+
+			} else {
+
+				var comments_cp = null;
+
+			}
+
+			var url = '{{ route('cataloguequalitydetails.saveCup',['cfd_id'=>":id",'cup'=>":cup",'dnt_cp'=>":dnt_cp",'acidity'=>":acidity",'body'=>":body",'flavour'=>":flavour",'comments_cp'=>":comments_cp"]) }}';
+
+			url = url.replace(':id', cfd_id);
+
+			url = url.replace(':cup', cup);
+
+			url = url.replace(':dnt_cp', dnt_cp);
+
+			url = url.replace(':acidity', acidity);
+
+			url = url.replace(':body', body);
+
+			url = url.replace(':flavour', flavour);
+
+			url = url.replace(':comments_cp', comments_cp);
+
+			var dialog = bootbox.alert({
+				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+						
+			$.ajax({
+				url: url,
+				dataType: 'json',
+				}).done(function(response) {
+					if(response.updated) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+						closeBootBox();
+						displayCup(event, null, cfd_id, direction, null, null, null);
+					} else if(response.inserted) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
+						closeBootBox();
+						displayCup(event, null, cfd_id, direction, null, null, null);
+					}else if(response.error) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
+						closeBootBox();
+					}
+				}).error(function(error) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+					closeBootBox();
+			});
+
+		});
+
+		$('#button_save_cup').on('click', function(){
+
+ 			var cfd_id = document.getElementById("cfd_id_cup").value;
+
+		    var cup = {};
+
+		    var direction = 'Next';
+
+		    cup = $('input[name=cup]:checked').map(function(){
+
+		        return this.value;
+
+		    }).get();
+
+
+			var dont = document.getElementById("dnt");
 
 			if (dont.checked) {
 
@@ -2125,123 +2237,11 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			url = url.replace(':comments_cp', comments_cp);
 
-
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 						
-			$.ajax({
-				url: url,
-				dataType: 'json',
-				}).done(function(response) {
-					if(response.updated) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-						closeBootBox();
-						displayCup(event, null, cfd_id, direction, null, null, null);
-					} else if(response.inserted) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
-						closeBootBox();
-						displayCup(event, null, cfd_id, direction, null, null, null);
-					}else if(response.error) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
-						closeBootBox();
-					}
-				}).error(function(error) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
-					closeBootBox();
-			});
-
-		});
-
-		$('#button_save_cup').on('click', function(){
-
- 			var cfd_id = document.getElementById("cfd_id_cup").value;
-
-		    var cup = {};
-
-		    var direction = 'Next';
-
-		    cup = $('input[name=cup]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-
-
-			var dont = document.getElementById("dnt_cp");
-
-			if (dont.checked) {
-
-				var dnt_cp = document.getElementById("dnt_cp").value;
-
-			} else {
-
-				var dnt_cp = null;
-
-			}
-
-			console.log(dnt_cp)
-			if (document.getElementById("acidity") != null) {
-
-				var acidity = document.getElementById("acidity").value;
-
-			} else {
-
-				var acidity = null;
-
-			}
-
-			if (document.getElementById("body") != null) {
-
-				var body = document.getElementById("body").value;
-
-			} else {
-
-				var body = null;
-
-			}
-
-			if (document.getElementById("flavour") != null) {
-
-				var flavour = document.getElementById("flavour").value;
-
-			} else {
-
-				var flavour = null;
-
-			}
-
-			if (document.getElementById("comments_cp").value != "") {
-
-				var comments_cp = document.getElementById("comments_cp").value;
-
-			} else {
-
-				var comments_cp = null;
-
-			}
-
-			var url = '{{ route('cataloguequalitydetails.saveCup',['cfd_id'=>":id",'cup'=>":cup",'dnt_cp'=>":dnt_cp",'acidity'=>":acidity",'body'=>":body",'flavour'=>":flavour",'comments_cp'=>":comments_cp"]) }}';
-
-			url = url.replace(':id', cfd_id);
-
-			url = url.replace(':cup', cup);
-
-			url = url.replace(':dnt_cp', dnt_cp);
-
-			url = url.replace(':acidity', acidity);
-
-			url = url.replace(':body', body);
-
-			url = url.replace(':flavour', flavour);
-
-			url = url.replace(':comments_cp', comments_cp);
-
-			var dialog = bootbox.alert({
-				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-						
-    	console.log(url)
+    
 			$.ajax({
 				url: url,
 				dataType: 'json',
