@@ -551,7 +551,7 @@ $(document).ready(function (){
 						selectBody += "<option value=''>Not Set</option>"
 						for (var i = 0; i<greenSizes.length; i++) {
 
-							extraAnalysisID = greenColors[i].id.toString().trim();
+							extraAnalysisID = greenSizes[i].id.toString().trim();
 
 							if (selectedAnalysisArray.indexOf(extraAnalysisID) >= 0) {
 								selectBody += "<option value='"+greenSizes[i].id+"' selected='selected'>"+"&nbsp"+greenSizes[i].qp_parameter+"</option>";
