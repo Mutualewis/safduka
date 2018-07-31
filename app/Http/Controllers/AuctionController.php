@@ -645,6 +645,8 @@ class AuctionController extends Controller {
 						if(!empty($data) && $data->count()){
 
 							$data = $data->first();
+							$certs = null;
+
 							foreach ($data as $key => $value) {
 
 								$sale = Input::get('sale');								
@@ -662,8 +664,6 @@ class AuctionController extends Controller {
 						     	$bags = trim(trim($value->bags));
 						     	$pkts = trim($value->pkt);						     	
 								$cert = trim($value->cert);
-
-								$certs = null;
 
 								if($lot != NULL){
 										$SellerDB = seller::where('slr_name', $seller)->first();
@@ -788,9 +788,7 @@ class AuctionController extends Controller {
 										$cdetails = coffee_details::where('sl_id', $sale)->where('csn_id', $season)->where('cfd_lot_no', $lot)->first();
 
 										if (!empty($cdetails)) {
-											return redirect('catalogueupload')
-							                       		->withErrors("Lot number ".$lot." already exists for a similiar sale and season!! ")
-							                       		->withInput();	
+											$insert = null;
 										} 
 										$cdetails = coffee_details::where('cfd_outturn', $outturn)->where('sl_id', $sale)->where('csn_id', $season)->where('cfd_lot_no', $lot)->first();
 
@@ -798,9 +796,7 @@ class AuctionController extends Controller {
 										if (empty($cdetails)) {
 											$insert[] = ['csn_id' => $season,  'sl_id' =>  $sale, 'cfd_lot_no' => $lot, 'cfd_outturn' => $outturn, 'wr_id' => $warehouseID, 'cfd_grower_mark' => $mark, 'cgrad_id' => $gradeid, 'cfd_weight' => $kilos, 'cfd_bags' => $bags, 'cfd_pockets' => $pkts, 'slr_id' => $sellerID, 'ml_id'=> $millID];
 										} else {
-											return redirect('catalogueupload')
-							                       		->withErrors("Lot number ".$lot.", outturn ".$outturn." already exists for a similiar sale and season!! ")
-							                       		->withInput();	
+											$insert = null;
 										}
 
 
@@ -810,6 +806,7 @@ class AuctionController extends Controller {
 							if(!empty($insert)){
 								coffee_details::insert($insert);
 							}
+							
 							if ($certs != null) {
 								foreach ($certs as $key => $value) {
 									$cdetails = coffee_details::where('cfd_outturn', $value["outturn"])->where('sl_id', $value["sale"])->where('csn_id', $value["season"])->where('cfd_lot_no', $value["lot"])->first();
