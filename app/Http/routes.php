@@ -63,7 +63,7 @@ Route::group(['middleware' => 'auth'], function()
 
 	Route::get('/lot_delete/{id}', 'AuctionController@lot_delete'); 
 
-	Route::get('/catalogueupload', 'AuctiocataloguequalitydetailsnController@catalogueUploadForm'); 
+	Route::get('/catalogueupload', 'AuctionController@catalogueUploadForm'); 
 	Route::post('/catalogueupload', 'AuctionController@uploadCatalogue'); 
 
 	Route::get('downloadExcelCatalogue/{type}', 'AuctionController@downloadExcelCatalogue');
