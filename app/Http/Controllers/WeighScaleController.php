@@ -356,6 +356,8 @@ class WeighScaleController extends Controller {
 
                 $st_name = NULL;
 
+                $grnid = null;
+
                 $batch_kilograms = $delivery_kilograms;
 
                 $wrhse = Input::get('warehouse');
@@ -471,7 +473,7 @@ class WeighScaleController extends Controller {
                     Activity::log('Inserted Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wb_id '. $weighbridgeTK . 'grn_number' . $grn_number );
                 }
                 
-                if ($prdetails != null) {
+                if (isset($prdetails)) {
 
                     $purchased_weight = $prdetails->inv_weight;
 

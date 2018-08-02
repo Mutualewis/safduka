@@ -183,6 +183,8 @@ class CreditController extends Controller {
       
         $user = $user_data->id;
 
+        $StockView = Breakdown_Without_Stuffed::select('*')->where('credit_number', $credit_no)->orWhereNull('credit_number')->orderByRaw(DB::raw("FIELD(credit_number, '$credit_no') DESC"))->get();
+
         if (null !== Input::get('confirminstruction')) {
             
             if ($credit_details != null) {

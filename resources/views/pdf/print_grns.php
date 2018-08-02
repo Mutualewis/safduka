@@ -25,34 +25,34 @@
 			<table style="text-align: left; font-size: 13px">
 				<tr>
 					<td width="250px" align="left">
-						<strong>Client:</strong> <?php echo $client; ?>
+						<strong>Client:</strong> <?php if(isset($client)) echo $client; ?>
 					</td>
 					<td width="200px" align="left">
-						<strong>Delivery Date:</strong> <?php echo $delivery_date; ?> <br>
+						<strong>Delivery Date:</strong> <?php if(isset($delivery_date))  echo $delivery_date; ?> <br>
 					</td>
 				</tr>			
 
 				<tr>
 					<td width="150px" align="left">
-						<strong>Mvt. Permit:</strong> <?php echo $movement_permit; ?>
+						<strong>Mvt. Permit:</strong> <?php if(isset($movement_permit)) echo $movement_permit; ?>
 					</td>
 					<td width="150px" align="left">
-						<strong>Vehicle Reg. No.:</strong> <?php echo $vehicle; ?> <br>
+						<strong>Vehicle Reg. No.:</strong> <?php if(isset($vehicle)) echo $vehicle; ?> <br>
 					</td>
 				</tr>	
 
 				<tr>
 					<td width="150px" align="left">
-						<strong>Wb. Ticket:</strong> <?php echo $weighbridge_ticket; ?>
+						<strong>Wb. Ticket:</strong> <?php if(isset($weighbridge_ticket)) echo $weighbridge_ticket; ?>
 					</td>
 					<td width="150px" align="left">
-						<strong>Time Received.:</strong> <?php echo $time_received; ?> <br>
+						<strong>Time Received.:</strong> <?php if(isset($time_received)) echo $time_received; ?> <br>
 					</td>
 				</tr>
 
 				<tr>
 					<td width="150px" align="left">
-						<strong>Receiving Clerk:</strong> <?php echo $received_by; ?>
+						<strong>Receiving Clerk:</strong> <?php if(isset($received_by))  echo $received_by; ?>
 					</td>
 					<td width="150px" align="left">
 						<strong>Signature:</strong> <?php echo " _________________________" ?> <br>
@@ -199,10 +199,10 @@
 			<table style="text-align: left; font-size: 13px">
 				<tr>
 					<td width="100px" align="left">
-						<strong>Driver:</strong> <?php echo $driver_name; ?>
+						<strong>Driver:</strong> <?php if(isset($driver_name)) echo $driver_name; ?>
 					</td>
 					<td width="100px" align="left">
-						<strong>ID No.:</strong> <?php echo $driver_id; ?> <br>
+						<strong>ID No.:</strong> <?php if(isset($driver_id)) echo $driver_id; ?> <br>
 					</td>
 					<td width="50px" align="left">
 						<strong>Signature:</strong> <?php echo " _________________________"; ?> <br>

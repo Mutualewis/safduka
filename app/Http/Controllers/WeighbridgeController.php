@@ -100,7 +100,7 @@ use Ngea\payment;
 use Ngea\warrants;
 use Ngea\transporters;
 use Ngea\release_instructions;
-use Ngea\weighbridge;
+use Ngea\Weighbridge;
 
 
 use Ngea\User;

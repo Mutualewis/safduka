@@ -804,9 +804,11 @@ class AuctionController extends Controller {
 							}
 
 							if(!empty($insert)){
+
 								coffee_details::insert($insert);
+								
 							}
-							
+
 							if ($certs != null) {
 								foreach ($certs as $key => $value) {
 									$cdetails = coffee_details::where('cfd_outturn', $value["outturn"])->where('sl_id', $value["sale"])->where('csn_id', $value["season"])->where('cfd_lot_no', $value["lot"])->first();
