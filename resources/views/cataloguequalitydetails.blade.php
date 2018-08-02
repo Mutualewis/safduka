@@ -1941,7 +1941,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		    }).get();
 
 
-			var dont = document.getElementById("dnt");
+			var dont = document.getElementById("dnt_cp");
 			console.log(dont)
 
 			if (dont.checked) {
@@ -1953,6 +1953,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 				var dnt_cp = null;
 
 			}
+
 
 
 			if (document.getElementById("acidity") != null) {
@@ -2057,7 +2058,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		    }).get();
 
 
-			var dont = document.getElementById("dnt");
+			var dont = document.getElementById("dnt_cp");
 
 			if (dont.checked) {
 
@@ -2168,7 +2169,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		    }).get();
 
 
-			var dont = document.getElementById("dnt");
+			var dont = document.getElementById("dnt_cp");
 
 			if (dont.checked) {
 
