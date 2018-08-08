@@ -34,6 +34,7 @@ use Ngea\Sum_Bric_Summary;
 use Ngea\Sum_Stock_Code;
 use Ngea\Sum_of_Sales_Contract;
 use Ngea\Long_Short;
+use Ngea\Long_Short_Internal;
 use Excel;
 
 
@@ -443,7 +444,8 @@ class StocksPerGridController extends Controller {
 
 
 
-     public function stocksLongShort (Request $request){
+    public function stocksLongShort (Request $request){
+
         $long_short = DB::select("CALL long_short_unallocated_months_procedure()");
         $long_short = json_decode(json_encode($long_short, true), true);
         // print_r($long_short);
@@ -671,7 +673,7 @@ class StocksPerGridController extends Controller {
 
 
 
-     public function stocksReconciliation (Request $request){
+    public function stocksReconciliation (Request $request){
         $grid = new Grid(
             (new GridConfig)
                 ->setDataProvider(
@@ -821,5 +823,254 @@ class StocksPerGridController extends Controller {
 
         return View::make('stocksreconciliation', compact('id','grid', 'text', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification'));
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function stocksLongShortInternal (Request $request){
+
+        $long_short = DB::select("CALL long_short_unallocated_months_internal_procedure()");
+        $long_short = json_decode(json_encode($long_short, true), true);
+        // print_r($long_short);
+        // print_r("<br>");
+        $query = DB::table('long_short_internal')->get();
+        $query = json_decode(json_encode($query, true), true);
+        
+        $months_value = array();
+        $months_title = array();
+
+
+        $final_array =  $this->left_join_array_internal($long_short, $query, 'code');
+
+        foreach ($final_array as $keyfa => $valuefa) {
+            foreach ($valuefa as $keyfav => $valuefav) {
+                $new_value = substr($keyfav, 0, strpos($keyfav, '_', strpos($keyfav, '_')+1));
+                if ($new_value == null) {
+                    $new_value = $keyfav;
+                }
+
+                if(!array_key_exists($new_value, $months_title))
+                {
+                    $months_title[$new_value] = 0;
+                }
+
+            }
+            
+        }
+
+        $new_months_title = $months_title;
+        foreach ($final_array as $keyfa => $valuefa) {
+            foreach ($valuefa as $keyfav => $valuefav) {
+                $new_value = substr($keyfav, 0, strpos($keyfav, '_', strpos($keyfav, '_')+1));
+                if ($new_value == null) {
+                    $new_value = $keyfav;
+                }
+
+                if(array_key_exists($new_value, $new_months_title))
+                {
+                    if ($valuefav != null) {
+                       $new_months_title [$new_value] = $valuefav;
+                    } 
+
+                }
+
+            }
+
+                array_push($months_value, $new_months_title);
+                $new_months_title = $months_title; 
+        }
+
+
+        $months = array(null);
+
+        foreach ($long_short as $key => $value) {
+            foreach ($value as $keyk => $valuev) {
+                if ($keyk != 'stock_bags' && $keyk != 'code' && $keyk != 'long_code' && $keyk != 'bs_quality' && $keyk != 'allocated_bags' && $keyk != 'value' && $keyk != 'bric_diff' && $keyk != 'stock_diff') {
+                    
+                    $new_value = substr($keyk, 0, strpos($keyk, '_', strpos($keyk, '_')+1));
+                    if (!in_array($new_value, $months)) {
+
+                        array_push($months, $new_value); 
+
+                    }
+                                       
+                }
+            }
+            
+        }
+        
+        $this->dropInternal();
+
+        $this->createInternal($months);
+
+        $final_array = $months_value;        
+
+        DB::table('long_short_internal_lsht')->truncate();
+        
+        DB::table('long_short_internal_lsht')->insert(
+            $final_array
+        );
+
+        // $final_array = Long_Short_Complete::select('*');
+
+        // $cfg = [
+        //     'src' => 'Ngea\Long_Short_Complete',
+        //     'columns' => [
+        //         'long_code' ,
+        //         'bs_quality',
+        //         'stock_bags',
+        //         'allocated_bags',
+        //         'value',
+        //         'bric_diff',
+        //         'stock_diff',
+
+        //     ]
+        // ];
+        
+        // foreach ($months as $key => $value) {
+        //         if ($value != null) {
+        //             $cfg['columns'][] = strtolower(trim($value));
+        //         }
+        // }
+
+        // $cfg['columns'][] = 'net_position';       
+
+        // $grid = Grids::make($cfg);
+
+        $long_short_details = Long_Short_Internal::get();     
+
+        // print_r($long_short_details);   
+
+        return View::make('stockslongshortinternal', compact('id','grid', 'months', 'text', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'long_short_details'));
+
+    }
+
+
+    public function downloadLongShortInternal (Request $request){
+
+        $long_short=null;
+
+        $timestamp=date('m d Y H i s');
+
+        $filename= 'Long_Short_Internal_ '.$timestamp;        
+
+        $long_short = Long_Short_Complete::get();
+
+        $count=count($long_short);
+
+        $info=Excel::create($filename, function($excel) use($long_short) {        
+
+               $excel->sheet('sheet 1', function($sheet) use($long_short){
+
+                $sheet->fromArray($long_short);
+                
+               });
+
+        })->export('xlsx');
+    }
+
+
+    public function left_join_array_internal($left, $right, $left_join_on, $right_join_on = NULL){
+        $final= array();
+        $stock_weight = null;
+        $sum_unallocated = null;
+        if(empty($right_join_on))
+            $right_join_on = $left_join_on;
+
+        foreach($left AS $k => $v){
+            $final[$k] = $v;
+            foreach($v AS $k1 => $v1){
+                if ($k1 != 'stock_bags' && $k1 != 'code' && $k1 != 'long_code' && $k1 != 'bs_quality' && $k1 != 'allocated_bags' && $k1 != 'value' && $k1 != 'bric_diff' && $k1 != 'stock_diff') {
+                    $sum_unallocated += $v1;
+                }
+
+            }
+            foreach($right AS $kk => $vv){
+
+                if($v[$left_join_on] == $vv[$right_join_on]){
+                    foreach($vv AS $key => $val){
+                        $final[$k][$key] = $val; 
+                        if ($key == 'stock_bags') {
+                            $stock_weight = $val;
+                        } 
+
+                    }
+                    break;
+
+                } else {
+                    foreach($vv AS $key => $val){
+                        $final[$k][$key] = 0;            
+                    }
+                }
+
+            }
+            $net_position = ($stock_weight+$sum_unallocated);
+
+            if ($net_position < 0) {
+                $net_position = '('.abs($net_position).')';
+            }
+            $final[$k]['net_position'] = $net_position;
+            $stock_weight = 0;
+            $sum_unallocated = 0;
+            $net_position = 0;
+        }
+
+       return $final;
+    }
+
+    public function createInternal($months)
+    {
+        $months = $months;
+
+        Schema::create('long_short_internal_lsht', function (Blueprint $table) use ($months) {
+            $table->increments('id');
+            $table->string('code');
+            $table->string('long_code');
+            $table->string('bs_quality'); 
+            $table->string('stock_bags');
+            $table->string('allocated_bags');
+            $table->string('value');
+            $table->string('bric_diff');
+            $table->string('stock_diff');
+
+            foreach ($months as $key => $value) {
+                if ($value != null) {
+                    $table->string(strtolower(trim($value)));
+                }
+                
+            }
+
+            $table->string('net_position');
+            $date = date("Y-m-d H:i:s"); 
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function dropInternal()
+    {
+         Schema::dropIfExists('long_short_internal_lsht');
+    }
+
 
 }

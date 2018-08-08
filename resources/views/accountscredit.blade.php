@@ -504,7 +504,7 @@
         deferRender: true,
      	ajax: url,
      	autoWidth: true,
-     	pageLength: 100,
+     	pageLength: 200,
      	buttons: [
      		'pageLength' , 
      	],
@@ -567,11 +567,11 @@
 					}
 				} else {
 					if (credit_number == null) {
-						return '<input type="checkbox" class="chk" name="tobeprocessedpurchased[]" value="' + $('<div/>').text(data).html() + '" >';
+						return '<input type="checkbox" class="chk" name="tobeprocessedpurchased[]" value="' + table.cell(meta.row,14).data() + '" >';
 					} else {
 
-						var viewedfield = '<input type="hidden" name="tobeprocessedpurchased[]" value="' + $('<div/>').text(data).html()  + '" >';
-						var hiddenfield = '<input type="checkbox" checked="checked" value="' + $('<div/>').text(data).html()  + '" disabled>';
+						var viewedfield = '<input type="hidden" name="tobeprocessedpurchased[]" value="' + table.cell(meta.row,14).data()  + '" >';
+						var hiddenfield = '<input type="checkbox" checked="checked" value="' + table.cell(meta.row,14).data() + '" disabled>';
 						var combined = viewedfield.concat(hiddenfield);
 						return combined;
 					}					
@@ -584,7 +584,13 @@
 				'searchable':true,
 				'orderable': true,
 				'render': function (data, type, full, meta, row){
+					var cfdid = table.cell(meta.row,14).data();
+					if (cfdid == null) {
 					return '<input size = "5" style="text-align:center;" type="text" name="'+"cweight["+ table.cell(meta.row,0).data()+"]"+'" id="'+"cweight["+ table.cell(meta.row,0).data()+"]"+'" value="' + $('<div/>').text(data).html() + '">';
+					} else {
+						
+						return '<input size = "5" style="text-align:center;" type="text" name="'+"cweight["+ table.cell(meta.row,14).data()+"]"+'" id="'+"cweight["+ table.cell(meta.row,14).data()+"]"+'" value="' + $('<div/>').text(data).html() + '">';
+					}
 			}},
 
 			{targets: 13, 
@@ -602,9 +608,9 @@
 						
 					} else {
 						if (credit_number == null) {
-							return '<input type="checkbox" name="tobewithdrawnpurchased[]" value="'+ $('<div/>').text(data).html() + '" disabled>';		
+							return '<input type="checkbox" name="tobewithdrawnpurchased[]" value="'+ table.cell(meta.row,14).data() + '" disabled>';		
 						} else {
-							return '<input type="checkbox" name="tobewithdrawnpurchased[]" value="'+ $('<div/>').text(data).html() + '" >';
+							return '<input type="checkbox" name="tobewithdrawnpurchased[]" value="'+ table.cell(meta.row,14).data() + '" >';
 						}			
 					}
 				}

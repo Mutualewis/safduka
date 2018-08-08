@@ -333,6 +333,13 @@ Route::group(['middleware' => 'auth'], function()
 	Route::get('/stockslongshort', 'StocksPerGridController@stocksLongShort');
 	Route::post('/stockslongshort', 'StocksPerGridController@downloadLongShort');
 
+	Route::get('/stockslongshortinternal', 'StocksPerGridController@stocksLongShortInternal');
+	Route::post('/stockslongshortinternal', 'StocksPerGridController@downloadLongShortInternal');
+
+
+
+	
+
 	Route::get('/stocksreconciliation', 'StocksPerGridController@stocksReconciliation');
 
 

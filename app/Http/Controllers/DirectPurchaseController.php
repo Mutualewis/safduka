@@ -171,7 +171,6 @@ class DirectPurchaseController extends Controller {
 
 
             // }
-
             if ($sale != null && $sale != "Sale No.") {
 
                 $sale_hedge = Sale::where('id', $sale)->first();
@@ -226,6 +225,7 @@ class DirectPurchaseController extends Controller {
             return redirect('directpurchasedetails');
 
         } else if (NULL !== Input::get('submitlot')){
+            
             $this->validate($request, [
                 'country' => 'required', 'sale_season' => 'required',
             ]);

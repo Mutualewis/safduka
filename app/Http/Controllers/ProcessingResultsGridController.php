@@ -104,6 +104,16 @@ class ProcessingResultsGridController extends Controller {
                         ->setSortable(true)
                     ,
                     (new FieldConfig)
+                        ->setName('br_no')
+                        ->setLabel('Bric')
+                        ->addFilter(
+                            (new FilterConfig)
+                                ->setName('br_no')
+                                ->setOperator(FilterConfig::OPERATOR_LIKE)
+                        )                         
+                        ->setSortable(true)
+                    ,
+                    (new FieldConfig)
                         ->setName('prt_name')
                         ->setLabel('Process Results Type')
                         ->addFilter(

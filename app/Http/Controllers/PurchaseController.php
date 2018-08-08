@@ -2897,7 +2897,7 @@ class PurchaseController extends Controller
                 // }
 
                 purchase::where('id', '=', $pid)
-                    ->update(['br_id' => $br_id, 'prc_purchase_contract_ratio' => $bric_ratio, 'prc_value' => $cost_value, 'prc_bric_value' => $bric_value]);
+                    ->update(['br_id' => $br_id, 'prc_purchase_contract_ratio' => $bric_ratio, 'prc_hedge' => $hedge, 'prc_value' => $cost_value, 'prc_bric_value' => $bric_value]);
                 Activity::log('Updated purchase information with bric no. ' . $bric . ' date ' . $date . ' confirmed by ' . $user);
 
             }

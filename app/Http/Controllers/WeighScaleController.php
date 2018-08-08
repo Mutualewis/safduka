@@ -496,6 +496,9 @@ class WeighScaleController extends Controller {
 
                     $stid = Stock::insertGetId(['prc_id' => $purchase_details->id,'gr_id' => $grn_id,'st_dispatch_net' => $dispatch_kilograms, 'st_net_weight' => $net_weight ,'st_tare' => $tare, 'st_bags' => $bags, 'st_pockets' => $pockets, 'st_gross' => $delivery_kilograms, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'ctr_id' => $cid, 'bs_id' => $pr_bsid, 'ibs_id' => $pr_ibsid, 'prc_price' => $pr_price, 'st_price' => $br_price_pounds, 'st_value' => $prc_value,  'st_diff' => $br_diffrential,  'br_id' => $pr_brid, 'sl_id' => $st_slid, 'cgrad_id' => $st_grid, 'st_name' => $st_name, 'st_outturn' => $st_outturn, 'st_mark' => $st_mark, 'csn_id' => $st_season, 'cb_id' => $cbid, 'st_packages' => $packages, 'st_partial_delivery' => $partial , 'st_value' => $prc_value , 'st_bric_value' => $bric_value , 'st_hedge' => $hedge, 'st_dispatch_date' => $dispatch_date, 'st_quality_check' => 1 ]);
 
+                    StockBreakdown::insertGetId (
+                                 ['st_id' => $stid, 'br_id' => $pr_brid, 'stb_value' => $bric_value, 'stb_weight' => $net_weight, 'bs_id' => $pr_bsid, 'ibs_id' => $pr_ibsid, 'stb_bulk_ratio' => 1,'stb_value_ratio' => 1,  'stb_purchase_contract_ratio' => 1, 'cb_id' => $cbid, 'cgr_id' => null]);
+
                 }
 
                 $request->session()->flash('alert-success', 'Stock Information Updated!!');            

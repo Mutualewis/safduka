@@ -181,7 +181,7 @@ class DirectsContractsController extends Controller
 
             } else {
                 $br_id = bric::insertGetId(
-                    ['br_no' => $bric,'bs_id' => $basket, 'br_date' => $date, 'br_confirmedby' => $user, 'br_purchased_weight' => $sum_bric_weight, 'br_price_per_fifty' => $purchase_contract_price, 'br_price_pounds' => $purchase_contract_price_pounds, 'br_diffrential' => $purchase_contract_differential, 'br_value' => $purchase_contract_value, 'cb_id' => $cbid, 'cg_id' => $cgid]);
+                    ['br_no' => $bric,'bs_id' => $basket, 'br_date' => $date, 'br_hedge' => $hedge,'br_confirmedby' => $user, 'br_purchased_weight' => $sum_bric_weight, 'br_price_per_fifty' => $purchase_contract_price, 'br_price_pounds' => $purchase_contract_price_pounds, 'br_diffrential' => $purchase_contract_differential, 'br_value' => $purchase_contract_value, 'cb_id' => $cbid, 'cg_id' => $cgid]);
                 $request->session()->flash('alert-success', 'Bric Information Added!!');
                 Activity::log('Inserted bric information with bric no. ' . $bric . ' date ' . $date . ' confirmed by ' . $user. ' sum_bric_weight ' . $sum_bric_weight. ' purchase_contract_price ' . $purchase_contract_price. ' purchase_contract_price_pounds ' . $purchase_contract_price_pounds. ' purchase_contract_differential ' . $purchase_contract_differential. ' purchase_contract_value ' . $purchase_contract_value);
             }
@@ -227,7 +227,7 @@ class DirectsContractsController extends Controller
                 // }
 
                 purchase::where('id', '=', $pid)
-                    ->update(['br_id' => $br_id, 'prc_purchase_contract_ratio' => $bric_ratio, 'prc_value' => $cost_value, 'prc_bric_value' => $bric_value]);
+                    ->update(['br_id' => $br_id, 'prc_purchase_contract_ratio' => $bric_ratio, 'prc_hedge' => $hedge, 'prc_value' => $cost_value, 'prc_bric_value' => $bric_value]);
                 Activity::log('Updated purchase information with bric no. ' . $bric . ' date ' . $date . ' confirmed by ' . $user);
 
             }

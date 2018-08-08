@@ -228,7 +228,7 @@ class CreditController extends Controller {
                                     ->update(['stb_bulk_ratio' => $ratios]);                        
                             } 
 
-                            $bric_details = bric::where('id', '=', $breakdown_without_stuffed_original->bric_id)->first();
+                            $bric_details = bric::where('id', '=', $breakdown_without_stuffed_original->br_id)->first();
 
                         }
 
@@ -248,7 +248,7 @@ class CreditController extends Controller {
                         }
 
 
-                        bric::where('id', '=', $bric_details->id)
+                        bric::where('id', '=', $bric_id)
                                     ->update(['br_credit_note_weight' => $credit_weight]);
 
                         $total_weight_credited = 0;
@@ -354,7 +354,13 @@ class CreditController extends Controller {
 
                 foreach ($tobeprocessedpurchased as $keytbp => $valuetbp) {   
 
-                    $in_weight = $cweight[$valuetbp];
+                    $in_weight = null;
+
+                    if ($valuetbp != null) {
+
+                        $in_weight = $cweight[$valuetbp];
+
+                    }
 
                     $in_bags = floor($in_weight/60);
 
@@ -362,29 +368,35 @@ class CreditController extends Controller {
 
                     $purchase_details = Purchase::where('cfd_id', $valuetbp)->first();
 
-                    $war_id = $purchase_details->war_id;
+                    if($purchase_details != null){
 
-                    $prc_value = $purchase_details->prc_value;
+                        $war_id = $purchase_details->war_id;
 
-                    $prc_bric_value = $purchase_details->prc_bric_value;
+                        $prc_value = $purchase_details->prc_value;
 
-                    $inv_weight = $purchase_details->inv_weight;
+                        $prc_bric_value = $purchase_details->prc_bric_value;
 
-                    $prc_value = ($in_weight/$inv_weight) * $prc_value;
+                        $inv_weight = $purchase_details->inv_weight;
 
-                    $prc_bric_value = ($in_weight/$inv_weight) * $prc_bric_value;
+                        $prc_value = ($in_weight/$inv_weight) * $prc_value;
 
-                    $breakdown_without_stuffed = Breakdown_Without_Stuffed::where('cfdid',$valuetbp)->first();
+                        $prc_bric_value = ($in_weight/$inv_weight) * $prc_bric_value;
 
-                    Purchase::where('cfd_id', $valuetbp)
-                        ->update(['cn_id' => $cnid, 'inv_weight' => $in_weight, 'prc_value' => $prc_value, 'prc_bric_value' => $prc_bric_value]);
+                        // $breakdown_without_stuffed = Breakdown_Without_Stuffed::where('cfdid',$valuetbp)->first();
+
+                        Purchase::where('cfd_id', $valuetbp)
+                            ->update(['cn_id' => $cnid, 'inv_weight' => $in_weight, 'prc_value' => $prc_value, 'prc_bric_value' => $prc_bric_value]);
 
 
-                    coffee_details::where('id', $valuetbp)
-                        ->update(['cfd_weight' => $in_weight, 'cfd_bags' => $in_bags, 'cfd_pockets' => $in_pkts]);
+                        coffee_details::where('id', $valuetbp)
+                            ->update(['cfd_weight' => $in_weight, 'cfd_bags' => $in_bags, 'cfd_pockets' => $in_pkts]);
 
-                    warrants::where('id', $war_id)
-                        ->update(['war_weight' => $in_weight]);
+                        warrants::where('id', $war_id)
+                            ->update(['war_weight' => $in_weight]);
+
+                    }
+
+
 
 
 
