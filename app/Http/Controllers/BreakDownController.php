@@ -178,7 +178,24 @@ class BreakDownController extends Controller {
 
        // $stock_items = Stock::where('id', '8094')->get();
 
-        $stock_items = Stock::where('id', '8110')->orWhere('id', '8111')->get();
+         $stock_items = Stock::where('id', '8110')->orWhere('id', '8229')->orWhere('id', '8230')->orWhere('id', '7956')->orWhere('id', '7957')->orWhere('id', '8103')->orWhere('id', '7972')->orWhere('id', '8261')->orWhere('id', '8262')->orWhere('id', '7894')->orWhere('id', '7896')->orWhere('id', '7857')->orWhere('id', '7934')->orWhere('id', '7952')->orWhere('id', '8095')->get();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         foreach ($stock_items as $key_si => $value_si) {
@@ -326,10 +343,7 @@ class BreakDownController extends Controller {
             
        // $stock_items = Stock::where('id', '7677')->orWhere('id', '7678')->get();
 
-
-
-       $stock_items = Stock::where('id', '8110')->orWhere('id', '8111')->get();
-
+        $stock_items = Stock::where('id', '8110')->orWhere('id', '8229')->orWhere('id', '8230')->orWhere('id', '7956')->orWhere('id', '7957')->orWhere('id', '8103')->orWhere('id', '7972')->orWhere('id', '8261')->orWhere('id', '8262')->orWhere('id', '7894')->orWhere('id', '7896')->orWhere('id', '7857')->orWhere('id', '7934')->orWhere('id', '7952')->orWhere('id', '8095')->get();
 
             // $stock_items = Stock::whereNotNull('st_bric_value')->get();
 

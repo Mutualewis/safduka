@@ -712,7 +712,7 @@ class ProcessingResultsQualityController extends Controller
 
                             }
                             
-                            $stb_value = $stb_store_ratio * $total_bric_initial_value; 
+                            $stb_value = $stb_value_ratio * $total_bric_initial_value; 
 
 
                            #$stb_store_ratio = ($psbvalue->stb_value/$stock_bric_value);

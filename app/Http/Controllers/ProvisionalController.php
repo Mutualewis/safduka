@@ -901,7 +901,7 @@ class ProvisionalController extends Controller
             if($ref_no != null){
                 $stockview = StockAndPurchased::select('*')->where('ctr_id', $countryID)->where('process_number', $ref_no)->orWhereNull('process_number')->whereNull('ended')->orderByRaw(DB::raw("FIELD(process_number, '$ref_no') DESC"));
             } else {
-                $stockview = StockAndPurchased::select('*')->where('ctr_id', $countryID)->whereNull('ended');
+                $stockview = StockAndPurchased::select('*')->where('ctr_id', $countryID)->whereNull('ended')->whereNull('process_number');
             }
 
         } else {
