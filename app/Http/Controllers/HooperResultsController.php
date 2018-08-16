@@ -441,10 +441,11 @@ class HooperResultsController extends Controller
 
             $ref_no    = Input::get('ref_no');
             $prdetails = Process::where('pr_instruction_number', $ref_no)->first();
-            $cid = $prdetails->ctr_id;
-            $prc_season = $prdetails->csn_id;
+           
 
             if ($prdetails != null) {
+                $cid = $prdetails->ctr_id;
+                $prc_season = $prdetails->csn_id;
 
                 if ($prdetails->pr_confirmed_by != null) {
                     $request->session()->flash('alert-warning', 'Process already confirmed!!');
