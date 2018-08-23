@@ -149,7 +149,7 @@ class QualityController extends Controller {
 	    	
 	    	$greencolor = quality_parameters::where('qg_id', '2')->get();
 	    	
-	    	$greendefects = quality_parameters::where('qg_id', '3')->get();
+	    	$greendefects = quality_parameters::where('qg_id', '3')->get()->orderBy('qp_parameter');
 
 	    	$processing = processing::where('prcss_auction', '1')->get();
 	    	

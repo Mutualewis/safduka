@@ -238,6 +238,21 @@
 
 	}
 
+	if (isset($partial) && isset($stock_details)) {
+
+		$bought_weight = $stock_details->inv_weight - $stock_details->st_net_weight;	
+
+		$packages_stock = CEIL($bought_weight/60);
+
+		$dispatch_kilograms = $bought_weight;	
+
+		$delivery_kilograms = $bought_weight;	
+
+		$batchview = null;
+
+
+	}
+
 	if(isset($grn_details)){
 
 		$grn_number = $grn_details->gr_number;	

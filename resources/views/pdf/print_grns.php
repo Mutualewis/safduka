@@ -15,7 +15,7 @@
 
 	    <div style="text-align: center; margin-top: 0.5cm;">
 		    <h2>
-		   		WAREHOUSE - GOODS RECEIVED NOTE &nbsp;&nbsp;&nbsp;&nbsp; <?php echo 'GRN-'.$grn_number; ?>
+		   		WAREHOUSE - GOODS RECEIVED NOTE &nbsp;&nbsp;&nbsp;&nbsp; <?php echo 'EGR-'.$grn_number; ?>
 
 		    </h2>
 	    </div>
@@ -25,7 +25,7 @@
 			<table style="text-align: left; font-size: 13px">
 				<tr>
 					<td width="250px" align="left">
-						<strong>Client:</strong> <?php if(isset($client)) echo $client; ?>
+						<strong>From:</strong> <?php if(isset($client)) echo $client; ?>
 					</td>
 					<td width="200px" align="left">
 						<strong>Delivery Date:</strong> <?php if(isset($delivery_date))  echo $delivery_date; ?> <br>
@@ -46,16 +46,13 @@
 						<strong>Wb. Ticket:</strong> <?php if(isset($weighbridge_ticket)) echo $weighbridge_ticket; ?>
 					</td>
 					<td width="150px" align="left">
-						<strong>Time Received.:</strong> <?php if(isset($time_received)) echo $time_received; ?> <br>
+						<strong>Start Time.:</strong> <?php if(isset($time_received)) echo $time_received; ?> <br>
 					</td>
 				</tr>
 
 				<tr>
 					<td width="150px" align="left">
-						<strong>Receiving Clerk:</strong> <?php if(isset($received_by))  echo $received_by; ?>
-					</td>
-					<td width="150px" align="left">
-						<strong>Signature:</strong> <?php echo " _________________________" ?> <br>
+						<strong>Stop Time.:</strong> <?php if(isset($time_received_stop)) echo $time_received_stop; ?> <br>
 					</td>
 				</tr>
 
@@ -109,6 +106,8 @@
 						$total_gross   = 0;
 						$total_tare   = 0;
 
+						$total_packages = 0;
+
 						if (isset($grnsview) && count($grnsview) > 0) {
 
 						    foreach ($grnsview as $value) {
@@ -126,6 +125,8 @@
 						        $total_pkts += $value->st_pockets;
 
 						        $total_tare += $value->st_tare;
+
+						        $total_packages += $value->st_packages;
 
 						        echo "<tr>";
 
@@ -148,9 +149,9 @@
 							echo "<td></td>";	
 							echo "<td>" . $total_bags . "</td>";
 							echo "<td>" . $total_pkts . "</td>";
-							echo "<td>" . $total . " Kgs</td>";
-							echo "<td>" . $total_tare . " Kgs</td>";
-							echo "<td>" . $total_gross . " Kgs</td>";
+							echo "<td>" . $total . " Kg</td>";
+							echo "<td>" . $total_tare . " Kg</td>";
+							echo "<td>" . $total_gross . " Kg</td>";
 
 						echo "</tr>";
 					?>
@@ -160,12 +161,24 @@
 
 
 		    <br>
+
+		    <p style="text-align: left; font-size: 13px">
+				<strong>Number of packages received:</strong>
+
+				<?php 
+
+				echo number_to_word($total_packages) ." (".$total_packages. ")";
+
+				?></br>
+
+
+			</p>
 			<p style="text-align: left; font-size: 13px">
 				<strong>Total weight received in words:</strong>
 
 				<?php 
 
-				echo number_to_word($total_gross);
+				echo number_to_word($total_gross) ." (".$total_gross. " Kg)";
 
 				?></br>
 
@@ -195,7 +208,10 @@
 
 		<footer class="footer" style="text-align: left;">
 			<p>
+
 			<i style="text-align: left; font-size: 13px">For Client:</i>
+			<br>
+			<br>			
 			<table style="text-align: left; font-size: 13px">
 				<tr>
 					<td width="100px" align="left">
@@ -210,10 +226,28 @@
 				</tr>	
 
 			</table>
+			<br>
+			<br>
 		<p>
 		</p>
 			<i style="text-align: left; font-size: 13px">For Ibero Kenya Ltd:</i>
-			<table style="text-align: left; font-size: 13px">
+			<br>
+			<br>
+			<table style="text-align: left; font-size: 13px" >
+				<tr>
+					<td width="100px" align="left">
+						<strong>Receiving Clerk:</strong> <?php if(isset($received_by))  echo $received_by; ?>
+					</td>
+					<td width="50px" align="left">
+						<strong>Signature:</strong> <?php echo " _________________________" ?> <br>
+					</td>
+				</tr>
+				<tr><td></td>
+				</tr>
+				<tr><td></td>
+				</tr>
+				<tr><td></td>
+				</tr>
 				<tr>
 					<td width="100px" align="left">
 						<strong>Supervisor:</strong> <?php echo "Nelson" ?>
@@ -222,24 +256,18 @@
 						<strong>Signature:</strong> <?php echo " _________________________"; ?> <br>
 					</td>
 				</tr>	
-				
+
 			</table>
+			<br>
 			<br>
 
 			<table style="text-align: left; font-size: 13px">
-				<tr>
-					<td width="100px" align="left">
-						<strong>Wr. Manager:</strong> <?php echo "Jane" ?>
-					</td>
-					<td width="50px" align="left">
-						<strong>Signature:</strong> <?php echo " _________________________"; ?> <br>
-					</td>					
-				</tr>
 
+				
 			</table>
+			
 
 
-				<br>
 			</p>
 			<br>
 			<br>
@@ -252,7 +280,7 @@
 		    <div style="text-align: left; font-size: 10pt;">Tet +254 20 2343009/2066886</div>
 		    <div style="text-align: left; font-size: 10pt;">Tel +254 733 893900/729407495</div>
 		    <div style="text-align: left; font-size: 10pt;">Fax +254 20 2056428</div>
-		    <div style="text-align: left; font-size: 10pt;">info.iberoke@ngea.com</div>
+		    <div style="text-align: left; font-size: 10pt;">info.ke@nkg.coffee</div>
 
 			<!-- <div style="text-align: center; font-weight: bold; font-size: 13pt;">Page {PAGENO}</div>
 		</htmlpagefooter> -->

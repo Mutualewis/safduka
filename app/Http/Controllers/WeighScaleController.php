@@ -28,6 +28,8 @@ use Ngea\Location;
 use Ngea\Batch;
 use Ngea\StockLocation;
 use Ngea\Person;
+use Ngea\StockBreakdown;
+
 use Yajra\Datatables\Datatables;
 use niklasravnsborg\LaravelPdf\Facades\Pdf as PDF;
 use Activity;
@@ -725,9 +727,9 @@ class WeighScaleController extends Controller {
 
             $weight = curl_exec ($ch);
 
-            curl_close ($ch);    
+            curl_close ($ch);   
 
-            $batch_kilograms = $weight;   
+            $batch_kilograms = $weight;  
 
         } else if (NULL !== Input::get('submitbatch')) {            
 
@@ -747,8 +749,34 @@ class WeighScaleController extends Controller {
 
             $coffee_details = NULL;
 
+            $preious_batch = Batch::where('st_id', $stock_id)->get();
+
             $btid = Batch::insertGetId (
             ['st_id' => $stock_id, 'btc_weight' => $batch_weight, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $wsid]);
+
+
+            if ($preious_batch != null) {
+
+                foreach ($preious_batch as $key_pb => $value_pb) {
+
+                    $batch_weight += $value_pb->btc_weight;
+
+                    $tare_batch += $value_pb->btc_tare;
+
+                    $net_weight_batch += $value_pb->btc_net_weight;
+
+                    $packages_batch += $value_pb->btc_packages;
+
+                    $bags_batch += $value_pb->bags_batch;
+
+                    $pockets_batch += $value_pb->btc_pockets;
+
+                }
+
+            }
+
+            Stock::where('id', '=', $stock_id)
+                        ->update([ 'st_net_weight' => $net_weight_batch ,'st_tare' => $tare_batch, 'st_bags' => $bags_batch, 'st_pockets' => $pockets_batch, 'st_gross' => $batch_weight]);
 
             Activity::log('Inserted Batch information with btid '.$btid. ' batch_kilograms '. $batch_weight. ' bags '. $bags_batch. ' pockets '. $pockets_batch. ' stid '. $stock_id.' btc_tare '.$tare_batch.' btc_net_weight '.$net_weight_batch);
 
@@ -760,7 +788,7 @@ class WeighScaleController extends Controller {
         } else if (NULL !== Input::get('printgrns')) {            
 
             $grnsview_summary = DB::table('stock_st AS st')
-                ->select('*','st.id as stid', 'prc.bs_id as bsid', 'gr.created_at as gr_date')
+                ->select('*','st.id as stid', 'prc.bs_id as bsid', 'gr.created_at as gr_date', 'gr.updated_at as gr_end_date')
                 ->leftJoin('purchases_prc AS prc', 'st.prc_id', '=', 'prc.id')
                 ->leftJoin('coffee_details_cfd AS cfd', 'prc.cfd_id', '=', 'cfd.id')
                 ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'cfd.cgrad_id')
@@ -777,7 +805,7 @@ class WeighScaleController extends Controller {
 
             if ($grnsview_summary != null) {
 
-                $client = 'IBERO ('. $grnsview_summary->wr_name. ')';
+                $client =  $grnsview_summary->wr_name;
 
                 $delivery_date = $grnsview_summary->gr_date;
 
@@ -791,7 +819,11 @@ class WeighScaleController extends Controller {
 
                 $time_received = $grnsview_summary->gr_date;
 
-                $time_received = date("h:i:s", strtotime($time_received));
+                $time_received_stop = $grnsview_summary->gr_end_date;
+
+                $time_received = date("H:i:s", strtotime($time_received));
+
+                $time_received_stop = date("H:i:s", strtotime($time_received_stop));
 
                 $received_by = $person_name;
 
@@ -800,6 +832,8 @@ class WeighScaleController extends Controller {
                 $driver_id = $grnsview_summary->wb_driver_id;
 
                 $warehouse_manager = $grnsview_summary->wr_att;
+
+
 
             }
 
@@ -816,7 +850,7 @@ class WeighScaleController extends Controller {
                 ->get();  
 
 
-            $pdf = PDF::loadView('pdf.print_grns', compact('grnsview','client', 'delivery_date', 'movement_permit', 'vehicle', 'weighbridge_ticket', 'time_received', 'received_by', 'driver_name', 'driver_id', 'grn_number', 'warehouse_manager'));
+            $pdf = PDF::loadView('pdf.print_grns', compact('grnsview','client', 'delivery_date', 'movement_permit', 'vehicle', 'weighbridge_ticket', 'time_received', 'received_by', 'driver_name', 'time_received_stop', 'driver_id', 'grn_number', 'warehouse_manager'));
 
             return $pdf->stream('print_grn.pdf');
 

@@ -830,9 +830,9 @@ class MovementController extends Controller {
 		$StockView = StockLocationView::where('wrid', $wrnameFrom)->whereNotNull('btc_instructed_by')->where('insloc_ref',$ref_no)->get();
 	
 		$StockView=$StockView->toArray();
-	
+		
 		foreach($StockView as $value){
-			$cweight       = $value['btc_net_weight'];
+			$cweight       = $value['btc_weight'];
 			if ($cweight != null) {
 				$weight_in += $cweight;
 			}
@@ -843,6 +843,7 @@ class MovementController extends Controller {
 			$rateid=$rate_details->id;
 			$servicename=$rate_details->service;
 			$bagstopay  = ceil($weight_in / 60);
+			
 			$charge = $rate*$bagstopay;
 			if($bagstopay!=0){
 					
