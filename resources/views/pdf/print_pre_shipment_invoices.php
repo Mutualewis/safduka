@@ -8,6 +8,7 @@
 
     <body>
 	    <?php
+
 	    	foreach ($getQueryOrganisation as $key => $value) {
 	    		$owner = null;
 	    		if ($value->cg_id != "10000001") {

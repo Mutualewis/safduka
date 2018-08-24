@@ -890,7 +890,7 @@ class WeighScaleController extends Controller {
 
         }  
 
-        if ($coffee_details != null) {
+        if ($coffee_details != null) {            
 
             $cfd_id = $coffee_details->id;
 
@@ -900,7 +900,9 @@ class WeighScaleController extends Controller {
 
                 $stock_details = Stock::where('prc_id', $purchase_details->id)->first();
 
-            }                
+            }   
+
+            // print_r($stock_details);        
 
 
         } else {

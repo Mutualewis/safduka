@@ -684,59 +684,9 @@ class ProcessingInstructionsViewController extends Controller
 
         }
 
-
         $pdf = PDF::loadView('pdf.print_pre_shipment_invoices', compact('getQueryOrganisation','getQuery', 'contract', 'client', 'sum_total', 'weight', 'approved_weight', 'shipment'));
 
         return $pdf->stream('print_pre_shipment_invoices.pdf');
-
-        // Do some querying..
-        $queryBuilder = $query;
-
-        // Set Column to be displayed
-        $columns = [
-            'Contract' => function($result) {
-                return $result->br_no;
-            },
-
-            'Code' => function($result) {
-                return $result->bs_code;
-            },
-            'Invoice From' => function($result) {
-                return $result->cg_name;
-            },
-            'Weight' => function($result) {
-                return $result->weight_total;
-            }
-
-        ];
-        /*
-            Generate Report with flexibility to manipulate column class even manipulate column value (using Carbon, etc).
-
-            - of()         : Init the title, meta (filters description to show), query, column (to be shown)
-            - editColumn() : To Change column class or manipulate its data for displaying to report
-            - editColumns(): Mass edit column
-            - showTotal()  : Used to sum all value on specified column on the last table (except using groupBy method). 'point' is a type for displaying total with a thousand separator
-            - groupBy()    : Show total of value on specific group. Used with showTotal() enabled.
-            - limit()      : Limit record to be showed
-            - make()       : Will producing DomPDF / SnappyPdf instance so you could do any other DomPDF / snappyPdf method such as stream() or download()
-        */
-        return PdfReport::of($title, $meta, $queryBuilder, $columns)
-            ->editColumns(['total_cost','total_col', 'total_diff'], [
-                'class' => 'hidden'
-            ])
-            ->setCss([
-                '.hidden' => 'display: none;'
-            ])
-
-            ->editColumns(['Contract', 'Code', 'Invoice Number', 'Weight'], [
-                'class' => 'right'
-            ])
-            ->showTotal([
-                'Weight' => 'point'
-            ])
-            // ->groupBy('Seller')
-            // ->stream(); // or download('filename here..') to download pdf
-            ->stream('allocations_'.$contract);
 
     }
 

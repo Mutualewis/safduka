@@ -163,8 +163,11 @@
 	$grnConfirmed = NULL;
 	$partial = NULL;
 	$bought_weight = NULL;
+	$ignore_partial = false;
 
 	if (isset($coffee_details)){
+
+		$ignore_partial = true;
 
 		$sif_lot = $coffee_details->lot;
 
@@ -197,6 +200,13 @@
 		}	
 
 
+		if (isset($stock_details)){
+			
+			$partial = $stock_details->st_partial_delivery;	
+
+		}
+
+
 
 	} else if (isset($stock_details)){
 
@@ -211,8 +221,6 @@
 		$grade = $stock_details->cgrad_name;
 
 		$coffee_grower = $stock_details->cfd_grower_mark;		
-
-		$partial = $stock_details->st_partial_delivery;	
 
 		$bought_weight = $stock_details->inv_weight;	
 
@@ -237,8 +245,10 @@
 		}	
 
 	}
+		
 
-	if (isset($partial) && isset($stock_details)) {
+	if (isset($partial) && isset($stock_details) && $ignore_partial == false) {
+
 
 		$bought_weight = $stock_details->inv_weight - $stock_details->st_net_weight;	
 

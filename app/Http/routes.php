@@ -205,8 +205,8 @@ Route::group(['middleware' => 'auth'], function()
 	Route::get('/weighbridgeout', 'WeighbridgeController@weighbridgeOutForm'); 
 	Route::post('/weighbridgeout', 'WeighbridgeController@weighbridgeout');
 
-	Route::get('/arrivalinformation', 'WarehouseController@arrivalInformationForm'); 
-	Route::post('/arrivalinformation', 'WarehouseController@arrivalInformation');
+	// Route::get('/arrivalinformation', 'WarehouseController@arrivalInformationForm'); 
+	// Route::post('/arrivalinformation', 'WarehouseController@arrivalInformation');
 
 	Route::get('/changelocation', 'WarehouseController@changeLocationForm'); 
 	Route::post('/changelocation', 'WarehouseController@changeLocation');	
