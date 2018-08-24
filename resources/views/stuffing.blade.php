@@ -120,6 +120,9 @@
 	if (!isset($wbtk)) {
 		$wbtk  = NULL;
 	}
+	if (!isset($instruction_id)) {
+		$instruction_id  = NULL;
+	}
 
 
 	if (!isset($pkg)) {
@@ -159,6 +162,7 @@
  
 
 	$sct_confirmed = null;
+	
 	if (isset($SalesContract)){		
 			$cid = $SalesContract->ctr_id;
 			$contract = $SalesContract->sct_number;
@@ -299,6 +303,23 @@
 
 		        </div>
 
+		        <div class="row">
+ 		            <div class="form-group col-md-6">
+		                <label>Select Instruction *</label> 
+		                <select class="form-control" id="instruction" name="instruction" >
+		                	<option></option> 
+							@if (isset($SalesContractSummary) && count($SalesContractSummary) > 0)
+										@foreach ($SalesContractSummary->all() as $value)
+											@if ($instruction_id ==  $value->stid)
+												<option value="{{ $value->stid }}" selected="selected">{{ $value->pr_instruction_number}}</option>
+											@else
+												<option value="{{ $value->stid }}">{{ $value->pr_instruction_number}}</option>
+											@endif
+										@endforeach									
+							@endif
+		                </select>		
+		            </div>   
+		        </div>
 
 		        <h2>Stuffing</h2>
 

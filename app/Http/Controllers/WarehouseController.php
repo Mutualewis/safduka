@@ -1532,6 +1532,9 @@ class WarehouseController extends Controller {
         $packages = Input::get('packages');
         $clid = Input::get('client');
         $spid = Input::get('shipmonth');
+        $instruction_id = Input::get('instruction');
+
+
         
         $bskt = Input::get('basket');
 
@@ -1607,25 +1610,24 @@ class WarehouseController extends Controller {
 
 	            if ($weight_note_no != null) {
 	                Stuffing::insert(
-	                    ['sct_id' => $sctID, 'stff_weight_note' => $weight_note_no, 'wb_id' => $wbtk, 'shpr_id' => $shipper, 'stff_weight' => $weight_staffed, 'stff_date' => $date, 'stff_container' => $container_number]);
+	                    ['sct_id' => $sctID, 'st_id' => $instruction_id, 'stff_weight_note' => $weight_note_no, 'wb_id' => $wbtk, 'shpr_id' => $shipper, 'stff_weight' => $weight_staffed, 'stff_date' => $date, 'stff_container' => $container_number]);
 
 	                Activity::log('Added Stuffing sctID '. $sctID. ' weight_note_no '. $weight_note_no. ' wbtk '. $wbtk. ' shipper '. $shipper. ' weight_staffed '. $weight_staffed.' date '.$date.' container_number '.$container_number);
 	            }
 
             }
 
-
-
             $SalesContract = SalesContract::where('ctr_id', '=', $cid)->where('sct_number',  $contract)->first();
-            $StuffingView = StuffingView::where('sct_id', $sctID)->get();
+
+            $StuffingView = StuffingView::where('sct_id', $sctID)->where('st_id', $instruction_id)->get();
 
             $disposaldate = Input::get('disposaldate');
 
-            return View::make('stuffing', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'disposaldate', 'description', 'packages', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContract', 'SalesContractSummary', 'client_reference', 'rates', 'teams'));
+            return View::make('stuffing', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'disposaldate', 'description', 'packages', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContract', 'SalesContractSummary', 'client_reference', 'rates', 'teams', 'instruction_id'));
 
         }  else if (NULL !== Input::get('confirmcontract')) {
 
-            $StuffingView = StuffingView::where('sct_id', $sctID)->get();
+            $StuffingView = StuffingView::where('sct_id', $sctID)->where('st_id', $instruction_id)->get();
 
             $sum_stuffed = null;
 
@@ -1641,22 +1643,16 @@ class WarehouseController extends Controller {
 
             $sale_contract_id = Stock::where('id', $stid_get)->where('sct_id', $sctID)->first();
 
-         
-
             if ($sale_contract_id == null ) {
                 # code...                
                 $request->session()->flash('alert-warning', 'The results are not yet confirmed!');
 
-                return View::make('stuffing', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'rates', 'teams'));            
+                return View::make('stuffing', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'rates', 'teams', 'instruction_id'));            
             }
 
             $stock_weight = $sale_contract_id->st_net_weight;
             $stock_ID = $sale_contract_id->id;
             $csn_id = $sale_contract_id->csn_id;
-
-            // print_r($stock_ID);
-
-            // print_r($dddddd);
 
             $SalesContract = SalesContract::where('ctr_id', '=', $cid)->where('sct_number',  $contract)->first();
             $sum_contract_weight = null;
@@ -1758,8 +1754,32 @@ class WarehouseController extends Controller {
             Stock::where('id', '=', $stock_ID)
                         ->update([ 'st_ended_by' => $user, 'st_disposed_by' => $user]);
 
-            SalesContract::where('ctr_id', '=', $cid)->where('sct_number',  $contract)
+            $sale_contract_all_ended = Stock::where('sct_id', $sctID)->get();
+
+            $st_all_ended = false;
+
+            if ($sale_contract_all_ended != null) {
+
+            	foreach ($sale_contract_all_ended as $key_scae => $value_scae) {
+
+            		if ($value_scae->st_disposed_by == null) {
+
+            			$st_all_ended = true;
+
+            		}
+
+
+
+            	}
+            }
+
+            if ($st_all_ended != true) {
+
+            	SalesContract::where('ctr_id', '=', $cid)->where('sct_number',  $contract)
                 ->update([ 'sct_stuffed' => $user, 'sct_updated_user' => $user]);
+
+            }
+            
 
             $client = null;
 
@@ -1793,12 +1813,12 @@ class WarehouseController extends Controller {
 
             });
 
-            return View::make('stuffing', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'rates', 'teams'));
+            return View::make('stuffing', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'rates', 'teams', 'instruction_id'));
 
         } else if(NULL !== Input::get('searchButtonContract')){
 
             $SalesContract = SalesContract::where('ctr_id', '=', $cid)->where('sct_number',  $contract)->first();
-            $StuffingView = StuffingView::where('sct_id', $sctID)->get();
+            $StuffingView = StuffingView::where('sct_id', $sctID)->where('st_id', $instruction_id)->get();
 
             $disposaldate = Input::get('disposaldate');
 
@@ -1809,10 +1829,10 @@ class WarehouseController extends Controller {
                 }
             }
             $request->session()->flash('alert-success', 'Sales Contract Information Found!!');
-            return View::make('stuffing', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'rates', 'teams'));
+            return View::make('stuffing', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'rates', 'teams', 'instruction_id'));
 
         } else {
-            return View::make('stuffing', compact('id', 'Season', 'country', 'shipmentmonth','client', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'cid', 'rates', 'teams'));
+            return View::make('stuffing', compact('id', 'Season', 'country', 'shipmentmonth','client', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'cid', 'rates', 'teams', 'instruction_id'));
         }
 
     }
