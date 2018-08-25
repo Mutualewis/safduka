@@ -318,7 +318,15 @@
 										@endforeach									
 							@endif
 		                </select>		
-		            </div>   
+		            </div> 
+
+		            <div class="form-group col-md-2">
+		                <label style="color: red;" >Partial Confirmation</label>
+		                <?php
+		                	echo "<input class='form-control' type='checkbox' name='partial' value='1' />";
+		                ?>
+		            </div>	
+
 		        </div>
 
 		        <h2>Stuffing</h2>

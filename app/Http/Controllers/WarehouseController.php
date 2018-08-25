@@ -1598,8 +1598,15 @@ class WarehouseController extends Controller {
         $weight = Input::get('weight');
 
         $stid_get = Input::get('stid');
+        $partial = Input::get('partial');
+
 
         if (NULL !== Input::get('createsalescontract')){
+
+            $this->validate($request, [
+                'country' => 'required', 'instruction' => 'required', 'contract' => 'required',  
+            ]);
+
 
             $SalesContract = SalesContract::where('ctr_id', '=', $cid)->where('sct_number',  $contract)->whereNull('sct_stuffed')->first();
             if ($SalesContract == NULL){
@@ -1626,6 +1633,9 @@ class WarehouseController extends Controller {
             return View::make('stuffing', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'disposaldate', 'description', 'packages', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContract', 'SalesContractSummary', 'client_reference', 'rates', 'teams', 'instruction_id'));
 
         }  else if (NULL !== Input::get('confirmcontract')) {
+            $this->validate($request, [
+                'country' => 'required', 'instruction' => 'required', 'contract' => 'required',  
+            ]);
 
             $StuffingView = StuffingView::where('sct_id', $sctID)->where('st_id', $instruction_id)->get();
 
@@ -1641,7 +1651,7 @@ class WarehouseController extends Controller {
                 $sum_stuffed += $value->stff_weight;
             }
 
-            $sale_contract_id = Stock::where('id', $stid_get)->where('sct_id', $sctID)->first();
+            $sale_contract_id = Stock::where('id', $instruction_id)->where('sct_id', $sctID)->first();
 
             if ($sale_contract_id == null ) {
                 # code...                
@@ -1660,7 +1670,7 @@ class WarehouseController extends Controller {
                 $sum_contract_weight = $SalesContract->sct_weight;
             }
 
-            if ($sum_stuffed < $stock_weight && $SalesContract->sct_stuffed == null ) {
+            if ($sum_stuffed < $stock_weight && $SalesContract->sct_stuffed == null && $sale_contract_id->st_disposed_by == null) {
                 //return to stock
                 $to_be_returned = $stock_weight - $sum_stuffed;
 
@@ -1773,7 +1783,7 @@ class WarehouseController extends Controller {
             	}
             }
 
-            if ($st_all_ended != true) {
+            if ($st_all_ended != true && $partial == null) {
 
             	SalesContract::where('ctr_id', '=', $cid)->where('sct_number',  $contract)
                 ->update([ 'sct_stuffed' => $user, 'sct_updated_user' => $user]);
@@ -1802,6 +1812,11 @@ class WarehouseController extends Controller {
             	$ship_month = date('F', $ship_month);
             	
             }
+
+            $SalesContract = SalesContract::where('ctr_id', '=', $cid)->where('sct_number',  $contract)->first();
+
+            $SalesContractSummary = Sales_Contract_Summary::where('sct_number',  $contract)->get();
+            $StuffingView = StuffingView::where('sct_id', $sctID)->where('st_id', $instruction_id)->get();
 
             $data = array('name'=>"Trading Department", "contract"=>$contract, "client"=>$client, "ship_month"=>$ship_month, "quality"=>$quality, "quantity"=>$quantity, "ship_year"=>$ship_year);    
 

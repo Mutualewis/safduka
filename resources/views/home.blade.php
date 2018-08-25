@@ -1786,8 +1786,17 @@ new Chart(contextBar).Bar(data, {
       min-width: 1000 !important;
     }
 
+    html {
+      font-size: 15px;
+    }
+
 </style>
 
+<style>
+  a {
+    color: #337ab7;
+  }
+</style>
 @stop
 
 <script type="text/javascript" charset="utf8" src="{{ asset("plugins/jquery/jquery.min.js") }}" ></script>
