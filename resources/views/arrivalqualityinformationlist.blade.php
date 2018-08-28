@@ -215,6 +215,9 @@
 									</th>
 									<th>
 										Basket
+									</th>
+									<th>
+										Moisture
 									</th>	
 									<th>
 										Green
@@ -283,6 +286,7 @@
 												echo "<td>".$value->weight."</td>";
 												echo "<td>".$value->code."</td>";			                	
 
+								                echo "<td>".$value->st_moisture."</td>";
 								                echo "<td>".$value->green."</td>";
 												echo "<td align='center'><input name='accept$id' type='checkbox' value='$id'></td>";
 												echo "<td align='center'><input name='reject$id' type='checkbox' value='$id'></td>";
@@ -304,6 +308,7 @@
 								    <?php
 									    echo "<td>".$total." KGs</td>";
 									?>
+									<td></td>
 									<td></td>
 									<td></td>
 									<td></td>

@@ -27,7 +27,7 @@
 
 				</div>				
 			</div>
-<?php 
+<?php
 	use Ngea\BatchView;
 
 	if(session('maincountry')!=NULL){
@@ -148,6 +148,9 @@
 	if (!isset($dispatch_date)) {
 		$dispatch_date = NULL;
 	}
+	if (!isset($st_quality_check)) {
+		$st_quality_check = NULL;
+	}
 
 	$screen = 0;
 	$process = 0;
@@ -165,7 +168,10 @@
 	$bought_weight = NULL;
 	$ignore_partial = false;
 
-	if (isset($coffee_details)){
+	$pkg_status = NULL;
+
+
+	if (isset($coffee_details) && !isset($st_quality_check)){
 
 		$ignore_partial = true;
 
@@ -210,19 +216,34 @@
 
 	} else if (isset($stock_details)){
 
-		$stock_id = $stock_details->stid;
-
 		$sif_lot = $stock_details->cfd_lot_no;
 
 		$outt_number = $stock_details->cfd_outturn;
 
 		$bskt = $stock_details->bsid;
 
+		if ($bskt == null){
+
+			$bskt = $stock_details->bs_id;	
+
+		}
+
+
 		$grade = $stock_details->cgrad_name;
 
 		$coffee_grower = $stock_details->cfd_grower_mark;		
 
-		$bought_weight = $stock_details->inv_weight;	
+		if ($coffee_grower == null){
+
+			$coffee_grower = $stock_details->st_mark;	
+
+		}
+
+		$bought_weight = $stock_details->inv_weight;
+
+		$pkg_status = $stock_details->st_package_status;
+
+		$st_quality_check = $stock_details->st_quality_check;	
 
 		$packages_stock = $stock_details->st_packages;
 
@@ -246,9 +267,9 @@
 
 	}
 		
+	
 
-	if (isset($partial) && isset($stock_details) && $ignore_partial == false) {
-
+	if (isset($partial) && isset($stock_details) && $ignore_partial == false ) {
 
 		$bought_weight = $stock_details->inv_weight - $stock_details->st_net_weight;	
 
@@ -275,6 +296,18 @@
 
 	}
 
+	$gr_confirmed_by = NULL;
+
+	if (isset($grnsview)){
+
+		foreach ($grnsview as $value) {
+
+			$gr_confirmed_by = $value->gr_confirmed_by;
+
+		}
+
+	}
+
 
 ?>
 
@@ -285,7 +318,7 @@
 
 			    <h3>General Information</h3>	
 			    <div class="row">
-		            <div class="form-group col-md-6">
+		            <div class="form-group col-md-3">
 		                <label>Country</label>
 		                <select class="form-control" name="country"  onchange="this.form.submit()">
 		                	<option></option> 
@@ -303,7 +336,7 @@
 		                </select>		
 		            </div>	
 
-		            <div class="form-group col-md-6">
+		            <div class="form-group col-md-3">
 		            	<label>Weighbridge Ticket</label>
 		                <select class="form-control" name="weighbridgeTK">
 		               		<option></option>
@@ -320,23 +353,8 @@
 		                </select>
 		            </div>
 
-			    	<div class="form-group col-md-6">
-			    		<label>GRN</label>
-	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" name="grn_number" style="text-transform:uppercase; " placeholder="Search/Enter GRN..."  value="{{ $grn_number}}"></input>
-
-		                        <span class="input-group-btn">
-
-			                        <button type="submit" name="searchButtonGrn" class="btn btn-default">
-			                        	<i class="fa fa-search"></i>
-			                        </button>
-
-	                    		</span>
-	                    </div>
-	                </div>
-
-		            <div class="form-group col-md-6">
-		            	<label>Season (Required)</label>
+		            <div class="form-group col-md-3">
+		            	<label>Season</label>
 		                <select class="form-control" name="outt_season">
 		               		<option></option>
 							@if (isset($Season))
@@ -350,97 +368,57 @@
 									
 							@endif
 		                </select>
-		            </div>	 
+		            </div>	
 
-			    </div>
+			    	<div class="form-group col-md-3">
+			    		<label>GRN</label>
+	                    <div class="input-group custom-search-form">
+	                        <input type="text" class="form-control" name="grn_number" style="text-transform:uppercase; " placeholder="Search/Enter GRN..."  value="{{ $grn_number}}"></input>
 
-				<div class="row">
-		            <div class="form-group col-md-4">
-		            	<label></label>
-						<button type="submit" name="updateGRN" class="btn btn-lg btn-success btn-block">Update GRN</button>		           		
-		            </div>						
-				</div>
+		                        <span class="input-group-btn">
+
+			                        <button type="button" name="searchButtonGrn" class="btn btn-default" onclick="this.form.submit();">
+			                        	<i class="fa fa-search"></i>
+			                        </button>
+
+	                    		</span>
+	                    </div>
+	                </div> 
+
+	            </div>
+
+
+
+
 
  				<h3>Outturn</h3>
 
 	        	<div class="row">
 
-	           		<div class="form-group col-md-4">
-		                <label>Sale</label>
-		                <select class="form-control" name="sale">
-		                	<option>Sale No.</option> 
-							@if (isset($sale) && count($sale) > 0)
-										@foreach ($sale->all() as $sales)
-											@if ($saleid ==  $sales->id)
-												<option value="{{ $sales->id }}" selected="selected">{{ $sales->sl_no}}</option>
-											@else
-												<option value="{{ $sales->id }}">{{ $sales->sl_no}}</option>
-											@endif
-
-										@endforeach
-							@else
-								<option>No Sale Found</option>		
-							@endif
-		                </select>		
-		            </div> 
-
 	        		<div class="form-group col-md-4">
-	        			<label>Lot</label>
-                        <input type="text" class="form-control" name="sif_lot" style="text-transform:uppercase; " placeholder="Search LOT..."  value="{{ old('sif_lot'). $sif_lot }}"></input>
-	                </div>	
+	        			<label>Sale-Lot-Outturn-Grade</label></br>
 
-	        		<div class="form-group col-md-4">
-	        			<label>Outturn</label>
-                        <input type="text" class="form-control" name="outt_number" style="text-transform:uppercase; " placeholder="Outturn"  value="{{ old('outt_number'). $outt_number }}"></input>
-						<input class="form-control" id="stock_id"  name="stock_id" value="{{ old('stock_id').$stock_id  }}" hidden>
-
-	                </div>	
-
-	        	</div>
-
-	        	<div class="row">
-  
-		            <div class="form-group col-md-4">
-		                <label>Grade</label>
-		                <select class="form-control" name="coffee_grade" >
+		                <select class="form-control" style="padding: 4px 14px; width: auto; height: initial;" id="outt_number_search" name="outt_number_search" placeholder="Select Outturn" data-search="true" onchange="this.form.submit();">
 		                	<option></option> 
-							@if (isset($coffeeGrade) && count($coffeeGrade) > 0)
-										@foreach ($coffeeGrade->all() as $cgrade)
-											@if ($grade ==  $cgrade->cgrad_name)
-												<option value="{{ $cgrade->id }}" selected="selected">{{ $cgrade->cgrad_name}}</option>
+							@if (isset($expected_arrival) && count($expected_arrival) > 0)
+										@foreach ($expected_arrival as $value)
+											@if ($stock_id ==  $value->id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->sale.'-'.$value->lot.'-'.$value->outturn.'-'.$value->grade}}</option>
 											@else
-												<option value="{{ $cgrade->id }}">{{ $cgrade->cgrad_name}}</option>
+												<option value="{{ $value->id }}">{{ $value->sale.'-'.$value->lot.'-'.$value->outturn.'-'.$value->grade}}</option>
 											@endif
 
 										@endforeach
 									
 							@endif
-		                </select>		
-		            </div>
-  
-		            <div class="form-group col-md-4">
-		                <label>Warrant (optional)</label>
-		                <select class="form-control" name="warrant" >
-							@if (isset($warrant_details) && count($warrant_details) > 0)
-										@foreach ($warrant_details->all() as $value)
-												<option value="{{ $value->warid }}" selected="selected">{{ $value->war_no}}</option>
-										@endforeach
-									
-							@endif
-		                </select>		
-		            </div>
+		                </select>
+
+	                </div>	
 
 		            <div class="form-group col-md-4">
-		            	<label> </label> </br>
-						<button type="submit" name="searchButton" class="btn btn-warning">
-							Search<i class="fa fa-search"></i>
-						</button>
-					</div>	
-
-	        	</div>
-	        	</br>
-
-	        	<div class="row">
+		           		<label>Mark</label>
+		                <input type="text"  class="form-control" name="coffee_grower" style="text-transform:uppercase" placeholder="Grower Mark" value="{{ old('coffee_grower'). $coffee_grower }}" readonly>	                
+		            </div> 
 
 		            <div class="form-group col-md-4">
 		                <label>Basket</label>
@@ -449,9 +427,9 @@
 							@if (count($basket) > 0)
 										@foreach ($basket->all() as $value)
 										@if ($bskt ==  $value->id)
-											<option value="{{ $value->id }}" selected="selected">{{ $value->bs_quality. " (". $value->bs_code.")"}}</option>
+											<option value="{{ $value->id }}" selected="selected">{{ $value->bs_code}}</option>
 										@else
-											<option value="{{ $value->id }}">{{ $value->bs_quality. " (". $value->bs_code.")"}}</option>
+											<option value="{{ $value->id }}">{{ $value->bs_code}}</option>
 										@endif
 										@endforeach
 									
@@ -459,33 +437,25 @@
 		                </select>
 		            </div>
 
-		            <div class="form-group col-md-4">
-		           		<label>Mark</label>
-		                <input type="text"  class="form-control" name="coffee_grower" style="text-transform:uppercase" placeholder="Grower Mark" value="{{ old('coffee_grower'). $coffee_grower }}" readonly>	                
-		            </div> 
-
-		            <div class="form-group col-md-4">
-		           		<label>Bought Weight</label>
-		                <input type="text"  class="form-control" name="bought_weight" style="text-transform:uppercase" placeholder="Bought Weight" value="{{ old('bought_weight'). $bought_weight }}" readonly>	                
-		            </div> 
-
 	        	</div>
 
 	        	<div class="row">
 
 		            <div class="form-group col-md-4">
 		                <label>Dispatch Net Weight</label>
-		                <input class="form-control"  id="dispatch_kilograms"  name="dispatch_kilograms" oninput="myFunction()" value="{{ old('dispatch_kilograms').$dispatch_kilograms  }}">
+		                <input class="form-control"  id="dispatch_kilograms"  name="dispatch_kilograms" oninput="myFunction()" value="{{ old('dispatch_kilograms').$dispatch_kilograms  }}" required>
 		            </div>
 
 		            <div class="form-group col-md-4">
 		            	<label>Dispatch Date</label>
-		           		<input class="form-control"  id="date"  name="date" value="{{ old('dispatch_date').$dispatch_date  }}">
+		           		<input class="form-control"  id="date"  name="date" value="{{ old('dispatch_date').$dispatch_date  }}" required>
 		            </div>	  
 
+	                <input class="form-control" type="hidden"  id="delivery_kilograms"  name="delivery_kilograms" oninput="myFunction()" value="{{ old('delivery_kilograms').$delivery_kilograms  }}" required>
+
 		            <div class="form-group col-md-4">
-		                <label>Delivery Gross Weight</label>
-		                <input class="form-control"  id="delivery_kilograms"  name="delivery_kilograms" oninput="myFunction()" value="{{ old('delivery_kilograms').$delivery_kilograms  }}">
+		                <label>Moisture(%)</label>
+		                <input class="form-control"  id="moisture"  name="moisture" oninput="myFunction()" value="{{ old('moisture').$moisture  }}" required>
 		            </div>
 
 	            </div>
@@ -493,13 +463,29 @@
 	            <div class="row">
 
 		            <div class="form-group col-md-4">
-		                <label>Moisture(%)</label>
-		                <input class="form-control"  id="moisture"  name="moisture" oninput="myFunction()" value="{{ old('moisture').$moisture  }}">
+		                <label>Packaging Check</label>
+		                <select class="form-control" name="package_status" required>
+		                	<option></option> 
+								@if ($pkg_status ==  NULL)
+									<option value="" selected="selected">Okay</option>
+								@else
+									<option value="" >Okay</option>
+								@endif
+
+								@if ($pkg_status !=  NULL)
+									<option value="1" selected="selected">Not Okay</option>
+								@else
+									<option value="1" >Not Okay</option>
+								@endif
+
+
+
+		                </select>		
 		            </div>
 
 		            <div class="form-group col-md-4">
 		                <label>Packaging</label>
-		                <select class="form-control" name="packaging">
+		                <select class="form-control" name="packaging" required>
 		                	<option></option> 
 								@if (isset($packaging))
 											@foreach ($packaging->all() as $value)
@@ -517,7 +503,7 @@
 
 		            <div class="form-group col-md-2">
 			                <label >Packages</label>
-			                <input class="form-control"  id="packages_stock"  name="packages_stock" oninput="calculateValue()" value="{{ old('packages_stock').$packages_stock  }}">		            
+			                <input class="form-control"  id="packages_stock"  name="packages_stock" oninput="calculateValue()" value="{{ old('packages_stock').$packages_stock  }}" required>		            
 		            </div>	
 
 		            <div class="form-group col-md-2">
@@ -585,7 +571,7 @@
 
 		        	<div class="form-group col-md-4">
 		                <label>Weigh Scales</label>
-		                <select class="form-control" name="weigh_scales">
+		                <select class="form-control" name="weigh_scales" onchange="this.form.submit()">
 		                	<option></option> 
 
 					        	<?php
@@ -682,7 +668,21 @@
 		            </div>
 		            <div class="form-group col-md-2">
 		            	<label></label>
-						<button type="submit" name="fetchweight" class="btn btn-lg btn-success btn-block">Fetch</button>	           		
+			            <?php
+			            	if(session('scale') != NULL && session('scale') == $wsid) {
+			            ?>		
+			            	<button type="submit" name="resetweight" class="btn btn-lg btn-danger btn-block">Reset</button>	  	
+
+				        <?php
+				        	} else {
+
+				        ?>							          		           	
+							<button type="submit" name="fetchweight" class="btn btn-lg btn-success btn-block">Fetch</button>
+
+				        <?php
+				        	}
+				        ?>
+
 		            </div>	
 
 	        	</div>
@@ -693,9 +693,26 @@
 		            <div class="form-group col-md-4">
 						<button type="submit" name="submitbatch" class="btn btn-lg btn-success btn-block">Add Batch</button>	           		
 		            </div>	
-		            <div class="form-group col-md-4">
-						<button type="submit" name="printgrns" class="btn btn-lg btn-warning btn-block">Print GRN</button>	           		
-		            </div>	
+
+		            <?php
+		            	if($gr_confirmed_by != NULL) {
+		            ?>
+			            <div class="form-group col-md-4">
+							<button type="submit" name="printgrns" class="btn btn-lg btn-warning btn-block">Print GRN</button>	           		
+			            </div>	
+
+			        <?php
+			        	} else {
+
+			        ?>
+			            <div class="form-group col-md-4">
+							<button type="submit" name="confirmgrns" class="btn btn-lg btn-danger btn-block">Confirm GRN</button>	           		
+			            </div>	
+
+			        <?php
+			        	}
+			        ?>
+
 		        </div>
 			</form>
 
@@ -910,11 +927,4 @@
 </div>	
 
 @stop
-<!-- @if(isset($willShow)) -->
-  <script>
-	  // if (confirm('are you sure?')) {
 
-	  // }
-
-  </script>
-<!-- @endif -->

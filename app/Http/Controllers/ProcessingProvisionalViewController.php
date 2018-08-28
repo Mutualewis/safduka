@@ -99,7 +99,6 @@ class ProcessingProvisionalViewController extends Controller
     {
         $stockview = ProvisionalSummary::select('*')->whereNull('process_confirmed_by');
 
-
         return Datatables::of($stockview)
             ->make(true);
     }

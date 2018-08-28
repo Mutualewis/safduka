@@ -168,6 +168,8 @@
 						$bric_value = 0;
 						$total_bric_value = 0;
 
+						$weighted_hedge = 0;
+
 
 						if (isset($StockView) && count($StockView) > 0) {
 
@@ -198,7 +200,9 @@
 					    		$diff = round( $diff, 2, PHP_ROUND_HALF_UP);
 
 					    		$total_cost += ($value->weight) * ($value->price);
-					    		$total_diff += ($value->weight) * ($diff);
+					    		// $total_diff += ($value->weight) * ($value->differential);
+
+					    		$weighted_hedge += ($value->weight) * ($value->hedge);
 
 
 								$bric_value = $value->price + $value->sl_margin;
@@ -259,9 +263,12 @@
 
 					    echo "<td>$".round($total_price, 2, PHP_ROUND_HALF_UP)."</td>";
 					    
+			    		$total_diff = ($total_cost/$total)/1.1023 - ($weighted_hedge/$total);
+			    		$total_diff = round( $total_diff, 2, PHP_ROUND_HALF_UP);
+
 
 				    	if ($total_diff != NULL && $total != NULL) {
-					   		echo "<td>".round($total_diff/$total, 2, PHP_ROUND_HALF_UP)." </td>";
+					   		echo "<td>".$total_diff." </td>";
 				    	}						    
 					    
 						echo "<input type='hidden' name ='total_cost' value='".round($total_cost/$total, 3, PHP_ROUND_HALF_UP)."'>";
