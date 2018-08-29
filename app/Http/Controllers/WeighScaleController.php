@@ -730,6 +730,7 @@ class WeighScaleController extends Controller {
             curl_close ($ch);   
 
             $batch_kilograms = $weight;  
+            $batch_kilograms = 0;  
 
             $weigh_scale_session = "scale - ".$wsid."";
 
@@ -791,6 +792,12 @@ class WeighScaleController extends Controller {
 
             }    
 
+            $purchased_details = purchase::where('cfd_id', $stock_id)->first();
+
+            $stock_item_id = stock::where('prc_id', $purchased_details->id)->where('gr_id', $grn_id)->first();
+
+            $stock_item_id = $stock_item_id->id;
+
             $net_weight_batch = $batch_weight - $tare_batch;
 
             $bags_batch = floor($net_weight_batch/60);
@@ -802,7 +809,7 @@ class WeighScaleController extends Controller {
             $preious_batch = Batch::where('st_id', $stock_id)->get();
 
             $btid = Batch::insertGetId (
-            ['st_id' => $stock_id, 'btc_weight' => $batch_weight, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $wsid]);
+            ['st_id' => $stock_item_id, 'btc_weight' => $batch_weight, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $wsid]);
 
 
             if ($preious_batch != null) {
@@ -825,7 +832,7 @@ class WeighScaleController extends Controller {
 
             }
 
-            Stock::where('id', '=', $stock_id)
+            Stock::where('id', '=', $stock_item_id)
                         ->update([ 'st_net_weight' => $net_weight_batch ,'st_tare' => $tare_batch, 'st_bags' => $bags_batch, 'st_pockets' => $pockets_batch, 'st_gross' => $batch_weight]);
 
             Activity::log('Inserted Batch information with btid '.$btid. ' batch_kilograms '. $batch_weight. ' bags '. $bags_batch. ' pockets '. $pockets_batch. ' stid '. $stock_id.' btc_tare '.$tare_batch.' btc_net_weight '.$net_weight_batch);
