@@ -1050,21 +1050,38 @@ class WeighScaleController extends Controller {
 
     public function getExpectedArrival($gr_id)
     {   
+        if ($gr_id != null) {
+            $expected = DB::table('coffee_details_cfd AS cfd')
+                ->select('cfd.id as id','sl.sl_no as sale', 'cfd.cfd_lot_no as lot', 'cfd.cfd_outturn as outturn', 'cgrad_name as grade')
+                ->leftJoin('sale_sl AS sl', 'sl.id', '=', 'cfd.sl_id')
+                ->leftJoin('purchases_prc AS prc', 'prc.cfd_id', '=', 'cfd.id')            
+                ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'prc.gr_id')
+                ->leftJoin('stock_st AS st', 'st.prc_id', '=', 'prc.id')
+                ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'cfd.cgrad_id')
+                ->whereNotNull('rl_id')
+                ->whereNull('prc.gr_id')
+                ->whereNull('st.st_net_weight')
+                ->orWhereNotNull('st_partial_delivery')
+                ->orWhereNull('gr_confirmed_by')
+                ->where('prc.gr_id', $gr_id)
+                ->get();
+        } else {
 
-        $expected = DB::table('coffee_details_cfd AS cfd')
-            ->select('cfd.id as id','sl.sl_no as sale', 'cfd.cfd_lot_no as lot', 'cfd.cfd_outturn as outturn', 'cgrad_name as grade')
-            ->leftJoin('sale_sl AS sl', 'sl.id', '=', 'cfd.sl_id')
-            ->leftJoin('purchases_prc AS prc', 'prc.cfd_id', '=', 'cfd.id')            
-            ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'prc.gr_id')
-            ->leftJoin('stock_st AS st', 'st.prc_id', '=', 'prc.id')
-            ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'cfd.cgrad_id')
-            ->whereNotNull('rl_id')
-            ->whereNull('prc.gr_id')
-            ->whereNull('st.st_net_weight')
-            ->orWhereNotNull('st_partial_delivery')
-            ->orWhereNull('gr_confirmed_by')
-            ->where('prc.gr_id', $gr_id)
-            ->get();
+            $expected = DB::table('coffee_details_cfd AS cfd')
+                ->select('cfd.id as id','sl.sl_no as sale', 'cfd.cfd_lot_no as lot', 'cfd.cfd_outturn as outturn', 'cgrad_name as grade')
+                ->leftJoin('sale_sl AS sl', 'sl.id', '=', 'cfd.sl_id')
+                ->leftJoin('purchases_prc AS prc', 'prc.cfd_id', '=', 'cfd.id')            
+                ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'prc.gr_id')
+                ->leftJoin('stock_st AS st', 'st.prc_id', '=', 'prc.id')
+                ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'cfd.cgrad_id')
+                ->whereNotNull('rl_id')
+                ->whereNull('prc.gr_id')
+                ->whereNull('st.st_net_weight')
+                ->orWhereNotNull('st_partial_delivery')
+                ->get();
+
+        }
+
 
         return $expected;
 

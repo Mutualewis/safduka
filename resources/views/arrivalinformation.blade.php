@@ -398,7 +398,7 @@
 	        		<div class="form-group col-md-4">
 	        			<label>Sale-Lot-Outturn-Grade</label></br>
 
-		                <select class="form-control" style="padding: 4px 14px; width: auto; height: initial;" id="outt_number_search" name="outt_number_search" placeholder="Select Outturn" data-search="true" onchange="this.form.submit();">
+		                <select class="form-control" style="padding: 4px 14px; width: initial; height: initial;" id="outt_number_search" name="outt_number_search" placeholder="Select Outturn" data-search="true" onchange="this.form.submit();">
 		                	<option></option> 
 							@if (isset($expected_arrival) && count($expected_arrival) > 0)
 										@foreach ($expected_arrival as $value)
