@@ -727,9 +727,16 @@ class WeighScaleController extends Controller {
 
             $weight = curl_exec ($ch);
 
-            if ($weight === 0 && isset($weight) && session('scale') == $wsid) {
+            curl_close ($ch);   
 
-                $request->session()->pull('scale');                
+            $batch_kilograms = $weight;  
+
+            $weigh_scale_session = "scale - ".$wsid."";
+
+            if (session()->has($weigh_scale_session) && $batch_kilograms === 0 ){
+
+                $request->session()->pull($weigh_scale_session);   
+
             }
 
 
@@ -770,14 +777,9 @@ class WeighScaleController extends Controller {
 
             $batch_kilograms = $weight;  
 
-            $request->session()->put('scale', $wsid);
+            $weigh_scale_session = "scale - ".$wsid."";
 
-            if (session($wsid) != NULL || session($wsid) != 0) {
-
-                echo "session set -".session('scale');
-
-            }        
-
+            $request->session()->put($weigh_scale_session, $batch_kilograms);
 
         } else if (NULL !== Input::get('submitbatch')) {            
 

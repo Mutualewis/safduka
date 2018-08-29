@@ -669,7 +669,9 @@
 		            <div class="form-group col-md-2">
 		            	<label></label>
 			            <?php
-			            	if(session('scale') != NULL && session('scale') == $wsid) {
+			            	$weigh_scale_session = "scale - ".$wsid."";
+			            	
+			            	if(session()->has($weigh_scale_session)) {
 			            ?>		
 			            	<button type="submit" name="resetweight" class="btn btn-lg btn-danger btn-block">Reset</button>	  	
 
