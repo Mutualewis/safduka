@@ -29,6 +29,12 @@ use Ngea\Batch;
 use Ngea\StockLocation;
 use Ngea\Person;
 use Ngea\StockBreakdown;
+use Ngea\ProvisionalAllocation;
+use Ngea\processrates;
+use Ngea\teams;
+use Ngea\processcharges;
+
+
 
 use Yajra\Datatables\Datatables;
 use niklasravnsborg\LaravelPdf\Facades\Pdf as PDF;
@@ -192,6 +198,11 @@ class WeighScaleController extends Controller {
 
         $grn_no = null;
 
+        $rates    = processrates::all(['id', 'service']);
+
+        $teams   = teams::all(['id', 'tms_grpname']);
+
+
         $grn_number = null;
 
         if ($cidmain != null) {
@@ -212,7 +223,7 @@ class WeighScaleController extends Controller {
 
         $expected_arrival = ExpectedArrival::get();
 
-        return View::make('arrivalinformation', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'expected_arrival'));   
+        return View::make('arrivalinformation', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'expected_arrival', 'rates', 'teams'));   
 
     }
 
@@ -299,6 +310,10 @@ class WeighScaleController extends Controller {
 
         $grn_id = NULL;
 
+        $rates    = processrates::all(['id', 'service']);
+
+        $teams   = teams::all(['id', 'tms_grpname']);
+
         $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->first(); 
 
         if ($grn_details != null) {
@@ -310,6 +325,20 @@ class WeighScaleController extends Controller {
         $expected_arrival = $this->getExpectedArrival($grn_id);       
 
         if (NULL !==  Input::get('confirmgrns')) { 
+
+            $weigh_scale_details = WeightScales::get();
+
+            if ($weigh_scale_details != NULL) {
+
+                foreach ($weigh_scale_details as $key_wsd => $value_wsd) {
+
+                    $weigh_scale_session = "scale - ".$value_wsd->id."";
+
+                    $request->session()->pull($weigh_scale_session);  
+
+                }
+
+            }
 
             if ($grn_details != NULL) {
 
@@ -327,6 +356,22 @@ class WeighScaleController extends Controller {
             }
 
         } else if (NULL !== Input::get('submitlot')) {
+
+            if ($grn_details != NULL) {
+
+                Grn::where('id', '=', $grn_id)
+                        ->update(['ctr_id' => $cid, 'gr_number' => $grn_number, 'wb_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'gr_confirmed_by' => $user]);
+
+                Activity::log('Updated Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wb_id '. $weighbridgeTK . 'grn_number' . $grn_number );
+
+            } else {
+
+                $grn_id = Grn::insertGetId (
+                        ['ctr_id' => $cid, 'gr_number' => $grn_number, 'wb_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'gr_confirmed_by' => $user]);
+
+                Activity::log('Inserted Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wb_id '. $weighbridgeTK . 'grn_number' . $grn_number );
+            }
+
 
             $cfd_id = NULL;
 
@@ -1051,7 +1096,7 @@ class WeighScaleController extends Controller {
             $st_quality_check = $stock_details->st_quality_check;
          } 
         
-        return View::make('arrivalinformation', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'grn_details', 'coffeeGrade', 'sale', 'coffee_details', 'saleid', 'basket', 'packaging', 'stock_details', 'warehouse', 'warehouse_count', 'wrhse', 'location', 'weigh_scales', 'weigh_scales_count', 'wsid', 'rw', 'clm', 'zone', 'packages_batch', 'batch_kilograms', 'grnsview', 'batchview', 'expected_arrival', 'stock_id', 'st_quality_check')); 
+        return View::make('arrivalinformation', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'grn_details', 'coffeeGrade', 'sale', 'coffee_details', 'saleid', 'basket', 'packaging', 'stock_details', 'warehouse', 'warehouse_count', 'wrhse', 'location', 'weigh_scales', 'weigh_scales_count', 'wsid', 'rw', 'clm', 'zone', 'packages_batch', 'batch_kilograms', 'grnsview', 'batchview', 'expected_arrival', 'stock_id', 'st_quality_check', 'rates', 'teams')); 
     
     }
 
@@ -1177,6 +1222,149 @@ class WeighScaleController extends Controller {
         else
             $ipaddress = 'UNKNOWN';
         return $ipaddress;
+    }
+
+    public function confirmArrivalInformation($cid, $grn_number, $weighbridgeTK, $outt_season, $service, $team){
+       
+        try{
+       
+            $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->first(); 
+
+            $grn_id = NULL;
+
+            $user_data = Auth::user();
+
+            $user = $user_data->id;        
+                
+            $weigh_scale_details = WeightScales::get();
+
+            if ($weigh_scale_details != NULL) {
+
+                foreach ($weigh_scale_details as $key_wsd => $value_wsd) {
+
+                    $weigh_scale_session = "scale - ".$value_wsd->id."";
+
+                    session()->pull($weigh_scale_session);  
+
+                }
+
+            }
+
+            if ($grn_details != NULL) {
+
+                $grn_id = $grn_details->id;
+
+                Grn::where('id', '=', $grn_id)
+                        ->update(['ctr_id' => $cid, 'gr_number' => $grn_number, 'wb_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'gr_confirmed_by' => $user]);
+
+                Activity::log('Updated Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wb_id '. $weighbridgeTK . 'grn_number' . $grn_number );
+
+            } else {
+
+                $grn_id = Grn::insertGetId (
+                        ['ctr_id' => $cid, 'gr_number' => $grn_number, 'wb_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'gr_confirmed_by' => $user]);
+
+                Activity::log('Inserted Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wb_id '. $weighbridgeTK . 'grn_number' . $grn_number );
+            }
+
+            $stock_details = stock::where('gr_id', $grn_id)->get();
+
+            $packages = 0;
+
+            foreach($stock_details as $stock_item){
+
+                $packages += $stock_item->st_packages;
+
+            }
+          
+            $rate_details = processrates::where('id', '=', $service)->first();
+            $rate=$rate_details->rate;
+            $rateid=$rate_details->id;
+            $servicename=$rate_details->service;
+            
+            $charge = $rate*$packages;
+
+
+            if($packages!=0){
+                
+                //get rate charges and insert team
+                
+                $processing_rate_details = processcharges::where('prcgs_instruction_no', $grn_number)->where('prcgs_rate_id', $service)->first();
+        
+                if ($processing_rate_details != null) {
+                    processcharges::where('prcgs_instruction_no', '=',  $grn_number)->where('prcgs_rate_id', $service)->update(['prcgs_rate_id' => $rateid, 'prcgs_service'=>$servicename, 'prcgs_rate'=>$rate, 'prcgs_total'=>$charge, 'prcgs_team_id'=>$team, 'bags'=>$packages]);
+        
+                    Activity::log('Updated process rate information for instruction ' . $grn_number . ' service ' . $servicename. ' team ' . $team. ' process charge ' . $charge. ' with rate ' . $rate. ' bags ' . $packages. ' user ' .$user);
+                    
+                    return response()->json([
+                        'bagstopay' => $packages,
+                        'rate' => $rate,
+                        'service' => $servicename,
+                        'charge' => $charge,
+                        'success' => true,
+                        'inserted' => false,
+                        'error' => null,
+                        'updated' => true
+                    ]);
+        
+                } else {
+                    processcharges::insert(['prcgs_instruction_no'=>$grn_number,'prcgs_rate_id' => $rateid, 'prcgs_service'=>$servicename, 'prcgs_rate'=>$rate, 'prcgs_total'=>$charge, 'prcgs_team_id'=>$team, 'bags'=>$packages]);
+        
+                    Activity::log('Inserted process rate information for instruction ' . $ref_no . ' service ' . $servicename. ' team ' . $team. ' process charge ' . $charge. ' with rate ' . $rate. ' bags ' . $packages. ' user ' .$user);
+                    
+                    return response()->json([
+                        'bagstopay' => $packages,
+                        'rate' => $rate,
+                        'service' => $servicename,
+                        'charge' => $charge,
+                        'success' => true,
+                        'inserted' => true,
+                        'error' => null,
+                        'updated' => false
+                    ]);
+        
+                }
+            }else{
+                return response()->json([
+                    'bagstopay' => $packages,
+                    'rate' => $rate,
+                    'service' => $servicename,
+                    'charge' => $charge,
+                    'success' => true,
+                    'inserted' => true,
+                    'error' => null,
+                    'updated' => false
+                ]);
+            }
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+    
+    public function printarrivalinformation($grn_number, $service, $team){
+        
+        $processing_rate_details = processcharges::where('prcgs_instruction_no', $grn_number)->where('prcgs_rate_id', $service)->first();
+        $rate=$processing_rate_details->prcgs_rate;
+        $servicename=$processing_rate_details->prcgs_service;
+        $total=$processing_rate_details->prcgs_total;
+        $ref_no=$processing_rate_details->prcgs_instruction_no;
+        $team=$processing_rate_details->prcgs_team_id;
+        $bagstopay=$processing_rate_details->bags;
+        $date=$processing_rate_details->created_at;
+    
+        $team_details = teams::where('id', '=', $team)->first();
+        $teamserviceprovider=$team_details->tms_serviceprovider;
+        $teamgroup=$team_details->tms_grpname;
+    
+        
+    
+        $pdf = PDF::loadView('pdf.movementrate', compact('ref_no','servicename', 'bagstopay','total', 'rate', 'teamserviceprovider', 'teamgroup', 'date'));
+                return $pdf->stream($ref_no .' '.$servicename. ' movementrate.pdf');
     }
 
 }

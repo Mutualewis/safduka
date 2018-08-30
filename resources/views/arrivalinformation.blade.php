@@ -210,6 +210,8 @@
 			
 			$partial = $stock_details->st_partial_delivery;	
 
+			$pkg_status = $stock_details->st_package_status;
+
 		}
 
 
@@ -308,6 +310,20 @@
 
 	}
 
+	if (old('rate') != NULL) {
+		$rate_id = old('rate');
+	}
+
+	if (!isset($rate_id )) {
+		$rate_id   = NULL;
+	}
+	if (old('team') != NULL) {
+		$team_id = old('team');
+	}
+
+	if (!isset($team_id )) {
+		$team_id   = NULL;
+	}
 
 ?>
 
@@ -320,7 +336,7 @@
 			    <div class="row">
 		            <div class="form-group col-md-3">
 		                <label>Country</label>
-		                <select class="form-control" name="country"  onchange="this.form.submit()">
+		                <select class="form-control" id="country" name="country"  onchange="this.form.submit()">
 		                	<option></option> 
 							@if (isset($country) && count($country) > 0)
 										@foreach ($country->all() as $countries)
@@ -338,7 +354,7 @@
 
 		            <div class="form-group col-md-3">
 		            	<label>Weighbridge Ticket</label>
-		                <select class="form-control" name="weighbridgeTK">
+		                <select class="form-control" id="weighbridgeTK" name="weighbridgeTK">
 		               		<option></option>
 							@if (isset($weighbridge_ticket))
 										@foreach ($weighbridge_ticket->all() as $value)
@@ -355,7 +371,7 @@
 
 		            <div class="form-group col-md-3">
 		            	<label>Season</label>
-		                <select class="form-control" name="outt_season">
+		                <select class="form-control" id="outt_season" name="outt_season">
 		               		<option></option>
 							@if (isset($Season))
 										@foreach ($Season->all() as $season)
@@ -373,7 +389,7 @@
 			    	<div class="form-group col-md-3">
 			    		<label>GRN</label>
 	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" name="grn_number" style="text-transform:uppercase; " placeholder="Search/Enter GRN..."  value="{{ $grn_number}}"></input>
+	                        <input type="text" class="form-control" id="grn_number" name="grn_number" name="grn_number" style="text-transform:uppercase; " placeholder="Search/Enter GRN..."  value="{{ $grn_number}}"></input>
 
 		                        <span class="input-group-btn">
 
@@ -466,13 +482,13 @@
 		                <label>Packaging Check</label>
 		                <select class="form-control" name="package_status" required>
 		                	<option></option> 
-								@if ($pkg_status ==  NULL)
-									<option value="" selected="selected">Okay</option>
+								@if ($pkg_status ==  0)
+									<option value="0" selected="selected">Okay</option>
 								@else
-									<option value="" >Okay</option>
+									<option value="0" >Okay</option>
 								@endif
 
-								@if ($pkg_status !=  NULL)
+								@if ($pkg_status ==  1)
 									<option value="1" selected="selected">Not Okay</option>
 								@else
 									<option value="1" >Not Okay</option>
@@ -708,7 +724,7 @@
 
 			        ?>
 			            <div class="form-group col-md-4">
-							<button type="submit" name="confirmgrns" class="btn btn-lg btn-danger btn-block">Confirm GRN</button>	           		
+							<button type="submit" id="confirmgrnsbtn" name="confirmgrns" class="btn btn-lg btn-danger btn-block">Confirm GRN</button>	           		
 			            </div>	
 
 			        <?php
@@ -927,6 +943,236 @@
 		<!-- </form> -->
 	</div>
 </div>	
+<!-- Modal -->
+<div class="modal fade" id="ratesModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="title">
+        <div class="alert alert-info" role="alert">
+		  <h4 class="alert-heading">
+		  Please select service and team</h4>
+		</div>
+    	</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
 
+						
+						
+		    <div class="form-group">
+			                <label>Service</label>
+			                <select class="form-control" name="service" id="service">
+			                	<option></option> 
+								@if (isset($rates) && count($rates) > 0)
+											@foreach ($rates->all() as $rate)
+												@if ($rate_id ==  $rate->id)
+													<option value="{{ $rate->id }}" selected="selected">{{ $rate->service}}</option>
+												@else
+												<option value="{{ $rate->id }}" >{{ $rate->service}}</option>
+												@endif
+
+											@endforeach
+										
+								@endif
+			                </select>	
+			                <!-- <input type="hidden" name="country" id="country" value="{{ $cid }}">	 -->
+			            </div>
+						<div class="form-group">
+			                <label>Team</label>
+			                <select class="form-control" name="team" id="team">
+			                	<option></option> 
+								@if (isset($teams) && count($teams) > 0)
+											@foreach ($teams->all() as $team)
+												@if ($team_id ==  $team->id)
+													<option value="{{ $team->id }}" selected="selected">{{ $team->tms_grpname}}</option>
+												@else
+												<option value="{{ $team->id }}" >{{ $team->tms_grpname}}</option>
+												@endif
+
+											@endforeach
+										
+								@endif
+			                </select>	
+			                <!-- <input type="hidden" name="country" id="country" value="{{ $cid }}">	 -->
+			            </div>
+				
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <a href='' class='btn btn-danger confirm-delete' id="confirmgrnsModalbtn">Confirm</a>
+		<button type="button" id="printgrns" class="btn btn-warning" data-dismiss="modal">Print</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 @stop
 
+@push('scripts')
+<script>
+$('#confirmgrnsbtn').prop('disabled', true);
+var autosubmit = <?php echo json_encode($autosubmit); ?>;
+console.log(autosubmit)
+	$(document).ready(function (){ 
+		$('#confirmgrnsbtn').prop('disabled', false);
+		if(autosubmit){
+			$( "#arrivalInformationForm" ).submit();
+		}
+	})
+
+	$( "#confirmgrnsbtn" ).click(function(event){
+		event.preventDefault();
+		$("#ratesModalCenter").modal();	
+	})
+	$( "#confirmgrnsModalbtn" ).click(function(event){
+		event.preventDefault();
+		postConfirmMovement()	
+	})
+
+	function postConfirmMovement(){
+		var t=null;
+		var cid = $('#country').val();
+
+		var grn_number = $('#grn_number').val();
+
+		var weighbridgeTK = $('#weighbridgeTK').val();
+		var outt_season = $('#warehouse').val();
+
+
+		var service = $('#service').val();
+		var team = $('#team').val();
+
+		console.log("post confirm")
+				if(cid==''){
+					bootbox.alert("Please select country")
+				return
+				}
+				if(grn_number==''){
+					bootbox.alert("Please enter GRN")
+				return
+				}
+				if(weighbridgeTK==''){
+					bootbox.alert("Please select weighbridge ticket")
+				return
+				}
+				if(outt_season==''){
+					bootbox.alert("Please select season")
+				return
+				}
+				if(team==''){
+					bootbox.alert("Please select team")
+				return
+				}
+
+				var confirmurl = '{{ route('arrivalinformation.confirmArrivalInformation',['cid'=>":cid",'grn_number'=>":grn_number",'weighbridgeTK'=>":weighbridgeTK",'outt_season'=>":outt_season",'service'=>":service",'team'=>":team"]) }}';
+
+				confirmurl = confirmurl.replace(':cid', cid);
+				confirmurl = confirmurl.replace(':grn_number', grn_number);
+				confirmurl = confirmurl.replace(':weighbridgeTK', weighbridgeTK);
+				confirmurl = confirmurl.replace(':outt_season', outt_season);
+				confirmurl = confirmurl.replace(':service', service);
+				confirmurl = confirmurl.replace(':team', team);
+				console.log(confirmurl)
+				var dialog = bootbox.dialog({
+					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
+  					backdrop: true,
+					closeButton: true,
+					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+				});
+						$.ajax({
+						url: confirmurl,
+						type: 'GET',
+						}).success(function(response) {
+						console.log(response)
+						if(parseFloat(response.bagstopay)===0){
+							dialog.find('.bootbox-body').html('<div class="alert alert-danger" role="alert"><h4 class="alert-heading"><i class="fa fa-exclamation-triangle fa-2x">Cannot confirm. Instruction has 0 packages</i></div>');
+						}else{
+						dialog.find('.bootbox-body').html(
+						'<div class="alert alert-success" role="alert"><h4 class="alert-heading">Update was successful</h4></div>'+
+						'<div class="alert alert-warning alert-dismissible" role="alert" class="alert-heading">'+
+									'<div class="row align-items-center justify-content-center"><h2>Bags to Pay: '+response.bagstopay+'</h2></div>'+
+									'<div class="row align-items-center justify-content-center"><h2>Rate: '+response.rate+'</h2></div>'+
+									'<div class="row align-items-center justify-content-center"><h2>Service: '+response.service+'</h2></div>'+
+									'<div class="row align-items-center justify-content-center"><h2>Charge: '+response.charge+'</h2></div>'+
+									'</div>');
+								}
+						
+						}).error(function(error) {
+							console.log(error)
+						dialog.find('.bootbox-body').html('<div class="progress"></div>'+
+									'<hr><div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">An error occured while attempting to complete process. Contact Database Team</i></div>');
+						});
+		
+					
+	}
+ //print
+ $( "#printgrns" ).click(function(event){
+		event.preventDefault();
+	printRate()	
+	})
+
+function printRate(){
+	var t=null;
+		var grn_number = $('#grn_number').val();
+		var service = $('#service').val();
+		var team = $('#team').val();
+
+		console.log("post confirm")
+				if(grn_number==''){
+					bootbox.alert("Please select GRN number")
+				return
+				}
+				if(service==''){
+					bootbox.alert("Please select service")
+				return
+				}
+				if(team==''){
+					bootbox.alert("Please select team")
+				return
+				}
+
+				var printurl = '{{ route('arrivalinformation.printarrivalinformation',['grn_number'=>":grn_number",'service'=>":service",'team'=>":team"]) }}';
+
+				printurl = printurl.replace(':grn_number', grn_number);
+				printurl = printurl.replace(':service', service);
+				printurl = printurl.replace(':team', team);
+				console.log(printurl)
+				var dialog = bootbox.dialog({
+					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
+  					backdrop: true,
+					closeButton: true,
+					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Printing...</div>'
+				});
+
+				setTimeout(function(){
+					dialog.modal('hide')
+				}, 1000)
+				
+   			    window.open(printurl, '_blank');	
+						// $.ajax({
+						// url: confirmurl,
+						// type: 'GET',
+						// }).success(function(response) {
+						// console.log(response)
+						
+						// dialog.find('.bootbox-body').html(
+						// '<div class="alert alert-success" role="alert"><h4 class="alert-heading">Update was successful</h4></div>'+
+						// '<div class="alert alert-warning alert-dismissible" role="alert" class="alert-heading">'+
+						// 			'<div class="row align-items-center justify-content-center"><h2>Bags to Pay: '+response.bagstopay+'</h2></div>'+
+						// 			'<div class="row align-items-center justify-content-center"><h2>Rate: '+response.rate+'</h2></div>'+
+						// 			'<div class="row align-items-center justify-content-center"><h2>Service: '+response.service+'</h2></div>'+
+						// 			'<div class="row align-items-center justify-content-center"><h2>Charge: '+response.charge+'</h2></div>'+
+						// 			'</div>');
+						// }).error(function(error) {
+						// 	console.log(error)
+						// dialog.find('.bootbox-body').html('<div class="progress">'+
+						// 			'<hr><div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">An error occured while attempting to complete process. Contact Database Team</i></div>');
+						// });
+		
+	
+}
+</script>
+@endpush

@@ -399,6 +399,10 @@ Route::group(['middleware' => 'auth'], function()
 	Route::get('/batch_delete/{id}', 'WeighScaleController@batch_delete'); 
 
 
+	Route::get('/arrivalinformation/confirmArrivalInformation/{cid}/{grn_number}/{weighbridgeTK}/{outt_season}/{service}/{team}', ['as'=>'arrivalinformation.confirmArrivalInformation','uses'=>'WeighScaleController@confirmArrivalInformation']);
+	Route::get('/arrivalinformation/printMovementWithRate/{grn_number}/{service}/{team}', ['as'=>'arrivalinformation.printarrivalinformation','uses'=>'WeighScaleController@printarrivalinformation']);
+
+
     Route::get('/settingsthresholds', 'ThresholdController@settingsThresholdsForm');
     Route::post('/settingsthresholds', 'ThresholdController@settingsThresholds');
     Route::get('/settingsthresholds/threshold_delete/{thresholdID}', ['as'=>'settingsthresholds.threshold_delete','uses'=>'ThresholdController@threshold_delete']);
