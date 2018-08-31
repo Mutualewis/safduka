@@ -360,14 +360,14 @@ class WeighScaleController extends Controller {
             if ($grn_details != NULL) {
 
                 Grn::where('id', '=', $grn_id)
-                        ->update(['ctr_id' => $cid, 'gr_number' => $grn_number, 'wb_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'gr_confirmed_by' => $user]);
+                        ->update(['ctr_id' => $cid, 'gr_number' => $grn_number, 'wb_id' => $weighbridgeTK, 'csn_id' => $outt_season]);
 
                 Activity::log('Updated Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wb_id '. $weighbridgeTK . 'grn_number' . $grn_number );
 
             } else {
 
                 $grn_id = Grn::insertGetId (
-                        ['ctr_id' => $cid, 'gr_number' => $grn_number, 'wb_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'gr_confirmed_by' => $user]);
+                        ['ctr_id' => $cid, 'gr_number' => $grn_number, 'wb_id' => $weighbridgeTK, 'csn_id' => $outt_season]);
 
                 Activity::log('Inserted Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wb_id '. $weighbridgeTK . 'grn_number' . $grn_number );
             }
@@ -1079,13 +1079,31 @@ class WeighScaleController extends Controller {
 
         if ($stock_id != null) {
 
+            $purchase_details_batch = purchase::where('cfd_id',$stock_id)->first();
+
+            $stock_details_batch_id = null;
+
+            if ($purchase_details_batch != null) {
+
+                $stock_details_batch = stock::where('prc_id', $purchase_details_batch->id)->first();
+
+                if ($stock_details_batch != null) {
+
+                    $stock_details_batch_id = $stock_details_batch->id;
+
+                }
+            }
+
+            
+
             $batchview = DB::table('batch_btc AS btc')
                 ->select('btc.id as btcid', 'btc_weight as btc_weight', 'btc_tare', 'btc_net_weight', 'btc_packages', 'wr_name', 'locrow.loc_row as loc_row', 'loccol.loc_column as loc_column', 'btc_zone')
                 ->leftJoin('stock_location_sloc AS sloc', 'sloc.bt_id', '=', 'btc.id')
                 ->leftJoin('location_loc AS locrow', 'locrow.id', '=', 'sloc.loc_row_id')
                 ->leftJoin('location_loc AS loccol', 'loccol.id', '=', 'sloc.loc_column_id')
                 ->leftJoin('warehouse_wr AS wr', 'wr.id', '=', 'locrow.wr_id')
-                ->where('btc.st_id', $stock_id)
+                ->where('btc.st_id', $stock_details_batch_id)
+                ->whereNotNull('btc.st_id')
                 ->get();
                 
         }

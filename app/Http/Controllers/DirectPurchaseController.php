@@ -164,13 +164,14 @@ class DirectPurchaseController extends Controller {
 
             $saleSeasonName = $saleSeasonName->csn_season;        
 
-            // foreach ($sale_lots as $key => $value) {
 
-            //     purchase::where('id', '=', $value->prcid)
-            //         ->update(['sst_id' => 2]);
+            for ($i = 0; $i < count($lotid); $i++) {
 
+                 purchase::where('cfd_id', '=', $lotid[$i])
+                    ->update(['sst_id' => 2]);
 
-            // }
+            }
+
             if ($sale != null && $sale != "Sale No.") {
 
                 $sale_hedge = Sale::where('id', $sale)->first();
@@ -789,7 +790,7 @@ class DirectPurchaseController extends Controller {
 
                     if ($request->has('seller') && Input::get('seller') != null) {
 
-                        $sale_lots = direct_sale::selectRaw('*,GROUP_CONCAT(DISTINCT grade) sum_grades, sum(bags) sum_bags, sum(pockets) sum_pockets,  sum(weight) sum_weight, sum(price*weight) sum_price, count(*) count ')->where('slctrid', $cid)->where('csn_season', $saleSeasonName)->where('status', 'confirmed')->where('slrid', Input::get('seller'))->whereNull('invoice')->whereNotNull('bric')->groupBy('sale')->get();
+                        $sale_lots = direct_sale::selectRaw('*,GROUP_CONCAT(DISTINCT grade) sum_grades, sum(bags) sum_bags, sum(pockets) sum_pockets,  sum(weight) sum_weight, sum(price*weight) sum_price, count(*) count ')->where('slctrid', $cid)->where('csn_season', $saleSeasonName)->where('status', 'confirmed')->where('slrid', Input::get('seller'))->whereNull('inv_weight')->groupBy('sale')->get();
 
 
                     }                    
