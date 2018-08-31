@@ -246,7 +246,6 @@
 	<script>
 	    function RunFile() {
 		    WshShell = new ActiveXObject("WScript.Shell");
-	    	alert('Lewis');
 		    WshShell.Exec("c:/GetIndicatorWeight.exe");
 	    }
 	</script>

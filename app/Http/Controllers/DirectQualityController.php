@@ -309,108 +309,125 @@ class DirectQualityController extends Controller {
     {
 
         try{
-		    	$process_type = json_decode($process_type);
+		    	$process_type_array = json_decode($process_type);
 
-		    	$raw = json_decode($raw);
+		    	$raw_array = json_decode($raw);
 
 		    	$cdetails = coffee_details::where('id', $cfd_id)->first();
 
-		    	$qdetails = quality_details::where('cfd_id', $cfd_id)->first(); 
 
-				if ($comments == 'null') {
+		    	if ($cdetails != null) {
 
-					$comments = null;
+		    		$coffee_details_all = coffee_details::where('csn_id', $cdetails->csn_id)->where('sl_id', $cdetails->sl_id)->where('cfd_outturn', $cdetails->cfd_outturn)->where('cgrad_id', $cdetails->cgrad_id)->get();
+
+		    		if ($coffee_details_all != null) {
+
+		    			foreach ($coffee_details_all as $key_coffee_detail => $value_coffee_detail) {
+
+		    				$cfd_id = $value_coffee_detail->id;
+
+					    	$qdetails = quality_details::where('cfd_id', $cfd_id)->first(); 
+
+							if ($comments == 'null') {
+
+								$comments = null;
+
+							}		    	
+
+					    	foreach ($process_type_array as $key => $value) {
+
+					    		$process_type = $value;
+
+					    	}
+
+					    	foreach ($raw_array as $key => $value) {
+
+					    		$raw = $value;
+					    		
+					    	}
+
+					        if ($qdetails != NULL) {
+							 	
+							 	$qid = $qdetails->id;
+
+								quality_details::where('id', '=', $qid)
+									->update(['prcss_id' => $process_type,  'qltyd_prcss_value' =>  $process_loss, 'rw_id'=> $raw, 'qltyd_comments'=> $comments]);
+								
+								Activity::log('Updated quality for cfd_id'.$cfd_id. ' with process_type '. $process_type.' process '.$process_loss.' raw '.$raw. ' comments '.$comments);
+
+							} else {
+
+								quality_details::insert(
+								    ['cfd_id' => $cfd_id,'prcss_id' => $process_type,  'qltyd_prcss_value' =>  $process_loss, 'rw_id'=> $raw, 'qltyd_comments'=> $comments]
+								);
+
+								Activity::log('Added quality for cfd_id'.$cfd_id. ' with process_type '. $process_type.' process '.$process_loss.' raw '.$raw. ' comments '.$comments);
+
+							}
+							
+
+							if ($dnt != 'null') {
+
+								coffee_details::where('id', '=', $cfd_id)
+									->update(['cfd_dnt'=> "1"]);	
+
+							} else {
+
+								coffee_details::where('id', '=', $cfd_id)
+									->update(['cfd_dnt'=> null]);	
+
+							}
+
+
+
+						 	if($cdetails != NULL){
+
+								$greensize_array = json_decode($greensize);
+								$greencolor_array =  json_decode($greencolor);
+								$greendefects_array =  json_decode($greendefects);
+
+
+						     	$greencomments_array = greencomments::where('cfd_id', $cfd_id)->get();
+
+						 		if($greencomments_array != NULL){
+							     	foreach ($greencomments_array as $key => $value) {
+							     		$greencommentsdel = greencomments::find($value->id);	
+							     		$greencommentsdel->delete(); 
+							     	}
+
+						 		}
+
+						     	 if ($greensize_array != NULL) {
+							     	 foreach ($greensize_array as $key => $value) {
+										greencomments::insert(
+											['cfd_id' => $cfd_id, 'qp_id' =>  $value]);  
+										Activity::log('Added Quality For Coffee ID '.$cfd_id. ' with quality ID '.$value);		     	 			     		
+							     	 	
+							     	 }
+						     	 }
+						     	 if ($greencolor_array != NULL) {
+							     	 foreach ($greencolor_array as $key => $value) {
+										greencomments::insert(
+											['cfd_id' => $cfd_id, 'qp_id' =>  $value]);  
+										Activity::log('Added Quality For Coffee ID '.$cfd_id. ' with quality ID '.$value); 			     	 	
+							     	 }
+							     }
+							     if ($greendefects_array != NULL) {
+							     	 foreach ($greendefects_array as $key => $value) {
+										greencomments::insert(
+											['cfd_id' => $cfd_id, 'qp_id' =>  $value]);  
+										Activity::log('Added Quality For Coffee ID '.$cfd_id. ' with quality ID '.$value);   	 		
+						     	 		     				     	 	
+							     	 }
+						     	}
+
+
+						 	}
+						}
+
+					}
 
 				}
-
-		    	foreach ($process_type as $key => $value) {
-
-		    		$process_type = $value;
-
-		    	}
-
-		    	foreach ($raw as $key => $value) {
-
-		    		$raw = $value;
-		    		
-		    	}
-
-		        if ($qdetails != NULL) {
-				 	
-				 	$qid = $qdetails->id;
-
-					quality_details::where('id', '=', $qid)
-						->update(['prcss_id' => $process_type,  'qltyd_prcss_value' =>  $process_loss, 'rw_id'=> $raw, 'qltyd_comments'=> $comments]);
-					
-					Activity::log('Updated quality for cfd_id'.$cfd_id. ' with process_type '. $process_type.' process '.$process_loss.' raw '.$raw. ' comments '.$comments);
-
-				} else {
-
-					quality_details::insert(
-					    ['cfd_id' => $cfd_id,'prcss_id' => $process_type,  'qltyd_prcss_value' =>  $process_loss, 'rw_id'=> $raw, 'qltyd_comments'=> $comments]
-					);
-
-					Activity::log('Added quality for cfd_id'.$cfd_id. ' with process_type '. $process_type.' process '.$process_loss.' raw '.$raw. ' comments '.$comments);
-
-				}
-
-				if ($dnt != 'null') {
-
-					coffee_details::where('id', '=', $cfd_id)
-						->update(['cfd_dnt'=> "1"]);	
-
-				} else {
-
-					coffee_details::where('id', '=', $cfd_id)
-						->update(['cfd_dnt'=> null]);	
-
-				}
-
-
-
-		 	 if($cdetails != NULL){
-
-		     	 $greensize = json_decode($greensize);
-		     	 $greencolor =  json_decode($greencolor);
-		     	 $greendefects =  json_decode($greendefects);
-		     	 
-
-		     	$greencomments = greencomments::where('cfd_id', $cfd_id)->get();
-
-		 		if($greencomments != NULL){
-			     	foreach ($greencomments as $key => $value) {
-			     		$greencommentsdel = greencomments::find($value->id);	
-			     		$greencommentsdel->delete(); 
-			     	}
-
-		 		}
-
-		     	 if ($greensize != NULL) {
-			     	 foreach ($greensize as $key => $value) {
-						greencomments::insert(
-							['cfd_id' => $cfd_id, 'qp_id' =>  $value]);  
-						Activity::log('Added Quality For Coffee ID '.$cfd_id. ' with quality ID '.$value);		     	 			     		
-			     	 	
-			     	 }
-		     	 }
-		     	 if ($greencolor != NULL) {
-			     	 foreach ($greencolor as $key => $value) {
-						greencomments::insert(
-							['cfd_id' => $cfd_id, 'qp_id' =>  $value]);  
-						Activity::log('Added Quality For Coffee ID '.$cfd_id. ' with quality ID '.$value); 			     	 	
-			     	 }
-			     }
-			     if ($greendefects != NULL) {
-			     	 foreach ($greendefects as $key => $value) {
-						greencomments::insert(
-							['cfd_id' => $cfd_id, 'qp_id' =>  $value]);  
-						Activity::log('Added Quality For Coffee ID '.$cfd_id. ' with quality ID '.$value);   	 		
-		     	 		     				     	 	
-			     	 }
-		     	}
-
-
-		 	 }
 
             return response()->json([
                 'exists' => false,
@@ -438,24 +455,40 @@ class DirectQualityController extends Controller {
 
 		    	$cdetails = coffee_details::where('id', $cfd_id)->first();
 
-		    	$qdetails = quality_details::where('cfd_id', $cfd_id)->first(); 
+		    	if ($cdetails != null) {
 
-		        if ($qdetails != NULL) {
-				 	
-				 	$qid = $qdetails->id;
+		    		$coffee_details_all = coffee_details::where('csn_id', $cdetails->csn_id)->where('sl_id', $cdetails->sl_id)->where('cfd_outturn', $cdetails->cfd_outturn)->where('cgrad_id', $cdetails->cgrad_id)->get();
 
-					quality_details::where('id', '=', $qid)
-						->update(['scr_id' => $screen_size,  'qltyd_scr_value' =>  $screen]);
-					
-					Activity::log('Updated quality for cfd_id'.$cfd_id. ' with scr_id '. $screen_size.' qltyd_scr_value '.$screen);
+		    		if ($coffee_details_all != null) {
 
-				} else {
+		    			foreach ($coffee_details_all as $key_coffee_detail => $value_coffee_detail) {
 
-					quality_details::insert(
-					    ['cfd_id' => $cfd_id, 'scr_id' => $screen_size,  'qltyd_scr_value' =>  $screen]
-					);
+		    				$cfd_id = $value_coffee_detail->id;
 
-					Activity::log('Added quality for cfd_id'.$cfd_id. ' with scr_id '. $screen_size.' qltyd_scr_value '.$screen);
+					    	$qdetails = quality_details::where('cfd_id', $cfd_id)->first(); 
+
+					        if ($qdetails != NULL) {
+							 	
+							 	$qid = $qdetails->id;
+
+								quality_details::where('id', '=', $qid)
+									->update(['scr_id' => $screen_size,  'qltyd_scr_value' =>  $screen]);
+								
+								Activity::log('Updated quality for cfd_id'.$cfd_id. ' with scr_id '. $screen_size.' qltyd_scr_value '.$screen);
+
+							} else {
+
+								quality_details::insert(
+								    ['cfd_id' => $cfd_id, 'scr_id' => $screen_size,  'qltyd_scr_value' =>  $screen]
+								);
+
+								Activity::log('Added quality for cfd_id'.$cfd_id. ' with scr_id '. $screen_size.' qltyd_scr_value '.$screen);
+
+							}
+
+						}
+
+					}
 
 				}
 
@@ -484,44 +517,62 @@ class DirectQualityController extends Controller {
 
 		    	$cdetails = coffee_details::where('id', $cfd_id)->first();
 
-		    	$qdetails = quality_details::where('cfd_id', $cfd_id)->first(); 
+		    	if ($cdetails != null) {
 
-				if ($dnt_cp != 'null') {
+		    		$coffee_details_all = coffee_details::where('csn_id', $cdetails->csn_id)->where('sl_id', $cdetails->sl_id)->where('cfd_outturn', $cdetails->cfd_outturn)->where('cgrad_id', $cdetails->cgrad_id)->get();
 
-					coffee_details::where('id', '=', $cfd_id)
-						->update(['cfd_dnt'=> "1"]);	
+		    		if ($coffee_details_all != null) {
 
-				} else {
+		    			foreach ($coffee_details_all as $key_coffee_detail => $value_coffee_detail) {
 
-					coffee_details::where('id', '=', $cfd_id)
-						->update(['cfd_dnt'=> null]);	
+		    				$cfd_id = $value_coffee_detail->id;
 
-				}
+					    	$qdetails = quality_details::where('cfd_id', $cfd_id)->first(); 
 
-				if ($comments_cp == 'null') {
+							if ($dnt_cp != 'null') {
 
-					$comments_cp = null;
+								coffee_details::where('id', '=', $cfd_id)
+									->update(['cfd_dnt'=> "1"]);	
 
-				}
+							} else {
 
-		        if ($qdetails != NULL) {
-				 	
-				 	$qid = $qdetails->id;
+								coffee_details::where('id', '=', $cfd_id)
+									->update(['cfd_dnt'=> null]);	
 
-					quality_details::where('id', '=', $qid)
-						->update(['cp_id' => $cup,  'qltyd_acidity' =>  $acidity,  'qltyd_body' =>  $body,  'qltyd_flavour' =>  $flavour,  'qltyd_comments' =>  $comments_cp]);
-					
-					Activity::log('Updated quality for cfd_id'.$cfd_id. ' with cup '. $cup.' acidity '.$acidity.' body '.$body.' flavour '.$flavour.' comments_cp '.$comments_cp);
+							}
 
-				} else {
+							if ($comments_cp == 'null') {
 
-					quality_details::insert(
-					    ['cfd_id' => $cfd_id, 'cp_id' => $cup,  'qltyd_acidity' =>  $acidity,  'qltyd_body' =>  $body,  'qltyd_flavour' =>  $flavour,  'qltyd_comments' =>  $comments_cp]
-					);
+								$comments_cp = null;
 
-					Activity::log('Added quality for cfd_id'.$cfd_id. ' with cup '. $cup.' acidity '.$acidity.' body '.$body.' flavour '.$flavour.' comments_cp '.$comments_cp);
+							}
 
-				}
+					        if ($qdetails != NULL) {
+							 	
+							 	$qid = $qdetails->id;
+
+								quality_details::where('id', '=', $qid)
+									->update(['cp_id' => $cup,  'qltyd_acidity' =>  $acidity,  'qltyd_body' =>  $body,  'qltyd_flavour' =>  $flavour,  'qltyd_comments' =>  $comments_cp]);
+								
+								Activity::log('Updated quality for cfd_id'.$cfd_id. ' with cup '. $cup.' acidity '.$acidity.' body '.$body.' flavour '.$flavour.' comments_cp '.$comments_cp);
+
+							} else {
+
+								quality_details::insert(
+								    ['cfd_id' => $cfd_id, 'cp_id' => $cup,  'qltyd_acidity' =>  $acidity,  'qltyd_body' =>  $body,  'qltyd_flavour' =>  $flavour,  'qltyd_comments' =>  $comments_cp]
+								);
+
+								Activity::log('Added quality for cfd_id'.$cfd_id. ' with cup '. $cup.' acidity '.$acidity.' body '.$body.' flavour '.$flavour.' comments_cp '.$comments_cp);
+
+							}
+
+
+		    			}
+
+		    		}
+
+		    	}
+
 
 
             return response()->json([
@@ -540,6 +591,7 @@ class DirectQualityController extends Controller {
         }
 
     }
+
 
 
     public function qualityListForm (Request $request){
