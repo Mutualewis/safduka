@@ -53,7 +53,7 @@ class Controller extends BaseController
 
 	            $message->to('caroline.njambi@nkg.coffee', 'Discrepancy-')->subject('Discrepancy');
 
-                $message->cc('lewis.mutua@nkg.coffee')
+                $message->cc('lewis.mutua@nkg.coffee');
 
 	            $message->from('lewis.mutua@nkg.coffee','Ibero Database');
 
