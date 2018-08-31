@@ -791,14 +791,37 @@ class ConfirmationController extends Controller {
 
         $user_data = Auth::user();
 
-        $user = $user_data ->usr_name;
+		$user = $user_data ->usr_name;
 
+		$lots_in_sale = coffee_details::where('sl_id', $sale)->get();
 
+		foreach ($lots_in_sale as $key_lt => $value_lt) {
+
+			$bs_id = 28;
+
+			$quality_details = quality_details::where('cfd_id', $value_lt->id)->first();
+
+			$lot_cup = $quality_details->cp_id;
+
+			$lot_grade = $value_lt->cgrad_id;
+
+			$basket_auto = BasketAuto::where('cp_id', $lot_cup)->where('cgrad_id', $lot_grade)->first();	
+
+			if ($basket_auto != null) {
+				
+				$bs_id = $basket_auto->bs_id;
+
+			}
+
+			coffee_details::where('id', '=', $value_lt)
+			->update(['bs_id' => $bs_id]);
+
+		}
 
 
         Sale::where('id', '=', $sale)
 
-                    ->update(['sl_quality_confirmedby' => $user]);
+        ->update(['sl_quality_confirmedby' => $user]);
 
                 //$request->session()->flash('alert-success', 'Sale Catalogue Confirmed!!');
 
