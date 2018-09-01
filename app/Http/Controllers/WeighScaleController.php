@@ -357,22 +357,6 @@ class WeighScaleController extends Controller {
 
         } else if (NULL !== Input::get('submitlot')) {
 
-            if ($grn_details != NULL) {
-
-                Grn::where('id', '=', $grn_id)
-                        ->update(['ctr_id' => $cid, 'gr_number' => $grn_number, 'wb_id' => $weighbridgeTK, 'csn_id' => $outt_season]);
-
-                Activity::log('Updated Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wb_id '. $weighbridgeTK . 'grn_number' . $grn_number );
-
-            } else {
-
-                $grn_id = Grn::insertGetId (
-                        ['ctr_id' => $cid, 'gr_number' => $grn_number, 'wb_id' => $weighbridgeTK, 'csn_id' => $outt_season]);
-
-                Activity::log('Inserted Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wb_id '. $weighbridgeTK . 'grn_number' . $grn_number );
-            }
-
-
             $cfd_id = NULL;
 
             $coffee_details = ExpectedArrival::where('id', $stock_id)->first();
@@ -383,7 +367,7 @@ class WeighScaleController extends Controller {
 
             }   
 
-            $purchase_details = purchase::where('cfd_id', $cfd_id)->first();
+            $purchase_details = purchase::where('cfd_id', $cfd_id)->where('gr_id', '!=', $grn_id)->orWhereNull('gr_id')->where('cfd_id', $cfd_id)->first();
 
             if ($purchase_details != null) {
 
@@ -532,19 +516,59 @@ class WeighScaleController extends Controller {
 
                 if ($partial == null) {
 
-                    $this->checkThreshold($threshold_name, $purchased_weight, $net_weight, $identifier);
+                    $net_weight_received = null;
+
+                    $purchase_received = Stock::where('prc_id', $purchase_details->id)->get();
+
+                    if ($purchase_details != null) {
+
+                        foreach ($purchase_received as $purchase_received_key => $purchase_received_value) {
+
+                            $net_weight_received += $purchase_received_value->st_net_weight;
+
+                        }
+
+                    }
+
+                    if ($net_weight_received == null || $net_weight_received ==  0) {
+
+                        $net_weight_received = $net_weight;
+
+                    }
+
+                    $this->checkThreshold($threshold_name, $purchased_weight, $net_weight_received, $identifier);
 
                 }   
 
 
-                $stock_details_exist = Stock::where('gr_id', $grnid)->where('st_outturn', $st_outturn)->where('cgrad_id', $st_grid)->first(); 
+                $stock_details_exist = Stock::where('gr_id', $grn_id)->where('st_outturn', $st_outturn)->where('cgrad_id', $st_grid)->first(); 
 
                 if ($stock_details_exist == null) {
 
-                    $stid = Stock::insertGetId(['prc_id' => $purchase_details->id,'gr_id' => $grn_id,'st_dispatch_net' => $dispatch_kilograms, 'st_net_weight' => $net_weight ,'st_tare' => $tare, 'st_bags' => $bags, 'st_pockets' => $pockets, 'st_gross' => $delivery_kilograms, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'ctr_id' => $cid, 'bs_id' => $pr_bsid, 'ibs_id' => $pr_ibsid, 'prc_price' => $pr_price, 'st_price' => $br_price_pounds, 'st_value' => $prc_value,  'st_diff' => $br_diffrential,  'br_id' => $pr_brid, 'sl_id' => $st_slid, 'cgrad_id' => $st_grid, 'st_name' => $st_name, 'st_outturn' => $st_outturn, 'st_mark' => $st_mark, 'csn_id' => $st_season, 'cb_id' => $cbid, 'st_packages' => $packages, 'st_partial_delivery' => $partial , 'st_value' => $prc_value , 'st_bric_value' => $bric_value , 'st_hedge' => $hedge, 'st_dispatch_date' => $dispatch_date, 'st_quality_check' => 1, 'st_package_status' => $package_status ]);
+                    $stid = Stock::insertGetId(['prc_id' => $purchase_details->id,'gr_id' => $grn_id,'st_dispatch_net' => $dispatch_kilograms, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'ctr_id' => $cid, 'bs_id' => $pr_bsid, 'ibs_id' => $pr_ibsid, 'prc_price' => $pr_price, 'st_price' => $br_price_pounds, 'st_value' => $prc_value,  'st_diff' => $br_diffrential,  'br_id' => $pr_brid, 'sl_id' => $st_slid, 'cgrad_id' => $st_grid, 'st_name' => $st_name, 'st_outturn' => $st_outturn, 'st_mark' => $st_mark, 'csn_id' => $st_season, 'cb_id' => $cbid, 'st_packages' => $packages, 'st_partial_delivery' => $partial , 'st_value' => $prc_value , 'st_bric_value' => $bric_value , 'st_hedge' => $hedge, 'st_dispatch_date' => $dispatch_date, 'st_quality_check' => 1, 'st_package_status' => $package_status ]);
 
                     StockBreakdown::insertGetId (
                                  ['st_id' => $stid, 'br_id' => $pr_brid, 'stb_value' => $bric_value, 'stb_weight' => $net_weight, 'bs_id' => $pr_bsid, 'ibs_id' => $pr_ibsid, 'stb_bulk_ratio' => 1,'stb_value_ratio' => 1,  'stb_purchase_contract_ratio' => 1, 'cb_id' => $cbid, 'cgr_id' => null]);
+
+                    $stock_details_partial_exist = Stock::where('prc_id', $purchase_details->id)->where('id', '!=', $stid)->get(); 
+                    $partial_update = null;
+
+                    if ($partial == null) {
+
+                        $partial_update = null;
+
+                    } else {
+                        $partial_update = 1;
+                    }
+
+                    if ($stock_details_partial_exist != null) {
+                        foreach ($stock_details_partial_exist as $stock_details_partial_key => $stock_details_partial_value) {
+                            Stock::where('id', '=', $stock_details_partial_value->id)
+                             ->update(['st_partial_delivery' => $partial_update]);
+                        }
+                         
+
+                    }
 
                 }
 
@@ -570,9 +594,8 @@ class WeighScaleController extends Controller {
                     ->leftJoin('purchases_prc AS prc', 'st.prc_id', '=', 'prc.id')
                     ->leftJoin('coffee_details_cfd AS cfd', 'prc.cfd_id', '=', 'cfd.id')
                     ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'cfd.cgrad_id')
-                    ->where('cfd_lot_no', $sif_lot)
-                    ->where('cfd_outturn', $outt_number)
-                    ->where('cfd.csn_id', $outt_season)
+                    ->where('cfd.id', $stock_id)
+                    ->where('st.gr_id', $grn_id)
                     ->first();
 
                 if ($stock_details != null) {
@@ -731,10 +754,30 @@ class WeighScaleController extends Controller {
                     $st_id = $stock_details->stid;
 
                     Stock::where('id', '=', $st_id)
-                            ->update(['prc_id' => $purchase_details->id,'gr_id' => $grn_id,'st_dispatch_net' => $dispatch_kilograms, 'st_net_weight' => $net_weight ,'st_tare' => $tare, 'st_bags' => $bags, 'st_pockets' => $pockets, 'st_gross' => $delivery_kilograms, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'ctr_id' => $cid, 'bs_id' => $pr_bsid, 'ibs_id' => $pr_ibsid, 'prc_price' => $pr_price, 'st_price' => $br_price_pounds, 'st_value' => $prc_value,  'st_diff' => $br_diffrential,  'br_id' => $pr_brid, 'sl_id' => $st_slid, 'cgrad_id' => $st_grid, 'st_name' => $st_name, 'st_outturn' => $st_outturn, 'st_mark' => $st_mark, 'csn_id' => $st_season, 'cb_id' => $cbid, 'st_packages' => $packages, 'st_partial_delivery' => $partial , 'st_value' => $prc_value , 'st_bric_value' => $bric_value , 'st_hedge' => $hedge, 'st_dispatch_date' => $dispatch_date, 'st_quality_check' => 1, 'st_package_status' => $package_status ]);
+                            ->update(['prc_id' => $purchase_details->id,'gr_id' => $grn_id,'st_dispatch_net' => $dispatch_kilograms, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'ctr_id' => $cid, 'bs_id' => $pr_bsid, 'ibs_id' => $pr_ibsid, 'prc_price' => $pr_price, 'st_price' => $br_price_pounds, 'st_value' => $prc_value,  'st_diff' => $br_diffrential,  'br_id' => $pr_brid, 'sl_id' => $st_slid, 'cgrad_id' => $st_grid, 'st_name' => $st_name, 'st_outturn' => $st_outturn, 'st_mark' => $st_mark, 'csn_id' => $st_season, 'cb_id' => $cbid, 'st_packages' => $packages, 'st_partial_delivery' => $partial , 'st_value' => $prc_value , 'st_bric_value' => $bric_value , 'st_hedge' => $hedge, 'st_dispatch_date' => $dispatch_date, 'st_quality_check' => 1, 'st_package_status' => $package_status ]);
 
                     $batch_kilograms = 0;
 
+                    $stock_details_partial_exist = Stock::where('prc_id', $purchase_details->id)->where('id', '!=', $st_id)->get();
+
+                    $partial_update = null;
+
+                    if ($partial == null) {
+
+                        $partial_update = null;
+
+                    } else {
+                        $partial_update = 1;
+                    }
+
+                    if ($stock_details_partial_exist != null) {
+                        foreach ($stock_details_partial_exist as $stock_details_partial_key => $stock_details_partial_value) {
+                            Stock::where('id', '=', $stock_details_partial_value->id)
+                             ->update(['st_partial_delivery' => $partial_update]);
+                        }
+                         
+
+                    }
                     }
 
             }
@@ -976,13 +1019,22 @@ class WeighScaleController extends Controller {
 
         $cfd_id = NULL;
 
+        $purchase_details = NULL;
+
         $coffee_details = ExpectedArrival::where('id', $stock_id)->first();
 
         if ($coffee_details != null) {            
 
             $cfd_id = $coffee_details->id;
 
-            $purchase_details = purchase::where('cfd_id', $cfd_id)->first();
+            $purchase_details = purchase::where('cfd_id', $cfd_id)->where('gr_id', $grn_id)->first();
+        }
+
+        if ($coffee_details != null && $purchase_details == null) {            
+
+            $cfd_id = $coffee_details->id;
+
+            $purchase_details = purchase::where('cfd_id', $cfd_id)->where('gr_id', '!=', $grn_id)->first();
 
             if ($purchase_details != null) {
 
@@ -992,12 +1044,15 @@ class WeighScaleController extends Controller {
 
         } else {
 
+            // $coffee_details = NULL;
+
             $stock_details = DB::table('stock_st AS st')
                 ->select('*','st.id as stid', 'prc.bs_id as bsid')
                 ->leftJoin('purchases_prc AS prc', 'st.prc_id', '=', 'prc.id')
                 ->leftJoin('coffee_details_cfd AS cfd', 'prc.cfd_id', '=', 'cfd.id')
                 ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'cfd.cgrad_id')
                 ->where('cfd.id', $stock_id)
+                ->where('st.gr_id', $grn_id)
                 ->first();
 
             if ($stock_details != null) {
@@ -1085,7 +1140,7 @@ class WeighScaleController extends Controller {
 
             if ($purchase_details_batch != null) {
 
-                $stock_details_batch = stock::where('prc_id', $purchase_details_batch->id)->first();
+                $stock_details_batch = stock::where('prc_id', $purchase_details_batch->id)->where('gr_id', $grn_id)->first();
 
                 if ($stock_details_batch != null) {
 
@@ -1112,9 +1167,13 @@ class WeighScaleController extends Controller {
 
         if ($stock_details != null) {
             $st_quality_check = $stock_details->st_quality_check;
-         } 
-        
-        return View::make('arrivalinformation', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'grn_details', 'coffeeGrade', 'sale', 'coffee_details', 'saleid', 'basket', 'packaging', 'stock_details', 'warehouse', 'warehouse_count', 'wrhse', 'location', 'weigh_scales', 'weigh_scales_count', 'wsid', 'rw', 'clm', 'zone', 'packages_batch', 'batch_kilograms', 'grnsview', 'batchview', 'expected_arrival', 'stock_id', 'st_quality_check', 'rates', 'teams')); 
+        } 
+
+        $wbtk = $weighbridgeTK;
+
+        $ot_season = $outt_season;
+
+        return View::make('arrivalinformation', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'grn_details', 'coffeeGrade', 'sale', 'coffee_details', 'saleid', 'basket', 'packaging', 'stock_details', 'warehouse', 'warehouse_count', 'wrhse', 'location', 'weigh_scales', 'weigh_scales_count', 'wsid', 'rw', 'clm', 'zone', 'packages_batch', 'batch_kilograms', 'grnsview', 'batchview', 'expected_arrival', 'stock_id', 'st_quality_check', 'rates', 'teams', 'wbtk', 'ot_season')); 
     
     }
 
@@ -1134,6 +1193,7 @@ class WeighScaleController extends Controller {
                 ->orWhereNotNull('st_partial_delivery')
                 ->orWhereNull('gr_confirmed_by')
                 ->where('prc.gr_id', $gr_id)
+                ->groupBy('cfd.id')
                 ->get();
         } else {
 

@@ -230,7 +230,10 @@
 
 		}
 
+		$partial = $stock_details->st_partial_delivery;	
 
+		$pkg_status = $stock_details->st_package_status;
+			
 		$grade = $stock_details->cgrad_name;
 
 		$coffee_grower = $stock_details->cfd_grower_mark;		
@@ -271,20 +274,20 @@
 		
 	
 
-	if (isset($partial) && isset($stock_details) && $ignore_partial == false ) {
+	// if (isset($partial) && isset($stock_details) && $ignore_partial == false ) {
 
-		$bought_weight = $stock_details->inv_weight - $stock_details->st_net_weight;	
+	// 	$bought_weight = $stock_details->inv_weight - $stock_details->st_net_weight;	
 
-		$packages_stock = CEIL($bought_weight/60);
+	// 	$packages_stock = CEIL($bought_weight/60);
 
-		$dispatch_kilograms = $bought_weight;	
+	// 	$dispatch_kilograms = $bought_weight;	
 
-		$delivery_kilograms = $bought_weight;	
+	// 	$delivery_kilograms = $bought_weight;	
 
-		$batchview = null;
+	// 	$batchview = null;
 
 
-	}
+	// }
 
 	if(isset($grn_details)){
 
@@ -336,7 +339,7 @@
 			    <div class="row">
 		            <div class="form-group col-md-3">
 		                <label>Country</label>
-		                <select class="form-control" id="country" name="country"  onchange="this.form.submit()">
+		                <select class="form-control" id="country" name="country" onchange="this.form.submit()">
 		                	<option></option> 
 							@if (isset($country) && count($country) > 0)
 										@foreach ($country->all() as $countries)
@@ -393,7 +396,7 @@
 
 		                        <span class="input-group-btn">
 
-			                        <button type="button" name="searchButtonGrn" class="btn btn-default" onclick="this.form.submit();">
+			                        <button type="submit" name="searchButtonGrn" class="btn btn-default" formnovalidate>
 			                        	<i class="fa fa-search"></i>
 			                        </button>
 
@@ -414,7 +417,8 @@
 	        		<div class="form-group col-md-4">
 	        			<label>Sale-Lot-Outturn-Grade</label></br>
 
-		                <select class="form-control" style="padding: 4px 14px; width: initial; height: initial;" id="outt_number_search" name="outt_number_search" placeholder="Select Outturn" data-search="true" onchange="this.form.submit();">
+		                <select class="form-control" id="outt_number_search" name="outt_number_search" placeholder="Select Outturn" data-search="true" onchange="this.form.submit();">
+		             
 		                	<option></option> 
 							@if (isset($expected_arrival) && count($expected_arrival) > 0)
 										@foreach ($expected_arrival as $value)
@@ -587,7 +591,7 @@
 
 		        	<div class="form-group col-md-4">
 		                <label>Weigh Scales</label>
-		                <select class="form-control" name="weigh_scales" onchange="this.form.submit()">
+		                <select class="form-control" name="weigh_scales">
 		                	<option></option> 
 
 					        	<?php
@@ -689,7 +693,7 @@
 			            	
 			            	if(session()->has($weigh_scale_session)) {
 			            ?>		
-			            	<button type="submit" name="resetweight" class="btn btn-lg btn-danger btn-block">Reset</button>	  	
+			            	<button type="submit" name="resetweight" class="btn btn-lg btn-danger btn-block" formnovalidate>Reset</button>	  	
 
 				        <?php
 				        	} else {
@@ -716,7 +720,7 @@
 		            	if($gr_confirmed_by != NULL) {
 		            ?>
 			            <div class="form-group col-md-4">
-							<button type="submit" name="printgrns" class="btn btn-lg btn-warning btn-block">Print GRN</button>	           		
+							<button type="submit" name="printgrns" class="btn btn-lg btn-warning btn-block" formnovalidate>Print GRN</button>	           		
 			            </div>	
 
 			        <?php
@@ -724,7 +728,7 @@
 
 			        ?>
 			            <div class="form-group col-md-4">
-							<button type="submit" id="confirmgrnsbtn" name="confirmgrns" class="btn btn-lg btn-danger btn-block">Confirm GRN</button>	           		
+							<button type="submit" id="confirmgrnsbtn" name="confirmgrns" class="btn btn-lg btn-danger btn-block" formnovalidate>Confirm GRN</button>	           		
 			            </div>	
 
 			        <?php
