@@ -669,7 +669,8 @@
         	{targets: 20,
 				'visible':false
 			},
-						{targets: 5, 
+			
+			{targets: 5, 
 				'searchable':true,
 				'orderable': true,
 				'render': function (data, type, full, meta, row){

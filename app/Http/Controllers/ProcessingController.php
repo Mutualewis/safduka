@@ -417,6 +417,7 @@ class ProcessingController extends Controller
                 ksort($additionalProcessing);
             }
 
+
             $cweight = Input::get('cweight');
 
             if ($tobeprocessed != null) {
@@ -1151,7 +1152,8 @@ class ProcessingController extends Controller
 
         } else {
             $stockview = null;
-        }        
+        }   
+
 
 
         return Datatables::of($stockview)
