@@ -878,7 +878,7 @@ class WeighScaleController extends Controller {
             
                 $tare_batch = ($package_weight->pkg_weight) * $packages_batch;
 
-            }    
+            }                
 
             $purchased_details = purchase::where('cfd_id', $stock_id)->first();
 
@@ -894,7 +894,7 @@ class WeighScaleController extends Controller {
 
             $coffee_details = NULL;
 
-            $preious_batch = Batch::where('st_id', $stock_id)->get();
+            $preious_batch = Batch::where('st_id', $stock_item_id)->get();
 
             $btid = Batch::insertGetId (
             ['st_id' => $stock_item_id, 'btc_weight' => $batch_weight, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $wsid]);
