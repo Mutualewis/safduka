@@ -920,6 +920,10 @@ class WeighScaleController extends Controller {
 
             }
 
+            $bags_batch = floor($net_weight_batch/60);
+
+            $pockets_batch = floor($net_weight_batch % 60);            
+
             Stock::where('id', '=', $stock_item_id)
                         ->update([ 'st_net_weight' => $net_weight_batch ,'st_tare' => $tare_batch, 'st_bags' => $bags_batch, 'st_pockets' => $pockets_batch, 'st_gross' => $batch_weight]);
 

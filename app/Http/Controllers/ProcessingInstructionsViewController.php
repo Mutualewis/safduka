@@ -597,7 +597,7 @@ class ProcessingInstructionsViewController extends Controller
             'Status' => $status
         ];
 
-        $query = Breakdown_Without_Stuffed::select('*', \DB::raw('SUM(weight) AS weight_total, SUM(value) AS value_total'))->where('status', 'like', '%' . $ref_no . '%')->groupBy('br_no', 'cg_name');
+        $query = Breakdown_Without_Stuffed::select('*', \DB::raw('SUM(weight) AS weight_total, SUM(value) AS value_total'))->where('status', 'like', '%' . $ref_no . '%')->whereNotNull('price')->groupBy('br_no', 'cg_name');
 
         $queryCheck = $query->get();
 
