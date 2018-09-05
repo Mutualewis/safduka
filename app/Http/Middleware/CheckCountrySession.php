@@ -1,16 +1,20 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace Ngea\Http\Middleware;
 
 use Closure;
+use Auth;
+use Ngea\Http\Controllers\Auth\AuthController;
 
-class CheckCountrySession
+class CheckCountrySession extends AuthController
 {
 
     public function handle($request, Closure $next)
     {
-        if(session('maincountry')!=NULL){
-            return redirect('auth/login');
+        if(session('maincountry') == NULL){
+
+            $this->getLogin();
+
         }   
 
         return $next($request);

@@ -15,13 +15,15 @@ Route::get('auth/login', 'Auth\AuthController@getLogin');
 Route::post('auth/login', 'Auth\AuthController@postLogin');
 
 
+Route::get('setcountry', 'Auth\AuthController@getLogin');
+
+
 Route::get('logout', 'Auth\AuthController@logout');
 
 /* Authenticated users */
-Route::group(['middleware' => 'auth'], function()
+Route::group(['middleware' => ['auth', 'countrysession']], function()
 	{
-	Route::group(['middleware' => 'countrysession'], function()
-	{
+
 		Route::get('/telextensions', 'GridController@telExtensionsGrid'); 
 
 	    Route::get('/home', array('as'=>'home', function()
@@ -641,8 +643,6 @@ Route::group(['middleware' => 'auth'], function()
 
 		Route::get('warehousechargerates/getreport', ['as'=>'warehousechargerates.getreport','uses'=>'RatesController@getWarehouseCharges']);
 
-
-	});
 });
 
 
