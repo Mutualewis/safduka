@@ -14,7 +14,7 @@ class CheckCountrySession extends AuthController
         if(session('maincountry') == NULL){
 
             $this->getLogin();
-
+ 
         }   
 
         return $next($request);
