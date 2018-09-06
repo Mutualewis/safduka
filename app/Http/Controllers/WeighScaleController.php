@@ -541,7 +541,7 @@ class WeighScaleController extends Controller {
                 }   
 
 
-                $stock_details_exist = Stock::where('gr_id', $grn_id)->where('st_outturn', $st_outturn)->where('cgrad_id', $st_grid)->first(); 
+                $stock_details_exist = Stock::where('gr_id', $grn_id)->where('st_outturn', $st_outturn)->where('cgrad_id', $st_grid)->where('prc_id', $purchase_details->id)->first(); 
 
                 if ($stock_details_exist == null) {
 
