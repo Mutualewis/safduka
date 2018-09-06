@@ -4,6 +4,7 @@ namespace Ngea\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use View;
 
 class Authenticate
 {
@@ -23,7 +24,7 @@ class Authenticate
             } else {
                 return redirect()->guest('auth/login');
             }
-        }
+        }       
 
      
 
