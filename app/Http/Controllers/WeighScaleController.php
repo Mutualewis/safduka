@@ -541,7 +541,7 @@ class WeighScaleController extends Controller {
                 }   
 
 
-                $stock_details_exist = Stock::where('gr_id', $grn_id)->where('st_outturn', $st_outturn)->where('cgrad_id', $st_grid)->first(); 
+                $stock_details_exist = Stock::where('gr_id', $grn_id)->where('st_outturn', $st_outturn)->where('cgrad_id', $st_grid)->where('prc_id', $purchase_details->id)->first(); 
 
                 if ($stock_details_exist == null) {
 
@@ -878,7 +878,7 @@ class WeighScaleController extends Controller {
             
                 $tare_batch = ($package_weight->pkg_weight) * $packages_batch;
 
-            }    
+            }                
 
             $purchased_details = purchase::where('cfd_id', $stock_id)->first();
 
@@ -894,7 +894,7 @@ class WeighScaleController extends Controller {
 
             $coffee_details = NULL;
 
-            $preious_batch = Batch::where('st_id', $stock_id)->get();
+            $preious_batch = Batch::where('st_id', $stock_item_id)->get();
 
             $btid = Batch::insertGetId (
             ['st_id' => $stock_item_id, 'btc_weight' => $batch_weight, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $wsid]);
@@ -919,6 +919,10 @@ class WeighScaleController extends Controller {
                 }
 
             }
+
+            $bags_batch = floor($net_weight_batch/60);
+
+            $pockets_batch = floor($net_weight_batch % 60);            
 
             Stock::where('id', '=', $stock_item_id)
                         ->update([ 'st_net_weight' => $net_weight_batch ,'st_tare' => $tare_batch, 'st_bags' => $bags_batch, 'st_pockets' => $pockets_batch, 'st_gross' => $batch_weight]);
@@ -1018,6 +1022,8 @@ class WeighScaleController extends Controller {
         }
 
         $cfd_id = NULL;
+
+        $stock_details = NULL;
 
         $purchase_details = NULL;
 
@@ -1180,6 +1186,7 @@ class WeighScaleController extends Controller {
     public function getExpectedArrival($gr_id)
     {   
         if ($gr_id != null) {
+
             $expected = DB::table('coffee_details_cfd AS cfd')
                 ->select('cfd.id as id','sl.sl_no as sale', 'cfd.cfd_lot_no as lot', 'cfd.cfd_outturn as outturn', 'cgrad_name as grade')
                 ->leftJoin('sale_sl AS sl', 'sl.id', '=', 'cfd.sl_id')

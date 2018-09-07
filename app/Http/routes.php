@@ -639,9 +639,7 @@ Route::group(['middleware' => 'auth'], function()
 
 	Route::get('warehousechargerates/getreport', ['as'=>'warehousechargerates.getreport','uses'=>'RatesController@getWarehouseCharges']);
 
-	Route::get('/settingspriceunits', 'SettingsController@settingsPriceunitsForm');
-    Route::post('/settingspriceunits', 'SettingsController@settingsPriceunits');
-    Route::get('/settingspriceunits/punit_delete/{puID}', ['as'=>'settingspriceunits.punit_delete','uses'=>'SettingsController@priceunit_delete']);
+	
 
 });
 

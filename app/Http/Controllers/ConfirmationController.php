@@ -798,12 +798,18 @@ class ConfirmationController extends Controller {
 		foreach ($lots_in_sale as $key_lt => $value_lt) {
 
 			$bs_id = 28;
+			$lot_cup = NULL;
+			$lot_grade = NULL;
 
 			$quality_details = quality_details::where('cfd_id', $value_lt->id)->first();
 
-			$lot_cup = $quality_details->cp_id;
+			if ($quality_details != null) {
 
-			$lot_grade = $value_lt->cgrad_id;
+				$lot_cup = $quality_details->cp_id;
+
+				$lot_grade = $value_lt->cgrad_id;				
+
+			}
 
 			$basket_auto = BasketAuto::where('cp_id', $lot_cup)->where('cgrad_id', $lot_grade)->first();	
 
