@@ -1410,3 +1410,4 @@ class CatalogueGridController extends Controller {
     }
 }
 
+ 

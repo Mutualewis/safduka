@@ -119,79 +119,84 @@ use Ngea\Menu;
 
 use delete;
 
+use Ngea\BagSizes;
+use Ngea\PriceUnits;
+use Ngea\PriceType;
+use Ngea\CallFrom;
+use Ngea\ContractUpdates;
 
 class SettingsController extends Controller {
 
     public function settingsCountryForm (Request $request){
-        $id = null;
-        
-        $country = country::all(['id', 'ctr_name', 'ctr_initial', 'ctr_is_active']);
+    	$id = null;
+    	
+    	$country = country::all(['id', 'ctr_name', 'ctr_initial', 'ctr_is_active']);
 
-        return View::make('settingscountry', compact('id', 'country'));
+    	return View::make('settingscountry', compact('id', 'country'));
     }
 
     public function settingsCountry (Request $request){
-        $id = null;
+    	$id = null;
 
-        $country_selected = Input::get('country');
+    	$country_selected = Input::get('country');
 
-        $initials = Input::get('initials');
+    	$initials = Input::get('initials');
 
-        $isActive = Input::get('isActive');
+    	$isActive = Input::get('isActive');
 
         $user_data = Auth::user();
       
         $user = $user_data->id;
 
-        if ($isActive != null) {
-            country::whereNotNull('ctr_is_active')
+    	if ($isActive != null) {
+			country::whereNotNull('ctr_is_active')
                     ->update(['ctr_is_active' => null]);   
-        }
+    	}
 
 
-        if (null !== Input::get('submit')) {
-            $country_details = country::where('ctr_name', $country_selected)->first();  
+    	if (null !== Input::get('submit')) {
+    		$country_details = country::where('ctr_name', $country_selected)->first();  
 
-            if ($country_details != null) {
-                country::where('id', '=', $country_details->id)
+    		if ($country_details != null) {
+    			country::where('id', '=', $country_details->id)
                     ->update(['ctr_initial' => $initials, 'ctr_is_active' => $isActive]);   
 
                 Activity::log('Updated country information for country ' . $country_selected . ' initials ' . $initials . ' isActive ' . $isActive . ' User '. $user);
 
-            } else {
-                country::insert(['ctr_name' => $country_selected, 'ctr_initial' => $initials, 'ctr_is_active' => $isActive]);
+    		} else {
+				country::insert(['ctr_name' => $country_selected, 'ctr_initial' => $initials, 'ctr_is_active' => $isActive]);
 
-                Activity::log('Inserted country information for country ' . $country_selected . ' initials ' . $initials . ' isActive ' . $isActive . ' User '. $user);
+				Activity::log('Inserted country information for country ' . $country_selected . ' initials ' . $initials . ' isActive ' . $isActive . ' User '. $user);
 
-            }
+    		}
 
-        }
+    	}
 
 
 
-        $country = country::all(['id', 'ctr_name', 'ctr_initial', 'ctr_is_active']);
+    	$country = country::all(['id', 'ctr_name', 'ctr_initial', 'ctr_is_active']);
 
-        return View::make('settingscountry', compact('id', 'country'));
+    	return View::make('settingscountry', compact('id', 'country'));
     }
 
 
-    public function country_delete($id)
-    {
-        $user_data = Auth::user();
+	public function country_delete($id)
+	{
+	    $user_data = Auth::user();
 
         $user = $user_data->id;
         try{
-        $country_details = country::findOrFail($id);  
-        if ($country_details) {
-            $country=$country_details->ctr_name;
-            $country_details->delete();
+		$country_details = country::findOrFail($id);  
+		if ($country_details) {
+		    $country=$country_details->ctr_name;
+	    	$country_details->delete();
             Activity::log('Deleted country information for country ' . $country. ' User '. $user);
             return response()->json([
                 'deletable' => true,
                 'error' => null
             ]);
 
-        }else{
+		}else{
             return response()->json([
                 'deletable' => false,
                 'error' => '404'
@@ -204,8 +209,38 @@ class SettingsController extends Controller {
             ]);
         }
     }
+    
+    public function country_edit($id)
+	{
+	    $user_data = Auth::user();
 
-    //region
+        $user = $user_data->id;
+        try{
+		$country_details = country::findOrFail($id);  
+		if ($country_details) {
+		    $country=$country_details->ctr_name;
+            Activity::log('Requested country information for country ' . $country. ' User '. $user);
+            return response()->json([
+                'data' => $country_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+	}
+
+	//region
     public function settingsRegionForm (Request $request){
         $id = null;
 
@@ -291,6 +326,35 @@ class SettingsController extends Controller {
         //return View::make('settingsregion', compact('id', 'country','region'));
         return View::make('settingsregion', compact('id', 'country','region'));
     }
+    public function region_edit($id)
+	{
+	    $user_data = Auth::user();
+
+        $user = $user_data->id;
+        try{
+		$region_details = Region::findOrFail($id);  
+		if ($region_details) {
+		    $rgn_name=$region_details->rgn_name;
+            Activity::log('Requested region information for region ' . $rgn_name. ' User '. $user);
+            return response()->json([
+                'data' => $region_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+	}
 
     public function getWarehouses($regionID)
     {
@@ -379,7 +443,7 @@ class SettingsController extends Controller {
         try{
             $warehouse_details = Warehouse::findOrFail($id);
             if ($warehouse_details) {
-                $warehouse=$warehouse_details->ctr_name;
+                $warehouse=$warehouse_details->wr_name;
                 $warehouse_details->delete();
                 Activity::log('Deleted warehouse information for warehouse ' . $warehouse. ' User '. $user);
                 return response()->json([
@@ -400,7 +464,34 @@ class SettingsController extends Controller {
             ]);
         }
     }
-    //region
+    public function warehouse_edit($id)
+	{
+	    $user_data = Auth::user();
+
+        $user = $user_data->id;
+        try{
+            $warehouse_details = Warehouse::findOrFail($id);
+            if ($warehouse_details) {
+                $warehouse=$warehouse_details->wr_name;
+            return response()->json([
+                'data' => $warehouse_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+	}
     public function settingsGradeForm (Request $request){
         $id = null;
 
@@ -434,13 +525,14 @@ class SettingsController extends Controller {
             $grade_details = CoffeeGrade::where('cgrad_name', $cgrade_name)->first();
 
             if ($grade_details != null) {
-                Grade::where('id', '=',  $grade_details->id)
+                CoffeeGrade::where('id', '=',  $grade_details->id)
                     ->update(['ctr_id' => $country_selected]);
 
                 Activity::log('Updated grade information for grade ' . $cgrade_name . ' country ' . $country_selected . ' User '. $user);
 
             } else {
-                $cg_id=CoffeeGrade ::orderBy('id', 'desc')->first()->id;
+                $cg_id=CoffeeGrade ::orderBy('id', 'desc')->first();
+                $cg_id=$cg_id->id;
                 $cg_id=$cg_id+1;
                 CoffeeGrade::insert(['id'=>$cg_id,'cgrad_name' => $cgrade_name, 'ctr_id' => $country_selected]);
 
@@ -458,11 +550,15 @@ class SettingsController extends Controller {
 
 
     public function grade_delete($id)
-    {
+    { 
+	    $user_data = Auth::user();
 
+        $user = $user_data->id;
         $grade_details = CoffeeGrade::findOrFail($id);
         if ($grade_details) {
+            $cgrade_name=$grade_details->cgrad_name;
             $grade_details->delete();
+            Activity::log('Deleted grade information for grade, User '. $user);
         }
 
         $id = null;
@@ -472,6 +568,34 @@ class SettingsController extends Controller {
         );
     }
 
+    public function grade_edit($id)
+	{
+	    $user_data = Auth::user();
+
+        $user = $user_data->id;
+        try{
+           
+        $grade_details = CoffeeGrade::findOrFail($id);
+        if ($grade_details) {
+            return response()->json([
+                'data' => $grade_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+	}
     public function getCoffeeGradeDetails($gradeID)
     {
         if ($gradeID != null) {
@@ -586,6 +710,34 @@ class SettingsController extends Controller {
             ]);
         }
     }
+    public function quality_edit($id)
+	{
+	    $user_data = Auth::user();
+
+        $user = $user_data->id;
+        try{
+           
+            $parameter_details = quality_parameters::findOrFail($id);
+            if ($parameter_details) {
+            return response()->json([
+                'data' => $parameter_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+	}
     //cup
     public function settingsCupForm (Request $request){
         $id = null;
@@ -669,6 +821,34 @@ class SettingsController extends Controller {
             ]);
         }
     }
+    public function cup_edit($id)
+	{
+	    $user_data = Auth::user();
+
+        $user = $user_data->id;
+        try{
+           
+            $cupscore_details = cupscore::findOrFail($id);
+            if ($cupscore_details) {
+            return response()->json([
+                'data' => $cupscore_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+	}
     //raw
     public function settingsRawForm (Request $request){
         $id = null;
@@ -689,7 +869,7 @@ class SettingsController extends Controller {
         $id = null;
 
         $country = Input::get('country');
-        $rawscore = Input::get('cupscore');
+        $rawscore = Input::get('rawscore');
         $quality = Input::get('quality');
         $qualification = Input::get('qualification');
         $description = Input::get('description');
@@ -753,6 +933,33 @@ class SettingsController extends Controller {
             ]);
         }
     }
+    public function raw_edit($id)
+	{
+	    $user_data = Auth::user();
+
+        $user = $user_data->id;
+        try{
+            $rawscore_details = rawscore::findOrFail($id);
+            if ($rawscore_details) {
+            return response()->json([
+                'data' => $rawscore_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+	}
     //screens
     public function settingsScreenForm (Request $request){
         $id = null;
@@ -824,6 +1031,33 @@ class SettingsController extends Controller {
             ]);
         }
     }
+    public function screen_edit($id)
+	{
+	    $user_data = Auth::user();
+
+        $user = $user_data->id;
+        try{
+            $screen_details = screens::findOrFail($id);
+            if ($screen_details) {
+            return response()->json([
+                'data' => $screen_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+	}
     //basket
     public function settingsBasketForm (Request $request){
         $id = null;
@@ -900,6 +1134,33 @@ class SettingsController extends Controller {
             ]);
         }
     }
+    public function basket_edit($id)
+	{
+	    $user_data = Auth::user();
+
+        $user = $user_data->id;
+        try{
+            $basket_details = basket::findOrFail($id);
+            if ($basket_details) {
+            return response()->json([
+                'data' => $basket_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+	}
     //certification
     public function settingsCertificationForm (Request $request){
         $id = null;
@@ -975,6 +1236,33 @@ class SettingsController extends Controller {
             ]);
         }
     }
+    public function certification_edit($id)
+	{
+	    $user_data = Auth::user();
+
+        $user = $user_data->id;
+        try{
+            $certification_details =Certification::findOrFail($id);
+            if ($certification_details) {
+            return response()->json([
+                'data' => $certification_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+	}
     //client
     public function settingsClientForm (Request $request){
         $id = null;
@@ -1052,7 +1340,34 @@ class SettingsController extends Controller {
             ]);
         }
     }
+    public function client_edit($id)
+	{
+	    $user_data = Auth::user();
 
+        $user = $user_data->id;
+        try{
+            $client_details =Client::findOrFail($id);
+            if ($client_details) {
+            return response()->json([
+                'data' => $client_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+    
     //buyer
     public function settingsBuyerForm (Request $request){
         $id = null;
@@ -1134,6 +1449,33 @@ class SettingsController extends Controller {
             ]);
         }
     }
+    public function buyer_edit($id)
+	{
+	    $user_data = Auth::user();
+
+        $user = $user_data->id;
+        try{
+            $buyer_details =buyer::findOrFail($id);
+            if ($buyer_details) {
+            return response()->json([
+                'data' => $buyer_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
     //department
     public function settingsDepartmentForm (Request $request){
         $id = null;
@@ -1211,6 +1553,33 @@ class SettingsController extends Controller {
         }catch (\PDOException $e) {
             return response()->json([
                 'deletable' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+    public function department_edit($id)
+	{
+	    $user_data = Auth::user();
+
+        $user = $user_data->id;
+        try{
+            $department_details =department::findOrFail($id);
+            if ($department_details) {
+            return response()->json([
+                'data' => $department_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
                 'error' => $e->getMessage()
             ]);
         }
@@ -1312,6 +1681,33 @@ class SettingsController extends Controller {
             ]);
         }
     }
+    public function grower_edit($id)
+	{
+	    $user_data = Auth::user();
+
+        $user = $user_data->id;
+        try{
+            $grower_details=coffeegrower::findOrFail($id);
+            if ($grower_details) {
+            return response()->json([
+                'data' => $grower_details->toJson(),
+                'found' => true,
+                'error' => null
+            ]);
+
+		}else{
+            return response()->json([
+                'found' => false,
+                'error' => '404'
+            ]);
+        }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
     //seasons
     public function settingsSeasonForm (Request $request){
         $id = null;
@@ -1367,6 +1763,79 @@ class SettingsController extends Controller {
                 $season=$season_details->csn_season;
                 $season_details->delete();
                 Activity::log('Deleted season information for season ' . $season. ' User '. $user);
+                return response()->json([
+                    'deletable' => true,
+                    'error' => null
+                ]);
+
+            }else{
+                return response()->json([
+                    'deletable' => false,
+                    'error' => '404'
+                ]);
+            }
+        }catch (\PDOException $e) {
+            return response()->json([
+                'deletable' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+    //seasons
+    public function settingsPriceunitsForm (Request $request){
+        $id = null;
+        $price_units= DB::table('price_units_pu AS pu')
+            ->select('*')
+            ->orderBy('pu.created_at', 'desc')
+            ->get();
+        return View::make('settingspriceunits', compact('id','price_units'));
+    }
+
+    public function settingsPriceunits (Request $request){
+        $this->validate($request, [
+            'price_unit' => 'required'
+        ]);
+        $id = null;
+
+        $punit = Input::get('price_unit');
+
+        $user_data = Auth::user();
+
+        $user = $user_data->id;
+
+
+
+        if (null !== Input::get('submit')) {
+            $price_unit_details = PriceUnits::where('pu_units', $punit)->first();
+
+            if ($price_unit_details != null) {
+                $request->session()->flash('alert-danger', 'Price Unit already exists!!');
+
+            } else {
+                PriceUnits::insert(['pu_units' => $punit]);
+
+                Activity::log('Inserted price unit information for unit ' . $punit . ' user ' .$user);
+
+            }
+
+        }
+
+        return redirect()->action(
+            'SettingsController@settingsPriceunitsForm'
+        );
+    }
+
+
+    public function priceunit_delete($id)
+    {
+        $user_data = Auth::user();
+        $user = $user_data->id;
+        try{
+            $price_unit_details =PriceUnits::findOrFail($id);
+            if ($price_unit_details) {
+                $punit=$price_unit_details->price_unit;
+                $price_unit_details->delete();
+                Activity::log('Deleted price unit information for season ' . $punit. ' User '. $user);
                 return response()->json([
                     'deletable' => true,
                     'error' => null
@@ -2392,7 +2861,6 @@ public function settingsGrowertypeForm (Request $request){
     }
     //transporters
     public function settingsTransportersForm (Request $request){
-
         $id = null;
         $countries = country::all(['id', 'ctr_name', 'ctr_initial', 'ctr_is_active']);
         $query= DB::table('transporters_trp AS trp')
@@ -2401,7 +2869,6 @@ public function settingsGrowertypeForm (Request $request){
             ->orderBy('trp.created_at', 'desc');
         $transporters=$query->addSelect('trp.id AS id')->get();
         return View::make('settingstransporters', compact('id','transporters', 'countries'));
-        
     }
 
     public function settingsTransporters (Request $request){
