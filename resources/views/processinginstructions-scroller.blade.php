@@ -175,7 +175,6 @@
 			$lots[] = $value->id;
 			$newElement = array();
 			$newElement['id'] = (int)$value->id;
-			$newElement['stockid'] = (int)$value->stock_id;
 			$newElement['weight'] = (int)$value->weight;
 			$newElement['bags'] = (int)$value->bags;
 			$newElement['pockets'] = (int)$value->pockets;
@@ -526,7 +525,7 @@
 									</th>
 						        </tr>
 						    </thead>
-						    <tfoot style="display: table-header-group; text-align:left; width: inherit; max-width:100%;">
+						  <!--   <tfoot style="display: table-header-group; text-align:left; width: inherit; max-width:100%;">
 						        <tr>
 									<th>
 										Select
@@ -561,7 +560,7 @@
 									<th>
 										Code
 									</th>
-									<th>
+									<th class="absorbing-column">
 										Quality
 									</th>
 									<th>
@@ -573,7 +572,7 @@
 									<th>
 										Diff
 									</th>
-									<th>
+									<th class="absorbing-column">
 										Location
 									</th>
 									<th style="display: none;">
@@ -586,7 +585,7 @@
 										Provisional
 									</th>
 						        </tr>
-						    </tfoot>
+						    </tfoot> -->
 
 						</table>
 @push('scripts')
@@ -609,7 +608,7 @@
 	url = url.replace(':rf', ref_no);
 
     var table = $('#stocks-table').DataTable({
-    	// serverSide: true,
+    	serverSide: true,
 		dom: 'Bfrtip',      	
    		type: 'POST',
    		url: 'processinginstructions',
@@ -617,7 +616,20 @@
         deferRender: true,
      	ajax: url,
      	autoWidth: true,
-     	pageLength: 100,
+     	// pageLength: 50,
+        bDeferRender: true,
+	    scrollY: 500,
+        scroller: {
+            loadingIndicator: true
+        },
+        stateSave: true,
+        scrollX: true,
+        scrollCollapse: true,
+
+        fixedColumns: {
+            leftColumns: 5
+        },
+     	 "colReorder": true,
 
      	buttons: [
      		'pageLength' , 
@@ -641,8 +653,8 @@
             { data: 'value', name: 'value'},
             { data: 'differential', name: 'differential'},
             { data: 'location', name: 'location'},
-            { data: 'id', name: 'additionalProcessing'},
-            { data: 'id', name: 'tobewithdrawn' , searchable: false},
+            { data: 'id', name: 'id'},
+            { data: 'id', name: 'id' , searchable: false},
             { data: 'pbk_instruction_number', name: 'pbk_instruction_number'},
             { data: 'ended', name: 'ended' , searchable: false},
             { data: 'prcssid_all', name: 'prcssid_all' , searchable: false},
@@ -650,13 +662,13 @@
 
         ],    
 
-        language: {
-            lengthMenu: "Display _MENU_ records per page",
-            zeroRecords: "Nothing found - sorry",
-            info: "Showing page _PAGE_ of _PAGES_",
-            infoEmpty: "No records available",
-            infoFiltered: "(filtered from _MAX_ total records)"
-        },
+        // language: {
+        //     lengthMenu: "Display _MENU_ records per page",
+        //     zeroRecords: "Nothing found - sorry",
+        //     info: "Showing page _PAGE_ of _PAGES_",
+        //     infoEmpty: "No records available",
+        //     infoFiltered: "(filtered from _MAX_ total records)"
+        // },
 
         columnDefs: [
 
@@ -1003,7 +1015,14 @@
 
    });
 
+        yadcf.init(table, [
+            {column_number : 0},
+            {column_number : 1},
+            {column_number : 2},
+            {column_number : 3}
+        ]);
 
+	
     $('#codeFltr').on('change', function(){
     	var search = [];
       

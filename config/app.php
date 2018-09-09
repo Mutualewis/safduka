@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'http://ibero'),
 
     /*
     |--------------------------------------------------------------------------
@@ -173,7 +173,6 @@ return [
         // Barryvdh\DomPDF\ServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
         Reportico\Reportico\ReporticoServiceProvider::class,
-        \Ecrmnn\LaravelHttps\Providers\ServiceProvider::class,
     ],
 
     /*

@@ -26,8 +26,7 @@
         "h4cc/wkhtmltoimage-amd64": "0.12.x",
         "wemersonjanuario/wkhtmltopdf-windows": "0.12.2.3",
         "view-components/view-components": "^0.26.6",
-        "doctrine/dbal": "^2.5",
-        "ecrmnn/laravel-https": "^1.0"
+        "doctrine/dbal": "^2.5"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
