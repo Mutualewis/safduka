@@ -1,0 +1,40 @@
+DROP EVENT stocks_summary_update;
+delimiter |
+CREATE EVENT stocks_summary_update
+    ON SCHEDULE
+      EVERY 30 MINUTE
+        DO
+BEGIN
+
+DELETE FROM `ibero_db`.`stocks_summary_ssm`
+WHERE date(created_at) = curdate();
+
+
+INSERT INTO `ibero_db`.`stocks_summary_ssm`
+(
+`wr_name`,
+`ssm_buyer`,
+`ssm_weight`,
+`ssm_storage`,
+`ssm_count`,
+`ssm_average_storage`,
+`ssm_value`,
+`created_at`)
+    select 
+        
+        `bws`.`wr_name` AS `wr_name`,
+        `bws`.`buyer` AS `buyer`,
+`bws`.`weight` AS `weight`,
+        `ssic`.`storage` AS `storage`,
+        `ssic`.`count` AS `count`,
+        `ssic`.`average_storage` AS `average_storage`,
+        `bws`.`value` AS `value`,
+CURRENT_TIMESTAMP
+    from
+        (`sum_warehouse_total` `bws`
+        left join `sum_stock_item_count` `ssic` ON ((`ssic`.`wr_name` = `bws`.`wr_name`)))
+    group by `bws`.`buyer` , `bws`.`wr_name`;
+      END |
+
+delimiter ;
+

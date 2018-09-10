@@ -1,0 +1,31 @@
+DROP EVENT processing_summary_update;
+delimiter |
+CREATE EVENT processing_summary_update
+    ON SCHEDULE
+	EVERY 30 MINUTE
+        DO
+BEGIN
+DELETE FROM `ibero_db`.`processing_summary_prssm`
+WHERE date(created_at) = curdate();
+INSERT INTO `ibero_db`.`processing_summary_prssm`
+(
+prssm_buyer,
+prssm_year,
+`prssm_month`,
+`prssm_total_allocated`,
+`prssm_results`,
+`prssm_difference`,
+`created_at`)
+    select 
+		cb_name,
+		year,        
+        `month` ,
+		`total_allocated` ,
+		`results` ,
+		`diffrence` ,
+		CURRENT_TIMESTAMP
+    from
+        `processing_monthly_summary` ;
+      END |
+
+delimiter ;

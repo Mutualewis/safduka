@@ -178,23 +178,7 @@ class BreakDownController extends Controller {
 
        // $stock_items = Stock::where('id', '8094')->get();
 
-         $stock_items = Stock::where('id', '8110')->orWhere('id', '8229')->orWhere('id', '8230')->orWhere('id', '7956')->orWhere('id', '7957')->orWhere('id', '8103')->orWhere('id', '7972')->orWhere('id', '8261')->orWhere('id', '8262')->orWhere('id', '7894')->orWhere('id', '7896')->orWhere('id', '7857')->orWhere('id', '7934')->orWhere('id', '7952')->orWhere('id', '8095')->get();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        $stock_items = Stock::where('id', '8755')->orWhere('id', '7956')->orWhere('id', '7957')->orWhere('id', '8784')->orWhere('id', '8594')->orWhere('id', '8747')->orWhere('id', '8375')->orWhere('id', '8376')->orWhere('id', '8593')->orWhere('id', '8756')->orWhere('id', '8860')->orWhere('id', '8861')->orWhere('id', '8588')->orWhere('id', '8753')->orWhere('id', '6178')->orWhere('id', '8700')->orWhere('id', '8701')->orWhere('id', '7464')->orWhere('id', '8699')->orWhere('id', '7894')->orWhere('id', '8783')->orWhere('id', '8887')->orWhere('id', '8888')->orWhere('id', '8889')->get();
 
 
 
@@ -343,7 +327,9 @@ class BreakDownController extends Controller {
             
        // $stock_items = Stock::where('id', '7677')->orWhere('id', '7678')->get();
 
-        $stock_items = Stock::where('id', '8110')->orWhere('id', '8229')->orWhere('id', '8230')->orWhere('id', '7956')->orWhere('id', '7957')->orWhere('id', '8103')->orWhere('id', '7972')->orWhere('id', '8261')->orWhere('id', '8262')->orWhere('id', '7894')->orWhere('id', '7896')->orWhere('id', '7857')->orWhere('id', '7934')->orWhere('id', '7952')->orWhere('id', '8095')->get();
+        $stock_items = Stock::where('id', '8755')->orWhere('id', '7956')->orWhere('id', '7957')->orWhere('id', '8784')->orWhere('id', '8594')->orWhere('id', '8747')->orWhere('id', '8375')->orWhere('id', '8376')->orWhere('id', '8593')->orWhere('id', '8756')->orWhere('id', '8860')->orWhere('id', '8861')->orWhere('id', '8588')->orWhere('id', '8753')->orWhere('id', '6178')->orWhere('id', '8700')->orWhere('id', '8701')->orWhere('id', '7464')->orWhere('id', '8699')->orWhere('id', '7894')->orWhere('id', '8783')->orWhere('id', '8887')->orWhere('id', '8888')->orWhere('id', '8889')->get();
+        
+
 
             // $stock_items = Stock::whereNotNull('st_bric_value')->get();
 

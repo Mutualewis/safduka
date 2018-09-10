@@ -1,0 +1,42 @@
+DROP EVENT stocks_location_update;
+delimiter |
+CREATE EVENT stocks_location_update
+    ON SCHEDULE 
+      EVERY 30 MINUTE
+        DO
+BEGIN
+
+TRUNCATE TABLE stock_locations_history_slh;
+
+INSERT INTO `ibero_db`.`stock_locations_history_slh`
+(
+
+stid,
+prc_id,
+st_dispatch_net,
+st_gross,
+st_moisture,
+pkg_name,
+weight,
+bags,
+pockets,
+location,
+`created_at`)
+    select 
+        
+		stid,
+		prc_id,
+		st_dispatch_net,
+		st_gross,
+		st_moisture,
+		pkg_name,
+		weight,
+		bags,
+		pockets,
+		location,
+		CURRENT_TIMESTAMP
+    from
+        `stock_location_combined` `slc`;
+      END |
+
+delimiter ;

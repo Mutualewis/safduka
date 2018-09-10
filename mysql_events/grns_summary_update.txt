@@ -1,0 +1,38 @@
+DROP EVENT grns_summary_update;
+delimiter |
+CREATE EVENT grns_summary_update
+    ON SCHEDULE 
+      EVERY 30 MINUTE
+        DO
+BEGIN
+
+DELETE FROM `ibero_db`.`grns_summary_gsm`
+WHERE date(created_at) = curdate();
+
+INSERT INTO `ibero_db`.`grns_summary_gsm`
+(
+`gsm_season`,
+`gsm_buyer`,
+`gsm_warehouse_from`,
+`gsm_month`,
+`gsm_weight`,
+`gsm_expected_weight`,
+`gsm_weight_difference`,
+`gsm_percentage_weight_difference`,
+`created_at`)
+    select 
+        
+        `grs`.`csn_season` ,
+		`cb_name`,
+        `grs`.`warehouse_from` ,
+		`grs`.`month` ,
+		`grs`.`weight` ,
+		`grs`.`expected_weight` ,
+		`grs`.`weight_difference` ,
+		`grs`.`percentage_weight_difference` ,
+CURRENT_TIMESTAMP
+    from
+        `grns_received_summary` `grs`;
+      END |
+
+delimiter ;
