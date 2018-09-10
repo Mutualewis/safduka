@@ -678,7 +678,7 @@
 
 		            <div class="form-group col-md-4">
 			                <label >Packages</label>
-			                <input class="form-control"  id="packages_batch"  name="packages_batch" oninput="calculateValue()">		            
+			                <input class="form-control"  id="packages_batch"  name="packages_batch" oninput="calculateValue()" value="{{ old('packages_batch').$packages_batch  }}">		            
 		            </div>		
 
 		            <div class="form-group col-md-2">
