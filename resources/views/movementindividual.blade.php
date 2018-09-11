@@ -257,7 +257,7 @@
 	        	<div class="row">
 					<div class="form-group col-md-12">
 						<label>Reason for Movement</label>
-						<textarea class="form-control" rows="3" name="reasonForMovement" value="{{ old('reasonForMovement').$reasonForMovement  }}"><?php echo htmlspecialchars($reasonForMovement); ?></textarea>
+						<textarea class="form-control" rows="3" id="reasonForMovement" name="reasonForMovement" value="{{ old('reasonForMovement').$reasonForMovement  }}"><?php echo htmlspecialchars($reasonForMovement); ?></textarea>
 					</div>
 	            </div>
 				<div class="col-md-12 col-md-offset-0 pre-scrollable" style="max-height: 800px;">
@@ -620,8 +620,6 @@
 
 		    movement = $('input[name=movement]:checked').map(function() {
 
-		    	alert("weight"+this.value);
-
     			return this.value + '-' +document.getElementById("weight"+this.value).value;;
 
 		    }).get();
@@ -631,6 +629,10 @@
 			var ref_no = document.getElementById("ref_no").value;
 
 			var movementType = document.getElementById("MovementType").value;
+
+			var reasonForMovement = document.getElementById("reasonForMovement").value;
+
+			
 
 
 			if (movement == "") {
@@ -651,13 +653,21 @@
 
 			}
 
-			var url = '{{ route('movementindividual.addLots',['movement'=>":movement" , 'ref_no'=>":ref_no", 'movementType'=>":movementType"]) }}';
+			if (reasonForMovement == "") {
+
+				reasonForMovement = 0;
+
+			}
+
+			var url = '{{ route('movementindividual.addLots',['movement'=>":movement" , 'ref_no'=>":ref_no", 'movementType'=>":movementType", 'reasonForMovement'=>":reasonForMovement"]) }}';
 
 			url = url.replace(':movement', movement);
 
 			url = url.replace(':ref_no', ref_no);
 
 			url = url.replace(':movementType', movementType);
+			
+			url = url.replace(':reasonForMovement', reasonForMovement);
 
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'

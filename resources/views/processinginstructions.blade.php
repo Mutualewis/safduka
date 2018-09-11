@@ -609,7 +609,6 @@
 	url = url.replace(':rf', ref_no);
 
     var table = $('#stocks-table').DataTable({
-    	// serverSide: true,
 		dom: 'Bfrtip',      	
    		type: 'POST',
    		url: 'processinginstructions',

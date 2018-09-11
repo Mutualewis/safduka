@@ -237,7 +237,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/movementindividual/getLots/{countryID}/{warehouse}/{new_row}/{new_column}', ['as'=>'movementindividual.getLots','uses'=>'MovementIndividualController@getLots']); 
 
-		Route::get('/movementindividual/addLots/{movement}/{ref_no}/{movementType}', ['as'=>'movementindividual.addLots','uses'=>'MovementIndividualController@addLots']); 
+		Route::get('/movementindividual/addLots/{movement}/{ref_no}/{movementType}/{reasonForMovement}', ['as'=>'movementindividual.addLots','uses'=>'MovementIndividualController@addLots']); 
 
 
 

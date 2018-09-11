@@ -569,6 +569,7 @@ $(function() {
         } );
     } ).draw();    
 });
+
 </script>
 @endpush
 					</div>

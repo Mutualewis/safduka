@@ -233,7 +233,6 @@ class MovementIndividualController extends Controller {
 
 		
 
-
 		$rates    = processrates::all(['id', 'service']);
 
 		$teams   = teams::all(['id', 'tms_grpname']);   	
@@ -464,7 +463,7 @@ class MovementIndividualController extends Controller {
     }
 
 
-    public function addLots($movement, $ref_no, $movementType)
+    public function addLots($movement, $ref_no, $movementType, $reasonForMovement)
     {	
 
         try{
@@ -484,14 +483,14 @@ class MovementIndividualController extends Controller {
                 $instructionRefId = $instructedRefDetails->id;
 
                 InstructedLocationRef::where('id', '=', $instructionRefId)
-                    ->update(['ilf_number' => $ref_no, 'ilf_reason' => NULL,  'mit_id' => $movementType]);
+                    ->update(['ilf_number' => $ref_no, 'ilf_reason' => $reasonForMovement,  'mit_id' => $movementType]);
 
                 Activity::log('Updated InstructedLocationRef information with ref_no '.$ref_no. ' reasonForMovement '. NULL. ' selectedMovementType '. $movementType);
 
             } else {
 
 				$instructionRefId = InstructedLocationRef::insertGetId (
-				['ilf_number' => $ref_no, 'ilf_reason' => NULL,  'mit_id' => $movementType]);
+				['ilf_number' => $ref_no, 'ilf_reason' => $reasonForMovement,  'mit_id' => $movementType]);
 
 				Activity::log('Inserted InstructedLocationRef information with ref_no '.$ref_no. ' reasonForMovement '. NULL . ' selectedMovementType '. $movementType);
             }
@@ -517,7 +516,7 @@ class MovementIndividualController extends Controller {
 							->update(['btc_instructed_by' => $user]);	
 
 						$stlocid = InstructedStockLocation::insertGetId (
-						['bt_id' => $btid, 'ilf_id' => $instructionRefId, 'loc_row_id' => NULL, 'loc_column_id' => NULL, 'btc_zone' => NULL, 'insloc_reason' => NULL, 'insloc_ref' => $ref_no, 'insloc_weight' => $instructed_weight,  'mit_id' => $movementType]);
+						['bt_id' => $btid, 'ilf_id' => $instructionRefId, 'loc_row_id' => NULL, 'loc_column_id' => NULL, 'btc_zone' => NULL, 'insloc_reason' => $reasonForMovement, 'insloc_ref' => $ref_no, 'insloc_weight' => $instructed_weight,  'mit_id' => $movementType]);
 			        }				
 				}
 			}
