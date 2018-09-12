@@ -503,7 +503,7 @@ public function CalculateProcessResultsRate($ref_no, $processingType, $service, 
 
         if ($processing_rate_details != null) {
             processcharges::where('ref_no', '=',  $ref_no)->where('prcgs_rate_id', '=',  $rateid)
-                ->update(['prcgs_rate_id' => $rateid, 'prcgs_service'=>$servicename, 'prcgs_rate'=>$rate, 'prcgs_total'=>$charge, 'bags'=>$packages]);
+                ->update(['prcgs_rate_id' => $rateid, 'prcgs_service'=>$servicename, 'prcgs_rate'=>$rate, 'prcgs_total'=>$charge, 'bags'=>$packages,'descr' => $teamdata->description]);
 
             Activity::log('Updated process rate information for instruction ' . $ref_no . ' service ' . $servicename. ' process charge ' . $charge. ' with rate ' . $rate. ' bags ' . $packages. ' user ' .$user);
             
