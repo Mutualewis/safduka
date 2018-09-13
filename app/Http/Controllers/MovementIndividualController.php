@@ -454,7 +454,7 @@ class MovementIndividualController extends Controller {
 
 		if (NULL != $warehouse) {
 
-			$stlocdetails = StockLocationView::where('wrid', $warehouse)->where('loc_row', $new_row)->where('loc_column', $new_column)->orderBY('btc_zone',' desc')->get();
+			$stlocdetails = StockLocationView::where('wrid', $warehouse)->where('loc_rowid', $new_row)->where('loc_columnid', $new_column)->orderBY('btc_zone',' desc')->get();
 		}
 
 

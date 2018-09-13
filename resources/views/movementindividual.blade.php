@@ -218,7 +218,7 @@
 								@if (isset($location))
 											@foreach ($location->all() as $value)
 												@if ($value->loc_row != NULL)
-													<option value="{{ $value->loc_row }}">{{ $value->loc_row}}</option>
+													<option value="{{ $value->id }}">{{ $value->loc_row}}</option>
 												@endif
 											@endforeach
 										
@@ -232,7 +232,7 @@
 								@if (isset($location))
 											@foreach ($location->all() as $value)
 												@if ($value->loc_column != NULL)
-													<option value="{{ $value->loc_column }}">{{ $value->loc_column}}</option>
+													<option value="{{ $value->id }}">{{ $value->loc_column}}</option>
 												@endif
 											@endforeach
 										
@@ -428,9 +428,11 @@
 
 		var warehouse = document.getElementById("warehouse").value;
 
-		var new_row = document.getElementById("new_row").value;
+		var new_row =document.getElementById("new_row").value.toString();
+
 
 		var new_column = document.getElementById("new_column").value;
+
 
 		if (country_id == "") {
 
@@ -453,7 +455,6 @@
 
 		}
 
-
 		var url = '{{ route('movementindividual.getLots',['country_id'=>":id",'warehouse'=>":warehouse",'new_row'=>":new_row",'new_column'=>":new_column" ]) }}';
 
 		url = url.replace(':id', country_id);
@@ -464,7 +465,7 @@
 
 		url = url.replace(':new_column', new_column);
 
-		return url;
+		return ((url));
 
 	}
 
@@ -524,16 +525,16 @@
 			    }
 
 
-			    var labelZones = document.createElement("p");
+			    var labelZones = document.createElement("label");
 
 			    labelZones.innerHTML = "&nbsp;<strong>Zone:</strong>&nbsp;" +obj[i].btc_zone;
 
 			    news.appendChild(labelZones);
 
 
-			    var labelOutt = document.createElement("p");
+			    var labelOutt = document.createElement("label");
 
-			    labelOutt.innerHTML = "&nbsp;<strong>Outturn:</strong>&nbsp;" +obj[i].name;
+			    labelOutt.innerHTML = "&nbsp;<strong>Outturn:</strong>&nbsp;" +obj[i].outturn;
 
 			    news.appendChild(labelOutt);
 
@@ -543,6 +544,14 @@
 			    labelGrade.innerHTML = "&nbsp;<strong>Grade:</strong>&nbsp;" +obj[i].grade;
 
 			    news.appendChild(labelGrade);
+
+
+			    var packages = document.createElement("label");
+
+			    packages.innerHTML = "&nbsp;<strong>Packages:</strong>&nbsp;" +obj[i].btc_packages;
+
+			    news.appendChild(packages);
+
 
 
 			    var weight = document.createElement("label");

@@ -503,7 +503,14 @@ public function CalculateProcessResultsRate($ref_no, $processingType, $service, 
 
         if ($processing_rate_details != null) {
             processcharges::where('ref_no', '=',  $ref_no)->where('prcgs_rate_id', '=',  $rateid)
-                ->update(['prcgs_rate_id' => $rateid, 'prcgs_service'=>$servicename, 'prcgs_rate'=>$rate, 'prcgs_total'=>$charge, 'bags'=>$packages,'descr' => $teamdata->description]);
+                ->update(['prcgs_rate_id' => $rateid, 'prcgs_service'=>$servicename, 'prcgs_rate'=>$rate, 'prcgs_total'=>$charge, 'bags'=>$packages]);
+            $processchargedetails = processcharges::where('ref_no', '=',  $ref_no)->where('prcgs_rate_id', '=',  $rateid)->first();
+            $prcgs_id=$processchargedetails->id;
+            process_charges_teams::where('prcgs_id', '=',$prcgs_id)->delete();
+            foreach($teams as $teamdata){
+                process_charges_teams::insert(['prcgs_id'=>$prcgs_id,'prcgs_team_id'=>$teamdata->team,'descr' => $teamdata->description]);
+                Activity::log('Inserted team information for instruction ' . ' team ' . $teamdata->team . ' description ' . $teamdata->description. ' user ' .$user);
+            }
 
             Activity::log('Updated process rate information for instruction ' . $ref_no . ' service ' . $servicename. ' process charge ' . $charge. ' with rate ' . $rate. ' bags ' . $packages. ' user ' .$user);
             
