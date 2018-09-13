@@ -430,8 +430,9 @@
 
 		var new_row =document.getElementById("new_row").value.toString();
 
-
 		var new_column = document.getElementById("new_column").value;
+
+		var ref_no = document.getElementById("ref_no").value;
 
 
 		if (country_id == "") {
@@ -454,8 +455,13 @@
 			new_column = 0;
 
 		}
+		if (ref_no == "") {
 
-		var url = '{{ route('movementindividual.getLots',['country_id'=>":id",'warehouse'=>":warehouse",'new_row'=>":new_row",'new_column'=>":new_column" ]) }}';
+			ref_no = 0;
+
+		}
+
+		var url = '{{ route('movementindividual.getLots',['country_id'=>":id",'warehouse'=>":warehouse",'new_row'=>":new_row",'new_column'=>":new_column",'ref_no'=>":ref_no" ]) }}';
 
 		url = url.replace(':id', country_id);
 
@@ -465,7 +471,9 @@
 
 		url = url.replace(':new_column', new_column);
 
-		return ((url));
+		url = url.replace(':ref_no', ref_no);
+
+		return (url);
 
 	}
 
@@ -718,16 +726,22 @@
 <style type="text/css">
 	
 	.modal-dialog {
-	  width: 100%;
-	  height: 100%;
-	  margin: 0;
-	  padding: 0;
+		overflow: scroll;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
 	}
 
 	.modal-content {
-	  height: auto;
-	  min-height: 100%;
-	  border-radius: 0;
+		overflow: scroll;
+		height: auto;
+		min-height: 100%;
+		border-radius: 0;
+	}
+	
+	.modal-open {
+		overflow: scroll;
 	}
 
 	.img {

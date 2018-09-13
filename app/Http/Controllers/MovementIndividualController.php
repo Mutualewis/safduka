@@ -449,12 +449,12 @@ class MovementIndividualController extends Controller {
 
  	}
 
-    public function getLots($countryID, $warehouse, $new_row, $new_column)
+    public function getLots($countryID, $warehouse, $new_row, $new_column, $ref_no)
     {	
 
 		if (NULL != $warehouse) {
 
-			$stlocdetails = StockLocationView::where('wrid', $warehouse)->where('loc_rowid', $new_row)->where('loc_columnid', $new_column)->orderBY('btc_zone',' desc')->get();
+			$stlocdetails = StockLocationView::where('wrid', $warehouse)->where('loc_rowid', $new_row)->where('loc_columnid', $new_column)->where('insloc_ref', $ref_no)->orWhereNull('insloc_ref')->where('wrid', $warehouse)->where('loc_rowid', $new_row)->where('loc_columnid', $new_column)->orderBY('btc_zone',' desc')->orderBY('grade',' desc')->get();
 		}
 
 
