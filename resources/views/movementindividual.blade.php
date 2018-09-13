@@ -522,6 +522,8 @@
 
 			    	document.getElementById('movement' + obj[i].stid).checked = true;
 
+			    	document.getElementById('movement' + obj[i].stid).setAttribute("disabled", true);
+
 			    }
 
 
