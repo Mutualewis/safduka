@@ -1,0 +1,60 @@
+Continue optimizing using page load time
+is datatables rendering the issue?
+Try loadng in foreach
+Gmail working? Push Notifications if multiple people issue diffrent instructions
+javascript scripting slow?
+
+
+
+
+
+
+
+
+
+
+
+You can load part of data only for one page. For make this solution you need changing API and update JS code if your table doesn't support it. I do it this way.
+
+For request:
+a) limit - number row in page
+b) offset - number row for skip (limit * current page)
+c) order - column name for order (Example: for ASC is order=prcie or for DESC is order=-price)
+d) plus other params for filtering.
+
+For response:
+a) count - count row in table (Example: SELECT count() FROM some_table WHERE / + filter if necessary*/;)
+b) rows - array of rows (Example: SELECT * FROM some_table WHERE /* + the same filter if exist */ ORDER BY some_column ASC|DESC LIMIT $limit OFFSET $offset)
+
+For pagination:
+a) Set count page to bootspap pagination
+b) Set current page if necessary
+
+var oSettings = {
+    'bDestroy': true,
+    "bInfo": true,
+    "bProcessing": true,
+    "bDeferRender": true,
+    'iDisplayLength': 10,
+    'sPaginationType': 'full_numbers',
+    'sDom': '<"top"i> T<"clear">lfrtip',
+    'sPageButtonActive': "paginate_active",
+    'sPageButtonStaticDisabled': "paginate_button",
+    "oLanguage": {
+        "sSearch": "Futher Filter Search results:",
+        "sInfo": "Got a total of _TOTAL_ results to show (_START_ to _END_)",
+        "sLengthMenu": 'Show <select>' +
+                '<option value="5">5</option>' +
+                '<option value="10">10</option>' +
+                '<option value="15">15</option>' +
+                '<option value="20">20</option>' +
+                '<option value="25">25</option>' +
+                '</select> results'
+    },
+    "bSort": false
+};
+
+
+https://espeo.eu/blog/jquery-data-tables/
+
+https://datatables.net/examples/data_sources/

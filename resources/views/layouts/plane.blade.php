@@ -13,11 +13,13 @@
 	<link rel="stylesheet" href="{{ asset("assets/stylesheets/datepicker.css") }}" />
 	<link href="{{ asset("favicon.ico") }}" rel="shortcut icon" type="image/ico">
 
-	<!-- <link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/css/chosen.min.css") }}" />	 -->
+	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/css/chosen.min.css") }}" />	
 	<!-- <link rel="stylesheet" href="{{ asset("assets/stylesheets/bootstrap.min.css") }}" type="text/css" /> -->
+
+	<!-- <link rel="stylesheet" href="{{ asset("assets/stylesheets/bootstrap-3.1.1.min.css") }}" type="text/css" /> -->
 	<link rel="stylesheet" href="{{ asset("assets/stylesheets/bootstrap-multiselect.css") }}" type="text/css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/css/ui.jqgrid.css") }}" />
-	<!-- <link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/css/jquery.dataTables.yadcf.css") }}" /> -->
+	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/css/jquery.dataTables.yadcf.css") }}" />
 
 	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/css/demo.css") }}" />
 	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/css/normalize.css") }}" />
@@ -29,16 +31,13 @@
 
 	<script src="{{ asset("assets/jquery-v2.0.3/jquery.js") }}" type="text/javascript"></script>
 
-
-	<script src="{{ asset("assets/jquery-v2.0.3/jquery.js") }}" type="text/javascript"></script>
-
 	
 
 	
 	<script src="{{ asset("assets/jquery-jqGrid-v4.6.0/js/jquery.jqGrid.src.js") }}" type="text/javascript"></script>
-	<script src="{{ asset("assets/scripts/frontend.js") }}" type="text/javascript"></script>
-	<script src="{{ asset("assets/scripts/Chart.js") }}" type="text/javascript"></script>
-	<script src="{{ asset("assets/scripts/Chart.min.js") }}" type="text/javascript"></script>
+	<!-- <script src="{{ asset("assets/scripts/frontend.js") }}" type="text/javascript"></script> -->
+	<!-- <script src="{{ asset("assets/scripts/Chart.js") }}" type="text/javascript"></script> -->
+	<!-- <script src="{{ asset("assets/scripts/Chart.min.js") }}" type="text/javascript"></script> -->
 	<script src="{{ asset("assets/scripts/bootstrap-datepicker.js") }}" type="text/javascript"></script>
 
 	<script type="text/javascript" src="{{ asset("assets/scripts/bootstrap-multiselect.js") }}" ></script>
@@ -57,7 +56,7 @@
 	@yield('body')
 	@stack('scripts')
 	
-	<!-- <link rel="stylesheet" type="text/css" href="{{ asset("assets/css/jquery.dataTables.css") }}" > -->
+	<link rel="stylesheet" type="text/css" href="{{ asset("assets/css/jquery.dataTables.css") }}" >
 	<!-- <link rel="stylesheet" type="text/css" href="{{ asset("assets/css/jquery.datatables.buttons.css") }}" > -->
 	
 
@@ -115,9 +114,9 @@
 	<script type="text/javascript" src="{{ asset("assets/KeyTable-2.2.1/js/dataTables.keyTable.min.js") }}" ></script>
 	<script type="text/javascript" src="{{ asset("assets/Responsive-2.1.1/js/dataTables.responsive.min.js") }}" ></script>
 	<script type="text/javascript" src="{{ asset("assets/js/dataTables.scroller.min.js") }}" ></script>
-	<script type="text/javascript" src="{{ asset("assets/js/dataTables.fixedColumns.min.js") }}" ></script>
+	<!-- <script type="text/javascript" src="{{ asset("assets/js/dataTables.fixedColumns.min.js") }}" ></script> -->
 	<!-- <script type="text/javascript" src="{{ asset("assets/js/bootstrap.min.js") }}" ></script> -->
-	<script type="text/javascript" src="{{ asset("assets/js/jquery.dataTables.yadcf.js") }}" ></script>
+	<!-- <script type="text/javascript" src="{{ asset("assets/js/jquery.dataTables.yadcf.js") }}" ></script> -->
 	<script type="text/javascript" src="{{ asset("assets/Select-1.2.2/js/dataTables.select.min.js") }}" ></script>
 
 
