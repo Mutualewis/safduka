@@ -1,10 +1,52 @@
+Change database coallation utf8_unicode_ci (quality), utf8_general_ci (faster)
+SELECT * 
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA="ibero_db"
+AND TABLE_TYPE="BASE TABLE";
+
+SET foreign_key_checks = 0;
+
+-- set your table name here
+SET @MY_SCHEMA = "ibero_db";
+
+-- tables
+SELECT DISTINCT
+    CONCAT("ALTER TABLE ", TABLE_NAME," CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;") as mySQL
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA=@MY_SCHEMA
+  AND TABLE_TYPE="BASE TABLE"
+
+UNION
+-- table columns
+SELECT DISTINCT
+    CONCAT("ALTER TABLE ", C.TABLE_NAME, " CHANGE ", C.COLUMN_NAME, " ", C.COLUMN_NAME, " ", C.COLUMN_TYPE, " CHARACTER SET utf8 COLLATE utf8_unicode_ci;") as mySQL
+FROM INFORMATION_SCHEMA.COLUMNS as C
+    LEFT JOIN INFORMATION_SCHEMA.TABLES as T
+        ON C.TABLE_NAME = T.TABLE_NAME
+WHERE C.COLLATION_NAME is not null
+    AND C.TABLE_SCHEMA=@MY_SCHEMA
+    AND T.TABLE_TYPE="BASE TABLE";
+
+
+
+
+
+SET foreign_key_checks = 1;
+
 Continue optimizing using page load time
 is datatables rendering the issue?
 Try loadng in foreach
 Gmail working? Push Notifications if multiple people issue diffrent instructions
 javascript scripting slow?
+server side datatbles for real updates
 
+sort javascripts
 
+add nginx server
+
+add https
+
+EACH COLUMN, ITS OWN INDEX
 
 
 
@@ -58,3 +100,13 @@ var oSettings = {
 https://espeo.eu/blog/jquery-data-tables/
 
 https://datatables.net/examples/data_sources/
+
+http://lasanthals.blogspot.com/2012/09/mysql-replication-server-configuration.html
+
+https://www.digitalocean.com/community/tutorials/how-to-configure-mysql-group-replication-on-ubuntu-16-04
+
+http://www.symmetricds.org/
+
+https://www.eltima.com/serial-ethernet-converter/
+
+http://www.usconverters.com/index.php?main_page=page&id=70&chapter=0

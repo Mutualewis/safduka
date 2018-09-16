@@ -35,7 +35,7 @@
 
 	
 	<script src="{{ asset("assets/jquery-jqGrid-v4.6.0/js/jquery.jqGrid.src.js") }}" type="text/javascript"></script>
-	<!-- <script src="{{ asset("assets/scripts/frontend.js") }}" type="text/javascript"></script> -->
+	<script src="{{ asset("assets/scripts/frontend.js") }}" type="text/javascript"></script>
 	<!-- <script src="{{ asset("assets/scripts/Chart.js") }}" type="text/javascript"></script> -->
 	<!-- <script src="{{ asset("assets/scripts/Chart.min.js") }}" type="text/javascript"></script> -->
 	<script src="{{ asset("assets/scripts/bootstrap-datepicker.js") }}" type="text/javascript"></script>
