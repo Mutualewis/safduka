@@ -39,10 +39,19 @@ Try loadng in foreach
 Gmail working? Push Notifications if multiple people issue diffrent instructions
 javascript scripting slow?
 server side datatbles for real updates
+<<<<<<< HEAD
 
 sort javascripts
 
 add nginx server
+=======
+
+sort javascripts
+
+add nginx server
+
+add https
+>>>>>>> 08a0420eaab712e76121fe7b16dc68ee5ac16863
 
 add https
 
@@ -110,3 +119,9 @@ http://www.symmetricds.org/
 https://www.eltima.com/serial-ethernet-converter/
 
 http://www.usconverters.com/index.php?main_page=page&id=70&chapter=0
+
+https://knpuniversity.com/screencast/rest/get#play
+
+http://socketo.me/docs/hello-world
+
+https://www.google.com/search?q=Microservices&oq=Microservices&aqs=chrome..69i57j69i60&sourceid=chrome&ie=UTF-8
