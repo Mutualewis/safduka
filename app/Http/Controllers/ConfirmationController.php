@@ -1,4 +1,4 @@
-<?php namespace Ngea\Http\Controllers;
+cc<?php namespace Ngea\Http\Controllers;
 
 use Input;
 use confirm;
@@ -1128,10 +1128,13 @@ score'); });
 
         Mail::send(['text'=>'mailquality'], $data, function($message) use ($info) {
 
-
-            $message->to('trading.ea@nkg.coffee', 'Sale Catalogue-')->subject('Confirmed Catalogue Quality');
-
-
+			$message->to('trading.ea@nkg.coffee', 'Sale Catalogue-')
+			->cc('judy.murimi@nkg.coffee')
+			->cc('christine.wanjiru@nkg.coffee')
+			->cc('john.gachunga@nkg.coffee')
+			->cc('samuel.kariuki@nkg.coffee')
+			->cc('lewis.mutua@nkg.coffee')
+			->subject('SALE '.$sale_name.' CONFIRMED CATALOGUE QUALITY');
 
 
             $message->from('lewis.mutua@nkg.coffee','Ibero Database');

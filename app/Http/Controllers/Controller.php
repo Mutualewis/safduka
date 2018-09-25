@@ -47,11 +47,11 @@ class Controller extends BaseController
 
     	if ($discepancy > $percentage) {
 
-	        $data = array('name'=>"Admin Department", "discepancy"=>$discepancy, "identifier"=>$identifier, "first_weight"=>$first_weight, "second_weight"=>$second_weight);    
+	        $data = array('name'=>"Admin Department", "discrepancy"=>$discepancy, "identifier"=>$identifier, "first_weight"=>$first_weight, "second_weight"=>$second_weight);    
 
 	        Mail::send(['text'=>'maildiscrepancy'], $data, function($message) {
 
-	            $message->to('caroline.njambi@nkg.coffee', 'Discrepancy-')->subject('Discrepancy');
+	            $message->to('caroline.njambi@nkg.coffee', 'Discrepancy-TZ')->subject('Discrepancy');
 
                 $message->cc('lewis.mutua@nkg.coffee');
 

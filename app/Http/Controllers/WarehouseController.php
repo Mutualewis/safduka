@@ -1722,14 +1722,15 @@ class WarehouseController extends Controller {
 
             $dp_no = Dispatch::where('ctr_id', $cid)->orderBy('id', 'desc')->first();
 
-            $dp_no = $dp_no->dp_number;            
+            if ($dp_no != null) {
+            	$dp_no = $dp_no->dp_number;       
+            }
 
             if ($dp_no != NULL && is_numeric($dp_no)) {
 
                 $dp_number = sprintf("%07d", ($dp_no + 0000001));
 
             }
-
 
             $dp_id = Dispatch::insertGetId (
                                 ['ctr_id' => $cid, 'st_id' => $instruction, 'wb_id' => $wbtk, 'csn_id' => $outt_season, 'sct_id' => $sctID, 'wb_id' => $wbtk, 'dp_number' => $dp_number, 'dp_confirmed_by' => $user]);

@@ -28,7 +28,7 @@
 						<strong>To:</strong> <?php if(isset($client)) echo $client; ?>
 					</td>
 					<td width="200px" align="left">
-						<strong>Dispatch Date:</strong> <?php if(isset($dispatch_date))  echo $dispatch_date; ?> <br>
+						<strong>Dispatch Date:</strong> <?php if(isset($delivery_date))  echo $delivery_date; ?> <br>
 					</td>
 				</tr>			
 
