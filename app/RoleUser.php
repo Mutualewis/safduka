@@ -5,7 +5,7 @@ use Zizaco\Entrust\EntrustRole;
 class RoleUser extends EntrustRole
 {
 	protected $table = 'role_user';
-	public $timestamps = false;
+	public $timestamps = true;
 	/**
 	 * The attributes that are mass assignable.
 	 *

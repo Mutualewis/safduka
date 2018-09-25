@@ -552,15 +552,23 @@
 		            <div class="form-group col-md-4">
 		                <label style="color: red;" >Cancel Contract</label>
 		                <?php
-		                	if ($cancelled == null) {
+		                	if ($role == $admin) {
+		                	
+			                	if ($cancelled == null) {
 
-		                		echo "<input class='form-control' type='checkbox' name='cancel' value='1' />";
+			                		echo "<input class='form-control' type='checkbox' name='cancel' value='1' />";
 
-		                	} else {
+			                	} else {
 
-		                		echo "<input class='form-control' type='checkbox' name='cancel' value='1' checked/>";
+			                		echo "<input class='form-control' type='checkbox' name='cancel' value='1' checked/>";
 
-		                	}		                	
+			                	}
+
+			                } else {
+
+			                	echo "<input class='form-control' type='checkbox' name='cancel' value='1' disabled/>";
+
+			                }	                	
 
 		                ?>
 		            </div>	

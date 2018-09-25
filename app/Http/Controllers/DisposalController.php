@@ -130,7 +130,7 @@ use Ngea\SalesContract;
 use Ngea\StockView;
 use Ngea\Processes;
 use Ngea\Person;
-
+use Ngea\RoleUser;
 
 
 use Ngea\Sales_Contract_Summary;
@@ -202,7 +202,13 @@ class DisposalController extends Controller {
         // $basket = basket::where('ctr_id', Input::get('country'))->get();
 
         $user_data = Auth::user();
-        $user      = $user_data->id;
+        $user = $user_data->id;
+
+        $roleDetails = DB::table('role_user')->where('user_id', $user)->first();
+
+        print_r($roleDetails);
+        $role = $roleDetails->role_id;
+        $admin = 2;
         
         $weight_note_no = Input::get('weight_note_no');
         $wbtk = Input::get('weighbridgeTK');
@@ -348,7 +354,8 @@ class DisposalController extends Controller {
 
             $disposaldate = Input::get('disposaldate');
 
-            return View::make('salescontract', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'disposaldate', 'description', 'packages', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContract', 'SalesContractSummary', 'client_reference', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on'));
+
+            return View::make('salescontract', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'disposaldate', 'description', 'packages', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContract', 'SalesContractSummary', 'client_reference', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on','role', 'admin'));
 
         } else if (NULL !== Input::get('printcontractsummary')) {
                 $this->validate($request, ['country' => 'required',
@@ -517,7 +524,7 @@ class DisposalController extends Controller {
             if ($process_number == null) {
                 $request->session()->flash('alert-warning', 'No such process!!');
                 return View::make('salescontract', compact('id',
-                    'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on'));                  
+                    'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on','role', 'admin'));                  
             }
       
             // $reference = $process_number->pr_reference_name;
@@ -599,7 +606,7 @@ class DisposalController extends Controller {
                 }
 
                 return View::make('salescontract', compact('id',
-                    'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on', 'SalesContract', 'clid'));    
+                    'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on', 'SalesContract', 'clid','role', 'admin'));    
 
             }
 
@@ -898,7 +905,7 @@ class DisposalController extends Controller {
             }
 
             $request->session()->flash('alert-success', 'Sales Contract Information Found!!');
-            return View::make('salescontract', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on'));
+            return View::make('salescontract', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on','role', 'admin'));
 
         } else {
 
@@ -910,7 +917,7 @@ class DisposalController extends Controller {
                 }
             }
 
-            return View::make('salescontract', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on'));
+            return View::make('salescontract', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on','role', 'admin'));
         }
 
 
