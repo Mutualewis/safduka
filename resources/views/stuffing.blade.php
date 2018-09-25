@@ -406,13 +406,18 @@
 		            	if ($sct_confirmed == null) {		            	
 		            	?>
 		           		<button type="submit" name="confirmcontract" class="btn btn-lg btn-danger btn-block" onclick="return confirm('Are you sure you want to confirm this contract?');">Confirm Contract</button>
+
 		           		<?php
 		           		} else {
 		           		?>
-		           		<button type="submit" name="confirmcontract" class="btn btn-lg btn-danger btn-block" onclick="return confirm('Are you sure you want to confirm this contract?');" disabled>Confirmed</button>
+
+							           		
+
 		           		<?php
 		           		}
 		           		?>
+		           		<button type="submit" name="printdispatch" class="btn btn-lg btn-warning btn-block" formnovalidate>Print Dispatch</button>
+		           		
 		            </div>
 		        </div>
 

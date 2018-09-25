@@ -74,11 +74,11 @@ use Ngea\ProvisionalAllocation;
 
 
 //use PDF;
-use PDF;
+// use PDF;
 use Activity;
 use Excel;
 // use Anouar\Fpdf\Fpdf as Fpdf;
-
+use niklasravnsborg\LaravelPdf\Facades\Pdf as PDF;
 use Ngea\country;
 
 
@@ -107,6 +107,8 @@ use Ngea\direct_sale;
 use Ngea\sale_status;
 use Ngea\basket;
 use Ngea\purchase;
+use Ngea\Dispatch;
+use Ngea\Person;
 
 use Ngea\invoices;
 use Ngea\bric;
@@ -909,8 +911,6 @@ class WarehouseController extends Controller {
  	}
 
 
-
-
     public function movementInstructionsForm (Request $request){
     	$id = NULL;
     	$Season = Season::all(['id', 'csn_season']);
@@ -1535,6 +1535,13 @@ class WarehouseController extends Controller {
         $instruction_id = Input::get('instruction');
 
 
+        $user_data = Auth::user();
+
+        $user = $user_data->id; 
+
+        $user_name = $user_data->usr_name; 
+
+        $per_id = $user_data->per_id; 
         
         $bskt = Input::get('basket');
 
@@ -1632,6 +1639,47 @@ class WarehouseController extends Controller {
 
             return View::make('stuffing', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'disposaldate', 'description', 'packages', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContract', 'SalesContractSummary', 'client_reference', 'rates', 'teams', 'instruction_id'));
 
+        } else if (NULL !== Input::get('printdispatch')) {   
+            $this->validate($request, [
+                'country' => 'required', 'instruction' => 'required', 'contract' => 'required',  
+            ]);
+
+			$SalesContractSummary = Sales_Contract_Summary::where('sct_number', Input::get('contract'))->where('stid', $instruction_id)->first();
+
+            $person_details = Person::where('id', $per_id)->first();
+
+            $person_name = $person_details->per_fname.' '.$person_details->per_sname;
+
+            if ($SalesContractSummary != null) {
+
+                $client =  $SalesContractSummary->cl_name;
+
+                $delivery_date = $SalesContractSummary->stuffing_date;
+                $delivery_date = date("d/m/Y", strtotime($delivery_date));
+                $movement_permit = $SalesContractSummary->wb_movement_permit;
+                $vehicle = $SalesContractSummary->wb_vehicle_plate;
+                $weighbridge_ticket = $SalesContractSummary->wb_ticket;
+                $time_received = $SalesContractSummary->dp_start;
+                $time_received_stop = $SalesContractSummary->dp_end_date;
+                $time_received = date("H:i:s", strtotime($time_received));
+                $time_received_stop = date("H:i:s", strtotime($time_received_stop));
+
+                $received_by = $person_name;
+                $driver_name = $SalesContractSummary->wb_driver_name;
+                $driver_id = $SalesContractSummary->wb_driver_id;
+                $dp_number = $SalesContractSummary->dp_number;
+
+                $warehouse_manager = $SalesContractSummary->cl_name;
+
+            }
+
+        	$SalesContractSummary = Sales_Contract_Summary::where('sct_number', Input::get('contract'))->where('stid', $instruction_id)->get();
+
+            $pdf = PDF::loadView('pdf.print_dispatch', compact('SalesContractSummary','client', 'delivery_date', 'movement_permit', 'vehicle', 'weighbridge_ticket', 'time_received', 'received_by', 'driver_name', 'time_received_stop', 'driver_id', 'dp_number', 'warehouse_manager'));
+
+            return $pdf->stream('print_dispatch.pdf');
+
+
         }  else if (NULL !== Input::get('confirmcontract')) {
             $this->validate($request, [
                 'country' => 'required', 'instruction' => 'required', 'contract' => 'required',  
@@ -1669,6 +1717,27 @@ class WarehouseController extends Controller {
             if ($SalesContract != null) {
                 $sum_contract_weight = $SalesContract->sct_weight;
             }
+
+            $dp_number = null;
+
+            $dp_no = Dispatch::where('ctr_id', $cid)->orderBy('id', 'desc')->first();
+
+            if ($dp_no != null) {
+            	$dp_no = $dp_no->dp_number;       
+            }
+
+                 
+
+            if ($dp_no != NULL && is_numeric($dp_no)) {
+
+                $dp_number = sprintf("%07d", ($dp_no + 0000001));
+
+            }
+
+
+            $dp_id = Dispatch::insertGetId (
+                                ['ctr_id' => $cid, 'st_id' => $instruction_id, 'wb_id' => $wbtk, 'csn_id' => $csn_id, 'sct_id' => $sctID, 'wb_id' => $wbtk, 'dp_number' => $dp_number, 'dp_confirmed_by' => $user]);
+
 
             if ($sum_stuffed < $stock_weight && $SalesContract->sct_stuffed == null && $sale_contract_id->st_disposed_by == null) {
                 //return to stock
