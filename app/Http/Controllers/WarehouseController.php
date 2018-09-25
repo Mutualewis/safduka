@@ -1726,17 +1726,14 @@ class WarehouseController extends Controller {
             	$dp_no = $dp_no->dp_number;       
             }
 
-                 
-
             if ($dp_no != NULL && is_numeric($dp_no)) {
 
                 $dp_number = sprintf("%07d", ($dp_no + 0000001));
 
             }
 
-
             $dp_id = Dispatch::insertGetId (
-                                ['ctr_id' => $cid, 'st_id' => $instruction_id, 'wb_id' => $wbtk, 'csn_id' => $csn_id, 'sct_id' => $sctID, 'wb_id' => $wbtk, 'dp_number' => $dp_number, 'dp_confirmed_by' => $user]);
+                                ['ctr_id' => $cid, 'st_id' => $instruction, 'wb_id' => $wbtk, 'csn_id' => $outt_season, 'sct_id' => $sctID, 'wb_id' => $wbtk, 'dp_number' => $dp_number, 'dp_confirmed_by' => $user]);
 
 
             if ($sum_stuffed < $stock_weight && $SalesContract->sct_stuffed == null && $sale_contract_id->st_disposed_by == null) {
