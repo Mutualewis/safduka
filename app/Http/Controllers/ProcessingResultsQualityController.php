@@ -239,6 +239,21 @@ class ProcessingResultsQualityController extends Controller
 
             $this->checkThreshold($threshold_name, $total_kilos_allocated, $total_kilos_processed, $identifier);
 
+            $process_number = $prdetails->pr_instruction_number;
+
+            $data = array('name'=>"Warehouse Department", "ref_no"=>$process_number); 
+
+
+            Mail::send(['text'=>'mailprocessconfirmation'], $data, function($message) use ($process_number) {
+
+                $message->to('nelson.mose@nkg.coffee', 'Confirmation-')
+                    ->cc('lewis.mutua@nkg.coffee')
+                    ->cc('nancy.kariuki@nkg.coffee')
+                    ->cc('lynn.waweru@nkg.coffee')          
+                ->subject('CONFIRMED '.$process_number);
+            });
+
+
 
             foreach ($process_results as $key => $value) {
                     
@@ -839,18 +854,6 @@ class ProcessingResultsQualityController extends Controller
             
             $prdetails = Process::where('id', $rfid)->first();
             $batch_kilograms = null;
-
-            $data = array('name'=>"Admin Department", "discepancy"=>$discepancy, "identifier"=>$identifier, "first_weight"=>$first_weight, "second_weight"=>$second_weight);    
-
-            Mail::send(['text'=>'maildiscrepancy'], $data, function($message) {
-                $message->to('nelson.mose@nkg.coffee', 'Discrepancy-')->subject('Confirmation');
-                $message->cc('lewis.mutua@nkg.coffee');
-                $message->cc('nancy.kariuki@nkg.coffee');
-                $message->cc('lynn.waweru@nkg.coffee');             
-                $message->from('lewis.mutua@nkg.coffee','Ibero Database');
-
-            });
-
 
             return View::make('processingresultsquality', compact('id',
                 'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'rfid', 'prc', 'processing_instruction', 'input_type', 'title', 'refno', 'resultsType', 'rtid', 'StockView', 'ProcessResults', 'wrhse', 'location', 'prdetails', 'isInBulk', 'batch_kilograms', 'packages', 'rtid', 'results_view'));
