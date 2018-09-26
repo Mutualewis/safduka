@@ -131,7 +131,7 @@ use Ngea\StockView;
 use Ngea\Processes;
 use Ngea\Person;
 use Ngea\RoleUser;
-
+use Ngea\CoffeeType;
 
 use Ngea\Sales_Contract_Summary;
 
@@ -152,9 +152,17 @@ class DisposalController extends Controller {
         $shipmentmonth = Months::all(['id', 'mth_name','mth_number']);
         $shipmentyear = Years::all(['id', 'yr_name','yr_number']);
 
+        $user_data = Auth::user();
+        $user = $user_data->id;
+
+        $roleDetails = DB::table('role_user')->where('user_id', $user)->first();
+
+        $role = $roleDetails->role_id;
+        $admin = 2;
+
         $SalesContract = SalesContract::select('*', \DB::raw('sct_number AS sct_number'))->orderBy('id', 'desc')->first();
 
-        return View::make('salescontract', compact('id', 'Season', 'country', 'shipmentmonth','client', 'shipmentyear', 'SalesContract'));
+        return View::make('salescontract', compact('id', 'Season', 'country', 'shipmentmonth','client', 'shipmentyear', 'SalesContract', 'role', 'admin'));
 
     }
 
@@ -181,7 +189,7 @@ class DisposalController extends Controller {
         $cancel = Input::get('cancel');
         $destination = Input::get('destination');
         $price = Input::get('price');
-
+        $coffeeType = CoffeeType::all(['id','ctyp_name']);
  
         $Packaging = Packaging::all(['id', 'pkg_name']);
 
@@ -197,6 +205,11 @@ class DisposalController extends Controller {
         
         $bskt = Input::get('basket');
 
+        $coffeeTy = Input::get('coffee_type');
+
+        $basket = basket::where('ctr_id', Input::get('country'))->where('bs_coffee_type', $coffeeTy)->orderBy('bs_code')->get();
+
+
         $client_reference = Input::get('client_reference');
 
         // $basket = basket::where('ctr_id', Input::get('country'))->get();
@@ -206,7 +219,6 @@ class DisposalController extends Controller {
 
         $roleDetails = DB::table('role_user')->where('user_id', $user)->first();
 
-        print_r($roleDetails);
         $role = $roleDetails->role_id;
         $admin = 2;
         
@@ -324,7 +336,7 @@ class DisposalController extends Controller {
                 }
                 
                 SalesContract::where('id', '=', $SalesContract->id)
-                            ->update(['ctr_id' => $cid, 'cl_id' => $clid, 'sct_number' => $contract, 'sct_description' => $description, 'sct_packages' => $packages, 'sct_packaging_method' => $packaging_method, 'pkg_id' => $packaging_type, 'bs_id' => $bskt, 'sct_month'=>$spid, 'yr_id'=>$syrid, 'sct_complemantary_condition'=>$complimentarycondition, 'sct_weight'=>$weight, 'sct_start_date'=>$start_date, 'sct_end_date'=>$end_date, 'sct_date'=>$contract_date, 'sct_client_reference'=>$client_reference, 'bgs_id'=>$bags_, 'pu_id'=>$price_units_id, 'pt_id'=>$price_type_id, 'sct_cancelled'=>$cancel, 'trm_id'=>$fixation_month_id, 'cf_id'=>$call_from_id, 'sct_destination' => $destination, 'sct_price' => $price, 'sct_shipment' => $SalesContract_shipment, 'sct_approved_weight' => $approved_weight]);
+                            ->update(['ctr_id' => $cid, 'cl_id' => $clid, 'sct_number' => $contract, 'sct_description' => $description, 'sct_packages' => $packages, 'sct_packaging_method' => $packaging_method, 'pkg_id' => $packaging_type, 'bs_id' => $bskt, 'sct_month'=>$spid, 'yr_id'=>$syrid, 'sct_complemantary_condition'=>$complimentarycondition, 'sct_weight'=>$weight, 'sct_start_date'=>$start_date, 'sct_end_date'=>$end_date, 'sct_date'=>$contract_date, 'sct_client_reference'=>$client_reference, 'bgs_id'=>$bags_, 'pu_id'=>$price_units_id, 'pt_id'=>$price_type_id, 'sct_cancelled'=>$cancel, 'trm_id'=>$fixation_month_id, 'cf_id'=>$call_from_id, 'sct_destination' => $destination, 'sct_price' => $price, 'sct_shipment' => $SalesContract_shipment, 'sct_approved_weight' => $approved_weight, 'sct_coffee_type' => $coffeeTy]);
 
                 $request->session()->flash('alert-success', 'Sales Contract Information Updated!!');
                 Activity::log('Updated SalesContract ctr_id '. $cid. ' cl_id '. $clid. ' sct_number '. $contract. ' sct_description '. $description.' sct_packages '.$packages.' packaging_method '.$packaging_method.' packaging_type '.$packaging_type.' bskt '.$bskt.' spid '.$spid. ' sct_start_date '.$start_date. ' sct_end_date '.$end_date. ' sct_date '.$contract_date);
@@ -355,7 +367,7 @@ class DisposalController extends Controller {
             $disposaldate = Input::get('disposaldate');
 
 
-            return View::make('salescontract', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'disposaldate', 'description', 'packages', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContract', 'SalesContractSummary', 'client_reference', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on','role', 'admin'));
+            return View::make('salescontract', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'disposaldate', 'description', 'packages', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContract', 'SalesContractSummary', 'client_reference', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on','role', 'admin', 'coffeeType', 'coffeeTy'));
 
         } else if (NULL !== Input::get('printcontractsummary')) {
                 $this->validate($request, ['country' => 'required',
@@ -444,7 +456,7 @@ class DisposalController extends Controller {
                 $client_reference = $sales_contract_summary->sct_client_reference;
 
                
-                $pdf = PDF::loadView('pdf.print_contract_summary', compact('contract', 'description', 'bskt', 'client', 'packages', 'weight', 'start_date', 'end_date', 'contract_date', 'instruction_number', 'complimentarycondition', 'packaging_method', 'packaging_name', 'status', 'client_reference', 'fixation_month', 'price_type', 'price_units', 'bag_size', 'destination', 'price', 'call_from', 'cancelled'));
+                $pdf = PDF::loadView('pdf.print_contract_summary', compact('contract', 'description', 'bskt', 'client', 'packages', 'weight', 'start_date', 'end_date', 'contract_date', 'instruction_number', 'complimentarycondition', 'packaging_method', 'packaging_name', 'status', 'client_reference', 'fixation_month', 'price_type', 'price_units', 'bag_size', 'destination', 'price', 'call_from', 'cancelled', 'coffeeType', 'coffeeTy'));
 
                 return $pdf->stream($contract.' print_contract_summary.pdf');
 
@@ -524,7 +536,7 @@ class DisposalController extends Controller {
             if ($process_number == null) {
                 $request->session()->flash('alert-warning', 'No such process!!');
                 return View::make('salescontract', compact('id',
-                    'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on','role', 'admin'));                  
+                    'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on','role', 'admin', 'coffeeType', 'coffeeTy'));                  
             }
       
             // $reference = $process_number->pr_reference_name;
@@ -606,7 +618,7 @@ class DisposalController extends Controller {
                 }
 
                 return View::make('salescontract', compact('id',
-                    'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on', 'SalesContract', 'clid','role', 'admin'));    
+                    'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on', 'SalesContract', 'clid','role', 'admin', 'coffeeType', 'coffeeTy'));    
 
             }
 
@@ -905,7 +917,7 @@ class DisposalController extends Controller {
             }
 
             $request->session()->flash('alert-success', 'Sales Contract Information Found!!');
-            return View::make('salescontract', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on','role', 'admin'));
+            return View::make('salescontract', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on','role', 'admin', 'coffeeType', 'coffeeTy'));
 
         } else {
 
@@ -917,7 +929,7 @@ class DisposalController extends Controller {
                 }
             }
 
-            return View::make('salescontract', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on','role', 'admin'));
+            return View::make('salescontract', compact('id', 'Season', 'country', 'cid', 'contract', 'shipmentmonth','client', 'clid', 'spid', 'date', 'disposaldate', 'description', 'packages', 'SalesContract', 'bskt', 'basket', 'Packaging', 'packaging_method', 'packaging_type', 'weighbridge_ticket','StuffingView', 'shipmentyear', 'syrid', 'SalesContractSummary', 'client_reference', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on','role', 'admin', 'coffeeType', 'coffeeTy'));
         }
 
 

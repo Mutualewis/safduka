@@ -238,6 +238,13 @@
 			$bskt = $SalesContract->bs_id;
 			$clid = $SalesContract->cl_id;
 
+			if (!isset($coffeeTy)){
+
+				$coffeeTy = $SalesContract->cl_id;
+
+			}			
+
+
 
 
 			$complimentarycondition = $SalesContract->sct_complemantary_condition;
@@ -275,7 +282,7 @@
 	        	<h2>Contract Details</h2>
 
 				<div class="row">
-		            <div class="form-group col-md-6">
+		            <div class="form-group col-md-4">
 		                <label>Country</label>
 		                <select class="form-control" name="country" onchange="this.form.submit()">
 		                	<option></option> 
@@ -292,7 +299,7 @@
 							@endif
 		                </select>		
 		            </div>	
-	        		<div class="form-group col-md-6">
+	        		<div class="form-group col-md-4">
 	        			<label>Contract Number</label>
 	                    <div class="input-group custom-search-form">
 	                        <input type="text" class="form-control" name="contract" style="text-transform:uppercase; " placeholder="Search Contract..."  value="{{ old('contract'). $contract }}"></input>
@@ -303,7 +310,24 @@
 	                    </span>
 	                    </div>
 	                </div>	
+		            <div class="form-group col-md-4">
+		                <label>Coffee Type</label>
+		                <select class="form-control" name="coffee_type" onchange="this.form.submit()">
+		                	<option></option> 
+							@if (isset($coffeeType) && count($coffeeType) > 0)
+										@foreach ($coffeeType->all() as $value)
+											@if ($coffeeTy ==  $value->id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->ctyp_name}}</option>
+											@else
+												<option value="{{ $value->id }}">{{ $value->ctyp_name}}</option>
+											@endif
 
+										@endforeach
+									
+							@endif
+		                </select>		
+		            </div>
+		            
 		        </div>
 
 		        <div class="row">
