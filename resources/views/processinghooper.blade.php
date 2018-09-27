@@ -240,6 +240,23 @@
 		                    </div>
 		                </div>	
 
+			            <div class="form-group col-md-3">
+			                <label >Hooper Capacity</label>
+			                <select class="form-control" name="process_type">
+			                	<option></option> 
+								@if (isset($hoopers_capacity) && count($hoopers_capacity) > 0)
+											@foreach ($hoopers_capacity->all() as $value)
+												@if ($prc ==  $value->id)
+													<option value="{{ $value->id }}" selected="selected">{{ $value->hp_capacity }}</option>
+												@else
+													<option value="{{ $value->id }}">{{ $value->hp_capacity }}</option>
+												@endif
+											@endforeach										
+								@endif
+			                </select>	
+			            </div>
+
+
 			        </div>
 			          
 	            </div>
