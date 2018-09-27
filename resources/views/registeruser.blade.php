@@ -73,11 +73,7 @@
 		                	<option></option>
 							@if (isset($Department))
 										@foreach ($Department->all() as $values)
-											@if ($cid ==  $values->id)
-												<option value="{{ $values->id }}" selected="selected">{{ $values->dprt_namea}}</option>
-											@else
 												<option value="{{ $values->id }}">{{ $values->dprt_name}}</option>
-											@endif
 										@endforeach									
 							@endif
 		                </select>		
