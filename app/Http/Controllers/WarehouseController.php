@@ -1733,7 +1733,7 @@ class WarehouseController extends Controller {
             }
 
             $dp_id = Dispatch::insertGetId (
-                                ['ctr_id' => $cid, 'st_id' => $instruction_id, 'wb_id' => $wbtk, 'csn_id' => $outt_season, 'sct_id' => $sctID, 'wb_id' => $wbtk, 'dp_number' => $dp_number, 'dp_confirmed_by' => $user]);
+                                ['ctr_id' => $cid, 'st_id' => $instruction_id, 'wb_id' => $wbtk, 'csn_id' => $csn_id, 'sct_id' => $sctID, 'dp_number' => $dp_number, 'dp_confirmed_by' => $user]);
 
 
             if ($sum_stuffed < $stock_weight && $SalesContract->sct_stuffed == null && $sale_contract_id->st_disposed_by == null) {
