@@ -1,4 +1,4 @@
-cc<?php namespace Ngea\Http\Controllers;
+<?php namespace Ngea\Http\Controllers;
 
 use Input;
 use confirm;
