@@ -365,6 +365,7 @@ class HooperResultsController extends Controller
             $FROM = "Quality Department";
             $reference = Input::get('reference');
             $contractID = Input::get('contract');
+            $hooper_capacity = Input::get('hooper_capacity');
             $contractNumber = SalesContract::where('id', '=', $contractID)->first();
             $this->checkIFBulkWithNoContract($prc, $contractID, $BULKING_PROCESS);
 
@@ -428,11 +429,9 @@ class HooperResultsController extends Controller
 
             $person_fname      = $personDetails->per_fname;
             $person_sname      = $personDetails->per_sname;
-
-
         
-
-            $pdf = PDF::loadView('pdf.processing_chops', compact('TO',  'ATTENTION', 'FROM', 'reference', 'ref_no', 'contractNumber', 'user',  'date', 'StockView', 'seasonName', 'person_fname', 'person_sname', 'process_type', 'process_instructions', 'process_other_instructions'));
+            
+            $pdf = PDF::loadView('pdf.processing_chops', compact('TO',  'ATTENTION', 'FROM', 'reference', 'ref_no', 'contractNumber', 'user',  'date', 'StockView', 'seasonName', 'person_fname', 'person_sname', 'process_type', 'process_instructions', 'process_other_instructions', 'hooper_capacity'));
             return $pdf->stream($ref_no . ' processing_chops.pdf');
         } else if (null !== Input::get('searchInstruction')) {
             $this->validate($request, [

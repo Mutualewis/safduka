@@ -138,7 +138,7 @@
 							$total_others = 0;
 
 
-							$chops = ceil($total_bags/360);
+							$chops = ceil($total_bags/$hooper_capacity);
 							for ($i=1; $i <= $chops ; $i++) { 
 								echo "<th>".$i.substr(date('jS', mktime(0,0,0,1,($i%10==0?9:($i%100>20?$i%10:$i%100)),2000)),-2)."</th>";
 							}
