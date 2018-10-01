@@ -243,15 +243,16 @@ class ProcessingResultsQualityController extends Controller
 
             $data = array('name'=>"Warehouse Department", "ref_no"=>$process_number); 
 
+            if ($prc == $BULKING_PROCESS) {
+                Mail::send(['text'=>'mailprocessconfirmation'], $data, function($message) use ($process_number) {
 
-            // Mail::send(['text'=>'mailprocessconfirmation'], $data, function($message) use ($process_number) {
-
-            //     $message->to('nelson.mose@nkg.coffee', 'Confirmation-')
-            //         ->cc('lewis.mutua@nkg.coffee')
-            //         ->cc('nancy.kariuki@nkg.coffee')
-            //         ->cc('lynn.waweru@nkg.coffee')          
-            //     ->subject('CONFIRMED '.$process_number);
-            // });
+                    $message->to('nelson.mose@nkg.coffee', 'Confirmation-')
+                        ->cc('lewis.mutua@nkg.coffee')
+                        ->cc('nancy.kariuki@nkg.coffee')
+                        ->cc('lynn.waweru@nkg.coffee')          
+                    ->subject('CONFIRMED '.$process_number);
+                });
+            }
 
 
 
