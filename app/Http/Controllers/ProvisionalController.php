@@ -589,10 +589,12 @@ class ProvisionalController extends Controller
 
             $process_type = "Provisional Bulking";
             $processes = Processes::where('id', $process_number->id)->first();
+            $process_instructions = null;
+            $process_other_instructions = null;
 
             if ($processes != null) {
-                $process_instructions = ', and '.$processes->process_instructions;
-                $process_other_instructions = $processes->process_other_instructions;
+                // $process_instructions = ', and '.$processes->process_instructions;
+                // $process_other_instructions = $processes->process_other_instructions;
             } else {
                 $process_instructions = null;
                 $process_other_instructions = null;
@@ -658,10 +660,12 @@ class ProvisionalController extends Controller
 
             $process_type = "Provisional Bulking";
             $processes = Processes::where('id', $process_number->id)->first();
-
+            $process_instructions = null;
+            $process_other_instructions = null;
+            
             if ($processes != null) {
-                $process_instructions = ', and '.$processes->process_instructions;
-                $process_other_instructions = $processes->process_other_instructions;
+                // $process_instructions = ', and '.$processes->process_instructions;
+                // $process_other_instructions = $processes->process_other_instructions;
             } else {
                 $process_instructions = null;
                 $process_other_instructions = null;
