@@ -1108,11 +1108,11 @@ score'); });
 
         })->store('xlsx', storage_path('excel/exports'), true);
 
-        return $this->sendExcelMail($info, $sale);      
+        return $this->sendExcelMail($info, $sale, $sale_name);      
 
     }
 
-    public function sendExcelMail($info, $sale){
+    public function sendExcelMail($info, $sale, $sale_name){
 
             
 
@@ -1124,9 +1124,7 @@ score'); });
         $data = array('name'=>"Trading Department", "sale"=>$sale, "info"=>$info);
 
 
-
-
-        Mail::send(['text'=>'mailquality'], $data, function($message) use ($info) {
+		Mail::send(['text'=>'mailquality'], $data, function($message) use ($info, $sale_name) {
 
 			$message->to('trading.ea@nkg.coffee', 'Sale Catalogue-')
 			->cc('judy.murimi@nkg.coffee')
@@ -1134,19 +1132,14 @@ score'); });
 			->cc('john.gachunga@nkg.coffee')
 			->cc('samuel.kariuki@nkg.coffee')
 			->cc('lewis.mutua@nkg.coffee')
-			->subject('SALE '.$sale_name.' CONFIRMED CATALOGUE QUALITY');
+			->subject('SALE '.$sale_name.' Confirmed Catalogue Quality');
 
+			$message->from('lewis.mutua@nkg.coffee','Ibero Database');
+		
+			$message->attach($info["full"]);
 
-            $message->from('lewis.mutua@nkg.coffee','Ibero Database');
+		});
 
-        
-
-            $message->attach($info["full"]);
-
-
-
-
-        });
 
         if( count(Mail::failures()) > 0 ) {                    
 

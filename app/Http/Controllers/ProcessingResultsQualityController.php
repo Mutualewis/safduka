@@ -420,7 +420,7 @@ class ProcessingResultsQualityController extends Controller
 
                                     }
 
-                                    $stb_value = $psbvalue->stb_value_ratio * $stock_bric_value;
+                                    $stb_value = $psbvalue->stb_value_ratio * $new_stock_bric_value;
 
                                     $split_lot = 1 - ($stock_net/$stock_single_lots->st_net_weight);   
 

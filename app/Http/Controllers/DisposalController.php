@@ -717,6 +717,184 @@ class DisposalController extends Controller {
             }
 
               
+        } else if (NULL !== Input::get('printexactlots')) {
+
+            $this->validate($request, ['country' => 'required',
+                                ]);
+            $pr_instruction_number = null;
+
+            $contract = Input::get('contract');
+
+            $sales_contract_summary = Sales_Contract_Summary::where('sct_number', $contract)->first();
+
+            if ($sales_contract_summary != null) {
+
+                $pr_instruction_number = $sales_contract_summary->pr_instruction_number;
+
+            }
+
+            if ($pr_instruction_number == null) {
+
+                $request->session()->flash('alert-warning', 'Contract has not been allocated!!');
+
+                $SalesContract = SalesContract::where('ctr_id', '=', $cid)->where('sct_number',  $contract)->first();
+
+                if ($SalesContract !== NULL){
+
+                    if ($clid == NULL) {
+
+                        $clid = $SalesContract->cl_id;
+
+                    }
+                }
+
+                return View::make('salescontract', compact('id',
+                    'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'bagSizes', 'priceUnits', 'priceType', 'tradingMonths', 'fixation_month_id', 'price_type_id', 'price_units_id', 'bag_size_id', 'callFrom', 'call_from_id', 'destination', 'price', 'created_by', 'created_on', 'updated_by', 'updated_on', 'SalesContract', 'clid', 'coffeeType', 'coffeeTy','role', 'admin'));    
+
+            }
+
+            $process_id;
+
+            $history = array();
+
+            $process_details = Process::where('pr_instruction_number', $pr_instruction_number)->first();
+
+            if ($process_details != null) {
+
+                $process_id = $process_details->id;
+
+            }
+
+            $stock_details = DB::table('stock_st AS st')
+            ->select('*', 'st.id as stid')
+            ->leftJoin('process_allocations_pall AS pall ','st.id', '=', 'pall.st_id')
+            ->leftJoin('purchases_prc AS prc ','st.prc_id', '=', 'prc.id')
+            ->leftJoin('coffee_details_cfd AS cfd ','prc.cfd_id', '=', 'cfd.id')
+            ->leftJoin('sale_sl AS sl ','cfd.sl_id', '=', 'sl.id')
+            ->where('st.pr_id', $process_id)
+            ->orWhere('pall.pr_id', $process_id)
+            ->groupBy('st.id')
+            ->orderBy('st.gr_id', 'desc')
+            ->get();
+
+            $st_ids=[];
+            
+            foreach ($stock_details as $key => $value) {
+                $st_ids[]= $value->st_id;
+
+                $allocated_weight = $value->pall_allocated_weight;
+               
+                $stock_id = $value->stid;
+
+                $stock_outturn = $value->st_outturn;
+
+                if ($value->gr_id != null || $value->gr_id ==  1) {
+
+                    $grade = null;
+
+                    $basket = null;
+
+                    $bric = null;
+
+                    $grade_details = CoffeeGrade::where('id', $value->cgrad_id)->first();
+
+                    $basket_details = Basket::where('id', $value->bs_id)->first();
+
+                    $bric_details = Bric::where('id', $value->br_id)->first();
+
+                    if ($grade_details != null) {
+
+                        $grade = $grade_details->cgrad_name;
+                        
+                    }
+
+                    if ($basket_details != null) {
+
+                        $basket = $basket_details->bs_quality;
+                        
+                    }
+
+                    if ($bric_details != null) {
+
+                        $bric = $bric_details->br_no;
+                        
+                    }               
+
+                    $history[] = array('ID' => $stock_id, 'SALE' => $value->sl_no, 'LOT' => $value->cfd_lot_no, 'OUTTURN' => $value->st_outturn , 'GRADE' => $grade, 'MARK' => $value->st_mark, "INITIAL WEIGHT" => $value->st_net_weight, "PRICE" => $value->st_price, "HEDGE" => $value->st_hedge,  "DIFFERENTIAL" => $value->st_diff); 
+                   
+                } else {
+
+                    $history = $this->getCompositionFinal($history, $stock_id, $stock_outturn, $allocated_weight);
+                    
+                }                
+
+            } 
+
+            $title = $pr_instruction_number . ' Final Allocations';
+
+            if ($history != null) {
+                $totalweight=0;
+                foreach($history as $item){
+                    $totalweight+= $item['INITIAL WEIGHT'];
+                }
+                $newhistory=[];
+                $sumcost = 0;
+                $sumkilos = 0;
+                $sumhedge = 0;
+                $sumdiff = 0;
+                $rowcount=1;
+                foreach($history as $item){
+                    $weight = $item['INITIAL WEIGHT'];
+                    $finalweight = $weight/$totalweight*$allocated_weight;
+                    $item['weight'] = number_format((float)$finalweight, 2, '.', '');
+                    $item['Bags']    = floor($finalweight / 60);
+                    $item['Pockets'] = $finalweight % 60;
+                    $item['Total Cost'] = number_format((float)($finalweight/50*$item['PRICE']), 2, '.', '');
+                    $newhistory[] = $item;
+
+                    $sumcost+= (float)($finalweight/50*$item['PRICE']);
+                    $sumdiff+= (float)($finalweight/50*$item['DIFFERENTIAL']);
+                    $sumhedge+= (float)($finalweight/50*$item['HEDGE']);
+                    $sumkilos+= $finalweight;
+                    $rowcount++;
+                }
+                $weighted_price = number_format((float)($sumcost/($allocated_weight/50)), 2, '.', '');
+                $weighted_hedge = number_format((float)($sumhedge/($allocated_weight/50)), 2, '.', '');
+                $weighted_diff = number_format((float)($sumdiff/($allocated_weight/50)), 2, '.', '');
+
+                $newhistory[] = ["","","","","","","", "PRICE"=> $weighted_price,"HEDGE"=> $weighted_hedge, "DIFFERENTIAL"=> $weighted_diff, "weight"=> $allocated_weight,"", "", "Total Cost" => number_format(($sumcost), 2, '.', '')];
+                $rowcount++;
+                $history=$newhistory;
+                $info=Excel::create($title, function($excel) use($history,$title, $rowcount) {        
+
+                    $excel->setTitle($title);
+
+                    $excel->sheet('sheet 1', function($sheet) use($history, $rowcount){
+
+                        $sheet->fromArray($history);
+
+                        $sheet->row(1, function($row) {
+
+                            $row->setFontWeight('bold');
+
+                        });
+
+                        $sheet->row($rowcount, function($row) {
+
+                            $row->setFontWeight('bold');
+                            $row->setFontColor('#ffffff');
+                            $row->setBackground('#000000');
+
+                        });
+
+
+                    });
+
+                })->export('xls');
+
+            }
+
+              
         }  else if (NULL !== Input::get('printallocation')) {
 
 
@@ -1035,6 +1213,123 @@ class DisposalController extends Controller {
         }
 
 
+
+        return $history; 
+
+    }
+    public function getCompositionFinal($history, $stock_id, $stock_outturn, $allocated_weight) {
+
+        $process_id = null;
+
+        $process_results_details = ProcessResults::where('st_id', $stock_id)->first();
+
+        if ($process_results_details != null) {
+
+            $process_id = $process_results_details->pr_id;
+
+        } else {
+
+            $process_details = Process::where('pr_instruction_number', $stock_outturn)->first();
+
+            if ($process_details != null) {
+
+                $process_id = $process_details->id;
+
+            }
+
+        }
+
+        $stock_details = null;
+
+        if ($process_id != null) {
+
+            $stock_details = DB::table('stock_st AS st')
+                 ->select('*', 'st.id as stid')
+                 ->leftJoin('process_allocations_pall AS pall ','st.id', '=', 'pall.st_id')
+                 ->leftJoin('purchases_prc AS prc ','st.prc_id', '=', 'prc.id')
+                 ->leftJoin('coffee_details_cfd AS cfd ','prc.cfd_id', '=', 'cfd.id')
+                 ->leftJoin('sale_sl AS sl ','cfd.sl_id', '=', 'sl.id')
+                 ->where('st.pr_id', $process_id)
+                 ->orWhere('pall.pr_id', $process_id)
+                 ->groupBy('st.id')
+                 ->orderBy('st.gr_id', 'desc')
+                 ->get();
+
+        } else {
+
+            $stock_details = DB::table('stock_st AS st')
+                 ->select('*', 'st.id as stid')
+                 ->leftJoin('process_allocations_pall AS pall ','st.id', '=', 'pall.st_id')
+                 ->leftJoin('purchases_prc AS prc ','st.prc_id', '=', 'prc.id')
+                 ->leftJoin('coffee_details_cfd AS cfd ','prc.cfd_id', '=', 'cfd.id')
+                 ->leftJoin('sale_sl AS sl ','cfd.sl_id', '=', 'sl.id')
+                 ->where('st.id', $stock_id)
+                 ->groupBy('st.id')
+                 ->get();
+
+        }
+       
+        $count=0;
+        $st_ids=[];
+       $history=[];
+        if ($stock_details != null) {
+            foreach ($stock_details as $key => $value) {
+                $count++;
+                if(!in_array($value->stid, $st_ids)){
+                $stock_id = $value->stid;
+                $st_ids[]= $value->stid;
+                $stock_outturn = $value->st_outturn;
+
+                if ($value->gr_id != null || $value->gr_id ==  1) {
+
+                    $grade = null;
+
+                    $basket = null;
+
+                    $bric = null;
+
+                    $bags = null;
+
+                    $pockets = null;
+
+                    $grade_details = CoffeeGrade::where('id', $value->cgrad_id)->first();
+
+                    $basket_details = Basket::where('id', $value->bs_id)->first();
+
+                    $bric_details = Bric::where('id', $value->br_id)->first();
+
+                    if ($grade_details != null) {
+
+                        $grade = $grade_details->cgrad_name;
+                        
+                    }
+
+                    if ($basket_details != null) {
+
+                        $basket = $basket_details->bs_quality;
+                        
+                    }
+
+                    if ($bric_details != null) {
+
+                        $bric = $bric_details->br_no;
+                        
+                    }            
+                   
+                    $history[] = array('ID' => $stock_id, 'SALE' => $value->sl_no, 'LOT' => $value->cfd_lot_no, 'OUTTURN' => $value->st_outturn , 'GRADE' => $grade, 'MARK' => $value->st_mark, "INITIAL WEIGHT" => $value->st_net_weight, "PRICE" => $value->st_price, "HEDGE" => $value->st_hedge,  "DIFFERENTIAL" => $value->st_diff); 
+
+                } else {
+
+                    $history = $this->getCompositionFinal($history, $stock_id, $stock_outturn, $allocated_weight);
+
+                }      
+
+            }
+        }
+
+        }
+
+      
 
         return $history; 
 
