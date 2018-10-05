@@ -399,6 +399,12 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/arrivalinformation', 'WeighScaleController@arrivalInformationForm'); 
 		Route::post('/arrivalinformation', 'WeighScaleController@arrivalInformation');
+
+		Route::get('/weighnote', 'WeightNoteController@weighNoteForm'); 
+		Route::post('/weighnote', 'WeightNoteController@weighNote');
+		Route::get('/weight_note_delete/{id}', 'WeightNoteController@weight_note_delete'); 
+
+
 		Route::get('/outturn_delete/{id}', 'WeighScaleController@outturn_delete'); 
 		Route::get('/batch_delete/{id}', 'WeighScaleController@batch_delete'); 
 
