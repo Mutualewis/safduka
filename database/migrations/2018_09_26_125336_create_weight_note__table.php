@@ -18,7 +18,6 @@ class CreateWeightNoteTable extends Migration
             $table->integer('ctr_id')->nullable();
             $table->integer('cgrad_id')->nullable();
             $table->integer('bs_id')->nullable();
-            $table->integer('ctr_id')->nullable();
             $table->integer('st_id')->nullable();
             $table->integer('pr_id')->nullable();
             $table->integer('pkg_id')->nullable();
