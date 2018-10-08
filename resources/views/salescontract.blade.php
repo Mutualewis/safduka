@@ -646,11 +646,6 @@
 		            </div>
 		        </div>
 
-				<div class="row">
-		            <div class="form-group col-md-12">
-		           		<button type="submit" name="printexactlots" class="btn btn-lg btn-success btn-block">Download Results Allocations</button>
-		            </div>
-		        </div>
 
 				<div class="row">
 		            <div class="form-group col-md-12">
