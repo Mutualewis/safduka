@@ -1,0 +1,78 @@
+tasks
+
+
+git branch
+1. git branch --name--
+2. git checkout --name--
+3. git add .
+4. git commit -m
+5. git checkout master
+6. git merge --name--
+7. git branch -d --name--
+checkout
+
+
+
+Pagination: https://laravel.com/docs/5.7/pagination
+			https://laracasts.com/series/whats-new-in-laravel-5-3/episodes/
+Reset: https://teamtreehouse.com/library/introduction-to-rest-apis
+
+
+	
+
+Broadcasting: https://laravel.com/docs/5.7/broadcasting
+
+Save only what is selected without reloding??https://stackoverflow.com/questions/2866063/submit-form-without-page-reloading
+
+1. Laravel offline app/android (also great for kenya)
+Tanzania activities:
+i. Receiving coffee
+ii. Weigh coffee
+iii. Move coffee within warehouse
+iv. Process results
+v. View reports
+
+(also great for kenya)
+https://stackoverflow.com/questions/2786303/offline-mode-app-in-a-html5-browser-possible#answer-2786567
+https://hacks.mozilla.org/2010/02/an-html5-offline-image-editor-and-uploader-application/
+Client-side_storage..: https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Client-side_storage
+Caching: Memcached 
+https://www.html5rocks.com/en/mobile/workingoffthegrid/
+
+2. Access computer on private network (setting up a server)
+
+
+3. Weighscale indicator/converter
+http://www.kantech.com/training/accesscontrolseminar/assets%202/Setting_up_the_UDS1100_DN1665-0611.pdf
+check signal with luka
+
+
+unit tests
+$ alias phpunit=vendor\bin\phpunit
+forunittest
+$ php artisan migrate --database=testing
+
+4. Milling;
+set-up: confluence vs bitrix24
+set up rules/review from confluence
+i. documents needed.
+ii. jenkins
+iii. add repo (also for other/all projects)
+-marketing
+-weighscale
+-weighscale api
+-ziprose
+-mill old
+
+5. Values check
+
+
+mod_filter
+mod_deflate
+https://www.linuxjournal.com/article/6802
+https://github.com/h5bp/server-configs-apache
+
+
+https://technumero.com/defer-parsing-of-javascript/
+
+http://ltxfaq.custhelp.com/app/answers/detail/a_id/1222/~/resetting-uds%2C-xport-03%2F04s-and-similar-products-to-factory-defaults

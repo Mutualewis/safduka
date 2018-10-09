@@ -66,6 +66,20 @@ return [
                         \PDO::ATTR_EMULATE_PREPARES => true]
         ],
 
+        'testing' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST', 'localhost'),
+            'database'  => 'forunittest',
+            'username'  => 'root',
+            'password'  => '',
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'strict'    => false,
+            'options'   => [
+                        \PDO::ATTR_EMULATE_PREPARES => true]
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'host' => env('DB_HOST', 'localhost'),

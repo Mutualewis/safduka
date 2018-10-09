@@ -2,7 +2,19 @@
     <IfModule mod_negotiation.c>
         Options -MultiViews
     </IfModule>
+    <IfModule mod_deflate.c>
+        SetOutputFilter DEFLATE
+        <IfModule mod_filter.c>
+            # these are known to be safe with MSIE 6
+            AddOutputFilterByType DEFLATE text/html text/plain text/xml
 
+            # everything else may cause problems with MSIE 6
+            AddOutputFilterByType DEFLATE text/css
+            AddOutputFilterByType DEFLATE application/x-javascript application/javascript application/ecmascript
+            AddOutputFilterByType DEFLATE application/rss+xml
+            AddOutputFilterByType DEFLATE application/xml
+        </IfModule>
+    </IfModule>
     #php_value upload_max_filesize 500M
     #php_value post_max_size 1000M
     #php_value memory_limit 1208M
@@ -18,3 +30,4 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+

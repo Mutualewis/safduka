@@ -74,8 +74,10 @@ class AuthController extends Controller {
             'password'  => Input::get('password'),
             'usr_active' => 1
         );
+        // redirect the user back to the intended page
+        // or defaultpage if there isn't one
         if (Auth::attempt($userdata, $request->has('usr_remember'))) {
-            return view('home');
+            return redirect()->intended('home');
         }
         return redirect('/auth/login')
                     ->withInput($request->only('usr_email'))
