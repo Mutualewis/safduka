@@ -55,7 +55,7 @@ return [
         'mysql' => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST', 'localhost'),
-            'database'  => env('DB_DATABASE', 'ibero_db'),
+            'database'  => env('DB_DATABASE', 'mill_db'),
             'username'  => env('DB_USERNAME', 'ngeatpmfkdb'),
             'password'  => env('DB_PASSWORD', 'Athi12is!'),
             'charset'   => 'utf8',

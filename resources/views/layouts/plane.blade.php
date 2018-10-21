@@ -48,7 +48,7 @@
 
  <p  class="overlay" style="font-size: 42px; font-family: -webkit-pictograph !important;
     font-weight: bold !important;
-    color: darkgreen !important;">IBERO <?php echo $value = session('countryname');?> LIMITED<p>
+    color: darkgreen !important;">NKG <?php echo $value = session('countryname');?> EAST AFRICA<p>
 	<!-- <img class="overlay" src="{{ asset("images/logo.png") }}" type="text/javascript" align="right"></img> -->
 
 </head>
