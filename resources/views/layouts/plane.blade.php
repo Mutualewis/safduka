@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8"/>
 	<meta name="csrf-token" content="{{ csrf_token() }}">
-	<title>IBERO</title>
+	<title>NGEA</title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta content="width=device-width, initial-scale=1" name="viewport"/>
 	<meta content="" name="description"/>
@@ -14,13 +14,10 @@
 	<link href="{{ asset("favicon.ico") }}" rel="shortcut icon" type="image/ico">
 
 	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/css/chosen.min.css") }}" />	
-	<!-- <link rel="stylesheet" href="{{ asset("assets/stylesheets/bootstrap.min.css") }}" type="text/css" /> -->
-
-	<!-- <link rel="stylesheet" href="{{ asset("assets/stylesheets/bootstrap-3.1.1.min.css") }}" type="text/css" /> -->
 	<link rel="stylesheet" href="{{ asset("assets/stylesheets/bootstrap-multiselect.css") }}" type="text/css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/css/ui.jqgrid.css") }}" />
 	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/css/jquery.dataTables.yadcf.css") }}" />
-
+	<link rel="stylesheet" type="text/css" href="{{ asset("assets/css/jquery.timepicker.min.css") }}" />
 	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/css/demo.css") }}" />
 	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/css/normalize.css") }}" />
 	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/css/ns-default.css") }}" />
@@ -118,9 +115,36 @@
 	<!-- <script type="text/javascript" src="{{ asset("assets/js/bootstrap.min.js") }}" ></script> -->
 	<!-- <script type="text/javascript" src="{{ asset("assets/js/jquery.dataTables.yadcf.js") }}" ></script> -->
 	<script type="text/javascript" src="{{ asset("assets/Select-1.2.2/js/dataTables.select.min.js") }}" ></script>
+	<script type="text/javascript" src="{{ asset("assets/js/jquery.timepicker.min.js") }}" ></script>
 
+	<script>
+	    $(document).ready(function(){
+	    	var time_input = $('input[name="time"]'); 
+	    	$(time_input).timepicker();
+			$(time_input).timepicker({
+			    timeFormat: 'G:i',
+			    show2400: true
+			});
+		    $(time_input).timepicker('setTime', new Date());
+	    })
+	</script>
 
-
+	<script>
+	    $(document).ready(function(){
+	      var date_input=$('input[name="date_current"]'); //our date input has the name "date"	  
+	      date_input.attr("autocomplete", "off");
+	      var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+	      var options={
+	        format: 'mm/dd/yyyy',
+	        container: container,
+	        todayHighlight: true,
+	        autoclose: true,
+	      };
+	      date_input.datepicker(options);
+		  date_input.datepicker({ autoclose: true, language: 'es' });
+		  date_input.datepicker('update', new Date());
+	    })
+	</script>
 
 	<script>
 	    $(document).ready(function(){
@@ -134,6 +158,8 @@
 	        autoclose: true,
 	      };
 	      date_input.datepicker(options);
+		  date_input.datepicker({ autoclose: true, language: 'es' });
+		  date_input.datepicker('update', new Date());
 	    })
 	</script>
 
@@ -149,6 +175,8 @@
 	        autoclose: true,
 	      };
 	      date_input.datepicker(options);
+		  date_input.datepicker({ autoclose: true, language: 'es' });
+		  date_input.datepicker('update', new Date());
 	    })
 	</script>
 
@@ -164,6 +192,8 @@
 	        autoclose: true,
 	      };
 	      date_input.datepicker(options);
+		  date_input.datepicker({ autoclose: true, language: 'es' });
+		  date_input.datepicker('update', new Date());
 	    })
 	</script>
 
@@ -180,6 +210,8 @@
 	        autoclose: true,
 	      };
 	      date_input.datepicker(options);
+		  date_input.datepicker({ autoclose: true, language: 'es' });
+		  date_input.datepicker('update', new Date());
 	    })
 	</script>
 
@@ -196,6 +228,8 @@
 	        autoclose: true,
 	      };
 	      date_input.datepicker(options);
+		  date_input.datepicker({ autoclose: true, language: 'es' });
+		  date_input.datepicker('update', new Date());
 	    })
 	</script>
 
