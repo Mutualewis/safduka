@@ -24,6 +24,7 @@ class CreateSctContractTermsTermsTable extends Migration
             $table->foreign('sct_id')->references('id')->on('service_contract_sct')->onDelete('restrict')->onUpdate('cascade');
             $table->foreign('term_id')->references('id')->on('terms_tms')->onDelete('restrict')->onUpdate('cascade');
         });
+        
     }
 
     /**

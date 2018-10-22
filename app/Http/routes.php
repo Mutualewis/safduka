@@ -87,7 +87,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::post('/weighbridgeout', 'WeighbridgeController@weighbridgeout');
 
 
-
+		
 
 
 
@@ -111,6 +111,11 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 	    Route::get('/settingsregion/region_delete/{regionID}', ['as'=>'settingsregion.region_delete','uses'=>'SettingsController@region_delete']);
 
 
+		Route::get('/booking', 'FormController@createBookingForm'); 
+		Route::post('/booking', 'FormController@booking'); 
+	
+		Route::get('/booking_delete/{id}', 'FormController@booking_delete'); 
+		
 });
 
 

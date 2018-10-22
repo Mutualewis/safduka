@@ -4,20 +4,22 @@ use Illuminate\Database\Eloquent\Model;
 
 // use Illuminate\Auth\Reminders\RemindableInterface;
 
-class Growers extends Model {
+class booking_items extends Model {
 
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'coffee_growers_cgr';
+	protected $table = 'booking_items_bki';
 
+	public $timestamps = false;
 	/**
 	 * The attributes that are mass assignable.
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['cgr_grower', 'cgr_code', 'cgr_mark', 'gty_id'];
-
+	
+	protected $fillable = ['id', 'bkg_id', 'pty_id', 'bki_bags'];
+           
 }
