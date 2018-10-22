@@ -18,6 +18,9 @@
 --
 -- Table structure for table `activity_log`
 --
+CREATE DATABASE IF NOT EXISTS ngea_db;
+
+USE ngea_db;
 
 DROP TABLE IF EXISTS `activity_log`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
