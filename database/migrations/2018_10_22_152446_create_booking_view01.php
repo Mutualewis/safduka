@@ -11,8 +11,7 @@ class CreateBookingView01 extends Migration
      * @return void
      */
     public function up()
-    {
-        
+    {    
     DB::statement("
     CREATE 
     ALGORITHM = UNDEFINED 

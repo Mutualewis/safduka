@@ -1591,15 +1591,15 @@ class SettingsController extends Controller {
         $regions = Region::all(['id', 'rgn_name', 'rgn_description']);
         $countys = county::all(['id', 'cnt_name']);
         $growerTypes = growertype::all(['id', 'gt_name']);
-        $query= DB::table('coffee_growers_cg AS cg')
+        $query= DB::table('coffee_growers_cgr AS cgr')
             ->select('*')
-            ->LeftJoin('country_ctr AS ctr', 'cg.ctr_id', '=', 'ctr.id')
-            ->LeftJoin('region_rgn AS rgn', 'cg.rgn_id', '=', 'rgn.id')
-            ->LeftJoin('county_cnt AS cnt', 'cg.cnt_id', '=', 'cnt.id')
-            ->groupBy('cg.id')
-            ->orderBy('cg.created_at', 'desc');
+            ->LeftJoin('country_ctr AS ctr', 'cgr.ctr_id', '=', 'ctr.id')
+            ->LeftJoin('region_rgn AS rgn', 'cgr.rgn_id', '=', 'rgn.id')
+            ->LeftJoin('county_cnt AS cnt', 'cgr.cnt_id', '=', 'cnt.id')
+            ->groupBy('cgr.id')
+            ->orderBy('cgr.created_at', 'desc');
 
-        $growers=$query->addSelect('cg.id AS id')->get();
+        $growers=$query->addSelect('cgr.id AS id')->get();
         return View::make('settingsgrowers', compact('id','growers', 'countrys', 'regions', 'countys', 'growerTypes'));
     }
 
@@ -1708,6 +1708,150 @@ class SettingsController extends Controller {
             ]);
         }
     }
+
+    
+	public function downloadExcelGrower($type)
+	{
+		return Excel::load('template_grower.xlsx', function($reader) {
+		})->download();
+	}
+    public function uploadGrowers (Request $request){
+
+    		if (NULL !== Input::get('submitgrower')){
+    			$path = Input::file('import_file')->getRealPath();
+
+				if($path != NULL){
+
+						$data = Excel::load($path, function($reader) {
+						})->get();
+
+						if(!empty($data) && $data->count()){
+
+							$data = $data->first();
+							$errors=[];
+							//dump($data->count());exit;
+							foreach ($data as $key => $value) {
+                                dump($value); exit;
+								$growerid = trim($value->growerid);
+                                $growername = trim($value->growername);
+                                $organisationname = trim($value->organisationname); 
+								$growermark =  trim($value->growermark);
+								$growerpin = trim($value->growerpin);
+								$groweremail = trim($value->groweremail);
+								$growermobile = trim(trim($value->growermobile));
+								$growerpostaladress = trim($value->growerpostaladress);		
+						     	$growerlandline = trim(trim($value->growerlandline));
+                                 $growervatnumber = trim($value->growervatnumber);$growerphysicaladress = trim($value->growerphysicaladress);
+                                 $dateregistered = trim($value->dateregistered);
+                                 $subcountyid = trim($value->subcountyid);
+                                 $isactive = trim($value->isactive);
+                                 $growertypeid = trim($value->growertypeid);
+                                 $apptransactionid = trim($value->apptransactionid);
+                                 $growerpostaltown = trim($value->growerpostaltown);
+                                 $countyid = trim($value->countyid);
+                                 $regionid = trim($value->regionid);
+                                 $countryid = trim($value->countryid);
+                                 $bulkmycoffee = trim($value->bulkmycoffee);
+                                 $growerpostcode = trim($value->growerpostcode);
+                                 $createdon = trim($value->createdon);
+                                 $mgtcommision = trim($value->mgtcommision);
+                                 $mgtcommision = trim($value->mgtcommision);
+                                 $certs = trim($value->cert);
+
+                                 
+
+                                 $arr=[
+
+                                 ];
+								
+								
+								if($growerid != NULL){
+
+										
+										
+										$gdetails = coffeegrower::where('id', $growerid)->orWhere('cgr_grower', $growername);
+
+										if (!empty($gdetails)) {
+											$errors[] = "Grower id ".$growerid." Name ".$growername." already exists in the database!! ";
+												
+										}
+										
+										
+
+										if (empty($gdetails)&&empty($errors)) {
+											$insert[] = ['csn_id' => $season,  'sl_id' =>  $sale, 'cfd_lot_no' => $lot, 'cfd_outturn' => $outturn, 'wr_id' => $warehouseID, 'cfd_grower_mark' => $mark, 'cgrad_id' => $gradeid, 'cfd_weight' => $kilos, 'cfd_bags' => $bags, 'cfd_pockets' => $pkts, 'slr_id' => $sellerID];
+										}
+										if(!empty($cdetails)){
+											$errors[] = "Lot number ".$lot." already exists for a similiar sale and season!! ";
+										}
+
+
+									}
+							}
+
+							if(!empty($errors)){
+								return redirect('settingsgrowers')
+											   ->withErrors($errors)
+											   ->withInput();
+							}
+							
+							if(!empty($insert)){
+								coffeegrower::insert($insert);
+							}
+							// if(!isset($certs)){
+							// 	$certs=[];
+							// }
+							// foreach ($certs as $key => $value) {
+							// 	$cdetails = coffee_details::where('cfd_outturn', $value["outturn"])->where('sl_id', $value["sale"])->where('csn_id', $value["season"])->where('cfd_lot_no', $value["lot"])->first();
+
+							// 	coffee_certification::insert(
+							// 	    ['cfd_id' => $cdetails->id, 'crt_id' => $value["certID"]]
+							// 	);
+							// }
+
+						$cid = Input::get('country');
+						$csn_season = Input::get('sale_season');
+						$sale = Sale::where('ctr_id', '=', Input::get('country'))->where('csn_id',  Input::get('sale_season'))->first();
+						Activity::log('Uploaded catalogue for sale '.$sale->sl_no. ' Season '.$csn_season.' country '. $cid);
+						$request->session()->flash('alert-success', 'Catalogue uploaded successfully!!');
+						$sale = Sale::where('ctr_id', '=', Input::get('country'))->where('csn_id',  Input::get('sale_season'))->where('sltyp_id',  '1')->where('sl_quality_confirmedby', null)->where('sl_auction_confirmedby', null)->get();
+						return View::make('catalogueupload', compact('id', 'Season', 'country', 'sale', 'cid', 'csn_season'));	
+
+						} else {
+							return redirect('catalogueupload')
+				                        ->withErrors("Lot Number Cannot be Empty!!")->withInput();
+						}   
+
+	    			
+				} 
+
+
+    			
+    		} else if($request->has('country')){
+
+	    		if($request->has('sale_season') & Input::get('sale_season') !== "Sale Season" ){
+
+	    				// $sale = Sale::where('ctr_id', '=', Input::get('country'))->where('csn_id',  Input::get('sale_season'))->get();
+	    				//$sale = Sale::where('ctr_id', '=', Input::get('country'))->where('csn_id',  Input::get('sale_season'))->where('sltyp_id',  '1')->get();
+	    				$sale = Sale::where('ctr_id', '=', Input::get('country'))->where('csn_id',  Input::get('sale_season'))->where('sltyp_id',  '1')->where('sl_quality_confirmedby', null)->where('sl_auction_confirmedby', null)->get();
+						// $request->session()->flash('alert-success', 'Sale found!!');
+						$cid = Input::get('country');
+						$csn_season = Input::get('sale_season');
+						return View::make('catalogueupload', compact('id', 'Season', 'country', 'sale', 'cid', 'csn_season'));	
+		    	} else {
+    				// $sale = Sale::where('ctr_id', '=', Input::get('country'))->where('csn_id',  Input::get('sale_season'))->get();
+    				// $sale = Sale::where('ctr_id', '=', Input::get('country'))->where('csn_id',  Input::get('sale_season'))->where('sltyp_id',  '1')->get();
+    				$sale = Sale::where('ctr_id', '=', Input::get('country'))->where('csn_id',  Input::get('sale_season'))->where('sltyp_id',  '1')->where('sl_quality_confirmedby', null)->where('sl_auction_confirmedby', null)->get();
+					// $request->session()->flash('alert-success', 'Sale found!!');
+					$cid = Input::get('country');
+					$csn_season = Input::get('sale_season');
+					return View::make('catalogueupload', compact('id', 'Season', 'country', 'cid', 'csn_season', 'sale'));
+
+				}
+		}
+
+	}
+
     //seasons
     public function settingsSeasonForm (Request $request){
         $id = null;

@@ -115,7 +115,13 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::post('/booking', 'FormController@booking'); 
 	
 		Route::get('/booking_delete/{id}', 'FormController@booking_delete'); 
-		
+
+		Route::get('/settingsgrowers', 'SettingsController@settingsGrowerForm');
+		Route::post('/settingsgrowers', 'SettingsController@settingsGrower');
+		Route::get('/settingsgrowers/grower_delete/{growerID}', ['as'=>'settingsgrowers.grower_delete','uses'=>'SettingsController@grower_delete']);
+
+		Route::get('downloadExcelGrower/{type}', 'SettingsController@downloadExcelGrower');
+		Route::post('/growerupload', 'SettingsController@uploadGrowers'); 
 });
 
 
