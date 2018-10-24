@@ -130,7 +130,7 @@
 
 	        		<div class="form-group col-md-1">
 	                    <label></label></br>
-	        			<button type="submit" name="searchButton" class="btn btn-lg btn-success btn-bloc">Fetch</button>
+	        			<button type="submit" name="searchButton" class="btn ">Fetch</button>
 	                </div>	
 
 		        </div>
@@ -201,85 +201,111 @@
 							@endif
 		                </select>
 		            </div>
-		            <div class="form-group col-md-4">
-		                <div class="form-group col-md-1">
-		                	<label>Client Representative</label>
-		            	</div>
 
-		        		<div class="form-group col-md-4">
-	                    	<input type="text" class="form-control" name="weighbridge_ticket" style="text-transform:uppercase; " placeholder="weighbridge ticket"  value="{{ $weighbridge_ticket }}"></input>	  
-		                </div>	
-	            	</div>
-	                <div class="form-group col-md-1">
-	                	<label>ID:&nbsp;</label>
-	            	</div>
-	        		<div class="form-group col-md-3">
-                    	<input type="text" class="form-control" name="weighbridge_ticket" style="text-transform:uppercase; " placeholder="weighbridge ticket"  value="{{ $weighbridge_ticket }}"></input>	  
+	        		<div class="form-group col-md-4">
+	        			<label>Client Representative</label>
+                    	<input type="text" class="form-control" name="weighbridge_ticket" style="text-transform:uppercase; " placeholder="Name" value=""></input>	  
+	                </div>	
+	        		<div class="form-group col-md-4">
+                    	<input type="text" class="form-control" name="weighbridge_ticket" style="text-transform:uppercase; " placeholder="ID" value=""></input>	  
 	                </div>	
 
 		        </div>
 
-
-			    <h3>Transporter Details</h3>
-	        	<div class="row">
-	        		<div class="form-group col-md-6">
-	                    <label>Weighbridge Ticket</label>
-	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" name="weighbridge_ticket" style="text-transform:uppercase; " placeholder="weighbridge ticket"  value="{{ $weighbridge_ticket }}"></input>
-		                        <span class="input-group-btn"><br>
-		                        <button type="submit" name="searchButton" class="btn btn-default">
-		                        	<i class="fa fa-search"></i>
-		                        </button>
-	                    </span>
-	                    </div>
-	                </div>	
-		            <div class="form-group col-md-6">
-		            	<label>Movement Permit</label>
-		                <input type="text"  class="form-control" name="movement_permit" style="text-transform:uppercase" placeholder="Movement Permit" value="{{ old('movement_permit'). $movement_permit }}">	                
-		            </div> 
-	            </div>
-
-	            <div class="row">
-		            <div class="form-group col-md-6">
-		           		<label>Driver Name</label>
-		                <input type="text"  class="form-control" name="driver_name" style="text-transform:uppercase" value="{{ old('driver_name'). $driver_name }}">	                
-		            </div> 
-		            <div class="form-group col-md-6">
-		           		<label>Driver ID</label>
-		                <input type="text"  class="form-control" name="driver_id" style="text-transform:uppercase" value="{{ old('driver_id'). $driver_id }}">	                
-		            </div> 
-	            	
-	            </div>
-
-	            <div class="row">
-		            <div class="form-group col-md-6">
-		            	<label>Vehicle Plate Number</label>
-		           		<input class="form-control" name="vehicle_plate" style="text-transform:uppercase" value="{{ old('vehicle_plate'). $vehicle_plate }}">
-		            </div> 
-		            <div class="form-group col-md-6">
-		                <label>Weight In</label>
-		                <input class="form-control" name="weighbridge_weight_in" style="text-transform:uppercase" value="{{ old('weighbridge_weight_in'). $weighbridge_weight_in }}">
-		            </div>		             	            
-	            </div>
-	            <h3>Dispatch Information</h3>
-	        	<div class="row" >
-<!-- 		            <div class="form-group col-md-6">
-		                <label>Seller</label>
-		                <select class="form-control" name="seller">
+		        <div class="row">
+		            <div class="form-group col-md-4">
+		                <label>Weigh Bridge</label>
+		                <select class="form-control" name="country">
 		                	<option></option> 
-							@if (isset($seller) && count($seller) > 0)
-										@foreach ($seller->all() as $sellers)
-											@if ($slr ==  $sellers->id)
-												<option value="{{ $sellers->id }}" selected="selected">{{ $sellers->slr_name}}</option>
+							@if (isset($country) && count($country) > 0)
+										@foreach ($country->all() as $countries)
+											@if ($cid ==  $countries->id)
+												<option value="{{ $countries->id }}" selected="selected">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
 											@else
-												<option value="{{ $sellers->id }}">{{ $sellers->slr_name}}</option>
+												<option value="{{ $countries->id }}">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
 											@endif
 
 										@endforeach
 									
 							@endif
-		                </select>
-		            </div> -->
+		                </select>		
+		            </div>		
+
+		            <div class="form-group col-md-4">
+		                <label>First Weight</label>
+		                <input class="form-control" name="weighbridge_weight_in" style="text-transform:uppercase" value="{{ old('weighbridge_weight_in'). $weighbridge_weight_in }}" disabled>
+		            </div>	
+
+		            <div class="form-group col-md-1">
+		            	<label></label>
+			            <?php
+			            	$weigh_scale_session = "scale - ".$cid."";
+			            	
+			            	if(session()->has($weigh_scale_session)) {
+			            ?>		
+			            	<button type="submit" name="resetweight" class="btn btn-lg btn-danger btn-block" formnovalidate>Reset</button>	  	
+
+				        <?php
+				        	} else {
+
+				        ?>							          		           	
+							<button type="submit" name="fetchweight" class="btn btn-lg btn-success btn-block">Fetch</button>
+
+				        <?php
+				        	}
+				        ?>
+
+		            </div>	
+
+		        </div>
+
+			    <h3>Transporter Details</h3>
+
+	            <div class="row">
+
+		            <div class="form-group col-md-4">
+		                <label>Transporter</label>
+		                <select class="form-control" name="country">
+		                	<option></option> 
+							@if (isset($country) && count($country) > 0)
+										@foreach ($country->all() as $countries)
+											@if ($cid ==  $countries->id)
+												<option value="{{ $countries->id }}" selected="selected">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
+											@else
+												<option value="{{ $countries->id }}">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
+											@endif
+
+										@endforeach
+									
+							@endif
+		                </select>		
+		            </div>		
+
+		            <div class="form-group col-md-4">
+		           		<label>Driver Name</label>
+		                <input type="text"  class="form-control" name="driver_name" style="text-transform:uppercase" value="{{ old('driver_name'). $driver_name }}">	                
+		            </div> 
+		            <div class="form-group col-md-4">
+		           		<label>Driver ID</label>
+		                <input type="text"  class="form-control" name="driver_id" style="text-transform:uppercase" value="{{ old('driver_id'). $driver_id }}">	                
+		            </div>  
+	            	
+	            </div>
+
+
+	        	<div class="row">
+		            <div class="form-group col-md-4">
+		            	<label>Vehicle Plate Number</label>
+		           		<input class="form-control" name="vehicle_plate" style="text-transform:uppercase" value="{{ old('vehicle_plate'). $vehicle_plate }}">
+		            </div> 	 
+		            <div class="form-group col-md-4">
+		            	<label>Movement Permit</label>
+		                <input type="text"  class="form-control" name="movement_permit" style="text-transform:uppercase" placeholder="Movement Permit" value="{{ old('movement_permit'). $movement_permit }}">	                
+		            </div> 
+	            </div>
+
+	            <h3>Dispatch Information</h3>
+	        	<div class="row" >
 		            <div class="form-group col-md-6">
 		            	<label>Delivery Note Number</label>
 		           		<input class="form-control" name="dnn" style="text-transform:uppercase" value="{{ old('dnn'). $dnn }}">
@@ -289,18 +315,9 @@
 		                <input type="text"  class="form-control" name="date" style="text-transform:uppercase" value="{{ old('date'). $date }}">	                
 		            </div>
 
-<!-- 		            <div class="form-group col-md-6">
-		            	<label>Dispatch Number</label>
-		           		<input class="form-control" name="vehicle_plate" style="text-transform:uppercase" value="{{ old('vehicle_plate'). $vehicle_plate }}">
-		            </div>   -->
-
 		        </div>
 	            <div class="row">		            
-
-<!-- 		            <div class="form-group col-md-6">
-		            <label></label>
-		           		<button type="submit" name="printreleaseinstructions" class="btn btn-lg btn-success btn-block">Add Dispatch</button>
-		            </div>	 -->	                        
+                       
 	            </div>
 
 				<div class="row">

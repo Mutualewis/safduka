@@ -4,14 +4,14 @@ use Illuminate\Database\Eloquent\Model;
 
 // use Illuminate\Auth\Reminders\RemindableInterface;
 
-class Weighbridge extends Model {
+class ParkingLots extends Model {
 
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'weighbridge_wb';
+	protected $table = 'parking_lots_pl';
 
 	public $timestamps = true;
 	/**
@@ -20,6 +20,6 @@ class Weighbridge extends Model {
 	 * @var array
 	 */
 	
-	protected $fillable = ['id', 'rgn_id', 'wb_number', 'created_at', 'updated_at'];
+	protected $fillable = ['id', 'pl_lot_no', 'pl_availability', 'created_at', 'updated_at'];
            
 }
