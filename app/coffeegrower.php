@@ -19,6 +19,6 @@ class coffeegrower extends Model {
 	 * @var array
 	 */
 	// Code  Mark  Type Total_Weight cgr_date_added
-	protected $fillable = ['gt_id', 'cgr_name', 'cgr_organisation', 'cgr_code', 'cgr_mark', 'cg_email' , 'cg_mobile', 'cg_postal_address', 'cg_land_line', 'cg_vat_number', 'cg_physical_address', 'cg_date_registered', 'cg_sub_county', 'cg_is_active', 'cg_app_transaction', 'cg_postal_town', 'cnt_id', 'rgn_id', 'ctr_id', 'cg_post_code', 'cg_factory_id', 'cg_cert'];
+	protected $fillable = ['gt_id', 'cgr_grower', 'cgr_organisation', 'cgr_code', 'cgr_mark', 'cgr_pin',  'cg_email' , 'cg_mobile', 'cg_postal_address', 'cg_land_line', 'cg_vat_number', 'cg_physical_address', 'cg_date_registered', 'cg_sub_county', 'cg_is_active', 'cg_app_transaction', 'cg_postal_town', 'cnt_id', 'rgn_id', 'ctr_id', 'cg_post_code', 'cg_factory_id', 'cg_cert'];
            
 }
