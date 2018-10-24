@@ -36,6 +36,7 @@ use Ngea\CoffeeGrade;
 use Ngea\coffee_details;
 use Ngea\SaleableStatus;
 use Ngea\cleancoffee;
+use Ngea\grower_certifications;
 
 use Ngea\coffeewarrant;
 use Ngea\buyer;
@@ -1731,17 +1732,18 @@ class SettingsController extends Controller {
 							$errors=[];
 							//dump($data->count());exit;
 							foreach ($data as $key => $value) {
-                                dump($value); exit;
+                               
 								$growerid = trim($value->growerid);
                                 $growername = trim($value->growername);
                                 $organisationname = trim($value->organisationname); 
 								$growermark =  trim($value->growermark);
 								$growerpin = trim($value->growerpin);
 								$groweremail = trim($value->groweremail);
-								$growermobile = trim(trim($value->growermobile));
+								$growermobile = trim($value->growermobile);
 								$growerpostaladress = trim($value->growerpostaladress);		
-						     	$growerlandline = trim(trim($value->growerlandline));
-                                 $growervatnumber = trim($value->growervatnumber);$growerphysicaladress = trim($value->growerphysicaladress);
+						     	$growerlandline = trim($value->growerlandline);
+                                 $growervatnumber = trim($value->growervatnumber);
+                                 $growerphysicaladress = trim($value->growerphysicaladress);
                                  $dateregistered = trim($value->dateregistered);
                                  $subcountyid = trim($value->subcountyid);
                                  $isactive = trim($value->isactive);
@@ -1751,6 +1753,7 @@ class SettingsController extends Controller {
                                  $countyid = trim($value->countyid);
                                  $regionid = trim($value->regionid);
                                  $countryid = trim($value->countryid);
+                                 $factoryid = trim($value->factoryid);
                                  $bulkmycoffee = trim($value->bulkmycoffee);
                                  $growerpostcode = trim($value->growerpostcode);
                                  $createdon = trim($value->createdon);
@@ -1758,20 +1761,14 @@ class SettingsController extends Controller {
                                  $mgtcommision = trim($value->mgtcommision);
                                  $certs = trim($value->cert);
 
-                                 
-
-                                 $arr=[
-
-                                 ];
-								
 								
 								if($growerid != NULL){
 
 										
 										
-										$gdetails = coffeegrower::where('id', $growerid)->orWhere('cgr_grower', $growername);
-
-										if (!empty($gdetails)) {
+										$gdetails = coffeegrower::where('id', $growerid)->orWhere('cgr_grower', $growername)->get();;
+                                        
+										if (!($gdetails->isEmpty())) {
 											$errors[] = "Grower id ".$growerid." Name ".$growername." already exists in the database!! ";
 												
 										}
@@ -1779,14 +1776,46 @@ class SettingsController extends Controller {
 										
 
 										if (empty($gdetails)&&empty($errors)) {
-											$insert[] = ['csn_id' => $season,  'sl_id' =>  $sale, 'cfd_lot_no' => $lot, 'cfd_outturn' => $outturn, 'wr_id' => $warehouseID, 'cfd_grower_mark' => $mark, 'cgrad_id' => $gradeid, 'cfd_weight' => $kilos, 'cfd_bags' => $bags, 'cfd_pockets' => $pkts, 'slr_id' => $sellerID];
+											$insert[] = [
+                                                'id' => $growerid,
+                                                'cgr_grower' =>  $growername,
+                                                'cgr_organisation' => $organisationname, 
+                                                'cgr_mark' => $growermark,
+                                                'cgr_pin' => $growerpin,
+                                                'cg_email' => $groweremail, 
+                                                'cg_mobile' => $growermobile, 
+                                                'cg_postal_address' => $growerpostaladress, 
+                                                'cg_land_line' => $growerlandline, 
+                                                'cg_vat_number' => $growervatnumber,
+                                                'cg_physical_address' => $growerphysicaladress,
+                                                'cg_date_registered' => $dateregistered,
+                                                'cg_sub_county' => $subcountyid,
+                                                'cg_is_active' => $isactive,
+                                                'gt_id' => $growertypeid,
+                                                'cg_app_transaction' => $apptransactionid,
+                                                'cg_postal_town' => $growerpostaltown,
+                                                'cnt_id' => $countyid,
+                                                'rgn_id' => $regionid,
+                                                'ctr_id' => $countryid,
+                                                'cg_post_code' => $growerpostcode,
+                                                'cg_factory_id' => $factoryid,
+                                                'cg_post_code' => $growerpostcode,
+                                                'certs' => $certs,
+                                            ];
 										}
-										if(!empty($cdetails)){
-											$errors[] = "Lot number ".$lot." already exists for a similiar sale and season!! ";
+										if(!empty($gdetails)){
+											$errors[] = "Grower id ".$gdetails->id." already exists !! ";
 										}
 
 
-									}
+                                    }
+                                    if($certs!= 'NULL' && $certs!= NULL){
+                                        $gcerts=[];
+                                        $gcerts=  [
+                                            'id' => $growerid,
+                                            'cgr_grower' =>  $growername ];
+                                        dump(explode(",",$certs)); exit;
+                                    }
 							}
 
 							if(!empty($errors)){
@@ -1795,31 +1824,30 @@ class SettingsController extends Controller {
 											   ->withInput();
 							}
 							
-							if(!empty($insert)){
-								coffeegrower::insert($insert);
-							}
-							// if(!isset($certs)){
-							// 	$certs=[];
-							// }
-							// foreach ($certs as $key => $value) {
-							// 	$cdetails = coffee_details::where('cfd_outturn', $value["outturn"])->where('sl_id', $value["sale"])->where('csn_id', $value["season"])->where('cfd_lot_no', $value["lot"])->first();
+							// if(!empty($insert)){
+							// 	coffeegrower::insert($insert);
+                            // }
+                           
+                            
+                            
+                            $gcerts=print_r (explode(",",$certs));
+							// foreach ($gcerts as $key => $value) {
+                            //     $gdetails = coffeegrower::where('id', $growerid)->orWhere('cgr_grower', $growername)->first();
+                            //     $certdetails = coffee_certification::where('crt_name', $value)->orWhere('crt_description', $value)->first();
 
-							// 	coffee_certification::insert(
-							// 	    ['cfd_id' => $cdetails->id, 'crt_id' => $value["certID"]]
+							// 	grower_certifications::insert(
+							// 	    ['cfd_id' => $gdetails->id, 'crt_id' => $certdetails->id]
 							// 	);
 							// }
 
-						$cid = Input::get('country');
-						$csn_season = Input::get('sale_season');
-						$sale = Sale::where('ctr_id', '=', Input::get('country'))->where('csn_id',  Input::get('sale_season'))->first();
-						Activity::log('Uploaded catalogue for sale '.$sale->sl_no. ' Season '.$csn_season.' country '. $cid);
-						$request->session()->flash('alert-success', 'Catalogue uploaded successfully!!');
-						$sale = Sale::where('ctr_id', '=', Input::get('country'))->where('csn_id',  Input::get('sale_season'))->where('sltyp_id',  '1')->where('sl_quality_confirmedby', null)->where('sl_auction_confirmedby', null)->get();
-						return View::make('catalogueupload', compact('id', 'Season', 'country', 'sale', 'cid', 'csn_season'));	
+						Activity::log('Uploaded grower details for grower id '.$gdetails->id. ' name '.$gdetails->cgr_grower.' user '. $cid);
+						$request->session()->flash('alert-success', 'Growers uploaded successfully!!');
+						
+						return View::make('settingsgrowers', compact('id', 'Season', 'country', 'sale', 'cid', 'csn_season'));	
 
 						} else {
-							return redirect('catalogueupload')
-				                        ->withErrors("Lot Number Cannot be Empty!!")->withInput();
+							return redirect('settingsgrowers')
+				                        ->withErrors("Grower id Cannot be Empty!!")->withInput();
 						}   
 
 	    			
