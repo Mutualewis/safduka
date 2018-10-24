@@ -4,7 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 
 // use Illuminate\Auth\Reminders\RemindableInterface;
 
-class transporters extends Model {
+class Transporters extends Model {
 
 	/**
 	 * The database table used by the model.

@@ -9,15 +9,20 @@ use Ngea\Http\Controllers\Controller;
 use View;
 use Ngea\Season;
 use Ngea\Warehouse;
-use Ngea\Region;
 use PDF;
 use Activity;
 use Excel;
 use Ngea\country;
-use Ngea\WeighbridgeInfo;
 use Ngea\User;
 use Auth;
 use delete;
+use Ngea\WeighbridgeInfo;
+use Ngea\Region;
+use Ngea\Weighbridge;
+use Ngea\ParkingLots;
+use Ngea\Items;
+use Ngea\booking;
+use Ngea\Transporters;
 
 
 class WeighbridgeController extends Controller {
@@ -27,8 +32,14 @@ class WeighbridgeController extends Controller {
     	$Season = Season::all(['id', 'csn_season']);
     	$country = country::all(['id', 'ctr_name', 'ctr_initial']);
     	$weighbridge_ticket = sprintf("%07d", 0000001);
-
 		$ref_no = weighbridgeinfo::orderBy('wbi_ticket', 'asc')->pluck('wbi_ticket');
+
+    	$region = region::all(['id', 'rgn_name', 'rgn_description']);
+    	$weighbridges = NULL;
+    	$parking = parkinglots::all(['id', 'pl_lot_no', 'pl_availability']);
+    	$booking = booking::all(['id', 'bkg_delivery_date', 'bkg_validity_date', 'bkg_sample_received', 'bkg_remarks']);
+    	$items = items::all(['id', 'it_name', 'it_client', 'it_client_table']);
+    	$transporters = transporters::all(['id', 'trp_name', 'trp_initials', 'trp_description']);
 
 		foreach ($ref_no as $ref) {
 		    $ref_no = $ref;
@@ -36,10 +47,9 @@ class WeighbridgeController extends Controller {
 		if ($ref_no != NULL && is_numeric($ref_no)) {
 			$weighbridge_ticket = sprintf("%07d", ($ref_no + 0000001));
 		}
-		
+				
 		return View::make('weighbridge', compact('id', 
-				'Season', 'country', 'cid', 'weighbridge_ticket'));	
-
+				'Season', 'country', 'cid', 'weighbridge_ticket', 'region', 'weighbridges', 'parking', 'booking', 'items', 'transporters'));	
     }
 
     public function weighbridge (Request $request){
@@ -54,9 +64,7 @@ class WeighbridgeController extends Controller {
 		}
 		
 		if (NULL !== Input::get('submitlot')){
-	     	 $this->validate($request, [
-		            'country' => 'required', 'coffee_buyer' => 'required', 'weighbridge_ticket' => 'required', 'vehicle_plate' => 'required', 'weighbridge_weight_in' => 'required', 'date' => 'required',
-		        ]);
+	    
 			$country = Input::get('country');
 			$weighbridge_ticket = Input::get('weighbridge_ticket');
 			$vehicle_plate = strtoupper(Input::get('vehicle_plate'));
@@ -99,9 +107,6 @@ class WeighbridgeController extends Controller {
 				'Season', 'country', 'cid', 'csn_season','weighbridge', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'weighbridge_all', 'weighbridge_ticket'));	
     	
 		}  else if (NULL !== Input::get('searchButton')) {
-	     	 $this->validate($request, [
-		            'country' => 'required', 'coffee_buyer' => 'required', 'weighbridge_ticket' => 'required'
-		        ]);
 
 			$country = Input::get('country');
 			$weighbridge_ticket = Input::get('weighbridge_ticket');
@@ -120,9 +125,7 @@ class WeighbridgeController extends Controller {
 				'Season', 'country', 'cid', 'csn_season','weighbridge', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'weighbridge_all', 'weighbridge_ticket'));	
 
 		}  else if (NULL !== Input::get('print')) {
-			$this->validate($request, [
-		            'country' => 'required', 'coffee_buyer' => 'required', 'weighbridge_ticket' => 'required'
-		        ]);
+
 			$country = Input::get('country');
 			$coffee_buyer = Input::get('coffee_buyer');
 			$weighbridge_ticket = Input::get('weighbridge_ticket');
