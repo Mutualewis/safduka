@@ -1726,10 +1726,16 @@ class SettingsController extends Controller {
 						$data = Excel::load($path, function($reader) {
 						})->get();
 
+                        $user_data = Auth::user();
+
+                        $user = $user_data->id;
+
+
 						if(!empty($data) && $data->count()){
 
 							$data = $data->first();
-							$errors=[];
+                            $errors=[];
+                            $gcerts=[];
 							//dump($data->count());exit;
 							foreach ($data as $key => $value) {
                                
@@ -1766,9 +1772,9 @@ class SettingsController extends Controller {
 
 										
 										
-										$gdetails = coffeegrower::where('id', $growerid)->orWhere('cgr_grower', $growername)->get();;
-                                        
-										if (!($gdetails->isEmpty())) {
+										$gdetails = coffeegrower::where('id', $growerid)->orWhere('cgr_grower', $growername)->first();;
+                                        //dump(empty($gdetails)); exit;
+										if (!empty($gdetails)) {
 											$errors[] = "Grower id ".$growerid." Name ".$growername." already exists in the database!! ";
 												
 										}
@@ -1779,7 +1785,7 @@ class SettingsController extends Controller {
 											$insert[] = [
                                                 'id' => $growerid,
                                                 'cgr_grower' =>  $growername,
-                                                'cgr_organisation' => $organisationname, 
+                                                'cgr_organization' => $organisationname, 
                                                 'cgr_mark' => $growermark,
                                                 'cgr_pin' => $growerpin,
                                                 'cg_email' => $groweremail, 
@@ -1800,22 +1806,23 @@ class SettingsController extends Controller {
                                                 'cg_post_code' => $growerpostcode,
                                                 'cg_factory_id' => $factoryid,
                                                 'cg_post_code' => $growerpostcode,
-                                                'certs' => $certs,
+                                                'cg_cert' => $certs,
                                             ];
 										}
 										if(!empty($gdetails)){
-											$errors[] = "Grower id ".$gdetails->id." already exists !! ";
+                                            
+											$errors[] = "Grower id ".$gdetails->id." already exists in the database!! ";
 										}
-
+                                        if($certs!= 'NULL' && $certs!= NULL){
+                                            $certs = explode(",",$certs);
+                                            $gcerts[]=  [
+                                                'growerid' => $growerid,
+                                                'certs' =>  $certs 
+                                            ];
+                                        }
 
                                     }
-                                    if($certs!= 'NULL' && $certs!= NULL){
-                                        $gcerts=[];
-                                        $gcerts=  [
-                                            'id' => $growerid,
-                                            'cgr_grower' =>  $growername ];
-                                        dump(explode(",",$certs)); exit;
-                                    }
+                                    
 							}
 
 							if(!empty($errors)){
@@ -1824,26 +1831,37 @@ class SettingsController extends Controller {
 											   ->withInput();
 							}
 							
-							// if(!empty($insert)){
-							// 	coffeegrower::insert($insert);
-                            // }
-                           
+							if(!empty($insert)){
+								coffeegrower::insert($insert);
+                            }
+                          
+							foreach ($gcerts as $key => $value) {
+                                
+                                $growerid=$value['growerid'];
+                                $certs = $value['certs'];
+                                
+                                $gdetails = coffeegrower::where('id', $growerid)->first();
+      
+                                foreach ($certs as $key2 => $value2) {
+                                    $value2  = str_replace("'", '', $value2);
+                                    $certdetails = Certification::where('crt_name', $value2)->orWhere('crt_description', $value2)->first();
+                                    if(!empty($certdetails)){
+                                    grower_certifications::insert(
+                                        ['cgr_id' => $growerid, 'crt_id' => $certdetails->id]
+                                    );
+                                    Activity::log('Inserted grower certification details for grower id'.$growerid.' cert id '.$certdetails->id);
+                                    }else{
+                                    $errors[] = "Cert ".$value2." not found exists in the database!! ";
+                                }
+                                }
+							}
+                        
+                       
                             
-                            
-                            $gcerts=print_r (explode(",",$certs));
-							// foreach ($gcerts as $key => $value) {
-                            //     $gdetails = coffeegrower::where('id', $growerid)->orWhere('cgr_grower', $growername)->first();
-                            //     $certdetails = coffee_certification::where('crt_name', $value)->orWhere('crt_description', $value)->first();
-
-							// 	grower_certifications::insert(
-							// 	    ['cfd_id' => $gdetails->id, 'crt_id' => $certdetails->id]
-							// 	);
-							// }
-
-						Activity::log('Uploaded grower details for grower id '.$gdetails->id. ' name '.$gdetails->cgr_grower.' user '. $cid);
+						Activity::log('Uploaded grower details user'. $user);
 						$request->session()->flash('alert-success', 'Growers uploaded successfully!!');
 						
-						return View::make('settingsgrowers', compact('id', 'Season', 'country', 'sale', 'cid', 'csn_season'));	
+						return View::make('settingsgrowers', compact('id', 'Season', 'country', 'sale', 'cid', 'csn_season'))->withErrors($errors);	
 
 						} else {
 							return redirect('settingsgrowers')

@@ -3820,7 +3820,7 @@ public function clean_delete($id)
 
 				$coffee_agent = $agents->agt_name;
 
-				Activity::log('Added Booking '.$booking->ref_no. " Agent = ". $coffee_agent. " Grower = ". $coffee_grower. " Delivery Date = ". $date);
+				Activity::log('Added Booking '.$ref_no. " Agent = ". $coffee_agent. " Grower = ". $coffee_grower. " Delivery Date = ". $date);
 			}
 
 
@@ -3917,7 +3917,8 @@ public function clean_delete($id)
 
 	        $deliveryid = ParchmentType::where('id', $delivery)->first();
 
-	        $booking = booking_with_names::where('ref_no', $ref_no )->first();
+			$booking = booking_with_names::where('ref_no', $ref_no )->first();
+			
 	        $bookingitem = booking_items::where('bkg_id', $booking->id)->where('pty_id', $delivery)->first();
 
 			
