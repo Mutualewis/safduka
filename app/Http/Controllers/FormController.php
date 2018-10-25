@@ -11,6 +11,7 @@ use View;
 use Ngea\Parchment;
 use Ngea\ParchmentType;
 use Ngea\Growers;
+use Ngea\coffeegrower;
 use Ngea\CropType;
 use Ngea\MillingStatus;
 use Ngea\outturn_with_names;
@@ -3663,7 +3664,9 @@ public function clean_delete($id)
 						$ref_no = Input::get('ref');
 
 						$booking = booking_with_names::where('ref_no', $ref_no )->first();
+						if(!empty($booking)){
 						$bookingitem = booking_items_with_names::where('bkgid', $booking->id)->get();
+						}
 
 
 						$pbulkoutturn = NULL;
@@ -3738,7 +3741,7 @@ public function clean_delete($id)
 							$grower = Growers::where('id', $booking->cgr_id)->first();
 
 							$agents = agent::where('id', $booking->agt_id)->first();
-
+							
 							$coffee_grower = $grower->cgr_grower;
 
 							$coffee_agent = $agents->agt_name;
@@ -3772,7 +3775,7 @@ public function clean_delete($id)
 
 	        $agent = agent::all(['id', 'agt_name']);
 	        // $growers = Growers::all(['id', 'cgr_grower', 'cgr_mark']);
-	        $growers = Growers::all(['id', 'cgr_grower', 'cgr_mark', 'cgr_organization']);
+	        $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_mark', 'cgr_organization']);
 	        $ParchmentType = ParchmentType::all(['id', 'pty_name']);
 	        $ParchmentType = ParchmentType::where('id', '!=', '7')->get();
 
@@ -3794,7 +3797,7 @@ public function clean_delete($id)
 							->update(['agt_id' => $coffee_agent,  'cgr_id' =>  $coffee_grower, 'bkg_delivery_date'=> $date]);
 				$request->session()->flash('alert-success', 'Booking Updated successfully!');
 
-				$grower = Growers::where('id', $coffee_grower)->first();
+				$grower = coffeegrower::where('id', $coffee_grower)->first();
 
 				$agents = agent::where('id', $coffee_agent)->first();
 
@@ -3812,7 +3815,7 @@ public function clean_delete($id)
 				);
 				$request->session()->flash('alert-success', 'Booking Created successfully!');
 
-				$grower = Growers::where('id', $coffee_grower)->first();
+				$grower = coffeegrower::where('id', $coffee_grower)->first();
 
 				$agents = agent::where('id', $coffee_agent)->first();
 
@@ -3835,8 +3838,6 @@ public function clean_delete($id)
 	        ]);
 			$ref_no = strtoupper(Input::get('ref'));	
 			$date = Input::get('date');
-
-
 
 			$date2 = Input::get('date');
 			$date2=date_create($date2);
@@ -3865,7 +3866,7 @@ public function clean_delete($id)
 			$bookingitem = booking_items_with_names::where('bkgid', $booking->id)->get();
 
 
-			$growers = Growers::where('id', $coffee_grower)->first();
+			$growers = coffeegrower::where('id', $coffee_grower)->first();
 
 			$coffee_grower = $growers->cgr_grower;
 			$code = $growers->cgr_code;
@@ -3903,7 +3904,7 @@ public function clean_delete($id)
 
 	        $agent = agent::all(['id', 'agt_name']);
 	        // $growers = Growers::all(['id', 'cgr_grower', 'cgr_mark']);
-	        $growers = Growers::all(['id', 'cgr_grower', 'cgr_mark', 'cgr_organization']);
+	        $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_mark', 'cgr_organization']);
 	        
 	        $ParchmentType = ParchmentType::all(['id', 'pty_name']);
 	        $ParchmentType = ParchmentType::where('id', '!=', '7')->get();
@@ -3975,7 +3976,7 @@ public function booking_delete($id)
 	//$booking_items->delete();
 
     $agent = agent::all(['id', 'agt_name']);
-    $growers = Growers::all(['id', 'cgr_grower', 'cgr_mark']);
+    $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_mark']);
 
 
     $ParchmentType = ParchmentType::all(['id', 'pty_name']);

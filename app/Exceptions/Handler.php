@@ -45,6 +45,40 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        return parent::render($request, $e);
+            
+    //     if($e instanceof HttpException 
+    //     && $e->getStatusCode() == 403) {
+    //     return response()->view('errors.403', [], 403);
+    //     }
+
+    //     $user_data = Auth::user();
+	//     $user = $user_data ->usr_name;
+
+
+    //     $data = array('name'=>"TZ DATABASE", "info"=>$e->getMessage());    
+    //     //dump($e->getLine()); exit;
+    //     //dump($data); exit;
+    //     $data = array('name'=>"TZ DATABASE TEAM", "error"=>$e->getMessage(), "user"=>$user, "line"=>$e->getLine(), "file"=>$e->getFile());    
+
+    //     Mail::send(['text'=>'systemerrormail'], $data, function($message) {
+
+    //         $message->to('john.gachunga@nkg.coffee', 'Tanzania Database Error-')
+    //         ->cc('lewis.mutua@nkg.coffee')
+    //         ->subject('TZ DATABASE SYSTEM EXCEPTION');
+
+    //         $message->from('lewis.mutua@nkg.coffee','Ibero Tz Database');
+
+    //     });
+	// 	if( count(Mail::failures()) > 0 ) {
+
+		 	
+		 
+	// 	 } else {
+			
+			
+    //      }
+         
+       return parent::render($request, $e);
+       //return response()->view('errors.500');
     }
 }
