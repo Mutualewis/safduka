@@ -373,10 +373,10 @@
 								$id = $value->id;
 								echo "<tr>";
 									echo "<td>".$count."</td>";
-									echo "<td>".$value->cg_name."</td>";
-									echo "<td>".$value->cg_organisation."</td>";
-									echo "<td>".$value->cg_code."</td>";
-									echo "<td>".$value->cg_mark."</td>";
+									echo "<td>".$value->cgr_grower."</td>";
+									echo "<td>".$value->cgr_organization."</td>";
+									echo "<td>".$value->cgr_code."</td>";
+									echo "<td>".$value->cgr_mark."</td>";
 									echo "<td>".$value->cg_email."</td>";
 									echo "<td>".$value->cg_mobile."</td>";
 									echo "<td>".$value->cg_postal_address."</td>";
