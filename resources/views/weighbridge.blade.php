@@ -39,6 +39,9 @@
 	if (!isset($cid)) {
 		$cid = NULL;
 	}
+	if (!isset($region_id)) {
+		$region_id = NULL;
+	}
 	if (!isset($date )) {
 		$date = NULL;
 	}
@@ -65,6 +68,15 @@
 	}		
 	if (!isset($dnn)) {
 		$dnn = NULL;
+	}		
+	if (!isset($parking_lot)) {
+		$parking_lot = NULL;
+	}			
+	if (!isset($booking_id)) {
+		$booking_id = NULL;
+	}			
+	if (!isset($selected_items)) {
+		$selected_items = array();
 	}	
 
 	if (isset($weighbridge)){
@@ -95,14 +107,14 @@
 	        	<div class="row" >
 		            <div class="form-group col-md-4">
 		                <label>Location</label>
-		                <select class="form-control" name="country">
+		                <select class="form-control" name="region">
 		                	<option></option> 
-							@if (isset($country) && count($country) > 0)
-										@foreach ($country->all() as $countries)
-											@if ($cid ==  $countries->id)
-												<option value="{{ $countries->id }}" selected="selected">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
+							@if (isset($region) && count($region) > 0)
+										@foreach ($region->all() as $value)
+											@if ($region_id ==  $value->id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->rgn_name}}</option>
 											@else
-												<option value="{{ $countries->id }}">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
+												<option value="{{ $value->id }}">{{ $value->rgn_name}}</option>
 											@endif
 
 										@endforeach
@@ -125,11 +137,11 @@
 
 	        		<div class="form-group col-md-3">
 	                    <label>Parking Lot Number</label>
-                    	<input type="text" class="form-control" name="weighbridge_ticket" style="text-transform:uppercase; " placeholder="weighbridge ticket"  value="{{ $weighbridge_ticket }}"></input>	  
+                    	<input type="text" class="form-control" name="parking_lot" style="text-transform:uppercase; " placeholder="Parking Lot Number"  value="{{ $parking_lot }}"></input>	  
 	                </div>	
 
 	        		<div class="form-group col-md-1">
-	                    <label></label></br>
+	                    <label> </label></br>
 	        			<button type="submit" name="searchButton" class="btn ">Fetch</button>
 	                </div>	
 
@@ -140,12 +152,12 @@
 		                <label>Booking Reference Number</label>
 		                <select class="form-control" name="country">
 		                	<option></option> 
-							@if (isset($country) && count($country) > 0)
-										@foreach ($country->all() as $countries)
-											@if ($cid ==  $countries->id)
-												<option value="{{ $countries->id }}" selected="selected">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
+							@if (isset($booking) && count($booking) > 0)
+										@foreach ($booking->all() as $value)
+											@if ($booking_id ==  $value->id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->bkg_ref_no}}</option>
 											@else
-												<option value="{{ $countries->id }}">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
+												<option value="{{ $value->id }}">{{ $value->bkg_ref_no}}</option>
 											@endif
 
 										@endforeach
@@ -171,13 +183,13 @@
 	        	<div class="row" >
 		            <div class="form-group col-md-4">
 		                <label>Item Name</label>
-		                <select class="form-control" id="select-seller" name="seller[]"  multiple="multiple">
-							@if (isset($seller) && count($seller) > 0)
-										@foreach ($seller->all() as $sellers)
-											@if (in_array($sellers->id, $slr))
-												<option value="{{ $sellers->id }}" selected="selected">{{ $sellers->slr_name}}</option>
+		                <select class="form-control" id="select-items" name="items[]"  multiple="multiple" onchange=AjaxFunction();>
+							@if (isset($items) && count($items) > 0)
+										@foreach ($items->all() as $value)
+											@if (in_array($value->id, $selected_items))
+												<option value="{{ $value->id }}" selected="selected">{{ $value->it_name}}</option>
 											@else
-												<option value="{{ $sellers->id }}">{{ $sellers->slr_name}}</option>
+												<option value="{{ $value->id }}">{{ $value->it_name}}</option>
 											@endif
 
 										@endforeach
@@ -187,7 +199,7 @@
 		            </div>
 		            <div class="form-group col-md-4">
 		                <label>Customer Name</label>
-		                <select class="form-control" id="select-seller" name="seller[]"  multiple="multiple">
+		                <select class="form-control" id="select-customer" name="customer[]"  multiple="multiple">
 							@if (isset($seller) && count($seller) > 0)
 										@foreach ($seller->all() as $sellers)
 											@if (in_array($sellers->id, $slr))
@@ -217,12 +229,12 @@
 		                <label>Weigh Bridge</label>
 		                <select class="form-control" name="country">
 		                	<option></option> 
-							@if (isset($country) && count($country) > 0)
-										@foreach ($country->all() as $countries)
-											@if ($cid ==  $countries->id)
-												<option value="{{ $countries->id }}" selected="selected">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
+							@if (isset($weighbridges) && count($weighbridges) > 0)
+										@foreach ($weighbridges->all() as $value)
+											@if ($cid ==  $value->id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->ctr_name . " (".$value->ctr_initial.")"}}</option>
 											@else
-												<option value="{{ $countries->id }}">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
+												<option value="{{ $value->id }}">{{ $value->ctr_name . " (".$value->ctr_initial.")"}}</option>
 											@endif
 
 										@endforeach
@@ -332,5 +344,38 @@
 	</div>
 	</form>
 </div>	
-@stop
 
+<script type="text/javascript">
+
+function AjaxFunction()
+{
+	
+	var item_id = $('#select-items').val();
+
+	var url="{{ route('weighbridge.getCustomer',['item_id'=>":item_id"]) }}";
+	url = url.replace(':item_id', item_id);
+
+	$.ajax({
+	url: url,
+	type: 'GET',
+	}).success(function(response) {
+		var customers = jQuery.parseJSON(response);
+
+		var $select = $('#select-customer');
+		$select.find('option').remove();      
+
+		$.each(customers,function(key, value) 
+		{	
+			$select.append('<option value=' + value["id"] + '>' + value["name"] + '</option>');
+
+		    
+		});
+	
+	}).error(function(error) {
+		console.log(error)
+	});
+
+
+}
+</script>
+@stop

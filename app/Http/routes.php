@@ -83,11 +83,13 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/weighbridge', 'WeighbridgeController@weighbridgeForm'); 
 		Route::post('/weighbridge', 'WeighbridgeController@weighbridge');
 
+
+		Route::get('/weighbridge/getCustomer/{item_id}', ['as'=>'weighbridge.getCustomer','uses'=>'WeighbridgeController@getCustomer']);
+
+
+
 		Route::get('/weighbridgeout', 'WeighbridgeController@weighbridgeOutForm'); 
 		Route::post('/weighbridgeout', 'WeighbridgeController@weighbridgeout');
-
-
-		
 
 
 
