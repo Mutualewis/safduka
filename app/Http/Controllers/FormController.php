@@ -845,18 +845,6 @@ class FormController extends Controller {
 		}
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     public function createCleanForm (Request $request){
 
 

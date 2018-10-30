@@ -131,7 +131,7 @@
 
 				<div class="row">
 		            <div class="form-group col-md-6">
-			            <h3>Select Sale</h3>						
+			            <h3>Details</h3>						
 		            </div>
 		        </div>
 
@@ -182,60 +182,33 @@
 
 		           		<div class="form-group col-md-12">
 			                <label>Sale</label>
-			                <select class="form-control" id="sale" name="sale">
-			                	<option>Sale No.</option> 
-								@if (isset($sale) && count($sale) > 0)
-									@foreach ($sale->all() as $sales)
-										@if ($sale_id ==  $sales->id)
-											<option value="{{ $sales->id }}" selected="selected">{{ $sales->sl_no}}</option>
-										@else
-											<option value="{{ $sales->id }}">{{ $sales->sl_no}}</option>
-										@endif
-
-									@endforeach
-								@else
-									<option>No Sale Found</option>		
-								@endif
-			                </select>		
+			               		
 			            </div>
 			        </div>
 
 			        <div class="row" >
 			            <div class="form-group col-md-12">
 			                <label>Seller(Should Be Selected)</label>
-			                <select class="form-control" id="seller" name="seller">
-			                	<option></option> 
-								@if (isset($seller) && count($seller) > 0)
-											@foreach ($seller->all() as $sellers)
-												@if ($seller_id ==  $sellers->id)
-													<option value="{{ $sellers->id }}" selected="selected">{{ $sellers->slr_name}}</option>
-												@else
-													<option value="{{ $sellers->id }}">{{ $sellers->slr_name}}</option>
-												@endif
-
-											@endforeach
-										
-								@endif
-			                </select>
+			              
 			            </div>
 			        </div>
 
 			        <div class="row">
 
 						 <div class="form-group col-md-4">
-			            	<button type="submit" name="submitlot" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalParchmentCenter'onclick='displayParchment(event, this, null, null, null, null, null)' data-dprtname='{$value->dprt_name}'>Parchment</button>
+			            	<button  class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalParchmentCenter'onclick='displayParchment(event, this, null, null, null, null, null)' data-dprtname='{$value->dprt_name}'>Parchment</button>
 						</div>	
 
 			            <div class="form-group col-md-4">
-			            	<button type="submit" name="submitlot" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalGreenCenter'onclick='displayGreen(event, this, null, null, null, null, null)' >Green</button>
+			            	<button class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalGreenCenter'onclick='displayGreen(event, this, null, null, null, null, null)' >Green</button>
 						</div>	
 
 			            <div class="form-group col-md-4">
-							<button type="submit" name="submitlot" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalScreenCenter'onclick='displayScreen(event, this, null, null, null, null, null)' data-dprtname='{$value->dprt_name}'>Screen</button>
+							<button class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalScreenCenter'onclick='displayScreen(event, this, null, null, null, null, null)' data-dprtname='{$value->dprt_name}'>Screen</button>
 						</div>	
 
 			            <div class="form-group col-md-4">
-			            	<button type="submit" name="submitlot" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalCupCenter' onclick='displayCup(event, this, null, null, null, null, null)' data-dprtname='{$value->dprt_name}'>Cup</button>
+			            	<button  class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalCupCenter' onclick='displayCup(event, this, null, null, null, null, null)' data-dprtname='{$value->dprt_name}'>Cup</button>
 
 						</div>	
 
@@ -278,45 +251,40 @@
 
 	      <div class="modal-body" id = "green" style="font-size: 35px;">
 	      	<div>
-	        	<div class="row">
+			  <div class="row">
 
-	        		<div class="form-group col-md-4">
-                       <input type="text" class="form-control" id="lot_number" name="lot_number" style="text-transform:uppercase; " placeholder="Lot ..." value="{{ old('lot_number') }}"></input>
-	                </div>	
+	        		
+				<div class="form-group col-md-4">
+					<div class="input-group custom-search-form">
+						<input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
 
-	        		<div class="form-group col-md-4">
-	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
+							<span class="input-group-btn">
 
-		                        <span class="input-group-btn">
+							<button type="submit" id="search_button_green" name="search_button_green" class="btn btn-default">
+								<i class="fa fa-search"></i>
+							</button>
 
-		                        <button type="submit" id="search_button_green" name="search_button_green" class="btn btn-default">
-		                        	<i class="fa fa-search"></i>
-		                        </button>
+					</span>
+					</div>
+				</div>
+				<div class="form-group col-md-4">
+				<input type="text" class="form-control" id="grower" name="grower" style="text-transform:uppercase; " placeholder="Grower ..." value="{{ old('grower') }}"></input>
+				</div>	
 
-	                    </span>
-	                    </div>
-	                </div>	
-		            <div class="form-group col-md-4">
-		                <select class="form-control" id="coffee_grade" name="coffee_grade" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
-		                	<option></option> 
-							@if (isset($CoffeeGrade) && count($CoffeeGrade) > 0)
-								@foreach ($CoffeeGrade->all() as $cgrade)											
-									<option value="{{ $cgrade->id }}">{{ $cgrade->cgrad_name}}</option>
-								@endforeach									
-							@endif
-		                </select>	
+				<div class="form-group col-md-4">
+					<select class="form-control" id="coffee_grade" name="coffee_grade" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
+						<option></option> 
+						@if (isset($partchment_types) && count($partchment_types) > 0)
+							@foreach ($partchment_types->all() as $partchment_type)											
+								<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
+							@endforeach									
+						@endif
+					</select>	
 
-		                <input type="hidden" id="cfd_id" name="cfd_id">		
+					<input type="hidden" id="st_id" name="st_id">		
 
-		            </div>        
-
-
-		            <div class="form-group col-md-4">
-		                <input type="text"  class="form-control" id="coffee_grower" name="coffee_grower" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;" placeholder="Grower Mark" value="{{ old('coffee_grower'). $coffee_grower }}" >	                
-		            </div>  
-
-	        	</div>
+				</div>        
+				</div>
 
     			<input type="checkbox" id="dnt" name="dnt" >&nbsp&nbsp <strong style="font-size:35px; color:red;">Do Not Touch(DNT)</strong>
 
@@ -580,45 +548,40 @@
 
 	      <div class="modal-body" id="screen_div"  style="font-size: 35px;">
 	      	<div>
-	        	<div class="row">
+			  <div class="row">
 
-	        		<div class="form-group col-md-4">
-                       <input type="text" class="form-control" id="lot_number_screen" name="lot_number_screen" style="text-transform:uppercase; " placeholder="Lot ..." value="{{ old('lot_number') }}"></input>
-	                </div>	
+	        		
+				<div class="form-group col-md-4">
+					<div class="input-group custom-search-form">
+						<input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
 
-	        		<div class="form-group col-md-4">
-	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" id="outt_number_screen" name="outt_number" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;" placeholder="Search Outturn..."  value="{{ old('outt_number'). $outt_number }}" ></input>
+							<span class="input-group-btn">
 
-		                        <span class="input-group-btn">
+							<button type="submit" id="search_button_green" name="search_button_green" class="btn btn-default">
+								<i class="fa fa-search"></i>
+							</button>
 
-		                        <button type="submit" name="search_button_screen" id="search_button_screen" class="btn btn-default">
-		                        	<i class="fa fa-search"></i>
-		                        </button>
+					</span>
+					</div>
+				</div>
+				<div class="form-group col-md-4">
+				<input type="text" class="form-control" id="grower" name="grower" style="text-transform:uppercase; " placeholder="Grower ..." value="{{ old('grower') }}"></input>
+				</div>	
 
-	                    </span>
-	                    </div>
-	                </div>	
-		            <div class="form-group col-md-4">
-		                <select class="form-control" id="coffee_grade_screen" name="coffee_grade"  style="height: 35px; font-size: 15px; font-weight: bold;">
-		                	<option></option> 
-							@if (isset($CoffeeGrade) && count($CoffeeGrade) > 0)
-								@foreach ($CoffeeGrade->all() as $cgrade)											
-									<option value="{{ $cgrade->id }}">{{ $cgrade->cgrad_name}}</option>
-								@endforeach									
-							@endif
-		                </select>		
+				<div class="form-group col-md-4">
+					<select class="form-control" id="coffee_grade" name="coffee_grade" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
+						<option></option> 
+						@if (isset($partchment_types) && count($partchment_types) > 0)
+							@foreach ($partchment_types->all() as $partchment_type)											
+								<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
+							@endforeach									
+						@endif
+					</select>	
 
-		                <input type="hidden" id="cfd_id_screen" name="cfd_id_screen">		
+					<input type="hidden" id="st_id" name="st_id">		
 
-		            </div>       
-
-
-		            <div class="form-group col-md-4">
-		                <input type="text"  class="form-control" id="coffee_grower_screen" name="coffee_grower" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;" placeholder="Grower Mark" value="{{ old('coffee_grower'). $coffee_grower }}" >	                
-		            </div>  
-
-	        	</div>
+				</div>        
+				</div>
 
 	        	<div class="row" >
 		           
@@ -664,45 +627,40 @@
 
 	      <div class="modal-body" id="cup_div" style="font-size: 35px;">
 	      	<div>
-	        	<div class="row">
+			  <div class="row">
 
-	        		<div class="form-group col-md-4">
-                       <input type="text" class="form-control" id="lot_number_cup" name="lot_number_cup" style="text-transform:uppercase; " placeholder="Lot ..." value="{{ old('lot_number') }}"></input>
-	                </div>	
+	        		
+				<div class="form-group col-md-4">
+					<div class="input-group custom-search-form">
+						<input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
 
-	        		<div class="form-group col-md-4">
-	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" id="outt_number_cup" name="outt_number" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;" placeholder="Search Outturn..."  value="{{ old('outt_number'). $outt_number }}"></input>
+							<span class="input-group-btn">
 
-		                        <span class="input-group-btn">
+							<button type="submit" id="search_button_green" name="search_button_green" class="btn btn-default">
+								<i class="fa fa-search"></i>
+							</button>
 
-		                        <button type="submit" name="search_button_cup" id="search_button_cup" class="btn btn-default">
-		                        	<i class="fa fa-search"></i>
-		                        </button>
+					</span>
+					</div>
+				</div>
+				<div class="form-group col-md-4">
+				<input type="text" class="form-control" id="grower" name="grower" style="text-transform:uppercase; " placeholder="Grower ..." value="{{ old('grower') }}"></input>
+				</div>	
 
-	                    </span>
-	                    </div>
-	                </div>	
-		            <div class="form-group col-md-4">
-		                <select class="form-control" id="coffee_grade_cup" name="coffee_grade" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
-		                	<option></option> 
-							@if (isset($CoffeeGrade) && count($CoffeeGrade) > 0)
-								@foreach ($CoffeeGrade->all() as $cgrade)											
-									<option value="{{ $cgrade->id }}">{{ $cgrade->cgrad_name}}</option>
-								@endforeach									
-							@endif
-		                </select>		
+				<div class="form-group col-md-4">
+					<select class="form-control" id="coffee_grade" name="coffee_grade" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
+						<option></option> 
+						@if (isset($partchment_types) && count($partchment_types) > 0)
+							@foreach ($partchment_types->all() as $partchment_type)											
+								<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
+							@endforeach									
+						@endif
+					</select>	
 
-		                <input type="hidden" id="cfd_id_cup" name="cfd_id_cup">	
+					<input type="hidden" id="st_id" name="st_id">		
 
-		            </div>	        
-
-
-		            <div class="form-group col-md-4">
-		                <input type="text"  class="form-control" id="coffee_grower_cup" name="coffee_grower" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;" placeholder="Grower Mark" value="{{ old('coffee_grower'). $coffee_grower }}" >	                
-		            </div>  
-
-	        	</div>
+				</div>        
+				</div>
 												
     			<input type="checkbox" id="dnt_cp" name="dnt_cp"  onchange="this.form.submit()">&nbsp&nbsp <strong style="font-size:25px; color:red;">Do Not Touch(DNT)</strong>
 				
@@ -971,10 +929,7 @@
 	      	<div>
 	        	<div class="row">
 
-	        		<div class="form-group col-md-4">
-                       <input type="text" class="form-control" id="lot_number" name="lot_number" style="text-transform:uppercase; " placeholder="Lot ..." value="{{ old('lot_number') }}"></input>
-	                </div>	
-
+	        		
 	        		<div class="form-group col-md-4">
 	                    <div class="input-group custom-search-form">
 	                        <input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
@@ -987,31 +942,29 @@
 
 	                    </span>
 	                    </div>
+	                </div>
+					<div class="form-group col-md-4">
+                       <input type="text" class="form-control" id="grower" name="grower" style="text-transform:uppercase; " placeholder="Grower ..." value="{{ old('grower') }}"></input>
 	                </div>	
+	
 		            <div class="form-group col-md-4">
 		                <select class="form-control" id="coffee_grade" name="coffee_grade" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
 		                	<option></option> 
-							@if (isset($CoffeeGrade) && count($CoffeeGrade) > 0)
-								@foreach ($CoffeeGrade->all() as $cgrade)											
-									<option value="{{ $cgrade->id }}">{{ $cgrade->cgrad_name}}</option>
+							@if (isset($partchment_types) && count($partchment_types) > 0)
+								@foreach ($partchment_types->all() as $partchment_type)											
+									<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
 								@endforeach									
 							@endif
 		                </select>	
 
-		                <input type="hidden" id="cfd_id" name="cfd_id">		
+		                <input type="hidden" id="st_id" name="st_id">		
 
 		            </div>        
-
-
-		            <div class="form-group col-md-4">
-		                <input type="text"  class="form-control" id="coffee_grower" name="coffee_grower" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;" placeholder="Grower Mark" value="{{ old('coffee_grower'). $coffee_grower }}" >	                
-		            </div>  
-
 	        	</div>
 
     			<!-- <input type="checkbox" id="dnt" name="dnt" >&nbsp&nbsp <strong style="font-size:35px; color:red;">Do Not Touch(DNT)</strong> -->
 
-				<h3  data-toggle="collapse" data-target="#green">Parchment </h3> 
+				<h3  data-toggle="collapse" data-target="#parchment">Parchment </h3> 
 
 				<div class="tabpanel">
 
@@ -1127,9 +1080,9 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		var sale_season = document.getElementById("sale_season").value;
 
-		var sale_number = document.getElementById("sale").value;
+		//var sale_number = document.getElementById("sale").value;
 
-		var seller = document.getElementById("seller").value;
+		//var seller = document.getElementById("seller").value;
 
 		if (country_id == "") {
 
@@ -1219,7 +1172,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 	}
 
 	function displayGreen (event, value, cfd_id, direction, lot_number, outt_number, coffee_grade){
-
+		event.preventDefault();
 		clearChildren(document.getElementById("green"));
 
 		var url = fetch_url(cfd_id, direction, lot_number, outt_number, coffee_grade); 
@@ -1350,9 +1303,6 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
         });
 
-
-		event.preventDefault();
-
 	}
 
 	function displayScreen(event, value, cfd_id, direction, lot_number, outt_number, coffee_grade){
@@ -1395,6 +1345,8 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 	}
 
 	function displayCup(event, value, cfd_id, direction, lot_number, outt_number, coffee_grade){
+
+		event.preventDefault();
 
 		clearChildren(document.getElementById("cup_div"));
 
@@ -1476,13 +1428,14 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
         });	
 
-		event.preventDefault();
+
 
 	}
 
 	function displayParchment (event, value, cfd_id, direction, lot_number, outt_number, coffee_grade){
 	
-
+		event.preventDefault();
+	
 	// clearChildren(document.getElementById("parchment"));
 
 	// var url = fetch_url(cfd_id, direction, lot_number, outt_number, coffee_grade); 
@@ -1614,7 +1567,6 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 	// });
 
 
-event.preventDefault();
 
 }
 

@@ -74,6 +74,7 @@ use delete;
 use Ngea\cupscorecomments;
 use Ngea\analysis_categories;
 
+
 class QualityController extends Controller {
 
 
@@ -129,10 +130,12 @@ class QualityController extends Controller {
 
 		$partchment = quality_parameters::where('qg_id', '13')->orderBy('qp_parameter', 'ASC')->get();
 
+		$partchment_types = ParchmentType::orderBy('pty_name', 'ASC')->get();
+
 		$coffeequality = quality_parameters::where('qg_id', '11')->orderBy('qp_parameter', 'ASC')->get();
 		$screensanalysis = analysis_categories::orderBy('id', 'ASC')->get();
 
-    	return View::make('cataloguequalitydetails', compact('id', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'largest', 'greensize', 'greencolor', 'greendefects', 'processing', 'cupscore', 'rawscore', 'screens', 'seller', 'sale', 'sale_lots', 'serve', 'timeout', 'partchment', 'cupscorecomments', 'coffeequality', 'acidities', 'bodies', 'flavours', 'screensanalysis'));
+    	return View::make('cataloguequalitydetails', compact('id', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'largest', 'greensize', 'greencolor', 'greendefects', 'processing', 'cupscore', 'rawscore', 'screens', 'seller', 'sale', 'sale_lots', 'serve', 'timeout', 'partchment', 'cupscorecomments', 'coffeequality', 'acidities', 'bodies', 'flavours', 'screensanalysis', 'partchment_types'));
 
     }
 
@@ -192,10 +195,11 @@ class QualityController extends Controller {
 			$coffeequality = quality_parameters::where('qg_id', '11')->get();
 			$screensanalysis = analysis_categories::orderBy('id', 'ASC')->get();
 
+			$partchment_types = ParchmentType::orderBy('pty_name', 'ASC')->get();
 
   		}
 
-    	return View::make('cataloguequalitydetails', compact('id', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'largest', 'greensize', 'greencolor', 'greendefects', 'processing', 'cupscore', 'rawscore', 'screens', 'seller', 'sale', 'sale_lots', 'sale_season', 'cid', 'sale_id', 'seller_id', 'cupscorecomments', 'partchment', 'coffeequality', 'screensanalysis'));
+    	return View::make('cataloguequalitydetails', compact('id', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'largest', 'greensize', 'greencolor', 'greendefects', 'processing', 'cupscore', 'rawscore', 'screens', 'seller', 'sale', 'sale_lots', 'sale_season', 'cid', 'sale_id', 'seller_id', 'cupscorecomments', 'partchment', 'coffeequality', 'screensanalysis', 'partchment_types'));
 
     
     }
