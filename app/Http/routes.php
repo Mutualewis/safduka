@@ -122,6 +122,31 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('downloadExcelGrower/{type}', 'SettingsController@downloadExcelGrower');
 		Route::post('/growerupload', 'SettingsController@uploadGrowers'); 
+
+		Route::get('/cataloguequalitydetails', 'QualityController@qualityForm'); 
+		Route::post('/cataloguequalitydetails', 'QualityController@addQualityDetails');
+
+		Route::get('/cataloguequalitydetailslist', 'QualityController@qualityListForm'); 
+		Route::get('/cataloguequalitydetailslist/getsalelots/{countryID}/{saleSeason}/{saleNumber}/{seller}', ['as'=>'cataloguequalitydetailslist.getsalelots','uses'=>'QualityController@getSaleLots']); 
+
+		Route::post('/cataloguequalitydetailslist', 'QualityController@addQualityDetailsList'); 
+
+		Route::get('/cataloguequalitydetailslist', 'QualityController@qualityListForm'); 
+		Route::get('/cataloguequalitydetailslist/getsalelots/{countryID}/{saleSeason}/{saleNumber}/{seller}', ['as'=>'cataloguequalitydetailslist.getsalelots','uses'=>'QualityController@getSaleLots']); 
+
+		Route::post('/cataloguequalitydetailslist', 'QualityController@addQualityDetailsList'); 
+
+		Route::get('/cataloguequalitydetails/getLots/{countryID}/{saleSeason}/{saleNumber}/{seller}/{cfd_id}/{direction}/{lot_number}/{outt_number}/{coffee_grade}', ['as'=>'cataloguequalitydetails.getLots','uses'=>'QualityController@getLots']); 
+
+	//tablet quality
+	Route::get('/cataloguequalitydetails/saveGreen/{cfd_id}/{dnt}/{greensize}/{greencolor}/{greendefects}/{process_type}/{process_loss}/{raw}/{comments}', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'QualityController@saveGreen']);
+
+
+	Route::get('/cataloguequalitydetails/saveScreen/{cfd_id}/{screen_size}/{screen}', ['as'=>'cataloguequalitydetails.saveScreen','uses'=>'QualityController@saveScreen']);
+
+
+	Route::get('/cataloguequalitydetails/saveCup/{cfd_id}/{cup}/{dnt_cp}/{acidity}/{body}/{flavour}/{comments_cp}', ['as'=>'cataloguequalitydetails.saveCup','uses'=>'QualityController@saveCup']);
+
 });
 
 

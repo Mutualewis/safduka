@@ -36,7 +36,7 @@
     	//$date2 = new DateTime($date2);
 			
 
-			$validdate = $date2->modify('friday');
+		$validdate = $date2->modify('friday');
 
     	//$validdate = strtotime("friday", $date2);
 
