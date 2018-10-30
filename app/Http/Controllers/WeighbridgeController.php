@@ -37,7 +37,7 @@ class WeighbridgeController extends Controller {
     	$region = region::all(['id', 'rgn_name', 'rgn_description']);
     	$weighbridges = NULL;
     	$parking = parkinglots::all(['id', 'pl_lot_no', 'pl_availability']);
-    	$booking = booking::all(['id', 'bkg_delivery_date', 'bkg_validity_date', 'bkg_sample_received', 'bkg_remarks']);
+    	$booking = booking::all(['id', 'bkg_ref_no', 'bkg_delivery_date', 'bkg_validity_date', 'bkg_sample_received', 'bkg_remarks']);
     	$items = items::all(['id', 'it_name', 'it_client', 'it_client_table']);
     	$transporters = transporters::all(['id', 'trp_name', 'trp_initials', 'trp_description']);
 
@@ -47,7 +47,7 @@ class WeighbridgeController extends Controller {
 		if ($ref_no != NULL && is_numeric($ref_no)) {
 			$weighbridge_ticket = sprintf("%07d", ($ref_no + 0000001));
 		}
-				
+
 		return View::make('weighbridge', compact('id', 
 				'Season', 'country', 'cid', 'weighbridge_ticket', 'region', 'weighbridges', 'parking', 'booking', 'items', 'transporters'));	
     }
@@ -167,4 +167,57 @@ class WeighbridgeController extends Controller {
     
  	}
 
+    public function getCustomer($item_id){
+       
+        try{
+
+    		$items_selected = explode(',', $item_id);
+
+    		$customers = array();
+
+    		foreach ($items_selected as $key => $value) {
+
+    			if ($value == 1) {   				
+
+	                $customers_db = DB::table('coffee_growers_cgr AS cgr')
+	                    ->select('id', 'cgr.cgr_grower as name')->get();
+
+	                $customers = json_decode(json_encode($customers_db), true);
+
+    			}
+
+    			if ($value == 2) {
+
+	                $customers_db = DB::table('agent_agt AS agt')
+	                    ->select('id', 'agt.agt_name as name')
+	                    ->get();
+
+	                $customers = json_decode(json_encode($customers_db), true);
+    			}
+
+    			if ($value == 3) {
+
+	                $customers_db = DB::table('client_cl AS cl')
+	                    ->select('id', 'cl.cl_name as name')
+	                    ->get();
+
+	                $customers = json_decode(json_encode($customers_db), true);
+    			}
+
+    		}
+       
+
+			return json_encode($customers);                    
+	        
+             
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
 }
+
