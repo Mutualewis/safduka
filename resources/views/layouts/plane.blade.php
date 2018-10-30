@@ -125,7 +125,9 @@
 			    timeFormat: 'G:i',
 			    show2400: true
 			});
-		    $(time_input).timepicker('setTime', new Date());
+			if (time_input.val() == '') {
+		   		$(time_input).timepicker('setTime', new Date());
+			}
 	    })
 	</script>
 
@@ -142,7 +144,10 @@
 	      };
 	      date_input.datepicker(options);
 		  date_input.datepicker({ autoclose: true, language: 'es' });
-		  date_input.datepicker('update', new Date());
+
+		  if (date_input.val() == '') {
+		  		date_input.datepicker('update', new Date());
+		  }
 	    })
 	</script>
 
@@ -159,7 +164,9 @@
 	      };
 	      date_input.datepicker(options);
 		  date_input.datepicker({ autoclose: true, language: 'es' });
-		  date_input.datepicker('update', new Date());
+		  if (date_input.val() == '') {
+		  		date_input.datepicker('update', new Date());
+		  }
 	    })
 	</script>
 
@@ -176,7 +183,9 @@
 	      };
 	      date_input.datepicker(options);
 		  date_input.datepicker({ autoclose: true, language: 'es' });
-		  date_input.datepicker('update', new Date());
+		  if (date_input.val() == '') {
+		  		date_input.datepicker('update', new Date());
+		  }
 	    })
 	</script>
 
@@ -193,7 +202,9 @@
 	      };
 	      date_input.datepicker(options);
 		  date_input.datepicker({ autoclose: true, language: 'es' });
-		  date_input.datepicker('update', new Date());
+		  if (date_input.val() == '') {
+		  		date_input.datepicker('update', new Date());
+		  }
 	    })
 	</script>
 
@@ -211,7 +222,9 @@
 	      };
 	      date_input.datepicker(options);
 		  date_input.datepicker({ autoclose: true, language: 'es' });
-		  date_input.datepicker('update', new Date());
+		  if (date_input.val() == '') {
+		  		date_input.datepicker('update', new Date());
+		  }
 	    })
 	</script>
 
@@ -229,7 +242,9 @@
 	      };
 	      date_input.datepicker(options);
 		  date_input.datepicker({ autoclose: true, language: 'es' });
-		  date_input.datepicker('update', new Date());
+		  if (date_input.val() == '') {
+		  		date_input.datepicker('update', new Date());
+		  }
 	    })
 	</script>
 

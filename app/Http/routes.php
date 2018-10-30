@@ -85,11 +85,60 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 
 		Route::get('/weighbridge/getCustomer/{item_id}', ['as'=>'weighbridge.getCustomer','uses'=>'WeighbridgeController@getCustomer']);
+		Route::get('/weighbridge/getWeighbridge/{region_id}', ['as'=>'weighbridge.getWeighbridge','uses'=>'WeighbridgeController@getWeighbridge']);
+		Route::get('/weighbridge/getParking', ['as'=>'weighbridge.getParking','uses'=>'WeighbridgeController@getParking']);
 
 
 
 		Route::get('/weighbridgeout', 'WeighbridgeController@weighbridgeOutForm'); 
 		Route::post('/weighbridgeout', 'WeighbridgeController@weighbridgeout');
+
+
+
+
+		Route::get('/arrivalinformationgrns', 'GRNSController@arrivalInformationGRNSForm'); 
+		Route::post('/arrivalinformationgrns', 'GRNSController@arrivalInformationGRNS');
+
+
+		Route::get('/arrivalinformationgrns/confirmArrivalInformation/{cid}/{grn_number}/{weighbridgeTK}/{outt_season}/{service}/{team}', ['as'=>'arrivalinformationgrns.confirmArrivalInformation','uses'=>'GRNSController@confirmArrivalInformation']);
+		Route::get('/arrivalinformationgrns/printMovementWithRate/{grn_number}/{service}/{team}', ['as'=>'arrivalinformationgrns.printarrivalinformation','uses'=>'GRNSController@printarrivalinformation']);
+
+		Route::get('/arrivalinformationgrns/getOutturnDetails/{outt_number_search}/{grn_number}', ['as'=>'arrivalinformationgrns.getOutturnDetails','uses'=>'GRNSController@getOutturnDetails']);
+		Route::get('/arrivalinformationgrns/getBatch/{outt_number_search}/{grn_number}', ['as'=>'arrivalinformationgrns.getBatch','uses'=>'GRNSController@getBatch']);
+		Route::get('/arrivalinformationgrns/getScales/{warehouse}', ['as'=>'arrivalinformationgrns.getScales','uses'=>'GRNSController@getScales']);
+		Route::get('/arrivalinformationgrns/getLocations/{warehouse}', ['as'=>'arrivalinformationgrns.getLocations','uses'=>'GRNSController@getLocations']);
+		Route::get('/arrivalinformationgrns/fetchWeight/{weighscale}', ['as'=>'arrivalinformationgrns.fetchWeight','uses'=>'GRNSController@fetchWeight']);
+		Route::get('/arrivalinformationgrns/resetWeight/{weighscale}', ['as'=>'arrivalinformationgrns.resetWeight','uses'=>'GRNSController@resetWeight']);
+
+		Route::get('/arrivalinformation', 'WeighScaleController@arrivalInformationForm'); 
+		Route::post('/arrivalinformation', 'WeighScaleController@arrivalInformation');
+		Route::get('/arrivalinformation/confirmArrivalInformation/{cid}/{grn_number}/{weighbridgeTK}/{outt_season}/{service}/{team}', ['as'=>'arrivalinformation.confirmArrivalInformation','uses'=>'WeighScaleController@confirmArrivalInformation']);
+		Route::get('/arrivalinformation/printMovementWithRate/{grn_number}/{service}/{team}', ['as'=>'arrivalinformation.printarrivalinformation','uses'=>'WeighScaleController@printarrivalinformation']);
+
+		Route::get('/arrivalqualityinformationlist', 'ArrivalQualityController@arrivalQualityInformationListForm'); 
+		Route::post('/arrivalqualityinformationlist', 'ArrivalQualityController@arrivalQualityInformationList');
+
+		Route::get('/weighnote', 'WeightNoteController@weighNoteForm'); 
+		Route::post('/weighnote', 'WeightNoteController@weighNote');
+		Route::get('/weight_note_delete/{id}', 'WeightNoteController@weight_note_delete'); 
+
+		Route::get('/movementindividual', 'MovementIndividualController@movementIndividualForm'); 
+		Route::post('/movementindividual', 'MovementIndividualController@movementIndividual'); 
+
+		Route::get('/movementindividual/getLots/{countryID}/{warehouse}/{new_row}/{new_column}/{ref_no}', ['as'=>'movementindividual.getLots','uses'=>'MovementIndividualController@getLots']); 
+
+		Route::get('/movementindividual/addLots/{movement}/{ref_no}/{movementType}/{reasonForMovement}', ['as'=>'movementindividual.addLots','uses'=>'MovementIndividualController@addLots']); 
+
+
+		Route::get('/movementspecial', 'MovementController@movementSpecialForm'); 
+		Route::post('/movementspecial', 'MovementController@movementSpecial'); 
+
+		Route::get('/movementspecial/confirmMovementWithRate/{ref}/{warehouseFrom}/{service}/{team}', ['as'=>'movementspecial.confirmmovementspecialwithrate','uses'=>'MovementController@confirmMovementWithRate']);
+
+		Route::get('/movementspecial/printMovementWithRate/{ref}/{warehouseFrom}/{service}/{team}', ['as'=>'movementspecial.printmovementspecialwithrate','uses'=>'MovementController@printMovementWithRate']);
+
+		Route::get('/movementconfirmation', 'WarehouseController@movementConfirmationForm'); 
+		Route::post('/movementconfirmation', 'WarehouseController@movementConfirmation'); 
 
 
 

@@ -19,10 +19,12 @@ use delete;
 use Ngea\WeighbridgeInfo;
 use Ngea\Region;
 use Ngea\Weighbridge;
-use Ngea\ParkingLots;
 use Ngea\Items;
 use Ngea\booking;
 use Ngea\Transporters;
+use Ngea\ParkingLots;
+use Ngea\DeliveryItems;
+use Ngea\coffeegrower;
 
 
 class WeighbridgeController extends Controller {
@@ -62,69 +64,108 @@ class WeighbridgeController extends Controller {
 		if ($ref_no != NULL && is_numeric($ref_no)) {
 			$weighbridge_ticket = sprintf("%07d", ($ref_no + 0000001));
 		}
+
+		$weighbridges = Weighbridge::all(['id', 'wb_number']);
+
+    	$booking = booking::all(['id', 'bkg_ref_no', 'bkg_delivery_date', 'bkg_validity_date', 'bkg_sample_received', 'bkg_remarks']);
+    	$items = items::all(['id', 'it_name', 'it_client', 'it_client_table']);
+    	$transporters = transporters::all(['id', 'trp_name', 'trp_initials', 'trp_description']);
+
+		$weighbridge_ticket = Input::get('weighbridge_ticket');
+
+
+		$region = region::all(['id', 'rgn_name', 'rgn_description']);
 		
-		if (NULL !== Input::get('submitlot')){
+		if (NULL !== Input::get('submit_weighbridge_info')){
 	    
-			$country = Input::get('country');
 			$weighbridge_ticket = Input::get('weighbridge_ticket');
 			$vehicle_plate = strtoupper(Input::get('vehicle_plate'));
 			$weighbridge_weight_in = Input::get('weighbridge_weight_in');
-			$weighbridge_weight_out = Input::get('weighbridge_weight_out');
-			$wb_movement_permit = strtoupper(Input::get('movement_permit'));
-			$wb_driver_name = strtoupper(Input::get('driver_name'));
-			$wb_driver_id = Input::get('driver_id');
-			$wb_dispatch_date = Input::get('date');
-			$wb_delivery_number = Input::get("dnn");
-			$wb_dispatch_date=date_create($wb_dispatch_date);
-			$wb_dispatch_date = date_format($wb_dispatch_date,"Y-m-d");	
+			$wbi_movement_permit = strtoupper(Input::get('movement_permit'));
+			$wbi_driver_name = strtoupper(Input::get('driver_name'));
+			$wbi_driver_id = Input::get('driver_id');
+			$wbi_dispatch_date = Input::get('date');
+			$wbi_delivery_number = Input::get("dnn");
+			$wbi_dispatch_date=date_create($wbi_dispatch_date);
+			$wbi_dispatch_date = date_format($wbi_dispatch_date,"Y-m-d");	
             $user_data = Auth::user();
             $user = $user_data ->id;
-			$weighbridge = weighbridgeinfo::where('wbi_ticket', $weighbridge_ticket)->where('cb_id', $coffee_buyer)->where('ctr_id', $country)->first();
+			
+			$region_id = Input::get("region");
+			$parking_lot_id = Input::get("parking_lot");
+			$booking_id = Input::get("booking");
+			$date_current = Input::get("date_current");
+			$time = Input::get("time");
+			$document_unit = Input::get("document_unit");
+			$document_quantity = Input::get("document_quantity");
 
-			date_default_timezone_set('Africa/Nairobi');
-   			$time_in = date('Y-m-d H:i:s');
-			if($weighbridge != NULL){
-				$wb_ticket = $weighbridge->id;
-				weighbridgeinfo::where('id', '=', $wb_ticket)
-				->update(['ctr_id' => $country,'csn_id' => $sale_season,'cb_id' => $coffee_buyer, 'slr_id' => $seller,  'wbi_ticket' =>  $weighbridge_ticket,  'wbi_delivery_number' =>  $wb_delivery_number, 'wbi_vehicle_plate' =>  $vehicle_plate, 'wbi_weight_in' =>  $weighbridge_weight_in, 'wbi_weight_out' =>  $weighbridge_weight_out, 'wbi_time_in' =>  $time_in, 'wbi_confirmedby' =>  $user, 'wbi_movement_permit' =>  $wb_movement_permit, 'wbi_driver_name' =>  $wb_driver_name, 'wbi_driver_id' =>  $wb_driver_id, 'wbi_dispatch_date' =>  $wb_dispatch_date]);
+
+			$items_id = Input::get("items");
+			$customers_id = Input::get("customer");
+
+			$representative_name = Input::get("representative_name");
+			$representative_id = Input::get("representative_id");
+			$weighbridge_id = Input::get("weighbridge");
+			$transporter_id = Input::get("transporter");
+
+			$weighbridge_info = weighbridgeinfo::where('wbi_ticket', $weighbridge_ticket)->first();
+        	$time_in=date_create($date_current.$time);
+    		$time_in = date_format($time_in,"Y-m-d H:i:s"); 
+    		$weighbridge_info_id = null;
+
+
+
+			if($weighbridge_info != NULL){
+				$weighbridge_info_id = $weighbridge_info->id;
+				weighbridgeinfo::where('id', '=', $weighbridge_info_id)
+				->update(['rgn_id' =>  $region_id, 'wbi_ticket' =>  $weighbridge_ticket,  'wbi_delivery_number' =>  $wbi_delivery_number, 'wbi_vehicle_plate' =>  $vehicle_plate, 'wbi_weight_in' =>  $weighbridge_weight_in, 'wbi_time_in' =>  $time_in, 'wbi_confirmedby' =>  $user, 'wbi_movement_permit' =>  $wbi_movement_permit, 'wbi_driver_name' =>  $wbi_driver_name, 'wbi_driver_id' =>  $wbi_driver_id, 'wbi_dispatch_date' =>  $wbi_dispatch_date, 'pl_id' =>  $parking_lot_id, 'bkg_id' =>  $booking_id, 'wbi_representative_name' =>  $representative_name, 'wbi_representative_id' =>  $representative_id, 'trp_id' =>  $transporter_id, 'wb_id' =>  $weighbridge_id, 'wbi_document_unit' =>  $document_unit, 'wbi_document_quantity' =>  $document_quantity]);
+
 				$request->session()->flash('alert-success', 'Weighbridge Information Updated!!');
-				Activity::log('Updated weighbridge information with ticket no. '.$weighbridge_ticket. ' date '. $wb_dispatch_date. ' confirmed by '. $user. ' weight in '. $weighbridge_weight_in. ' weight out '. $weighbridge_weight_out);
+				Activity::log('Updated weighbridge information with ticket no. '.$weighbridge_ticket. ' date '. $wbi_dispatch_date. ' confirmed by '. $user. ' weight in '. $weighbridge_weight_in);
 
 			} else {
-				$wb_ticket = weighbridgeinfo::insertGetId (
-				['ctr_id' => $country,'csn_id' => $sale_season,'cb_id' => $coffee_buyer, 'slr_id' => $seller,  'wbi_ticket' =>  $weighbridge_ticket,  'wbi_delivery_number' =>  $wb_delivery_number, 'wbi_vehicle_plate' =>  $vehicle_plate, 'wbi_weight_in' =>  $weighbridge_weight_in, 'wbi_weight_out' =>  $weighbridge_weight_out, 'wbi_time_in' =>  $time_in, 'wbi_confirmedby' =>  $user, 'wbi_movement_permit' =>  $wb_movement_permit, 'wbi_driver_name' =>  $wb_driver_name, 'wbi_driver_id' =>  $wb_driver_id, 'wbi_dispatch_date' =>  $wb_dispatch_date]);
+
+				$weighbridge_info_id = weighbridgeinfo::insertGetId (
+				['rgn_id' =>  $region_id, 'wbi_ticket' =>  $weighbridge_ticket,  'wbi_delivery_number' =>  $wbi_delivery_number, 'wbi_vehicle_plate' =>  $vehicle_plate, 'wbi_weight_in' =>  $weighbridge_weight_in, 'wbi_time_in' =>  $time_in, 'wbi_confirmedby' =>  $user, 'wbi_movement_permit' =>  $wbi_movement_permit, 'wbi_driver_name' =>  $wbi_driver_name, 'wbi_driver_id' =>  $wbi_driver_id, 'wbi_dispatch_date' =>  $wbi_dispatch_date, 'pl_id' =>  $parking_lot_id, 'bkg_id' =>  $booking_id, 'wbi_representative_name' =>  $representative_name, 'wbi_representative_id' =>  $representative_id, 'trp_id' =>  $transporter_id, 'wb_id' =>  $weighbridge_id, 'wbi_document_unit' =>  $document_unit, 'wbi_document_quantity' =>  $document_quantity]);
 				$request->session()->flash('alert-success', 'Weighbridge Information Added!!');
 
-				Activity::log('Inserted weighbridge information with ticket no. '.$weighbridge_ticket. ' date '. $wb_dispatch_date. ' confirmed by '. $user. ' weight in '. $weighbridge_weight_in. ' weight out '. $weighbridge_weight_out);
-				
-			}	
-			$weighbridge = weighbridgeinfo::where('wbi_ticket', $weighbridge_ticket)->where('cb_id', $coffee_buyer)->where('ctr_id', $country)->first();
-			$weighbridge_all = weighbridgeinfo::where('cb_id', $coffee_buyer)->where('ctr_id', $country)->get();
-	    	$country = country::all(['id', 'ctr_name', 'ctr_initial']);
-			$sale = Sale::where('ctr_id', '=', Input::get('country'))->where('csn_id',  Input::get('sale_season'))->where('sltyp_id',  '1')->where('sl_catalogue_confirmedby','!=', null)->where('sl_quality_confirmedby','!=', null)->where('sl_auction_confirmedby','!=', null)->get();
-			$date = date("m/d/Y", strtotime($wb_dispatch_date));
+				Activity::log('Inserted weighbridge information with ticket no. '.$weighbridge_ticket. ' date '. $wbi_dispatch_date. ' confirmed by '. $user. ' weight in '. $weighbridge_weight_in);
+
+			}
+
+			if ($weighbridge_info_id != null) {
+
+				$delivery_items = DeliveryItems::where('wbi_id', $weighbridge_ticket)->first();
+				$delivery_items_id = null;
+
+				if($delivery_items != NULL){
+					$delivery_items_id = $delivery_items->id;
+
+					foreach ($customers_id as $key => $value) {
+
+						DeliveryItems::where('id', '=', $delivery_items_id)
+						->update(['cgr_id' =>  $value, 'it_id' =>  $items_id[0], 'wbi_id' =>  $weighbridge_info_id]);
+					}
+
+				} else {
+					foreach ($customers_id as $key => $value) {
+						$delivery_items_id = DeliveryItems::insertGetId(['cgr_id' =>  $value, 'it_id' =>  $items_id[0], 'wbi_id' =>  $weighbridge_info_id]);
+					}
+
+				}
+
+
+			}
+
+			parkinglots::where('id', '=', $parking_lot_id)
+						->update(['pl_availability' =>  0]);
+
+			$weighbridge = weighbridgeinfo::where('wbi_ticket', Input::get('weighbridge_ticket'))->first();
+
 			return View::make('weighbridge', compact('id', 
-				'Season', 'country', 'cid', 'csn_season','weighbridge', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'weighbridge_all', 'weighbridge_ticket'));	
+				'Season', 'country', 'cid', 'csn_season','weighbridge', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'weighbridge_all', 'weighbridge_ticket', 'region', 'booking', 'items', 'transporters', 'weighbridges'));	
     	
-		}  else if (NULL !== Input::get('searchButton')) {
-
-			$country = Input::get('country');
-			$weighbridge_ticket = Input::get('weighbridge_ticket');
-			$vehicle_plate = Input::get('vehicle_plate');
-			$weighbridge_weight_in = Input::get('weighbridge_weight_in');
-			$weighbridge_weight_out = Input::get('weighbridge_weight_out');
-			$date = Input::get('date');
-			$date=date_create($date);
-			$date = date_format($date,"Y-m-d");	
-			$weighbridge = weighbridgeinfo::where('wbi_ticket', $weighbridge_ticket)->where('cb_id', $coffee_buyer)->where('ctr_id', $country)->first();
-			$weighbridge_all = weighbridgeinfo::where('cb_id', $coffee_buyer)->where('ctr_id', $country)->get();
-	    	$country = country::all(['id', 'ctr_name', 'ctr_initial']);
-			$cid = Input::get('country');
-			$date = date("m/d/Y", strtotime($date));
-			return View::make('weighbridge', compact('id', 
-				'Season', 'country', 'cid', 'csn_season','weighbridge', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'weighbridge_all', 'weighbridge_ticket'));	
-
-		}  else if (NULL !== Input::get('print')) {
+		} else if (NULL !== Input::get('print')) {
 
 			$country = Input::get('country');
 			$coffee_buyer = Input::get('coffee_buyer');
@@ -133,36 +174,30 @@ class WeighbridgeController extends Controller {
 			$weighbridge_weight_in = Input::get('weighbridge_weight_in');
 			$weighbridge_weight_out = Input::get('weighbridge_weight_out');
 
-			$wb_movement_permit = strtoupper(Input::get('movement_permit'));
-			$wb_driver_name = strtoupper(Input::get('driver_name'));
-			$wb_driver_id = Input::get('driver_id');
-			$wb_dispatch_date = Input::get('date');
-			$wb_delivery_number = Input::get("dnn");
-			$wb_dispatch_date=date_create($wb_dispatch_date);
-			$wb_dispatch_date = date_format($wb_dispatch_date,"m/d/Y");	
+			$wbi_movement_permit = strtoupper(Input::get('movement_permit'));
+			$wbi_driver_name = strtoupper(Input::get('driver_name'));
+			$wbi_driver_id = Input::get('driver_id');
+			$wbi_dispatch_date = Input::get('date');
+			$wbi_delivery_number = Input::get("dnn");
+			$wbi_dispatch_date=date_create($wbi_dispatch_date);
+			$wbi_dispatch_date = date_format($wbi_dispatch_date,"m/d/Y");	
             $user_data = Auth::user();
             $user = $user_data ->usr_name;
             $weighbridge = weighbridgeinfo::where('wbi_ticket', $weighbridge_ticket)->where('cb_id', $coffee_buyer)->where('ctr_id', $country)->first();
             $delivery_date = $weighbridge->wb_time_in;
             $delivery_date = date('m/j/Y h:i:s A',strtotime($delivery_date));
+
 		    $pdf = PDF::loadView('pdf.weighbridge_in', compact('weighbridge_ticket', 'vehicle_plate', 'weighbridge_weight_in', 'weighbridge_weight_out', 'wbi_movement_permit', 'wbi_driver_name', 'wbi_driver_id', 'wbi_dispatch_date', 'wbi_delivery_number', 'wbi_dispatch_date', 'user', 'delivery_date'));
+
 		    return $pdf->stream($weighbridge_ticket.' weighbridge_in.pdf');
 
 		}  else {
-	    	$Season = Season::all(['id', 'csn_season']);
-	    	$country = country::all(['id', 'ctr_name', 'ctr_initial']);
-	    	if($request->has('country')){
-				$cid = Input::get('country');
-				$weighbridge_all = weighbridgeinfo::where('cb_id', Input::get('coffee_buyer'))->where('ctr_id', $cid)->get();
-				return View::make('weighbridge', compact('id', 
-					'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'weighbridge_all', 'weighbridge_ticket'));	
-	    	} else {
 
-				return redirect('weighbridge')
-	                        ->withErrors("Please select a valid Country!!")->withInput();
-			}
+			$weighbridge = weighbridgeinfo::where('wbi_ticket', Input::get('weighbridge_ticket'))->first();
 
-	    	return View::make('weighbridge', compact('id', 'Season', 'country', 'Warehouse', 'Mill', 'Certification', 'seller', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'weighbridge_ticket'));		
+			return View::make('weighbridge', compact('id', 
+				'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'weighbridge_all', 'weighbridge_ticket', 'region', 'weighbridge', 'booking', 'items', 'transporters', 'weighbridges'));	
+
  	   }
     
  	}
@@ -177,22 +212,12 @@ class WeighbridgeController extends Controller {
 
     		foreach ($items_selected as $key => $value) {
 
-    			if ($value == 1) {   				
+    			if ($value == 1 || $value == 2) {   				
 
 	                $customers_db = DB::table('coffee_growers_cgr AS cgr')
 	                    ->select('id', 'cgr.cgr_grower as name')->get();
-
 	                $customers = json_decode(json_encode($customers_db), true);
 
-    			}
-
-    			if ($value == 2) {
-
-	                $customers_db = DB::table('agent_agt AS agt')
-	                    ->select('id', 'agt.agt_name as name')
-	                    ->get();
-
-	                $customers = json_decode(json_encode($customers_db), true);
     			}
 
     			if ($value == 3) {
@@ -219,5 +244,42 @@ class WeighbridgeController extends Controller {
             ]);
         }
     }
+
+
+    public function getWeighbridge($region_id){
+       
+        try{
+
+    		$weighbridge = Weighbridge::where('rgn_id', $region_id)->get();
+
+			return json_encode($weighbridge);                    
+	        
+             
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function getParking(){
+       
+        try{
+
+       		$parking = ParkingLots::where('pl_availability', 1)->first();
+			return json_encode($parking->pl_lot_no);                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
 }
 

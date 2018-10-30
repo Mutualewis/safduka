@@ -20,6 +20,6 @@ class WeighbridgeInfo extends Model {
 	 * @var array
 	 */
 	
-	protected $fillable = ['id', 'cb_id', 'ctr_id','slr_id', 'wb_ticket', 'wb_vehicle_plate', 'wb_weight_in', 'wb_weight_out', 'wb_date', 'created_at', 'updated_at'];
+	protected $fillable = ['id', 'ctr_id', 'csn_id', 'cb_id', 'slr_id', 'wbi_ticket', 'wbi_delivery_number', 'wbi_vehicle_plate', 'wbi_weight_in', 'wbi_weight_out', 'wbi_confirmedby', 'wbi_time_in', 'wbi_time_out', 'wbi_movement_permit', 'wbi_driver_name', 'wbi_driver_id', 'wbi_dispatch_date', 'created_at', 'updated_at'];
            
 }
