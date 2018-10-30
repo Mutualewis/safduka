@@ -40,7 +40,7 @@ class WeighbridgeController extends Controller {
     	$weighbridges = NULL;
     	$parking = parkinglots::all(['id', 'pl_lot_no', 'pl_availability']);
     	$booking = booking::all(['id', 'bkg_ref_no', 'bkg_delivery_date', 'bkg_validity_date', 'bkg_sample_received', 'bkg_remarks']);
-    	$items = items::all(['id', 'it_name', 'it_client', 'it_client_table']);
+    	$items = items::all(['id', 'it_name']);
     	$transporters = transporters::all(['id', 'trp_name', 'trp_initials', 'trp_description']);
 
 		foreach ($ref_no as $ref) {
@@ -68,7 +68,7 @@ class WeighbridgeController extends Controller {
 		$weighbridges = Weighbridge::all(['id', 'wb_number']);
 
     	$booking = booking::all(['id', 'bkg_ref_no', 'bkg_delivery_date', 'bkg_validity_date', 'bkg_sample_received', 'bkg_remarks']);
-    	$items = items::all(['id', 'it_name', 'it_client', 'it_client_table']);
+    	$items = items::all(['id', 'it_name']);
     	$transporters = transporters::all(['id', 'trp_name', 'trp_initials', 'trp_description']);
 
 		$weighbridge_ticket = Input::get('weighbridge_ticket');
