@@ -341,7 +341,7 @@
 		            </div>	
 
 		            <div class="form-group col-md-3">
-		            	<label>Weighbridge Ticket</label>
+		            	<label>Ticket</label>
 		                <select class="form-control" id="weighbridgeTK" name="weighbridgeTK">
 		               		<option></option>
 							@if (isset($weighbridge_ticket))
