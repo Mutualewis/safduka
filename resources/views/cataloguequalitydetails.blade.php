@@ -161,7 +161,7 @@
 
 			            <div class="form-group col-md-12" style="padding-left:20px;">
 			            	<label>Season</label>
-			                <select class="form-control" id="sale_season" name="sale_season">
+			                <select class="form-control" id="crop_season" name="crop_season">
 			               		<option>Sale Season</option>
 								@if (isset($Season) && count($Season) > 0)
 											@foreach ($Season->all() as $season)
@@ -178,20 +178,7 @@
 
 			        </div>
 
-			        <div class="row" >
-
-		           		<div class="form-group col-md-12">
-			                <label>Sale</label>
-			               		
-			            </div>
-			        </div>
-
-			        <div class="row" >
-			            <div class="form-group col-md-12">
-			                <label>Seller(Should Be Selected)</label>
-			              
-			            </div>
-			        </div>
+			        
 
 			        <div class="row">
 
@@ -297,18 +284,18 @@
 
 
 				            <li role="presentation" class="active">
-				                <a href="#tab-green" aria-controls="#tab-green" role="tab" data-toggle="tab">Green Size</a
+				                <a href="#tab-green" aria-controls="#tab-green" role="tab" data-toggle="tab">Green Size</a>
 				            </li>
 				            <li role="presentation">
-				                <a href="#tab-color" aria-controls="#tab-color" role="tab" data-toggle="tab">Color</a
+				                <a href="#tab-color" aria-controls="#tab-color" role="tab" data-toggle="tab">Color</a>
 				            </li>
 				             <!-- onclick="doFunction();"  -->
 				            <li role="presentation">
-				                <a href="#tab-deffects" aria-controls="#tab-deffects" role="tab" data-toggle="tab">Deffects</a
+				                <a href="#tab-deffects" aria-controls="#tab-deffects" role="tab" data-toggle="tab">Deffects</a>
 				            </li>
 				           
 				            <li role="presentation">
-				                <a href="#tab-raw" aria-controls="#tab-raw" role="tab" data-toggle="tab">Quality</a
+				                <a href="#tab-raw" aria-controls="#tab-raw" role="tab" data-toggle="tab">Quality</a>
 				            </li>
 				    
 				    </ul>
@@ -932,23 +919,21 @@
 	        		
 	        		<div class="form-group col-md-4">
 	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
+	                        <input type="text" class="form-control" id="outt_number_parchment" name="outt_number_parchment" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
 
 		                        <span class="input-group-btn">
 
-		                        <button type="submit" id="search_button_green" name="search_button_green" class="btn btn-default">
+		                        <button type="submit" id="search_button_parchment" name="search_button_parchment" class="btn btn-default">
 		                        	<i class="fa fa-search"></i>
 		                        </button>
 
 	                    </span>
+						<div class="alert-dismissible alert-info" id="outt_number_display_partchment"></div>
 	                    </div>
 	                </div>
-					<div class="form-group col-md-4">
-                       <input type="text" class="form-control" id="grower" name="grower" style="text-transform:uppercase; " placeholder="Grower ..." value="{{ old('grower') }}"></input>
-	                </div>	
-	
+				
 		            <div class="form-group col-md-4">
-		                <select class="form-control" id="coffee_grade" name="coffee_grade" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
+		                <select class="form-control" id="coffee_grade_parchment" name="coffee_grade_parchment" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
 		                	<option></option> 
 							@if (isset($partchment_types) && count($partchment_types) > 0)
 								@foreach ($partchment_types->all() as $partchment_type)											
@@ -959,7 +944,8 @@
 
 		                <input type="hidden" id="st_id" name="st_id">		
 
-		            </div>        
+		            </div>
+					<div class="alert-dismissible alert-info" id="coffee_grower_display_partchment"></div>        
 	        	</div>
 
     			<!-- <input type="checkbox" id="dnt" name="dnt" >&nbsp&nbsp <strong style="font-size:35px; color:red;">Do Not Touch(DNT)</strong> -->
@@ -1074,69 +1060,33 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 <script type="text/javascript">
 
 
-	function fetch_url(cfd_id, direction, lot_number, outt_number, coffee_grade) {
+	function fetch_url(st_id, direction , outt_number, coffee_grade) {
 
-		var country_id = document.getElementById("country").value;
+		var season = null;
 
-		var sale_season = document.getElementById("sale_season").value;
+		season = document.getElementById("crop_season").value;
 
-		//var sale_number = document.getElementById("sale").value;
+		if (season == "") {
 
-		//var seller = document.getElementById("seller").value;
-
-		if (country_id == "") {
-
-			country_id = 0;
+			season = 0;
 
 		}
-		if (sale_season == "") {
 
-			sale_season = 0;
+		var url = '{{ route('cataloguequalitydetails.getLots',['crop_season'=>":crop_season",'st_id'=>":st_id",'direction'=>":direction",'outt_number'=>":outt_number",'coffee_grade'=>":coffee_grade"]) }}';
 
-		}
-		if (sale_number == "") {
+	
+		url = url.replace(':st_id', st_id);
 
-			sale_number = 0;
-
-		}
-		if (seller == "") {
-
-			seller = 0;
-
-		}	
-		if (cfd_id == "") {
-
-			cfd_id = 0;
-
-		}	
-		if (direction == "") {
-
-			direction = 0;
-
-		}			
-
-		var url = '{{ route('cataloguequalitydetails.getLots',['country_id'=>":id",'sale_season'=>":slssn",'sale_number'=>":slno",'seller'=>":slr",'cfd_id'=>":cfd_id",'direction'=>":direction",'lot_number'=>":lot_number",'outt_number'=>":outt_number",'coffee_grade'=>":coffee_grade"]) }}';
-
-		url = url.replace(':id', country_id);
-
-		url = url.replace(':cfd_id', cfd_id);
-
-		url = url.replace(':slssn', sale_season);
-
-		url = url.replace(':slno', sale_number);
-
-		url = url.replace(':slr', seller);
+		url = url.replace(':crop_season', season);
 
 		url = url.replace(':direction', direction);
-
-		url = url.replace(':lot_number', lot_number);
 
 		url = url.replace(':outt_number', outt_number);
 
 		url = url.replace(':coffee_grade', coffee_grade);
-
+		
 		return url;
-
+	
 	}
 
 	function closeBootBox () {
@@ -1431,140 +1381,76 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 
 	}
-
-	function displayParchment (event, value, cfd_id, direction, lot_number, outt_number, coffee_grade){
+	
+	function displayParchment (event, value, st_id, direction , outt_number, coffee_grade, season){
 	
 		event.preventDefault();
 	
-	// clearChildren(document.getElementById("parchment"));
+	clearChildren(document.getElementById("parchment"));
+	
+	var url = fetch_url(st_id, direction , outt_number, coffee_grade); 
+	
+	$.get(url, function(data, status){
 
-	// var url = fetch_url(cfd_id, direction, lot_number, outt_number, coffee_grade); 
-
-	// $.get(url, function(data, status){
-
-	// 	var obj = jQuery.parseJSON(data);
-
-	// 	document.getElementById('lot_number').value = obj.cfd_lot_no;
-
-	// 	document.getElementById('outt_number').value = obj.cfd_outturn;
-
-	// 	document.getElementById('coffee_grade').value = obj.cgrad_id;
-
-	// 	document.getElementById('cfd_id').value = obj.cfd_id;
-
-	// 	document.getElementById('coffee_grower').value = obj.cfd_grower_mark;
-
-	// 	if (obj.cfd_dnt == 1) {
-
-	// 		document.getElementById("dnt").checked = true;
-
-	// 	} else {
-
-	// 		document.getElementById("dnt").checked = false;
-
-	// 	}
-
-	// 	var quality_params = null;
-
-	// 	quality_params = obj.qualityParameterID;
-
-	// 	if (quality_params != null) {
-
-	// 		$.each(quality_params.split(","), function(i,e){
-
-	// 			var str1_gd = "gd";
-
-	// 			var str2_gd = e;
-
-	// 			var res_gd = str1_gd.concat(str2_gd);
-
-	// 			if (document.getElementById(res_gd) != null) {
-				
-	// 				document.getElementById(res_gd).checked = true;
-				
-	// 			}
-
-	// 			var str1_gc = "gc";
-
-	// 			var str2_gc = e;
-
-	// 			var res_gc = str1_gc.concat(str2_gc);
-
-	// 			if (document.getElementById(res_gc) != null) {
-				
-	// 				document.getElementById(res_gc).checked = true;
-				
-	// 			}
-
-
-	// 			var str1_gs = "gs";
-
-	// 			var str2_gs = e;
-
-	// 			var res_gs = str1_gs.concat(str2_gs);
-
-	// 			if (document.getElementById(res_gs) != null) {
-
-	// 				document.getElementById(res_gs).checked = true;
-	// 			}
-
-	// 			var str1_pt = "process_type";
-
-	// 			var str2_pt = obj.prcss_id;
-
-	// 			var res_pt = str1_pt.concat(str2_pt);
-
-	// 			if (document.getElementById(res_pt) != null) {
-
-	// 				document.getElementById(res_pt).checked = true;
-	// 			}
-
-	// 			if (obj.qltyd_prcss_value != null) {
-
-	// 				document.getElementById('process').value = obj.qltyd_prcss_value;
-
-	// 			} else {
-
-	// 				document.getElementById('process').value =  0;
-	// 			}
-
+		var obj = jQuery.parseJSON(data);
 		
+		if(!jQuery.isEmptyObject(obj)){
+		$('#outt_number_display_partchment').html(obj.st_outturn);
 
-	// 			var str1_rw = "raw";
+		//document.getElementById('coffee_grade').value = obj.pty_id;
 
-	// 			var str2_rw = obj.rw_id;
+		document.getElementById('st_id').value = obj.st_id;
 
-	// 			var res_rw = str1_rw.concat(str2_rw);
+		$('#coffee_grower_display_partchment').html(obj.st_mark);
 
-	// 			if (document.getElementById(res_rw) != null) {
+		if (obj.cfd_dnt == 1) {
 
-	// 				document.getElementById(res_rw).checked = true;
-	// 			}
+			document.getElementById("dnt").checked = true;
+
+		} else {
+
+			document.getElementById("dnt").checked = false;
+
+		}
+
+		var quality_params = null;
+
+		quality_params = obj.qualityParameterID;
+
+		if (quality_params != null) {
+
+			$.each(quality_params.split(","), function(i,e){
 
 
-	// 			if (obj.qltyd_comments != null) {
+				// var str1_rw = "raw";
 
-	// 				document.getElementById('comments').value = obj.qltyd_comments; 
+				// var str2_rw = obj.rw_id;
 
-	// 			} else {
+				// var res_rw = str1_rw.concat(str2_rw);
 
-	// 				document.getElementById('comments').value = null;
-	// 			}
+				// if (document.getElementById(res_rw) != null) {
 
-
-	// 		});	
-
+				// 	document.getElementById(res_rw).checked = true;
+				// }
 
 
-	// 	} else {
+				// if (obj.qltyd_comments != null) {
 
-	// 		document.getElementById('comments').value = null;
+				// 	document.getElementById('comments').value = obj.qltyd_comments; 
 
-	// 		document.getElementById('process').value =  0;
+				// } else {
 
-	// 	}
+				// 	document.getElementById('comments').value = null;
+				// }
 
-	// });
+
+			});	
+
+
+
+		} 
+	}
+	});
 
 
 
@@ -2044,6 +1930,46 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		});
 
+		
+		$('#search_button_parchment').on('click', function(e){
+		e.preventDefault();
+		var direction = 'Search';
+
+		var season = null;
+
+		season = document.getElementById("crop_season").value;
+		
+		if (season == "") {
+
+			season = 0;
+
+		}
+
+
+		var outt_number = null;
+
+		
+		 outt_number=$('#outt_number_parchment').val()
+		
+		if (outt_number == "") {
+
+			outt_number = 0;
+
+		}
+		
+		var coffee_grade = null;
+
+		coffee_grade =$("#coffee_grade_parchment").val();
+		
+		if (coffee_grade == "") {
+
+			coffee_grade = 0;
+
+		}
+		
+		displayParchment(event, null, null, direction, outt_number, coffee_grade, season);
+
+		});
 
 
 
@@ -2617,6 +2543,72 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			});
 
 		});
+		
+		$('#button_save_parchment').on('click', function(e){
+			e.prevent
+			var st_id = document.getElementById("st_id").value;
+
+			var direction = 'Next';
+
+			var dont = document.getElementById("dnt");
+
+			if (dont.checked) {
+
+				var dnt = document.getElementById("dnt").value;
+
+			} else {
+
+				var dnt = null;
+
+			}
+
+
+		    var parchmentdesc = {};
+
+		    parchmentdesc = $('input[name=parchmentquality]:checked').map(function(){
+
+		        return this.value;
+
+		    }).get();
+
+		    parchmentdesc = JSON.stringify(parchmentdesc);	
+
+			var url = '{{ route('cataloguequalitydetails.saveParchment',['st_id'=>":id",'dnt'=>":dnt",'parchmentdesc'=>":parchmentdesc"]) }}';
+
+			url = url.replace(':id', st_id);
+
+			url = url.replace(':dnt', dnt);
+
+			url = url.replace(':parchmentdesc', parchmentdesc);
+
+			console.log(url)
+			var dialog = bootbox.alert({
+				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+						
+    
+			$.ajax({
+				url: url,
+				dataType: 'json',
+				}).done(function(response) {
+					if(response.updated) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+						closeBootBox();
+						displayParchment(event, null, st_id, direction, null, null, null);
+					} else if(response.inserted) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
+						closeBootBox();
+						displayParchment(event, null, st_id, direction, null, null, null);
+					}else if(response.error) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
+						closeBootBox();
+					}
+				}).error(function(error) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+					closeBootBox();
+			});
+
+		});
 
 		$('#search_button_cup').on('click', function(){
 
@@ -2678,3 +2670,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 	
 </style>
 @endpush
+
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
