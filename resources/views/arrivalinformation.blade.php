@@ -317,6 +317,14 @@
 		$material_id   = NULL;
 	}
 
+	if (!isset($basket_id )) {
+		$basket_id   = NULL;
+	}
+
+	if (!isset($warehouse_id )) {
+		$warehouse_id   = NULL;
+	}
+
 
 ?>
 
@@ -468,7 +476,7 @@
 
 		            <div class="form-group col-md-4">
 		                <label>Moisture(%)</label>
-		                <input class="form-control"  id="moisture"  name="moisture" oninput="myFunction()" value="{{ old('moisture').$moisture  }}" required  onchange='fetchOutturnNumber()'>
+		                <input class="form-control"  id="moisture"  name="moisture" value="{{ old('moisture').$moisture  }}" required  onchange='fetchOutturnNumber()'>
 		            </div>
 		        </div>
 
@@ -489,6 +497,23 @@
 	                    </span>
 	                    </div>
 	                </div>	
+
+		            <div class="form-group col-md-4">
+		                <label>Basket</label>
+		                <select class="form-control" name="basket">
+		               		<option></option>
+							@if (isset($basket))
+										@foreach ($basket->all() as $value)
+										@if ($basket_id ==  $value->id)
+											<option value="{{ $value->id }}" selected="selected">{{ $value->bs_code. " (". $value->bs_quality.")"}}</option>
+										@else
+											<option value="{{ $value->id }}">{{ $value->bs_code. " (". $value->bs_quality.")"}}</option>
+										@endif
+										@endforeach
+									
+							@endif
+		                </select>
+		            </div>
 
 		            <div class="form-group col-md-2">
 		                <label style="color: red;" >Partial</label>
@@ -530,85 +555,25 @@
 
 		        	<div class="form-group col-md-4">
 		                <label>Warehouse</label>
-		                <select class="form-control" name="warehouse" onchange="this.form.submit()">
+		                <select class="form-control" id="warehouse" name="warehouse" onchange='fetchWarehouseDetails()'>
 		                	<option></option> 
-
-					        	<?php
-
-					        		for ($i=0; $i < $warehouse_count; $i++) {  
-
-					        			$id = 0;
-
-					        			$name = null;
-
-					        			foreach ($warehouse[0][$i] as $key => $value) {
-
-					        				if ($key == 'id') {
-
-					        					$id = $value;
-					        				}
-
-					        				if ($key == 'wr_name') {
-					        					
-					        					$name = $value;
-					        				}
-					        			}
-					        			if ($wrhse ==  $id){
-
-					        				echo '<option value="'.$id.'" selected="selected">'.$name.'</option>';
-
-					        			} else {
-
-					        				echo '<option value="'.$id.'" >'.$name.'</option>';
-
-					        			}
-					        			
-					        		}
-
-	            				?>
-
+								@if (isset($warehouse))
+											@foreach ($warehouse->all() as $value)
+											@if ($warehouse_id ==  $value->id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->agt_name}}</option>
+											@else
+												<option value="{{ $value->id }}">{{ $value->agt_name}}</option>
+											@endif
+											@endforeach
+										
+								@endif
 	            		</select>
             		</div>
 
 		        	<div class="form-group col-md-4">
 		                <label>Weigh Scales</label>
-		                <select class="form-control" name="weigh_scales">
+		                <select class="form-control" id="weigh_scales" name="weigh_scales">
 		                	<option></option> 
-
-					        	<?php
-
-					        		for ($i=0; $i < $weigh_scales_count; $i++) {  
-
-					        			$id = 0;
-
-					        			$name = null;
-
-					        			foreach ($weigh_scales[0][$i] as $key => $value) {
-
-					        				if ($key == 'id') {
-
-					        					$id = $value;
-					        				}
-
-					        				if ($key == 'ws_equipment_number') {
-					        					
-					        					$name = $value;
-					        				}
-					        			}
-					        			if ($wsid ==  $id){
-
-					        				echo '<option value="'.$id.'" selected="selected">'.$name.'</option>';
-
-					        			} else {
-
-					        				echo '<option value="'.$id.'" >'.$name.'</option>';
-
-					        			}
-					        			
-					        		}
-
-	            				?>
-
 	            		</select>
             		</div>
 		        </div> 	
@@ -617,7 +582,7 @@
 
 		            <div class="form-group col-md-4">
 		                <label >Row</label>
-		                <select class="form-control" name="row">
+		                <select class="form-control" id="row" name="row">
 		                	<option></option> 
 								@if (isset($location))
 											@foreach ($location->all() as $value)
@@ -636,7 +601,7 @@
 
 		            <div class="form-group col-md-4">
 		                <label >Column</label>
-		                <select class="form-control" name="column">
+		                <select class="form-control" id="column" name="column">
 		                	<option></option> 
 								@if (isset($location))
 											@foreach ($location->all() as $value)
@@ -677,13 +642,13 @@
 			            	
 			            	if(session()->has($weigh_scale_session)) {
 			            ?>		
-			            	<button type="submit" name="resetweight" class="btn btn-lg btn-danger btn-block" formnovalidate>Reset</button>	  	
+			            	<button type="button" id="resetweight" name="resetweight" class="btn btn-lg btn-danger btn-block" formnovalidate onclick='resetWeight()'>Reset</button>	  	
 
 				        <?php
 				        	} else {
 
 				        ?>							          		           	
-							<button type="submit" name="fetchweight" class="btn btn-lg btn-success btn-block">Fetch</button>
+							<button type="button" id="fetchweight" name="fetchweight" class="btn btn-lg btn-success btn-block" onclick='fetchWeight()'>Fetch</button>
 
 				        <?php
 				        	}
@@ -971,36 +936,176 @@ function printRate(){
 
 	function fetchOutturnNumber()
 	{
-
 		var item_id = $('#select_items').val();
 		var miller_id = $('#select_miller').val();
+		var moisture = $('#moisture').val();
+		var input = $('#outt_number');
 
-		if (item_id != '' && miller_id != '') {
-			var url="{{ route('arrivalinformation.getOutturn',['item_id'=>":item_id", 'miller_id'=>":miller_id"]) }}";
-			url = url.replace(':item_id', item_id);
-			url = url.replace(':miller_id', miller_id);
-			var input = $('#outt_number');
-			input.val('');
+		if (moisture != ''){
+			if (item_id != '' && miller_id != '') {
+				var url="{{ route('arrivalinformation.getOutturn',['item_id'=>":item_id", 'miller_id'=>":miller_id", 'moisture'=>":moisture"]) }}";
+				url = url.replace(':item_id', item_id);
+				url = url.replace(':miller_id', miller_id);
+				url = url.replace(':moisture', moisture);
+				input.val('');
 
+				$.ajax({
+				url: url,
+				type: 'GET',
+				}).success(function(response) {
+					var outturn = jQuery.parseJSON(response);
+					input.val(outturn);
+					input.prop('disabled', false);
 
-			$.ajax({
-			url: url,
-			type: 'GET',
-			}).success(function(response) {
-				var outturn = jQuery.parseJSON(response);
-				input.val(outturn);
-				input.prop('disabled', false);
+				}).error(function(error) {
+					input.prop('disabled', false);
+					console.log(error)
+				});
 
-			}).error(function(error) {
-				input.prop('disabled', false);
-				console.log(error)
-			});
+			}			
+		} else {
 
+			input.val('REDRY');
 		}
 
+	}
 
+	function fetchWarehouseDetails()
+	{
+		var warehouse = $('#warehouse').val();
+		var weigh_scales = $('#weigh_scales');
+		var row = $('#row');
+		var column = $('#column');
+
+		weigh_scales.find('option').remove();   
+		row.find('option').remove();   
+		column.find('option').remove();   
+
+
+		var url="{{ route('arrivalinformation.getScales',['warehouse'=>":warehouse"]) }}";
+		url = url.replace(':warehouse', warehouse);
+
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			var scales = jQuery.parseJSON(response);
+			weigh_scales.append('<option></option>');
+			$.each(scales,function(key, value) 
+			{	
+				weigh_scales.append('<option value=' + value["id"] + '>&nbsp;&nbsp;&nbsp;' + value["ws_equipment_number"] + '</option>');
+
+			});
+		}).error(function(error) {
+			console.log(error)
+		});  
+
+
+		var url_locations="{{ route('arrivalinformation.getLocations',['warehouse'=>":warehouse"]) }}";
+		url_locations = url_locations.replace(':warehouse', warehouse);
+
+		$.ajax({
+		url: url_locations,
+		type: 'GET',
+		}).success(function(response) {
+			var locations = jQuery.parseJSON(response);
+			row.append('<option></option>');
+			column.append('<option></option>');
+
+			$.each(locations,function(key, value) 
+			{	
+				row.append('<option value=' + value["id"] + '>&nbsp;&nbsp;&nbsp;' + value["loc_row"] + '</option>');
+				column.append('<option value=' + value["id"] + '>&nbsp;&nbsp;&nbsp;' + value["loc_column"] + '</option>');
+			});
+
+		}).error(function(error) {
+			console.log(error)
+		});
 
 
 	}
+
+	function fetchWeight()
+	{
+
+		var weigh_scales = $('#weigh_scales').val();
+		var batch_kilograms = $('#batch_kilograms');
+
+		batch_kilograms.val('');
+
+		var url="{{ route('arrivalinformation.getWeight',['weigh_scales'=>":weigh_scales"]) }}";
+		url = url.replace(':weigh_scales', weigh_scales);
+		alert(url);
+
+
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			var weight = jQuery.parseJSON(response);
+			batch_kilograms.val(weight);
+
+		}).error(function(error) {
+			console.log(error)
+		});  
+
+	}
+
+	function resetweight()
+	{
+		var warehouse = $('#warehouse').val();
+		var weigh_scales = $('#weigh_scales');
+		var row = $('#row');
+		var column = $('#column');
+
+		weigh_scales.find('option').remove();   
+		row.find('option').remove();   
+		column.find('option').remove();   
+
+
+		var url="{{ route('arrivalinformation.reSetWeight',['warehouse'=>":warehouse"]) }}";
+		url = url.replace(':warehouse', warehouse);
+
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			var scales = jQuery.parseJSON(response);
+			weigh_scales.append('<option></option>');
+			$.each(scales,function(key, value) 
+			{	
+				weigh_scales.append('<option value=' + value["id"] + '>&nbsp;&nbsp;&nbsp;' + value["ws_equipment_number"] + '</option>');
+
+			});
+		}).error(function(error) {
+			console.log(error)
+		});  
+
+
+		var url_locations="{{ route('arrivalinformation.getLocations',['warehouse'=>":warehouse"]) }}";
+		url_locations = url_locations.replace(':warehouse', warehouse);
+
+		$.ajax({
+		url: url_locations,
+		type: 'GET',
+		}).success(function(response) {
+			var locations = jQuery.parseJSON(response);
+			row.append('<option></option>');
+			column.append('<option></option>');
+
+			$.each(locations,function(key, value) 
+			{	
+				row.append('<option value=' + value["id"] + '>&nbsp;&nbsp;&nbsp;' + value["loc_row"] + '</option>');
+				column.append('<option value=' + value["id"] + '>&nbsp;&nbsp;&nbsp;' + value["loc_column"] + '</option>');
+			});
+
+		}).error(function(error) {
+			console.log(error)
+		});
+
+
+	}
+
+	
 </script>
 @endpush

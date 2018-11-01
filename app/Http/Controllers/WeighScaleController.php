@@ -197,6 +197,10 @@ class WeighScaleController extends Controller {
         $country = country::all(['id', 'ctr_name', 'ctr_initial']);
         $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_code']);
         $material = Material::all(['id', 'mt_name']);
+        $basket = basket::all(['id', 'bs_code', 'bs_quality']);
+        $warehouse = agent::where('agtc_id', 4)->get();
+
+        $packaging = packaging::all(['id', 'pkg_name', 'pkg_description']);
         $millers = agent::where('agtc_id', 1)->get();
         $cidmain = session('maincountry');
         $grn_no = null;
@@ -205,6 +209,7 @@ class WeighScaleController extends Controller {
         $grn_number = null;
         $active_season = $this->getActiveSeason();
         $items = items::all(['id', 'it_name']);
+
         if ($cidmain != null) {
 
             $weighbridge_ticket = WeighbridgeInfo::where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->orWhere('id', 1)->get(); 
@@ -227,7 +232,7 @@ class WeighScaleController extends Controller {
 
         }
 
-        return View::make('arrivalinformation', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'expected_arrival', 'rates', 'teams', 'active_season', 'growers', 'items', 'millers', 'material'));   
+        return View::make('arrivalinformation', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'expected_arrival', 'rates', 'teams', 'active_season', 'growers', 'items', 'millers', 'material', 'basket', 'packaging', 'warehouse'));   
 
     }
 

@@ -14,6 +14,8 @@ use Ngea\InstructedLocationRef;
 use Ngea\Season;
 use Ngea\OutturnNumberSettings;
 use Ngea\agent;
+use Ngea\WeightScales;
+use Ngea\Location;
 
 class Controller extends BaseController
 {
@@ -104,43 +106,54 @@ class Controller extends BaseController
         return $ref_no;
     }
 
-    public function getOutturn ($item_id, $agent_id) {
+    public function getOutturn ($item_id, $agent_id, $moisture) {
 
         try{
-            $agt_code = null;
-            $prefix = null;
-            $padding_character = null;
-            $previous_week = null;
-            $previous_number = null;
-            $delivery_number = null;
-            $length = null;
+            $moisture_threshold = null;
             $outturn = null;
 
-            $week_of_year = $this->returnWeekOfYear();
-            $agent = agent::where('id', $agent_id)->first();
-            if ($agent != null) {
-                $agt_code = $agent->agt_code;
+            $threshold_details = Thresholds::where('th_name', 'Moisture')->where('it_id', $item_id)->first();
+            if ($threshold_details != null) {
+                $moisture_threshold = $threshold_details->th_percentage;
             }
-
-
-            $outturnNumberSettings = OutturnNumberSettings::where('it_id', $item_id)->first();
-            if ($outturnNumberSettings != null) {
-                $prefix = $outturnNumberSettings->ons_prefix;
-                $padding_character = $outturnNumberSettings->ons_padding_character;
-                $previous_week = $outturnNumberSettings->ons_previous_week;
-                $previous_number = $outturnNumberSettings->ons_previous_number;
-                $length = $outturnNumberSettings->ons_length;
-            }
-
-            if ($previous_week == $week_of_year) {
-                $delivery_number = sprintf("%0".$length."d", ($previous_number + 1));
+            if ($moisture > $moisture_threshold) {
+                $outturn = 'REDRY';
             } else {
-                $delivery_number = sprintf("%0".$length."d", (001));
+                $agt_code = null;
+                $prefix = null;
+                $padding_character = null;
+                $previous_week = null;
+                $previous_number = null;
+                $delivery_number = null;
+                $length = null;
+
+                $week_of_year = $this->returnWeekOfYear();
+                $agent = agent::where('id', $agent_id)->first();
+                if ($agent != null) {
+                    $agt_code = $agent->agt_code;
+                }
+
+
+                $outturnNumberSettings = OutturnNumberSettings::where('it_id', $item_id)->first();
+                if ($outturnNumberSettings != null) {
+                    $prefix = $outturnNumberSettings->ons_prefix;
+                    $padding_character = $outturnNumberSettings->ons_padding_character;
+                    $previous_week = $outturnNumberSettings->ons_previous_week;
+                    $previous_number = $outturnNumberSettings->ons_previous_number;
+                    $length = $outturnNumberSettings->ons_length;
+                }
+
+                if ($previous_week == $week_of_year) {
+                    $delivery_number = sprintf("%0".$length."d", ($previous_number + 1));
+                } else {
+                    $delivery_number = sprintf("%0".$length."d", (001));
+                }
+
+                if ($week_of_year != null && $agt_code != null && $prefix != null && $delivery_number != null) {
+                    $outturn = $week_of_year . $agt_code . $prefix . $delivery_number;
+                }                 
             }
 
-            if ($week_of_year != null && $agt_code != null && $prefix != null && $delivery_number != null) {
-                $outturn = $week_of_year . $agt_code . $prefix . $delivery_number;
-            } 
             
           
             return json_encode($outturn);                    
@@ -176,4 +189,135 @@ class Controller extends BaseController
         $coffeeweekNumber = sprintf("%02d", ($coffeeweekNumber));
         return $coffeeweekNumber;      
     }    
+
+    public function getScales ($warehouse) {
+
+        try{
+            $scales_details = WeightScales::where('agt_id', $warehouse)->get();
+
+            return json_encode($scales_details);                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function getLocations ($warehouse) {
+
+        try{
+            $location_details = Location::where('agt_id', $warehouse)->get();
+
+            return json_encode($location_details);                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function getWeight ($weigh_scales) {
+
+        try{
+
+            $weigh_scales_details = WeightScales::where('id', $weigh_scales)->first();
+
+            if ($weigh_scales_details != null) {
+                $strBaudRate = $weigh_scales_details->ws_baud_rate;
+                $strParity = $weigh_scales_details->ws_parity;
+                $strStopBits = $weigh_scales_details->ws_stop_bits;
+                $strDataBits = $weigh_scales_details->ws_data_bits;
+                $strPortName = $weigh_scales_details->ws_port_name;
+            }
+
+            $ch = curl_init();
+            $ip_address = $this->get_client_ip();
+            curl_setopt($ch, CURLOPT_URL,"http://".$ip_address."//weighscale/api.php");
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS,
+                        "strBaudRate=".$strBaudRate."&strParity=".$strParity."&strStopBits=".$strStopBits."&strDataBits=".$strDataBits."&strPortName=".$strPortName."");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $weight = curl_exec ($ch);           
+            curl_close ($ch);   
+            $batch_kilograms = $weight;  
+            $weigh_scale_session = "scale - ".$weigh_scales."";
+            session()->put($weigh_scale_session, $batch_kilograms);
+
+            return json_encode($batch_kilograms);                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function reSetWeight ($weigh_scales) {
+
+        try{
+
+            $weigh_scales_details = WeightScales::where('id', $weigh_scales)->first();
+            if ($weigh_scales_details != null) {
+                $strBaudRate = $weigh_scales_details->ws_baud_rate;
+                $strParity = $weigh_scales_details->ws_parity;
+                $strStopBits = $weigh_scales_details->ws_stop_bits;
+                $strDataBits = $weigh_scales_details->ws_data_bits;
+                $strPortName = $weigh_scales_details->ws_port_name;
+            }
+
+            $ch = curl_init();
+            $ip_address = $this->get_client_ip();
+            curl_setopt($ch, CURLOPT_URL,"http://".$ip_address."//weighscale/api.php");
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS,
+                        "strBaudRate=".$strBaudRate."&strParity=".$strParity."&strStopBits=".$strStopBits."&strDataBits=".$strDataBits."&strPortName=".$strPortName."");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $weight = curl_exec ($ch);
+            curl_close ($ch);   
+            $batch_kilograms = $weight;  
+            $batch_kilograms = 0;  
+            $weigh_scale_session = "scale - ".$weigh_scales."";
+
+            if (session()->has($weigh_scale_session) && $batch_kilograms === 0 ){
+                $request->session()->pull($weigh_scale_session); 
+            }     
+
+            return json_encode($batch_kilograms); 
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function get_client_ip() {
+        $ipaddress = '';
+        if (getenv('HTTP_CLIENT_IP'))
+            $ipaddress = getenv('HTTP_CLIENT_IP');
+        else if(getenv('HTTP_X_FORWARDED_FOR'))
+            $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+        else if(getenv('HTTP_X_FORWARDED'))
+            $ipaddress = getenv('HTTP_X_FORWARDED');
+        else if(getenv('HTTP_FORWARDED_FOR'))
+            $ipaddress = getenv('HTTP_FORWARDED_FOR');
+        else if(getenv('HTTP_FORWARDED'))
+           $ipaddress = getenv('HTTP_FORWARDED');
+        else if(getenv('REMOTE_ADDR'))
+            $ipaddress = getenv('REMOTE_ADDR');
+        else
+            $ipaddress = 'UNKNOWN';
+        return $ipaddress;
+    }
 }

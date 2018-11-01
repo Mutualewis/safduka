@@ -22,9 +22,9 @@ class WeightScales extends Model {
 
 	public function warehouse()
 	{
-	    return $this->belongsTo('Ngea\Warehouse', 'wr_id');
+	    return $this->belongsTo('Ngea\Agent', 'agt_id');
 	}
 	
-	protected $fillable = ['id', 'wr_id', 'ws_station', 'ws_equipment_number', 'ws_baud_rate', 'ws_parity', 'ws_stop_bits', 'ws_data_bits', 'ws_port_name', 'created_at', 'updated_at'];
+	protected $fillable = ['id', 'agt_id', 'ws_station', 'ws_equipment_number', 'ws_baud_rate', 'ws_parity', 'ws_stop_bits', 'ws_data_bits', 'ws_port_name', 'created_at', 'updated_at'];
            
 }
