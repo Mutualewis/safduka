@@ -39,6 +39,15 @@ class UpdateWeighbridgeTable extends Migration
             $table->dropColumn('csn_id');
             $table->dropColumn('cb_id');
             $table->dropColumn('slr_id');
+            $table->dropColumn('rgn_id');
+            $table->dropColumn('bkg_id');
+            $table->dropColumn('trp_id');
+            $table->dropColumn('wb_id');
+            $table->dropColumn('pl_id');
+            $table->dropColumn('wbi_document_unit');
+            $table->dropColumn('wbi_document_quantity');
+            $table->dropColumn('wbi_representative_name');
+            $table->dropColumn('wbi_representative_id');
         });
     }
 }

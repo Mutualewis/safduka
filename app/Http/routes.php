@@ -198,7 +198,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::post('/cataloguequalitydetailslist', 'QualityController@addQualityDetailsList'); 
 
-		Route::get('/cataloguequalitydetails/getLots/{countryID}/{saleSeason}/{saleNumber}/{seller}/{cfd_id}/{direction}/{lot_number}/{outt_number}/{coffee_grade}', ['as'=>'cataloguequalitydetails.getLots','uses'=>'QualityController@getLots']); 
+		Route::get('/cataloguequalitydetails/getLots/{season}/{st_id}/{direction}/{outt_number}/{coffee_grade}', ['as'=>'cataloguequalitydetails.getLots','uses'=>'QualityController@getLots']); 
 
 	//tablet quality
 	Route::get('/cataloguequalitydetails/saveGreen/{cfd_id}/{dnt}/{greensize}/{greencolor}/{greendefects}/{process_type}/{process_loss}/{raw}/{comments}', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'QualityController@saveGreen']);
@@ -208,6 +208,8 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 
 	Route::get('/cataloguequalitydetails/saveCup/{cfd_id}/{cup}/{dnt_cp}/{acidity}/{body}/{flavour}/{comments_cp}', ['as'=>'cataloguequalitydetails.saveCup','uses'=>'QualityController@saveCup']);
+
+	Route::get('/cataloguequalitydetails/saveParchment/{st_id}/{dnt}/{parchmentdesc}', ['as'=>'cataloguequalitydetails.saveParchment','uses'=>'QualityController@saveParchment']);
 
 });
 
