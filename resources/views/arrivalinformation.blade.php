@@ -1,9 +1,9 @@
 @extends ('layouts.dashboard')
-@section('page_heading','Arrival Information')
+@section('page_heading','Goods Received Note')
 @section('section')
 <div class="col-sm-14 col-md-offset-0">
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-12">
 					@if (count($errors) > 0)
 						<div class="alert alert-danger">
 							<strong>Whoops!</strong> There were some problems with your input.<br><br>
@@ -107,7 +107,11 @@
 		$wbtk = NULL;
 	}
 	if (!isset($ot_season )) {
-		$ot_season = NULL;
+		if (isset($active_season )) {
+			$ot_season = $active_season;
+		} else {
+			$ot_season = NULL;
+		}
 	}
 	if (!isset($rlno )) {
 		$rlno = NULL;
@@ -174,42 +178,26 @@
 	if (isset($coffee_details) && !isset($st_quality_check)){
 
 		$ignore_partial = true;
-
 		$sif_lot = $coffee_details->lot;
-
 		$outt_number = $coffee_details->outturn;
-
 		$bskt = $coffee_details->bsid;
-
 		$rlno = $coffee_details->rl_no;
-
 		$grade = $coffee_details->grade;
-
-		$coffee_grower = $coffee_details->mark;		
-
-		$partial = $coffee_details->partial_delivey;	
-
-		$bought_weight = $coffee_details->weight;	
-
+		$coffee_grower = $coffee_details->mark;	
+		$partial = $coffee_details->partial_delivey;
+		$bought_weight = $coffee_details->weight;
 		$packages_stock = CEIL($bought_weight/60);
-
 		$dispatch_kilograms = $bought_weight;	
-
 		$delivery_kilograms = $bought_weight;	
 
 		if ($coffee_details->st_dispatch_date != null) {
-
 			$dispatch_date = $coffee_details->st_dispatch_date;
-
 			$dispatch_date = date("m/d/Y", strtotime($dispatch_date));
-
 		}	
 
 
-		if (isset($stock_details)){
-			
+		if (isset($stock_details)){			
 			$partial = $stock_details->st_partial_delivery;	
-
 			$pkg_status = $stock_details->st_package_status;
 
 		}
@@ -313,68 +301,33 @@
 		$team_id   = NULL;
 	}
 
+	if (!isset($grower_id )) {
+		$grower_id   = NULL;
+	}
+
+	if (!isset($item_id )) {
+		$item_id   = NULL;
+	}
+
+	if (!isset($miller_id )) {
+		$miller_id   = NULL;
+	}
+
+	if (!isset($material_id )) {
+		$material_id   = NULL;
+	}
+
+
 ?>
 
-    <div class="col-md-6">
+    <div class="col-md-12">
 	        <form role="form" method="POST" action="arrivalinformation">
 
 	        	<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-			    <h3>General Information</h3>	
 			    <div class="row">
-		            <div class="form-group col-md-3">
-		                <label>Country</label>
-		                <select class="form-control" id="country" name="country" onchange="this.form.submit()">
-		                	<option></option> 
-							@if (isset($country) && count($country) > 0)
-										@foreach ($country->all() as $countries)
-											@if ($cid ==  $countries->id)
-												<option value="{{ $countries->id }}" selected="selected">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
-											@else
-												<option value="{{ $countries->id }}">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
-											@endif
 
-										@endforeach
-									
-							@endif
-		                </select>		
-		            </div>	
-
-		            <div class="form-group col-md-3">
-		            	<label>Weighbridge Ticket</label>
-		                <select class="form-control" id="weighbridgeTK" name="weighbridgeTK">
-		               		<option></option>
-							@if (isset($weighbridge_ticket))
-										@foreach ($weighbridge_ticket->all() as $value)
-										@if ($wbtk ==  $value->id)
-											<option value="{{ $value->id }}" selected="selected">{{ $value->wb_ticket}}</option>
-										@else
-											<option value="{{ $value->id }}">{{ $value->wb_ticket}}</option>
-										@endif
-										@endforeach
-									
-							@endif
-		                </select>
-		            </div>
-
-		            <div class="form-group col-md-3">
-		            	<label>Season</label>
-		                <select class="form-control" id="outt_season" name="outt_season">
-		               		<option></option>
-							@if (isset($Season))
-										@foreach ($Season->all() as $season)
-										@if ($ot_season ==  $season->id)
-											<option value="{{ $season->id }}" selected="selected">{{ $season->csn_season}}</option>
-										@else
-											<option value="{{ $season->id }}">{{ $season->csn_season}}</option>
-										@endif
-										@endforeach
-									
-							@endif
-		                </select>
-		            </div>	
-
-			    	<div class="form-group col-md-3">
+			    	<div class="form-group col-md-4">
 			    		<label>GRN</label>
 	                    <div class="input-group custom-search-form">
 	                        <input type="text" class="form-control" id="grn_number" name="grn_number" name="grn_number" style="text-transform:uppercase; " placeholder="Search/Enter GRN..."  value="{{ $grn_number}}"></input>
@@ -389,20 +342,143 @@
 	                    </div>
 	                </div> 
 
+		            <div class="form-group col-md-4">
+		            	<label>Vehicle</label>
+		                <select class="form-control" id="weighbridgeTK" name="weighbridgeTK">
+		               		<option></option>
+							@if (isset($weighbridge_ticket))
+										@foreach ($weighbridge_ticket->all() as $value)
+										@if ($wbtk ==  $value->id)
+											<option value="{{ $value->id }}" selected="selected">{{ $value->wbi_vehicle_plate."( ".$value->wbi_ticket.")"}}</option>
+										@else
+											<option value="{{ $value->id }}">{{ $value->wbi_vehicle_plate."( ".$value->wbi_ticket.")"}}</option>
+										@endif
+										@endforeach
+									
+							@endif
+		                </select>
+		            </div>
+
+		            <div class="form-group col-md-4">
+		            	<label>Season</label>
+		                <select class="form-control" id="outt_season" name="outt_season">
+							@if (isset($Season))
+										@foreach ($Season->all() as $season)
+										@if ($ot_season ==  $season->id)
+											<option value="{{ $season->id }}" selected="selected">{{ $season->csn_season}}</option>
+										@else
+											<option value="{{ $season->id }}">{{ $season->csn_season}}</option>
+										@endif
+										@endforeach
+									
+							@endif
+		                </select>
+		            </div>	
 	            </div>
 
 
+	            <div class="row">
+		            <div class="form-group col-md-4">
+		                <label>Grower</label>
+		                <select class="form-control searchable" id="coffee_grower" name="coffee_grower">
+		                	<option></option> 
+							@if (isset($growers) && count($growers) > 0)
+										@foreach ($growers->all() as $value)
+											@if ($grower_id ==  $value->id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->cgr_grower."( ".$value->cgr_code.")"}}</option>
+											@else
+												<option value="{{ $value->id }}">{{ $value->cgr_grower."( ".$value->cgr_code.")"}}</option>
+											@endif
 
+										@endforeach
+									
+							@endif
+		                </select>		                                
+		            </div>   
+		            <div class="form-group col-md-4">
+		                <label>Item Name</label>
+		                <select class="form-control searchable" id="select_items" name="select_items" onchange=fetchOutturnNumber();>
+		                	<option></option> 
+							@if (isset($items) && count($items) > 0)
+										@foreach ($items->all() as $value)
+											@if ($value->id == $item_id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->it_name}}</option>
+											@else
+												<option value="{{ $value->id }}">{{ $value->it_name}}</option>
+											@endif
 
+										@endforeach
+									
+							@endif
+		                </select>
+		            </div>
+		            <div class="form-group col-md-4">
+		                <label>Miller</label>
+		                <select class="form-control searchable" id="select_miller" name="select_miller" onchange=fetchOutturnNumber();>
+		                	<option></option> 
+							@if (isset($millers) && count($millers) > 0)
+										@foreach ($millers->all() as $value)
+											@if ($value->id == $miller_id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->agt_name}}</option>
+											@else
+												<option value="{{ $value->id }}">{{ $value->agt_name}}</option>
+											@endif
 
- 				<h3>Outturn</h3>
+										@endforeach
+									
+							@endif
+		                </select>
+		            </div>
+		        </div>
+	        	<div class="row">
+		            <div class="form-group col-md-4">
+		                <label>Milled By</label>
+		                <select class="form-control" id="milled_by" name="milled_by" >
+		                	<option></option> 
+			<!-- 				@if (isset($items) && count($items) > 0)
+										@foreach ($items->all() as $value)
+											@if ($value->id == $item_id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->it_name}}</option>
+											@else
+												<option value="{{ $value->id }}">{{ $value->it_name}}</option>
+											@endif
+
+										@endforeach
+									
+							@endif -->
+		                </select>
+		            </div>
+		            <div class="form-group col-md-4">
+		                <label>Outturn Type</label>
+		                <select class="form-control" id="outturn_type" name="outturn_type" onchange='fetchOutturnNumber()'>
+		                	<option></option> 
+							@if (isset($material) && count($material) > 0)
+										@foreach ($material->all() as $value)
+											@if ($value->id == $material_id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->mt_name}}</option>
+											@else
+												<option value="{{ $value->id }}">{{ $value->mt_name}}</option>
+											@endif
+
+										@endforeach
+									
+							@endif
+		                </select>
+		            </div>
+
+		            <div class="form-group col-md-4">
+		                <label>Moisture(%)</label>
+		                <input class="form-control"  id="moisture"  name="moisture" oninput="myFunction()" value="{{ old('moisture').$moisture  }}" required  onchange='fetchOutturnNumber()'>
+		            </div>
+		        </div>
+
 
 	        	<div class="row">
 
 	        		<div class="form-group col-md-4">
 		           		<label>Outturn</label>
 	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" name="outt_number" style="text-transform:uppercase; " placeholder="Add/Search Outturn..."  value="{{ old('outt_number'). $outt_number }}"></input>
+	                        <input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Add/Search Outturn..."  value="{{ old('outt_number'). $outt_number }}" disabled></input>
 
 		                        <span class="input-group-btn">
 
@@ -414,87 +490,25 @@
 	                    </div>
 	                </div>	
 
-		            <div class="form-group col-md-4">
-		           		<label>Material</label>
-		                <select class="form-control" name="coffee_grade">
-		                	<option></option> 
-							@if (isset($CoffeeGrade) && count($CoffeeGrade) > 0)
-										@foreach ($CoffeeGrade->all() as $cgrade)
-											@if ($grade ==  $cgrade->id)
-												<option value="{{ $cgrade->id }}" selected="selected">{{ $cgrade->cgrad_name}}</option>
-											@else
-												<option value="{{ $cgrade->id }}">{{ $cgrade->cgrad_name}}</option>
-											@endif
+		            <div class="form-group col-md-2">
+		                <label style="color: red;" >Partial</label>
+		                <?php
+		                	if ($partial == null) {
 
-										@endforeach
-									
-							@endif
-		                </select>		
-		            </div>
+		                		echo "<input class='form-control' type='checkbox' id='partial' name='partial' value='1' />";
 
-		            <div class="form-group col-md-4">
-		                <label>Grower</label>
-		                <select class="form-control" name="coffee_grower">
-		                	<option></option> 
-							@if (isset($Growers) && count($Growers) > 0)
-										@foreach ($Growers->all() as $value)
-											@if ($cgrw ==  $value->id)
-												<option value="{{ $value->id }}" selected="selected">{{ $value->cg_name}}</option>
-											@else
-												<option value="{{ $value->id }}">{{ $value->cg_name}}</option>
-											@endif
+		                	} else {
 
-										@endforeach
-									
-							@endif
-		                </select>		                                
-		            </div>   
+		                		echo "<input class='form-control' type='checkbox' id='partial' name='partial' value='1' checked/>";
 
-	        	</div>
+		                	}		                	
 
-	        	<div class="row">
-
-		            <div class="form-group col-md-4">
-		                <label>Dispatch Net Weight</label>
-		                <input class="form-control"  id="dispatch_kilograms"  name="dispatch_kilograms" oninput="myFunction()" value="{{ old('dispatch_kilograms').$dispatch_kilograms  }}" required>
-		            </div>
-
-		            <div class="form-group col-md-4">
-		            	<label>Dispatch Date</label>
-		           		<input class="form-control"  id="date"  name="date" value="{{ old('dispatch_date').$dispatch_date  }}" required>
-		            </div>	  
-
-	                <input class="form-control" type="hidden"  id="delivery_kilograms"  name="delivery_kilograms" oninput="myFunction()" value="{{ old('delivery_kilograms').$delivery_kilograms  }}" required>
-
-		            <div class="form-group col-md-4">
-		                <label>Moisture(%)</label>
-		                <input class="form-control"  id="moisture"  name="moisture" oninput="myFunction()" value="{{ old('moisture').$moisture  }}" required>
-		            </div>
+		                ?>
+		            </div>	
 
 	            </div>
-
-	            <div class="row">
-
-		            <div class="form-group col-md-4">
-		                <label>Packaging Check</label>
-		                <select class="form-control" id="package_status" name="package_status" required>
-		                	<option></option> 
-								@if ($pkg_status ==  0)
-									<option value="0" selected="selected">Okay</option>
-								@else
-									<option value="0" >Okay</option>
-								@endif
-
-								@if ($pkg_status ==  1)
-									<option value="1" selected="selected">Not Okay</option>
-								@else
-									<option value="1" >Not Okay</option>
-								@endif
-
-
-
-		                </select>		
-		            </div>
+ 				<h3>Batch</h3>
+		        <div class="row">
 
 		            <div class="form-group col-md-4">
 		                <label>Packaging</label>
@@ -514,32 +528,6 @@
 		                </select>		
 		            </div>
 
-		            <div class="form-group col-md-2">
-			                <label >Packages</label>
-			                <input class="form-control"  id="packages_stock"  name="packages_stock" oninput="calculateValue()" value="{{ old('packages_stock').$packages_stock  }}" required>		            
-		            </div>	
-
-		            <div class="form-group col-md-2">
-		                <label style="color: red;" >Partial</label>
-		                <?php
-		                	if ($partial == null) {
-
-		                		echo "<input class='form-control' type='checkbox' id='partial' name='partial' value='1' />";
-
-		                	} else {
-
-		                		echo "<input class='form-control' type='checkbox' id='partial' name='partial' value='1' checked/>";
-
-		                	}		                	
-
-		                ?>
-		            </div>	
-
-	        	</div>
-
-
- 				<h3>Batch</h3>
-		        <div class="row">
 		        	<div class="form-group col-md-4">
 		                <label>Warehouse</label>
 		                <select class="form-control" name="warehouse" onchange="this.form.submit()">
@@ -623,8 +611,11 @@
 
 	            		</select>
             		</div>
+		        </div> 	
 
-		            <div class="form-group col-md-2">
+		        <div class="row">
+
+		            <div class="form-group col-md-4">
 		                <label >Row</label>
 		                <select class="form-control" name="row">
 		                	<option></option> 
@@ -643,7 +634,7 @@
 		                </select>
 		            </div>
 
-		            <div class="form-group col-md-2">
+		            <div class="form-group col-md-4">
 		                <label >Column</label>
 		                <select class="form-control" name="column">
 		                	<option></option> 
@@ -661,25 +652,25 @@
 								@endif
 		                </select>
 		            </div>	
-		        </div> 				
-	        	<div class="row">
 		            
 		            <div class="form-group col-md-4">
 		                <label >Zone</label>
 		                <input class="form-control"  id="zone"  name="zone" oninput="myFunction()" value="{{ old('zone').$zone  }}">
 		            </div>	
+	            </div>		        			
+	        	<div class="row">
 
 		            <div class="form-group col-md-4">
 			                <label >Packages</label>
 			                <input class="form-control"  id="packages_batch"  name="packages_batch" oninput="calculateValue()" value="{{ old('packages_batch').$packages_batch  }}">		            
 		            </div>		
 
-		            <div class="form-group col-md-2">
+		            <div class="form-group col-md-4">
 		                <label>Weight (KGS)</label>
 		                <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" oninput="arrivalBags()" value="{{ old('batch_kilograms').$batch_kilograms  }}" disabled>
 		                <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" oninput="arrivalBags()" value="{{ old('batch_kilograms').$batch_kilograms  }}" hidden>
 		            </div>
-		            <div class="form-group col-md-2">
+		            <div class="form-group col-md-4">
 		            	<label></label>
 			            <?php
 			            	$weigh_scale_session = "scale - ".$wsid."";
@@ -732,211 +723,7 @@
 			</form>
 
 	</div>
-	<div class="col-md-6 col-md-offset-0 pre-scrollable" style="max-height: 800px;">
-		<form role="form" method="POST" action="arrivalinformation">
-	        	<input type="hidden" name="_token" value="{{ csrf_token() }}">		
-				<h3>Outturn(s) In GRN</h3>
-				<table class="table table-striped">
-				<thead>
-				<tr>	
-					<th>
-						Lot
-					</th>
-					<th>
-						Outturn
-					</th>
-					<th>
-						Mark
-					</th>
-					<th>
-						Grade
-					</th>
-					<th>
-						Gross Weight
-					</th>
-					<th>
-						Net Weight
-					</th>
-					<th>
-						Warrant no.
-					</th>
-					<th>
-						Remove
-					</th>
-				  </tr>
-				</thead>
-				<tbody>
 
-					<?php
-						$total_bags = 0;
-						$total_pkts = 0;
-						$count = 0;
-						$count_green = 0;
-						$count_process = 0;
-						$count_screen = 0;
-						$count_cup = 0;
-						$total_price = 0;
-						$total = 0;
-						$total_gross = 0;
-						
-						if (isset($grnsview)) {
-
-							foreach ($grnsview as $value) {
-
-								$total_gross += $value->st_gross; 
-
-								$total += $value->st_net_weight; 
-
-								$count += 1;
-
-								$id = $value->id;
-
-								$total_bags += $value->st_bags;
-
-								$total_pkts += $value->st_pockets;
-
-								echo "<tr>";
-
-									echo "<td>".$value->cfd_lot_no."</td>";
-									echo "<td>".$value->st_outturn."</td>";
-									echo "<td>".$value->st_mark."</td>";
-									echo "<td>".$value->cgrad_name."</td>";
-									echo "<td>".$value->st_gross."</td>";
-									echo "<td>".$value->st_net_weight."</td>";
-									echo "<td>".$value->war_no."</td>";
-									echo "<td>"."<a href='/outturn_delete/{$value->stid}'  class='btn btn-success btn-danger' >Delete</a>";
-
-								echo "</tr>";
-
-							}
-						}
-					?>
-					  <tr>
-					    <?php
-						    echo "<td>".$count." Lot(s)</td>";
-						?>
-						<td></td>
-						<td></td>
-						<td></td>
-
-					    <?php
-						    echo "<td>".$total_gross." KG(s)</td>";
-						?>
-
-					    <?php
-						    echo "<td>".$total." KG(s)</td>";
-						?>
-						<td></td>
-						<td></td>
-						
-					  </tr>
-				</tbody>
-				</table>
-		</form>
-	</div>
-	<div class="col-md-6 col-md-offset-0 pre-scrollable" style="max-height: 800px;">
-	        	<input type="hidden" name="_token" value="{{ csrf_token() }}">		
-				<h3>Batch(s) In Outturn</h3>
-				<table class="table table-striped">
-				<thead>
-				<tr>			
-					<th>
-						Batch Kilos
-					</th>
-					<th>
-						Batch Tare
-					</th>
-					<th>
-						Batch Net
-					</th>
-					<th>
-						Packages
-					</th>
-					<th>
-						Warehouse
-					</th>
-					<th>
-						Row
-					</th>
-					<th>
-						Column
-					</th>
-					<th>
-						Zone
-					</th>
-					<th>
-						Remove
-					</th>
-				</tr>
-				</thead>
-				<tbody>
-
-					<?php
-						$total_bags = 0;
-						$total_pkts = 0;
-						$count = 0;
-						$count_green = 0;
-						$count_process = 0;
-						$count_screen = 0;
-						$count_cup = 0;
-						$total_price = 0;
-						$total = 0;
-						$total_tare = 0;
-						$total_net = 0;
-						$total_packages = 0;
-
-						if (isset($batchview)) {
-
-							foreach ($batchview as $value) {
-
-								$total += $value->btc_weight; 
-
-								$count += 1;
-
-								$total_tare += $value->btc_tare;
-
-								$total_net += $value->btc_net_weight;
-
-								$total_packages += $value->btc_packages;							
-
-								echo "<tr>";
-
-									echo "<td>".$value->btc_weight."</td>";
-									echo "<td>".$value->btc_tare."</td>";
-									echo "<td>".$value->btc_net_weight."</td>";
-									echo "<td>".$value->btc_packages."</td>";
-									echo "<td>".$value->wr_name."</td>";
-									echo "<td>".$value->loc_row."</td>";
-									echo "<td>".$value->loc_column."</td>";
-									echo "<td>".$value->btc_zone."</td>";
-									echo "<td>"."<a href='/batch_delete/{$value->btcid}'  class='btn btn-success btn-danger' >Delete</a>";
-
-								echo "</tr>";
-
-							}
-						}
-					?>
-					  <tr>
-
-					    <?php
-						    echo "<td>".$count." bt of ".$total." KGS</td>";
-						    echo "<td>".$total_tare."</td>";
-						    echo "<td>".$total_net." KGS</td>";
-						?>
-					    <?php
-						    echo "<td>".$total_packages." PK</td>";
-						?>
-					    <?php
-						    // echo "<td>".$total_pkts." Pkts</td>";
-						?>						
-						<td></td>						
-						<td></td>						
-						<td></td>						
-						<td></td>						
-					  </tr>
-				</tbody>
-				</table>
-	</div>
 </div>	
 <!-- Modal -->
 <div class="modal fade" id="ratesModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -1008,15 +795,6 @@
 
 @push('scripts')
 <script>
-$('#confirmgrnsbtn').prop('disabled', true);
-var autosubmit = <?php echo json_encode($autosubmit); ?>;
-console.log(autosubmit)
-	$(document).ready(function (){ 
-		$('#confirmgrnsbtn').prop('disabled', false);
-		if(autosubmit){
-			$( "#arrivalInformationForm" ).submit();
-		}
-	})
 
 	$( "#confirmgrnsbtn" ).click(function(event){
 		event.preventDefault();
@@ -1169,5 +947,60 @@ function printRate(){
 		
 	
 }
+</script>
+
+<script>
+	
+	$(document).ready(function (){ 
+		
+	    $(".searchable").searchable({
+	        maxListSize: 100,                       // if list size are less than maxListSize, show them all
+	        maxMultiMatch: 50,                      // how many matching entries should be displayed
+	        exactMatch: false,                      // Exact matching on search
+	        wildcards: true,                        // Support for wildcard characters (*, ?)
+	        ignoreCase: true,                       // Ignore case sensitivity
+	        latency: 200,                           // how many millis to wait until starting search
+	        warnMultiMatch: 'top {0} matches ...',  // string to append to a list of entries cut short by maxMultiMatch
+	        warnNoMatch: 'no matches ...',          // string to show in the list when no entries match
+	        zIndex: 'auto'                          // zIndex for elements generated by this plugin
+	    });
+	});
+</script>
+
+<script type="text/javascript">
+
+	function fetchOutturnNumber()
+	{
+
+		var item_id = $('#select_items').val();
+		var miller_id = $('#select_miller').val();
+
+		if (item_id != '' && miller_id != '') {
+			var url="{{ route('arrivalinformation.getOutturn',['item_id'=>":item_id", 'miller_id'=>":miller_id"]) }}";
+			url = url.replace(':item_id', item_id);
+			url = url.replace(':miller_id', miller_id);
+			var input = $('#outt_number');
+			input.val('');
+
+
+			$.ajax({
+			url: url,
+			type: 'GET',
+			}).success(function(response) {
+				var outturn = jQuery.parseJSON(response);
+				input.val(outturn);
+				input.prop('disabled', false);
+
+			}).error(function(error) {
+				input.prop('disabled', false);
+				console.log(error)
+			});
+
+		}
+
+
+
+
+	}
 </script>
 @endpush

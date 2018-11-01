@@ -158,19 +158,6 @@
 		}
 		
 
-
-
-// id, ctr_id, csn_id, cb_id, slr_id, wbi_ticket, wbi_delivery_number, wbi_vehicle_plate, wbi_weight_in, wbi_weight_out, wbi_confirmedby, wbi_time_in, wbi_time_out, wbi_movement_permit, wbi_driver_name, wbi_driver_id, wbi_dispatch_date, created_at, updated_at, rgn_id, bkg_id, trp_id, wbi_representative_name, wbi_representative_id, pl_id
-
-// selected_items
-// selected_customers
-
-
-
-
-
-
-
 	}
 ?>
     <div class="col-md-12">
@@ -267,9 +254,9 @@
 							@if (isset($items) && count($items) > 0)
 										@foreach ($items->all() as $value)
 											@if (in_array($value->id, $selected_items))
-												<option value="{{ $value->id }}" selected="selected">{{ $value->it_name}}</option>
+												<option value="{{ $value->id }}" selected="selected">&nbsp;&nbsp;&nbsp;{{ $value->it_name}}</option>
 											@else
-												<option value="{{ $value->id }}">{{ $value->it_name}}</option>
+												<option value="{{ $value->id }}">&nbsp;&nbsp;&nbsp;{{ $value->it_name}}</option>
 											@endif
 
 										@endforeach
@@ -458,7 +445,7 @@ function fetchClients()
 
 		$.each(customers,function(key, value) 
 		{	
-			select.append('<option value=' + value["id"] + '>' + value["name"] + '</option>');
+			select.append('<option value=' + value["id"] + '>&nbsp;&nbsp;&nbsp;' + value["name"] + '</option>');
 
 		});
 		initMultiSelect();

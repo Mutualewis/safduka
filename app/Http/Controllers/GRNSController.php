@@ -57,10 +57,11 @@ class GRNSController extends Controller {
         $warehouse = array();
         $packaging = Packaging::get();
         $grn_number = null;
+        $active_season = $this->getActiveSeason();
 
         if ($cidmain != null) {
 
-            $weighbridge_ticket = WeighbridgeInfo::where('ctr_id', $cidmain)->where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->orWhere('id', 1)->get(); 
+            $weighbridge_ticket = WeighbridgeInfo::where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->orWhere('id', 1)->get(); 
             $grn_no = Grn::where('ctr_id', $cidmain)->orderBy('id', 'desc')->first();
             
             if ($grn_no != NULL) {

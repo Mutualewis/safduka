@@ -34,8 +34,10 @@ use Ngea\ProvisionalAllocation;
 use Ngea\processrates;
 use Ngea\teams;
 use Ngea\processcharges;
-
-
+use Ngea\coffeegrower;
+use Ngea\Items;
+use Ngea\agent;
+use Ngea\Material;
 
 use Yajra\Datatables\Datatables;
 use niklasravnsborg\LaravelPdf\Facades\Pdf as PDF;
@@ -192,23 +194,20 @@ class WeighScaleController extends Controller {
     public function arrivalInformationForm (Request $request){
 
         $Season = Season::all(['id', 'csn_season']);
-
         $country = country::all(['id', 'ctr_name', 'ctr_initial']);
-
+        $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_code']);
+        $material = Material::all(['id', 'mt_name']);
+        $millers = agent::where('agtc_id', 1)->get();
         $cidmain = session('maincountry');
-
         $grn_no = null;
-
         $rates    = processrates::all(['id', 'service']);
-
         $teams   = teams::all(['id', 'tms_grpname']);
-
-
         $grn_number = null;
-
+        $active_season = $this->getActiveSeason();
+        $items = items::all(['id', 'it_name']);
         if ($cidmain != null) {
 
-            $weighbridge_ticket = WeighbridgeInfo::where('ctr_id', $cidmain)->where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->orWhere('id', 1)->get(); 
+            $weighbridge_ticket = WeighbridgeInfo::where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->orWhere('id', 1)->get(); 
 
             $grn_no = Grn::where('ctr_id', $cidmain)->orderBy('id', 'desc')->first();
 
@@ -228,7 +227,7 @@ class WeighScaleController extends Controller {
 
         }
 
-        return View::make('arrivalinformation', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'expected_arrival', 'rates', 'teams'));   
+        return View::make('arrivalinformation', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'expected_arrival', 'rates', 'teams', 'active_season', 'growers', 'items', 'millers', 'material'));   
 
     }
 

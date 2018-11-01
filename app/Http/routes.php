@@ -89,6 +89,9 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/weighbridge/getParking', ['as'=>'weighbridge.getParking','uses'=>'WeighbridgeController@getParking']);
 
 
+		Route::get('/arrivalinformation/getOutturn/{item_id}/{miller_id}', ['as'=>'arrivalinformation.getOutturn','uses'=>'Controller@getOutturn']);
+
+
 
 		Route::get('/weighbridgeout', 'WeighbridgeController@weighbridgeOutForm'); 
 		Route::post('/weighbridgeout', 'WeighbridgeController@weighbridgeout');
