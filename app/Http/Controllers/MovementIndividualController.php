@@ -219,7 +219,7 @@ class MovementIndividualController extends Controller {
 
 		if ($wrhse !== NULL) {
 
-			$location = Location::where('wr_id', $wrhse)->get();	
+			$location = Location::where('agt_id', $wrhse)->get();	
 
 		}
 

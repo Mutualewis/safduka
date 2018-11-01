@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.20-19, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.9, for Win32 (AMD64)
 --
--- Host: 127.0.0.1    Database: ngea_db
+-- Host: localhost    Database: ngea_db
 -- ------------------------------------------------------
--- Server version	5.7.20-19
+-- Server version	5.6.17
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,15 +14,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-/*!50717 SELECT COUNT(*) INTO @rocksdb_has_p_s_session_variables FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'performance_schema' AND TABLE_NAME = 'session_variables' */;
-/*!50717 SET @rocksdb_get_is_supported = IF (@rocksdb_has_p_s_session_variables, 'SELECT COUNT(*) INTO @rocksdb_is_supported FROM performance_schema.session_variables WHERE VARIABLE_NAME=\'rocksdb_bulk_load\'', 'SELECT 0') */;
-/*!50717 PREPARE s FROM @rocksdb_get_is_supported */;
-/*!50717 EXECUTE s */;
-/*!50717 DEALLOCATE PREPARE s */;
-/*!50717 SET @rocksdb_enable_bulk_load = IF (@rocksdb_is_supported, 'SET SESSION rocksdb_bulk_load = 1', 'SET @rocksdb_dummy_bulk_load = 0') */;
-/*!50717 PREPARE s FROM @rocksdb_enable_bulk_load */;
-/*!50717 EXECUTE s */;
-/*!50717 DEALLOCATE PREPARE s */;
 
 --
 -- Table structure for table `activity_log`
@@ -39,7 +30,7 @@ CREATE TABLE `activity_log` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,7 +39,7 @@ CREATE TABLE `activity_log` (
 
 LOCK TABLES `activity_log` WRITE;
 /*!40000 ALTER TABLE `activity_log` DISABLE KEYS */;
-INSERT INTO `activity_log` VALUES (1,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 11:38:30','2018-10-30 11:38:30'),(2,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 11:38:56','2018-10-30 11:38:56'),(3,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 11:39:53','2018-10-30 11:39:53'),(4,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 12:56:44','2018-10-30 12:56:44'),(5,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 12:57:43','2018-10-30 12:57:43'),(6,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 12:58:21','2018-10-30 12:58:21'),(7,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 12:58:33','2018-10-30 12:58:33'),(8,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 12:58:44','2018-10-30 12:58:44');
+INSERT INTO `activity_log` VALUES (1,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 11:38:30','2018-10-30 11:38:30'),(2,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 11:38:56','2018-10-30 11:38:56'),(3,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 11:39:53','2018-10-30 11:39:53'),(4,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 12:56:44','2018-10-30 12:56:44'),(5,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 12:57:43','2018-10-30 12:57:43'),(6,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 12:58:21','2018-10-30 12:58:21'),(7,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 12:58:33','2018-10-30 12:58:33'),(8,1,'Updated weighbridge information with ticket no. 0000001 date 2018-10-30 confirmed by 1 weight in 1000','192.168.7.216','2018-10-30 12:58:44','2018-10-30 12:58:44'),(9,1,'Inserted Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 18:39:15','2018-11-01 18:39:15'),(10,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 18:39:39','2018-11-01 18:39:39'),(11,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 18:45:56','2018-11-01 18:45:56'),(12,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:35:36','2018-11-01 19:35:36'),(13,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:37:51','2018-11-01 19:37:51'),(14,1,'Inserted Stock information with stid1 grn_id 1 dispatch_kilograms  delivery_kilograms  moisture 3 packaging 1','192.168.222.1','2018-11-01 19:37:51','2018-11-01 19:37:51'),(15,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:42:04','2018-11-01 19:42:04'),(16,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:42:42','2018-11-01 19:42:42'),(17,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:43:04','2018-11-01 19:43:04'),(18,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:43:23','2018-11-01 19:43:23'),(19,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:44:06','2018-11-01 19:44:06'),(20,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:45:19','2018-11-01 19:45:19'),(21,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:46:29','2018-11-01 19:46:29'),(22,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:46:55','2018-11-01 19:46:55'),(23,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:48:49','2018-11-01 19:48:49'),(24,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:49:50','2018-11-01 19:49:50'),(25,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:51:29','2018-11-01 19:51:29'),(26,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:52:09','2018-11-01 19:52:09'),(27,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 19:52:50','2018-11-01 19:52:50'),(28,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:07:43','2018-11-01 20:07:43'),(29,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:08:13','2018-11-01 20:08:13'),(30,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:08:53','2018-11-01 20:08:53'),(31,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:17:06','2018-11-01 20:17:06'),(32,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:17:28','2018-11-01 20:17:28'),(33,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:21:19','2018-11-01 20:21:19'),(34,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:22:22','2018-11-01 20:22:22'),(35,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:22:53','2018-11-01 20:22:53'),(36,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:22:59','2018-11-01 20:22:59'),(37,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:23:51','2018-11-01 20:23:51'),(38,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:24:36','2018-11-01 20:24:36'),(39,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:25:29','2018-11-01 20:25:29'),(40,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:25:50','2018-11-01 20:25:50'),(41,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:26:55','2018-11-01 20:26:55'),(42,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:27:49','2018-11-01 20:27:49'),(43,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:28:22','2018-11-01 20:28:22'),(44,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:28:52','2018-11-01 20:28:52'),(45,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:29:04','2018-11-01 20:29:04'),(46,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:29:47','2018-11-01 20:29:47'),(47,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:30:38','2018-11-01 20:30:38'),(48,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:31:12','2018-11-01 20:31:12'),(49,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:31:41','2018-11-01 20:31:41'),(50,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:32:50','2018-11-01 20:32:50'),(51,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:33:26','2018-11-01 20:33:26'),(52,1,'Updated Grn information with grn_id 1 ctr_id  wbi_id 1grn_number0000001','192.168.222.1','2018-11-01 20:33:48','2018-11-01 20:33:48'),(53,1,'Inserted Batch information with btid 1 batch_kilograms  bags -1 pockets -10 stid  btc_tare 10.8 btc_net_weight -10.8','192.168.222.1','2018-11-01 20:43:44','2018-11-01 20:43:44'),(54,1,'Inserted StockLocation information with bt_id 1 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:43:44','2018-11-01 20:43:44'),(55,1,'Inserted Batch information with btid 2 batch_kilograms  bags -1 pockets -10 stid  btc_tare 10.8 btc_net_weight -10.8','192.168.222.1','2018-11-01 20:45:54','2018-11-01 20:45:54'),(56,1,'Inserted StockLocation information with bt_id 2 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:45:54','2018-11-01 20:45:54'),(57,1,'Inserted Batch information with btid 3 batch_kilograms 0 bags -1 pockets -21 stid  btc_tare 21.6 btc_net_weight -21.8','192.168.222.1','2018-11-01 20:46:34','2018-11-01 20:46:34'),(58,1,'Inserted StockLocation information with bt_id 3 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:46:35','2018-11-01 20:46:35'),(59,1,'Inserted Batch information with btid 4 batch_kilograms 0 bags -1 pockets -32 stid  btc_tare 32.4 btc_net_weight -32.8','192.168.222.1','2018-11-01 20:47:35','2018-11-01 20:47:35'),(60,1,'Inserted StockLocation information with bt_id 4 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:47:35','2018-11-01 20:47:35'),(61,1,'Inserted Batch information with btid 5 batch_kilograms 0 bags -1 pockets -43 stid  btc_tare 43.2 btc_net_weight -43.8','192.168.222.1','2018-11-01 20:47:55','2018-11-01 20:47:55'),(62,1,'Inserted StockLocation information with bt_id 5 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:47:55','2018-11-01 20:47:55'),(63,1,'Inserted Batch information with btid 6 batch_kilograms 0 bags -1 pockets -54 stid  btc_tare 54 btc_net_weight -54.8','192.168.222.1','2018-11-01 20:48:39','2018-11-01 20:48:39'),(64,1,'Inserted StockLocation information with bt_id 6 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:48:39','2018-11-01 20:48:39'),(65,1,'Inserted Batch information with btid 7 batch_kilograms  bags -1 pockets -10 stid 1 btc_tare 10.8 btc_net_weight -10.8','192.168.222.1','2018-11-01 20:50:42','2018-11-01 20:50:42'),(66,1,'Inserted StockLocation information with bt_id 7 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:50:42','2018-11-01 20:50:42'),(67,1,'Inserted Batch information with btid 8 batch_kilograms 0 bags -1 pockets -21 stid 1 btc_tare 21.6 btc_net_weight -21.8','192.168.222.1','2018-11-01 20:51:11','2018-11-01 20:51:11'),(68,1,'Inserted StockLocation information with bt_id 8 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:51:11','2018-11-01 20:51:11'),(69,1,'Inserted Batch information with btid 9 batch_kilograms  bags -1 pockets -10 stid 1 btc_tare 10.8 btc_net_weight -10.8','192.168.222.1','2018-11-01 20:55:35','2018-11-01 20:55:35'),(70,1,'Inserted StockLocation information with bt_id 9 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:55:35','2018-11-01 20:55:35'),(71,1,'Inserted Batch information with btid 10 batch_kilograms 0 bags -1 pockets -21 stid 1 btc_tare 21.6 btc_net_weight -21.8','192.168.222.1','2018-11-01 20:56:36','2018-11-01 20:56:36'),(72,1,'Inserted StockLocation information with bt_id 10 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:56:36','2018-11-01 20:56:36'),(73,1,'Inserted Batch information with btid 11 batch_kilograms 0 bags -1 pockets -32 stid 1 btc_tare 32.4 btc_net_weight -32.8','192.168.222.1','2018-11-01 20:56:50','2018-11-01 20:56:50'),(74,1,'Inserted StockLocation information with bt_id 11 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:56:50','2018-11-01 20:56:50'),(75,1,'Inserted Batch information with btid 12 batch_kilograms 0 bags -1 pockets -43 stid 1 btc_tare 43.2 btc_net_weight -43.8','192.168.222.1','2018-11-01 20:57:02','2018-11-01 20:57:02'),(76,1,'Inserted StockLocation information with bt_id 12 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:57:02','2018-11-01 20:57:02'),(77,1,'Inserted Batch information with btid 13 batch_kilograms 0 bags -1 pockets -54 stid 1 btc_tare 54 btc_net_weight -54.8','192.168.222.1','2018-11-01 20:57:44','2018-11-01 20:57:44'),(78,1,'Inserted StockLocation information with bt_id 13 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:57:44','2018-11-01 20:57:44'),(79,1,'Inserted Batch information with btid 14 batch_kilograms 0 bags -2 pockets -5 stid 1 btc_tare 64.8 btc_net_weight -65.8','192.168.222.1','2018-11-01 20:58:20','2018-11-01 20:58:20'),(80,1,'Inserted StockLocation information with bt_id 14 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:58:20','2018-11-01 20:58:20'),(81,1,'Inserted Batch information with btid 15 batch_kilograms  bags -1 pockets -10 stid 1 btc_tare 10.8 btc_net_weight -10.8','192.168.222.1','2018-11-01 20:59:53','2018-11-01 20:59:53'),(82,1,'Inserted StockLocation information with bt_id 15 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 20:59:53','2018-11-01 20:59:53'),(83,1,'Inserted Batch information with btid 16 batch_kilograms 0 bags -1 pockets -21 stid 1 btc_tare 21.6 btc_net_weight -21.8','192.168.222.1','2018-11-01 21:00:08','2018-11-01 21:00:08'),(84,1,'Inserted StockLocation information with bt_id 16 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:00:08','2018-11-01 21:00:08'),(85,1,'Inserted Batch information with btid 17 batch_kilograms 0 bags -1 pockets -32 stid 1 btc_tare 32.4 btc_net_weight -32.8','192.168.222.1','2018-11-01 21:00:49','2018-11-01 21:00:49'),(86,1,'Inserted StockLocation information with bt_id 17 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:00:49','2018-11-01 21:00:49'),(87,1,'Inserted Batch information with btid 18 batch_kilograms 0 bags -1 pockets -43 stid 1 btc_tare 43.2 btc_net_weight -43.8','192.168.222.1','2018-11-01 21:02:09','2018-11-01 21:02:09'),(88,1,'Inserted StockLocation information with bt_id 18 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:02:09','2018-11-01 21:02:09'),(89,1,'Inserted Batch information with btid 19 batch_kilograms 0 bags -1 pockets -54 stid 1 btc_tare 54 btc_net_weight -54.8','192.168.222.1','2018-11-01 21:03:07','2018-11-01 21:03:07'),(90,1,'Inserted StockLocation information with bt_id 19 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:03:07','2018-11-01 21:03:07'),(91,1,'Inserted Batch information with btid 20 batch_kilograms 0 bags -2 pockets -5 stid 1 btc_tare 64.8 btc_net_weight -65.8','192.168.222.1','2018-11-01 21:03:15','2018-11-01 21:03:15'),(92,1,'Inserted StockLocation information with bt_id 20 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:03:15','2018-11-01 21:03:15'),(93,1,'Inserted Batch information with btid 21 batch_kilograms 0 bags -2 pockets -16 stid 1 btc_tare 75.6 btc_net_weight -76.8','192.168.222.1','2018-11-01 21:03:48','2018-11-01 21:03:48'),(94,1,'Inserted StockLocation information with bt_id 21 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:03:48','2018-11-01 21:03:48'),(95,1,'Inserted Batch information with btid 22 batch_kilograms 0 bags -2 pockets -27 stid 1 btc_tare 86.4 btc_net_weight -87.8','192.168.222.1','2018-11-01 21:06:00','2018-11-01 21:06:00'),(96,1,'Inserted StockLocation information with bt_id 22 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:06:00','2018-11-01 21:06:00'),(97,1,'Inserted Batch information with btid 23 batch_kilograms 0 bags -2 pockets -38 stid 1 btc_tare 97.2 btc_net_weight -98.8','192.168.222.1','2018-11-01 21:06:13','2018-11-01 21:06:13'),(98,1,'Inserted StockLocation information with bt_id 23 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:06:13','2018-11-01 21:06:13'),(99,1,'Inserted Batch information with btid 24 batch_kilograms 0 bags -2 pockets -49 stid 1 btc_tare 108 btc_net_weight -109.8','192.168.222.1','2018-11-01 21:06:20','2018-11-01 21:06:20'),(100,1,'Inserted StockLocation information with bt_id 24 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:06:20','2018-11-01 21:06:20'),(101,1,'Inserted Batch information with btid 25 batch_kilograms 0 bags -3 pockets 0 stid 1 btc_tare 118.8 btc_net_weight -120.8','192.168.222.1','2018-11-01 21:07:03','2018-11-01 21:07:03'),(102,1,'Inserted StockLocation information with bt_id 25 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:07:03','2018-11-01 21:07:03'),(103,1,'Inserted Batch information with btid 26 batch_kilograms 100 bags -1 pockets -31 stid 1 btc_tare 129.6 btc_net_weight -31.8','192.168.222.1','2018-11-01 21:07:41','2018-11-01 21:07:41'),(104,1,'Inserted StockLocation information with bt_id 26 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:07:41','2018-11-01 21:07:41'),(105,1,'Inserted Batch information with btid 27 batch_kilograms 100 bags 1 pockets 29 stid 1 btc_tare 10.8 btc_net_weight 89.2','192.168.222.1','2018-11-01 21:08:13','2018-11-01 21:08:13'),(106,1,'Inserted StockLocation information with bt_id 27 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:08:13','2018-11-01 21:08:13'),(107,1,'Inserted Batch information with btid 28 batch_kilograms 200 bags 2 pockets 58 stid 1 btc_tare 21.6 btc_net_weight 178.2','192.168.222.1','2018-11-01 21:17:39','2018-11-01 21:17:39'),(108,1,'Inserted StockLocation information with bt_id 28 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:17:39','2018-11-01 21:17:39'),(109,1,'Inserted Batch information with btid 29 batch_kilograms 300 bags 4 pockets 27 stid 1 btc_tare 32.4 btc_net_weight 267.2','192.168.222.1','2018-11-01 21:18:45','2018-11-01 21:18:45'),(110,1,'Inserted StockLocation information with bt_id 29 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:18:45','2018-11-01 21:18:45'),(111,1,'Inserted Batch information with btid 30 batch_kilograms 400 bags 5 pockets 56 stid 1 btc_tare 43.2 btc_net_weight 356.2','192.168.222.1','2018-11-01 21:21:03','2018-11-01 21:21:03'),(112,1,'Inserted StockLocation information with bt_id 30 locrowid 1 loccolid 1 zone 2','192.168.222.1','2018-11-01 21:21:03','2018-11-01 21:21:03');
 /*!40000 ALTER TABLE `activity_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -69,7 +60,7 @@ CREATE TABLE `agent_agt` (
   PRIMARY KEY (`id`),
   KEY `agent_agt_agtc_id_foreign` (`agtc_id`),
   CONSTRAINT `agent_agt_agtc_id_foreign` FOREIGN KEY (`agtc_id`) REFERENCES `agent_category_agtc` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -78,7 +69,7 @@ CREATE TABLE `agent_agt` (
 
 LOCK TABLES `agent_agt` WRITE;
 /*!40000 ALTER TABLE `agent_agt` DISABLE KEYS */;
-INSERT INTO `agent_agt` VALUES (2,1,'Lewis','10001','2018-10-24 14:18:58','2018-10-24 14:18:58');
+INSERT INTO `agent_agt` VALUES (2,1,'Lewis','LE','2018-10-24 14:18:58','2018-10-24 14:18:58'),(4,4,'NKG MILLS','NG','2018-10-24 14:18:58','2018-10-31 11:59:43');
 /*!40000 ALTER TABLE `agent_agt` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -95,7 +86,7 @@ CREATE TABLE `agent_category_agtc` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -104,7 +95,7 @@ CREATE TABLE `agent_category_agtc` (
 
 LOCK TABLES `agent_category_agtc` WRITE;
 /*!40000 ALTER TABLE `agent_category_agtc` DISABLE KEYS */;
-INSERT INTO `agent_category_agtc` VALUES (1,'Miller','2018-10-24 14:18:32',NULL);
+INSERT INTO `agent_category_agtc` VALUES (1,'Miller','2018-10-24 14:18:32',NULL),(4,'Warehouse','2018-10-31 11:59:15','2018-10-31 11:59:15');
 /*!40000 ALTER TABLE `agent_category_agtc` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -204,7 +195,7 @@ CREATE TABLE `basket_bs` (
   PRIMARY KEY (`id`),
   KEY `fk_score_type_bs_region_rgn1_idx` (`ctr_id`),
   CONSTRAINT `fk_score_type_bs_region_rgn1` FOREIGN KEY (`ctr_id`) REFERENCES `country_ctr` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -213,6 +204,7 @@ CREATE TABLE `basket_bs` (
 
 LOCK TABLES `basket_bs` WRITE;
 /*!40000 ALTER TABLE `basket_bs` DISABLE KEYS */;
+INSERT INTO `basket_bs` VALUES (1,1,'10040','AB/PB PLUS',NULL,1,'2017-01-26 12:41:23','2017-01-26 12:41:23'),(2,1,'10060','AA FAQ',NULL,1,'2017-01-26 12:41:23','2017-01-26 12:41:23'),(3,1,'10070','AB/PB FAQ',NULL,1,'2017-01-26 12:41:23','2017-01-26 12:41:23'),(4,1,'10084','C FAQ',NULL,1,'2017-01-26 12:41:23','2017-01-26 12:41:23'),(5,1,'10090','AA MINUS',NULL,1,'2017-01-26 12:41:23','2017-01-26 12:41:23'),(6,1,'10100','AB/PB MINUS',NULL,1,'2017-01-26 12:41:23','2017-01-26 12:41:23'),(7,1,'10115','C MINUS',NULL,1,'2017-01-26 12:41:23','2017-01-26 12:41:23'),(8,1,'10130','GRINDER',NULL,1,'2017-01-26 12:41:23','2017-01-26 12:41:23'),(9,1,'10140','MH',NULL,1,'2017-01-26 12:41:23','2017-01-26 12:41:23'),(10,1,'10310','AA/AB/PB PLUS CERTIFIED',NULL,1,'2017-01-26 12:41:23','2017-01-26 12:41:23'),(11,1,'10020','AB/PB TOP',NULL,1,'2017-03-03 05:56:54','2017-03-03 05:56:54'),(12,1,'10015','AA PLUS CERTIFIED',NULL,1,'2017-03-03 05:57:20','2017-03-03 05:57:20'),(13,1,'10030','AA PLUS',NULL,1,'2017-03-03 05:58:16','2017-03-03 05:58:16'),(14,1,'10045','ABC CERTIFIED',NULL,1,'2017-03-03 06:11:14','2017-03-03 06:11:14'),(15,1,'10055','C PLUS',NULL,1,'2017-03-03 06:11:50','2017-03-03 06:11:50'),(16,1,'10080','ABC FAQ',NULL,1,'2017-03-03 06:12:47','2017-03-03 06:12:47'),(17,1,'10110','ABC MINUS',NULL,1,'2017-03-03 06:13:47','2017-03-03 06:13:47'),(18,1,'10120','GRINDER PLUS',NULL,1,'2017-03-03 06:14:20','2017-03-03 06:14:20'),(19,1,'10135','GRINDER MINUS',NULL,1,'2017-03-03 06:15:00','2017-03-03 06:15:00'),(20,1,'10137','GRINDER CERTIFIED',NULL,1,'2017-03-03 06:15:45','2017-03-03 06:15:45'),(21,1,'10025','GRINDER - H CLASS',NULL,1,'2017-03-03 06:16:25','2017-03-03 06:16:25'),(22,1,'10150','ML',NULL,1,'2017-03-03 06:16:54','2017-03-03 06:16:54'),(23,1,'10260','UGI HP MIXED',NULL,1,'2017-03-03 06:17:39','2017-03-03 06:17:39'),(24,1,'10262','UG2 HP BLACK',NULL,1,'2017-03-03 06:18:02','2017-03-03 06:18:02'),(25,1,'10264','UG3 GT LIGHT',NULL,1,'2017-03-03 06:19:00','2017-03-03 06:19:00'),(26,1,'10010','AA TOP',NULL,1,'2017-03-06 12:24:40','2017-03-06 12:24:40'),(27,1,'10050 ','ABC Plus',NULL,1,'2018-01-31 07:52:06','2018-01-31 07:52:06'),(28,1,'0','Not Set',NULL,1,'2018-04-06 13:06:53','2018-04-06 13:06:53'),(29,1,'10261','UG 1 Plus','UG 1 Plus',1,'2018-10-17 13:14:28','2018-10-17 13:14:28');
 /*!40000 ALTER TABLE `basket_bs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -227,6 +219,7 @@ CREATE TABLE `batch_btc` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `btc_number` int(11) DEFAULT NULL,
   `st_id` int(11) DEFAULT NULL,
+  `ws_id` int(11) DEFAULT NULL,
   `btc_weight` int(11) DEFAULT NULL,
   `btc_tare` decimal(18,2) DEFAULT NULL,
   `btc_net_weight` int(11) DEFAULT NULL,
@@ -242,7 +235,7 @@ CREATE TABLE `batch_btc` (
   PRIMARY KEY (`id`),
   KEY `st_id_idx` (`st_id`),
   KEY `f` (`btc_net_weight`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -251,11 +244,12 @@ CREATE TABLE `batch_btc` (
 
 LOCK TABLES `batch_btc` WRITE;
 /*!40000 ALTER TABLE `batch_btc` DISABLE KEYS */;
+INSERT INTO `batch_btc` VALUES (27,NULL,1,6,100,10.80,89,12,1,29,NULL,NULL,NULL,NULL,NULL,NULL),(28,NULL,1,6,100,10.80,89,12,1,29,NULL,NULL,NULL,NULL,NULL,NULL),(29,NULL,1,6,100,10.80,89,12,1,29,NULL,NULL,NULL,NULL,NULL,NULL),(30,NULL,1,6,100,10.80,89,12,1,29,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `batch_btc` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Temporary table structure for view `booking`
+-- Temporary view structure for view `booking`
 --
 
 DROP TABLE IF EXISTS `booking`;
@@ -310,7 +304,7 @@ INSERT INTO `booking_bkg` VALUES (3,'10001',1,'2018-10-10',NULL,0,NULL,'2018-10-
 UNLOCK TABLES;
 
 --
--- Temporary table structure for view `booking_items`
+-- Temporary view structure for view `booking_items`
 --
 
 DROP TABLE IF EXISTS `booking_items`;
@@ -721,7 +715,9 @@ DROP TABLE IF EXISTS `coffee_seasons_csn`;
 CREATE TABLE `coffee_seasons_csn` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `csn_season` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `csn_date_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `csn_active` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -732,7 +728,7 @@ CREATE TABLE `coffee_seasons_csn` (
 
 LOCK TABLES `coffee_seasons_csn` WRITE;
 /*!40000 ALTER TABLE `coffee_seasons_csn` DISABLE KEYS */;
-INSERT INTO `coffee_seasons_csn` VALUES (1,'2017/2018','2018-10-30 14:01:08'),(2,'2018/2019','2018-10-30 14:01:08');
+INSERT INTO `coffee_seasons_csn` VALUES (1,'2017/2018',NULL,NULL,NULL),(2,'2018/2019','1',NULL,NULL);
 /*!40000 ALTER TABLE `coffee_seasons_csn` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -876,6 +872,33 @@ CREATE TABLE `credit_note_cn` (
 LOCK TABLES `credit_note_cn` WRITE;
 /*!40000 ALTER TABLE `credit_note_cn` DISABLE KEYS */;
 /*!40000 ALTER TABLE `credit_note_cn` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cup_comments`
+--
+
+DROP TABLE IF EXISTS `cup_comments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cup_comments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `st_mill_id` int(10) unsigned DEFAULT NULL,
+  `st_wr_id` int(10) unsigned DEFAULT NULL,
+  `qp_id` int(10) unsigned DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cup_comments`
+--
+
+LOCK TABLES `cup_comments` WRITE;
+/*!40000 ALTER TABLE `cup_comments` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cup_comments` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1115,14 +1138,15 @@ DROP TABLE IF EXISTS `grn_gr`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grn_gr` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `agt_id` int(11) DEFAULT NULL,
   `ctr_id` int(11) DEFAULT NULL,
-  `wb_id` int(11) DEFAULT NULL,
+  `wbi_id` int(11) DEFAULT NULL,
   `gr_number` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `gr_confirmed_by` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1131,6 +1155,7 @@ CREATE TABLE `grn_gr` (
 
 LOCK TABLES `grn_gr` WRITE;
 /*!40000 ALTER TABLE `grn_gr` DISABLE KEYS */;
+INSERT INTO `grn_gr` VALUES (1,4,NULL,1,'0000001',NULL,NULL,'2018-11-01 20:33:47');
 /*!40000 ALTER TABLE `grn_gr` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1194,7 +1219,7 @@ CREATE TABLE `groupmenu_gpm` (
 
 LOCK TABLES `groupmenu_gpm` WRITE;
 /*!40000 ALTER TABLE `groupmenu_gpm` DISABLE KEYS */;
-INSERT INTO `groupmenu_gpm` VALUES (1,4,1,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(2,4,3,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(3,4,4,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(4,4,5,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(5,4,6,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(6,4,7,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(7,4,8,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(8,4,9,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(9,4,10,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(10,4,11,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(11,4,12,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(12,4,13,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(13,4,14,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(14,4,15,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(495,4,15,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(496,4,16,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(497,4,17,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(498,4,18,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(499,4,19,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(500,4,20,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(501,4,21,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(502,4,22,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(503,4,23,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(504,4,24,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(505,4,25,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(506,4,26,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(507,4,27,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(508,4,28,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(509,4,29,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(510,4,30,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(511,4,31,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(512,4,146,'[\"2\"]','2018-10-30 06:12:56','2018-10-30 06:12:56'),(513,4,147,'[\"1\"]','2018-10-30 06:12:56','2018-10-30 06:12:56'),(514,4,148,'[\"1\"]','2018-10-30 06:12:56','2018-10-30 06:12:56'),(515,4,149,'[\"1\"]','2018-10-30 06:12:56','2018-10-30 06:12:56'),(516,4,150,'[\"1\"]','2018-10-30 06:12:56','2018-10-30 06:12:56'),(517,4,151,'[\"1\"]','2018-10-30 06:12:56','2018-10-30 06:12:56'),(518,4,152,'[\"1\"]','2018-10-30 06:12:56','2018-10-30 06:12:56');
+INSERT INTO `groupmenu_gpm` VALUES (1,4,1,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(2,4,3,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(3,4,4,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(4,4,5,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(5,4,6,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(6,4,7,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(7,4,8,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(8,4,9,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(9,4,10,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(10,4,11,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(11,4,12,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(12,4,13,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(13,4,14,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(14,4,15,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(495,4,15,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(496,4,16,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(497,4,17,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(498,4,18,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(499,4,19,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(500,4,20,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(501,4,21,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(502,4,22,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(503,4,23,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(504,4,24,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(505,4,25,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(506,4,26,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(507,4,27,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(508,4,28,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(509,4,29,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(510,4,30,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(511,4,31,'[\"1\"]','2018-05-10 18:00:00','2018-05-10 18:00:00'),(512,4,146,'[\"2\"]','2018-10-30 06:12:56','2018-10-30 06:12:56'),(513,4,147,'[\"1\"]','2018-10-30 06:12:56','2018-10-30 06:12:56'),(514,4,148,'[\"1\"]','2018-10-30 06:12:56','2018-10-30 06:12:56'),(515,4,149,'[\"2\"]','2018-10-30 06:12:56','2018-10-30 06:12:56'),(516,4,150,'[\"1\"]','2018-10-30 06:12:56','2018-10-30 06:12:56'),(517,4,151,'[\"2\"]','2018-10-30 06:12:56','2018-10-30 06:12:56'),(518,4,152,'[\"1\"]','2018-10-30 06:12:56','2018-10-30 06:12:56');
 /*!40000 ALTER TABLE `groupmenu_gpm` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1405,12 +1430,10 @@ DROP TABLE IF EXISTS `items_it`;
 CREATE TABLE `items_it` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `it_name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `it_client` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `it_client_table` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1419,7 +1442,7 @@ CREATE TABLE `items_it` (
 
 LOCK TABLES `items_it` WRITE;
 /*!40000 ALTER TABLE `items_it` DISABLE KEYS */;
-INSERT INTO `items_it` VALUES (1,'Parchment','1','1','2018-10-24 14:43:07','2018-10-24 14:43:07'),(2,'Clean','1','1','2018-10-24 14:43:07','2018-10-24 14:43:07'),(3,'Green','1','1','2018-10-24 14:43:07','2018-10-24 14:43:07'),(4,'Husk','1','1','2018-10-30 08:07:52','2018-10-30 08:07:52');
+INSERT INTO `items_it` VALUES (1,'Parchment','2018-10-24 14:43:07','2018-10-24 14:43:07'),(2,'Estate Cured','2018-10-24 14:43:07','2018-10-24 14:43:07'),(3,'Clean','2018-10-24 14:43:07','2018-10-24 14:43:07'),(4,'Sweeping','2018-10-30 08:07:52','2018-10-30 08:07:52'),(5,'Green','2018-10-30 20:30:33','2018-10-30 20:30:33'),(6,'Husk','2018-10-30 20:30:33','2018-10-30 20:30:33'),(7,'Parchment Bulk','2018-10-30 21:35:48','2018-10-30 21:35:48'),(8,'Clean Bulk','2018-10-30 21:35:48','2018-10-30 21:35:48');
 /*!40000 ALTER TABLE `items_it` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1432,14 +1455,14 @@ DROP TABLE IF EXISTS `location_loc`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `location_loc` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `wr_id` int(11) DEFAULT NULL,
+  `agt_id` int(11) DEFAULT NULL,
   `loc_row` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `loc_column` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `loc_description` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1448,6 +1471,7 @@ CREATE TABLE `location_loc` (
 
 LOCK TABLES `location_loc` WRITE;
 /*!40000 ALTER TABLE `location_loc` DISABLE KEYS */;
+INSERT INTO `location_loc` VALUES (1,4,'A','1',NULL,NULL,NULL),(2,4,'B','2',NULL,NULL,NULL),(3,4,'C','3',NULL,NULL,NULL),(4,4,'D','4',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `location_loc` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1460,12 +1484,12 @@ DROP TABLE IF EXISTS `material_mt`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `material_mt` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `mt_name` int(10) DEFAULT NULL,
+  `mt_name` varchar(50) DEFAULT NULL,
   `mt_description` varchar(50) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1474,6 +1498,7 @@ CREATE TABLE `material_mt` (
 
 LOCK TABLES `material_mt` WRITE;
 /*!40000 ALTER TABLE `material_mt` DISABLE KEYS */;
+INSERT INTO `material_mt` VALUES (1,'P1','','2018-10-30 20:57:12',NULL),(2,'P2','','2018-10-30 20:57:12',NULL),(3,'PL','','2018-10-30 20:57:12',NULL),(4,'MBUNI','','2018-10-30 20:57:12',NULL),(5,'AA','','2018-10-30 20:57:12',NULL),(6,'AB','','2018-10-30 20:57:12',NULL),(7,'C','','2018-10-30 20:57:12',NULL);
 /*!40000 ALTER TABLE `material_mt` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1505,7 +1530,7 @@ CREATE TABLE `menu_mn` (
 
 LOCK TABLES `menu_mn` WRITE;
 /*!40000 ALTER TABLE `menu_mn` DISABLE KEYS */;
-INSERT INTO `menu_mn` VALUES (1,'Department','Add/update department','settingsdepartment',2,15,NULL,1,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(3,'Menu','Add/update menus','settingsmenu',2,15,NULL,2,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(4,'Home','View home page','home',1,0,'coffee',1,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(5,'Registration','Top menu registration','registration',1,0,'user-plus',2,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(6,'Users','Register users','registeruser',2,5,NULL,1,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(7,'UserManager','Manage users and their roles','usermanager',1,0,'users',3,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(8,'Roles','Add roles','roles',2,7,NULL,1,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(9,'Role User','Add users','rolesuser',2,7,NULL,2,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(10,'Grower Manager','Manage all growers activities','#',1,0,'file',4,'2018-10-21 03:41:54',NULL),(11,'Arrival','Weigh trucks','weighbridge',1,0,'truck',5,'2018-10-21 03:41:54',NULL),(12,'Quality','Quality operatins','#',1,0,'thumbs-up',6,'2018-10-21 03:41:54',NULL),(13,'Warehouse','Warehuse management','#',1,0,'building',7,'2018-10-21 03:41:54',NULL),(14,'Processing','Handle all processing','#',1,0,'star',8,'2018-10-21 03:41:54',NULL),(15,'Settings','Application settings','#',1,0,'cog',9,'2018-10-21 03:41:54',NULL),(16,'Intake Ticket - IN','Capture weight in','weighbridge',2,11,NULL,1,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(17,'Intake Ticket - OUT','Capture weight out','weighbridgeout',2,11,NULL,3,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(146,'Arrival GRNS ','Receive coffee and update grns ','arrivalinformationgrns',2,13,NULL,1,'2018-10-25 08:30:02',NULL),(147,'GRNS','Receive coffee and update grns ','arrivalinformation',2,11,NULL,2,'2018-05-10 21:00:00','2018-05-10 21:00:00'),(148,'Arrival Quality Information','Confirm arrival quality information','arrivalqualityinformationlist',2,13,NULL,3,'2018-05-10 21:00:00','2018-05-10 21:00:00'),(149,'Weight Note','Weighing coffee in the warehouse','weighnote',2,13,NULL,4,'2018-10-05 09:09:31',NULL),(150,'Movement Individual','Issue individual movement instruction','movementindividual',2,13,NULL,5,'2018-07-26 14:33:18',NULL),(151,'Movement Instruction','Issue movement instruction','movementspecial',2,13,NULL,6,'2018-05-10 21:00:00','2018-05-10 21:00:00'),(152,'Confirm Movement','Confirm movement','movementconfirmation',2,13,NULL,7,'2018-05-10 21:00:00','2018-05-10 21:00:00');
+INSERT INTO `menu_mn` VALUES (1,'Department','Add/update department','settingsdepartment',2,15,NULL,1,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(3,'Menu','Add/update menus','settingsmenu',2,15,NULL,2,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(4,'Home','View home page','home',1,0,'coffee',1,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(5,'Registration','Top menu registration','registration',1,0,'user-plus',2,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(6,'Users','Register users','registeruser',2,5,NULL,1,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(7,'UserManager','Manage users and their roles','usermanager',1,0,'users',3,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(8,'Roles','Add roles','roles',2,7,NULL,1,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(9,'Role User','Add users','rolesuser',2,7,NULL,2,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(10,'Grower Manager','Manage all growers activities','#',1,0,'file',4,'2018-10-21 03:41:54',NULL),(11,'Arrival','Weigh trucks','weighbridge',1,0,'truck',5,'2018-10-21 03:41:54',NULL),(12,'Quality','Quality operatins','#',1,0,'thumbs-up',6,'2018-10-21 03:41:54',NULL),(13,'Warehouse','Warehuse management','#',1,0,'building',7,'2018-10-21 03:41:54',NULL),(14,'Processing','Handle all processing','#',1,0,'star',8,'2018-10-21 03:41:54',NULL),(15,'Settings','Application settings','#',1,0,'cog',9,'2018-10-21 03:41:54',NULL),(16,'Intake Ticket - IN','Capture weight in','weighbridge',2,11,NULL,1,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(17,'Intake Ticket - OUT','Capture weight out','weighbridgeout',2,11,NULL,3,'2018-05-10 18:00:00','2018-05-10 18:00:00'),(146,'Arrival GRNS ','Receive coffee and update grns ','arrivalinformationgrns',2,13,NULL,1,'2018-10-25 08:30:02',NULL),(147,'GRNS','Receive coffee and update grns ','arrivalinformation',2,11,NULL,2,'2018-05-10 21:00:00','2018-05-10 21:00:00'),(148,'Generate Warrants','Generate Warrants','arrivalqualityinformationlist',2,13,NULL,3,'2018-05-10 21:00:00','2018-05-10 21:00:00'),(149,'Weight Note','Weighing coffee in the warehouse','weighnote',2,13,NULL,4,'2018-10-05 09:09:31',NULL),(150,'Movement Individual','Issue individual movement instruction','movementindividual',2,13,NULL,5,'2018-07-26 14:33:18',NULL),(151,'Movement Instruction','Issue movement instruction','movementspecial',2,13,NULL,6,'2018-05-10 21:00:00','2018-05-10 21:00:00'),(152,'Confirm Movement','Confirm movement','movementconfirmation',2,13,NULL,7,'2018-05-10 21:00:00','2018-05-10 21:00:00');
 /*!40000 ALTER TABLE `menu_mn` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1641,6 +1666,39 @@ LOCK TABLES `movement_instruction_type_mit` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `outturn_number_settings_ons`
+--
+
+DROP TABLE IF EXISTS `outturn_number_settings_ons`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `outturn_number_settings_ons` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `it_id` int(10) DEFAULT NULL,
+  `ons_transactin_type` varchar(45) DEFAULT NULL,
+  `ons_item_phase` varchar(45) DEFAULT NULL,
+  `ons_prefix` int(11) DEFAULT NULL,
+  `ons_padding_character` int(11) DEFAULT NULL,
+  `ons_length` int(11) DEFAULT NULL,
+  `ons_previous_week` varchar(45) DEFAULT NULL,
+  `ons_previous_number` varchar(45) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `outturn_number_settings_ons`
+--
+
+LOCK TABLES `outturn_number_settings_ons` WRITE;
+/*!40000 ALTER TABLE `outturn_number_settings_ons` DISABLE KEYS */;
+INSERT INTO `outturn_number_settings_ons` VALUES (1,1,'GRN','RAW',0,0,3,'05','12','2018-10-30 19:10:51','2018-10-30 19:10:51'),(2,2,'GRN','CLEAN',3,0,3,'01',NULL,'2018-10-30 19:10:51','2018-10-30 19:10:51'),(3,7,'BULKING','RAW',1,0,3,'01',NULL,'2018-10-30 19:10:51','2018-10-30 19:10:51'),(4,8,'BULKING','CLEAN',2,0,3,'01',NULL,'2018-10-30 19:10:51','2018-10-30 19:10:51'),(5,4,'SWEEPINGS','RAW AND CLEEN',4,0,3,'01',NULL,'2018-10-30 19:10:51','2018-10-30 19:10:51');
+/*!40000 ALTER TABLE `outturn_number_settings_ons` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `outturn_quality_oqlty`
 --
 
@@ -1659,7 +1717,7 @@ CREATE TABLE `outturn_quality_oqlty` (
   `oqlty_aqr_serial` varchar(50) DEFAULT NULL,
   `oqlty_date_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6235 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1712,7 +1770,7 @@ CREATE TABLE `packaging_pkg` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1721,6 +1779,7 @@ CREATE TABLE `packaging_pkg` (
 
 LOCK TABLES `packaging_pkg` WRITE;
 /*!40000 ALTER TABLE `packaging_pkg` DISABLE KEYS */;
+INSERT INTO `packaging_pkg` VALUES (1,'SISAL','The fiber made from the sisal plant, used esp',NULL,NULL,NULL),(2,'JUTE','Rough fiber made from the stems of a tropical',0.90,NULL,NULL),(3,'ECOTACT',NULL,0.10,NULL,NULL),(4,'GRAIN PRO',NULL,0.10,NULL,NULL),(5,'VACUUM',NULL,1.10,NULL,NULL),(7,'30 KGS',NULL,0.00,NULL,NULL),(8,'SISAL + ECOTAT',NULL,1.10,NULL,NULL),(9,'SISAL + GRAIN PRO',NULL,1.10,NULL,NULL),(10,'JUTE + ECOTAT',NULL,0.90,NULL,NULL),(11,'JUTE + GRAIN PRO',NULL,0.90,NULL,NULL);
 /*!40000 ALTER TABLE `packaging_pkg` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1736,7 +1795,7 @@ CREATE TABLE `parchment_type_pty` (
   `pty_name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `pty_date_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1745,6 +1804,7 @@ CREATE TABLE `parchment_type_pty` (
 
 LOCK TABLES `parchment_type_pty` WRITE;
 /*!40000 ALTER TABLE `parchment_type_pty` DISABLE KEYS */;
+INSERT INTO `parchment_type_pty` VALUES (1,'P1','2018-10-30 20:55:45'),(2,'P2','2018-10-30 20:55:45'),(3,'PL','2018-10-30 20:55:45'),(4,'MBUNI','2018-10-30 20:55:45');
 /*!40000 ALTER TABLE `parchment_type_pty` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2434,7 +2494,7 @@ CREATE TABLE `quality_analysis_qanl` (
   `qanl_value` varchar(50) DEFAULT NULL,
   `qanl_date_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=62464 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2694,6 +2754,33 @@ CREATE TABLE `release_instructions_rl` (
 LOCK TABLES `release_instructions_rl` WRITE;
 /*!40000 ALTER TABLE `release_instructions_rl` DISABLE KEYS */;
 /*!40000 ALTER TABLE `release_instructions_rl` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `roast_comments`
+--
+
+DROP TABLE IF EXISTS `roast_comments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `roast_comments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `st_mill_id` int(10) unsigned DEFAULT NULL,
+  `st_wr_id` int(10) unsigned DEFAULT NULL,
+  `qp_id` int(10) unsigned DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `roast_comments`
+--
+
+LOCK TABLES `roast_comments` WRITE;
+/*!40000 ALTER TABLE `roast_comments` DISABLE KEYS */;
+/*!40000 ALTER TABLE `roast_comments` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -3110,7 +3197,7 @@ CREATE TABLE `stock_location_sloc` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index2` (`bt_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3119,6 +3206,7 @@ CREATE TABLE `stock_location_sloc` (
 
 LOCK TABLES `stock_location_sloc` WRITE;
 /*!40000 ALTER TABLE `stock_location_sloc` DISABLE KEYS */;
+INSERT INTO `stock_location_sloc` VALUES (1,1,1,1,2,NULL,NULL),(2,2,1,1,2,NULL,NULL),(3,3,1,1,2,NULL,NULL),(4,4,1,1,2,NULL,NULL),(5,5,1,1,2,NULL,NULL),(6,6,1,1,2,NULL,NULL),(7,7,1,1,2,NULL,NULL),(8,8,1,1,2,NULL,NULL),(9,9,1,1,2,NULL,NULL),(10,10,1,1,2,NULL,NULL),(11,11,1,1,2,NULL,NULL),(12,12,1,1,2,NULL,NULL),(13,13,1,1,2,NULL,NULL),(14,14,1,1,2,NULL,NULL),(15,15,1,1,2,NULL,NULL),(16,16,1,1,2,NULL,NULL),(17,17,1,1,2,NULL,NULL),(18,18,1,1,2,NULL,NULL),(19,19,1,1,2,NULL,NULL),(20,20,1,1,2,NULL,NULL),(21,21,1,1,2,NULL,NULL),(22,22,1,1,2,NULL,NULL),(23,23,1,1,2,NULL,NULL),(24,24,1,1,2,NULL,NULL),(25,25,1,1,2,NULL,NULL),(26,26,1,1,2,NULL,NULL),(27,27,1,1,2,NULL,NULL),(28,28,1,1,2,NULL,NULL),(29,29,1,1,2,NULL,NULL),(30,30,1,1,2,NULL,NULL);
 /*!40000 ALTER TABLE `stock_location_sloc` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3261,13 +3349,16 @@ DROP TABLE IF EXISTS `stock_warehouse_st`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `stock_warehouse_st` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `season_id` int(11) DEFAULT NULL,
-  `material_id` int(10) DEFAULT NULL,
+  `csn_id` int(11) DEFAULT NULL,
+  `mt_id` int(10) DEFAULT NULL,
   `grn_id` int(11) DEFAULT NULL,
   `dp_id` int(11) DEFAULT NULL,
+  `cgr_id` int(11) DEFAULT NULL,
+  `it_id` int(11) DEFAULT NULL,
+  `miller_id` int(11) DEFAULT NULL,
+  `milled_by` varchar(45) DEFAULT NULL,
   `st_outturn` varchar(45) DEFAULT NULL,
   `st_mark` varchar(255) DEFAULT NULL,
-  `st_name` varchar(45) DEFAULT NULL,
   `sts_id` int(11) NOT NULL DEFAULT '1',
   `st_gross` int(11) DEFAULT NULL,
   `st_tare` decimal(18,2) DEFAULT NULL,
@@ -3281,6 +3372,7 @@ CREATE TABLE `stock_warehouse_st` (
   `bs_id` int(10) DEFAULT NULL,
   `ibs_id` int(11) DEFAULT NULL,
   `usr_id` int(11) DEFAULT NULL,
+  `warehouse_id` int(11) DEFAULT NULL,
   `st_ended_by` int(11) DEFAULT NULL,
   `st_quality_check` int(11) DEFAULT NULL,
   `st_rejected` varchar(45) DEFAULT NULL,
@@ -3293,15 +3385,15 @@ CREATE TABLE `stock_warehouse_st` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_material_id_idx` (`material_id`),
+  KEY `fk_material_id_idx` (`mt_id`),
   KEY `fk_grn_id_idx` (`grn_id`),
   KEY `fk_dispatch_id_idx` (`dp_id`),
-  KEY `fk_season_id` (`season_id`),
+  KEY `fk_season_id` (`csn_id`),
   CONSTRAINT `fk_dispatch_id` FOREIGN KEY (`dp_id`) REFERENCES `dispatch_dp` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_grn_id` FOREIGN KEY (`grn_id`) REFERENCES `grn_gr` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_material_id` FOREIGN KEY (`material_id`) REFERENCES `material_mt` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_season_id` FOREIGN KEY (`season_id`) REFERENCES `coffee_seasons_csn` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=9969 DEFAULT CHARSET=latin1;
+  CONSTRAINT `fk_material_id` FOREIGN KEY (`mt_id`) REFERENCES `material_mt` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_season_id` FOREIGN KEY (`csn_id`) REFERENCES `coffee_seasons_csn` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3310,6 +3402,7 @@ CREATE TABLE `stock_warehouse_st` (
 
 LOCK TABLES `stock_warehouse_st` WRITE;
 /*!40000 ALTER TABLE `stock_warehouse_st` DISABLE KEYS */;
+INSERT INTO `stock_warehouse_st` VALUES (1,2,5,1,NULL,13,3,2,'','05NG0023','05NG0023/2',1,400,43.20,3.00,NULL,356,NULL,5,56,2,7,7,1,4,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2018-11-01 19:37:51','2018-11-01 21:21:03');
 /*!40000 ALTER TABLE `stock_warehouse_st` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3439,13 +3532,14 @@ DROP TABLE IF EXISTS `thresholds_th`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `thresholds_th` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `it_id` int(11) DEFAULT NULL,
   `ctr_id` int(11) DEFAULT NULL,
   `th_name` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `th_percentage` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3454,6 +3548,7 @@ CREATE TABLE `thresholds_th` (
 
 LOCK TABLES `thresholds_th` WRITE;
 /*!40000 ALTER TABLE `thresholds_th` DISABLE KEYS */;
+INSERT INTO `thresholds_th` VALUES (1,1,1,'Moisture',12,NULL,NULL),(2,2,1,'Moisture',12,NULL,NULL),(3,3,1,'Moisture',12,NULL,NULL);
 /*!40000 ALTER TABLE `thresholds_th` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3739,7 +3834,7 @@ CREATE TABLE `weighbridge_info_wbi` (
 
 LOCK TABLES `weighbridge_info_wbi` WRITE;
 /*!40000 ALTER TABLE `weighbridge_info_wbi` DISABLE KEYS */;
-INSERT INTO `weighbridge_info_wbi` VALUES (1,NULL,NULL,NULL,NULL,'0000001','123456','KCQ 771S',1000,NULL,1,'2018-10-30 14:35:00',NULL,'123456','MIKE PETER','123456','2018-10-30',NULL,'2018-10-30 12:58:44',1,3,1,'Lewis','122222',2,1,27,1300);
+INSERT INTO `weighbridge_info_wbi` VALUES (1,NULL,NULL,NULL,NULL,'0000001','123456','KCQ 771S',1000,NULL,1,'2018-11-02 14:35:00',NULL,'123456','MIKE PETER','123456','2018-10-30',NULL,'2018-10-30 12:58:44',1,3,1,'Lewis','122222',2,1,27,1300);
 /*!40000 ALTER TABLE `weighbridge_info_wbi` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3768,6 +3863,77 @@ LOCK TABLES `weighbridge_wb` WRITE;
 /*!40000 ALTER TABLE `weighbridge_wb` DISABLE KEYS */;
 INSERT INTO `weighbridge_wb` VALUES (1,1,1,'2018-10-30 09:13:26','2018-10-30 09:13:26');
 /*!40000 ALTER TABLE `weighbridge_wb` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `weight_note_wn`
+--
+
+DROP TABLE IF EXISTS `weight_note_wn`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `weight_note_wn` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `wn_number` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ctr_id` int(11) DEFAULT NULL,
+  `cgrad_id` int(11) DEFAULT NULL,
+  `bs_id` int(11) DEFAULT NULL,
+  `st_id` int(11) DEFAULT NULL,
+  `pr_id` int(11) DEFAULT NULL,
+  `pkg_id` int(11) DEFAULT NULL,
+  `wn_packages` int(11) DEFAULT NULL,
+  `wn_weight` int(11) DEFAULT NULL,
+  `wb_id` int(11) DEFAULT NULL,
+  `ws_id` int(11) DEFAULT NULL,
+  `usr_id` int(11) DEFAULT NULL,
+  `wn_purpose` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=68 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `weight_note_wn`
+--
+
+LOCK TABLES `weight_note_wn` WRITE;
+/*!40000 ALTER TABLE `weight_note_wn` DISABLE KEYS */;
+INSERT INTO `weight_note_wn` VALUES (2,'0000001',1,19,17,NULL,993,2,4,249,904,8,29,'SPRING VALLEY DISPATCH.','2018-10-16 12:25:13','2018-10-16 12:26:46'),(3,'0000002',1,1,2,NULL,1416,2,4,242,904,8,29,'SPRING VALLEY DISPATCH.','2018-10-16 12:34:47','2018-10-16 12:36:09'),(4,'0000003',1,NULL,NULL,NULL,1589,9,160,9772,0,8,29,'stuffing SI2049','2018-10-16 15:34:54','2018-10-16 15:34:54'),(5,'0000004',1,NULL,NULL,NULL,1589,9,160,9779,0,7,29,'stuffing  si2049','2018-10-16 16:36:03','2018-10-16 16:36:03'),(6,'0000005',1,13,9,NULL,1329,2,120,7310,906,8,11,'DISPATCH TO BOLLORE.','2018-10-17 06:12:26','2018-10-17 06:13:02'),(7,'0000006',1,13,9,NULL,1329,2,65,3962,906,5,11,'DISPATCH TO BOLLORE.','2018-10-17 06:25:55','2018-10-17 06:29:30'),(8,'0000007',1,13,9,NULL,1329,2,120,7310,913,8,11,'DISPATCH TO BOLLORE.','2018-10-17 14:14:05','2018-10-17 14:14:32'),(9,'0000008',1,13,9,NULL,1329,2,65,3960,913,5,11,'DISPATCH TO BOLLORE.','2018-10-17 14:28:46','2018-10-17 14:29:10'),(10,'0000009',1,14,22,NULL,1379,2,125,7571,916,5,11,'DISPATCH TO BOLLORE.','2018-10-18 09:39:16','2018-10-18 09:53:19'),(11,'0000010',1,NULL,NULL,NULL,1379,2,125,7585,916,8,11,'DISPATCH TO BOLLORE.','2018-10-18 09:54:43','2018-10-18 09:54:43'),(12,'0000011',1,2,0,NULL,1537,2,160,9722,918,8,29,'STUFFING.','2018-10-18 11:57:01','2018-10-18 11:57:43'),(13,'0000012',1,NULL,NULL,NULL,1537,2,160,9718,918,8,29,'STUFFING.','2018-10-18 12:58:24','2018-10-18 12:58:24'),(14,'0000013',1,NULL,NULL,NULL,1521,2,180,10952,1,8,29,'bulking','2018-10-19 08:19:51','2018-10-19 08:19:51'),(15,'0000014',1,NULL,NULL,NULL,1521,2,180,10964,1,7,29,'BULKIING','2018-10-19 09:00:45','2018-10-19 09:00:45'),(16,'0000015',1,NULL,NULL,NULL,1521,2,180,10956,0,8,29,'bulking','2018-10-19 11:21:19','2018-10-19 11:21:19'),(17,'0000016',1,NULL,NULL,NULL,1521,2,185,10991,0,8,29,'bulking','2018-10-19 13:09:44','2018-10-19 13:09:44'),(20,'0000017',1,NULL,NULL,NULL,1375,2,125,7619,922,7,5,'COLOUR SORTING AT BOLLORE','2018-10-22 06:13:29','2018-10-22 06:13:29'),(21,'0000018',1,NULL,NULL,9061,NULL,2,125,7620,922,8,5,'COLOUR SORTING AT BOLLORE','2018-10-22 06:34:18','2018-10-22 06:34:18'),(22,'0000019',1,0,0,9061,NULL,2,125,7592,923,7,5,'COLOUR SORTING  AT BOLLORE','2018-10-22 07:32:22','2018-10-22 07:32:29'),(23,'0000020',1,NULL,NULL,9061,NULL,2,127,7738,923,8,5,'COLOUR SORTING AT BOLLORE','2018-10-22 07:51:14','2018-10-22 07:51:14'),(24,'0000021',1,NULL,NULL,9061,NULL,2,127,7738,924,8,5,'COLOUR SORTING AT BOLLORE','2018-10-22 11:45:23','2018-10-22 11:45:23'),(25,'0000022',1,NULL,NULL,9061,NULL,2,123,7503,924,7,5,'COLOUR SORTING AT BOLLORE','2018-10-22 11:58:49','2018-10-22 11:58:49'),(26,'0000023',1,NULL,NULL,9061,NULL,2,135,8207,925,8,5,'COLOUR SORTING AT BOLLORE','2018-10-23 06:33:09','2018-10-23 06:33:09'),(27,'0000024',1,NULL,NULL,9061,NULL,2,50,3038,0,8,5,'COLOUR SORTING AT BOLLORE','2018-10-23 07:22:02','2018-10-23 07:22:02'),(28,'0000025',1,NULL,NULL,NULL,1558,2,200,12160,1,7,5,'BULKING','2018-10-23 07:30:10','2018-10-23 07:30:10'),(29,'0000026',1,NULL,NULL,9061,NULL,2,127,7742,926,8,5,'COLOUR SORTING AT BOLLORE','2018-10-23 07:52:28','2018-10-23 07:52:28'),(30,'0000027',1,NULL,NULL,9061,NULL,2,70,4269,926,8,5,'COLOUR SORTING AT BOLLORE','2018-10-23 08:32:48','2018-10-23 08:32:48'),(31,'0000028',1,NULL,NULL,NULL,1558,2,160,9735,1,7,5,'bulking','2018-10-23 08:48:27','2018-10-23 08:48:27'),(32,'0000029',1,NULL,NULL,7482,NULL,2,53,3216,926,8,5,'COLOUR SORTING AT BOLLORE','2018-10-23 09:10:07','2018-10-23 09:10:07'),(33,'0000030',1,NULL,NULL,NULL,1558,2,200,12159,1,8,29,'bulking','2018-10-23 10:04:06','2018-10-23 10:04:06'),(35,'0000031',1,NULL,NULL,7482,NULL,2,159,9672,927,7,5,'COLOUR SORTING AT BOLLORE','2018-10-23 11:21:21','2018-10-23 11:21:21'),(36,'0000032',1,NULL,NULL,9060,NULL,2,5,303,928,8,5,'LOADING SPRING VALLEY','2018-10-23 12:12:23','2018-10-23 12:12:23'),(37,'0000033',1,NULL,NULL,7482,NULL,2,159,9689,927,7,5,'COLOUR SORTING AT BOLLORE','2018-10-23 12:15:55','2018-10-23 12:15:55'),(38,'0000034',1,NULL,NULL,5254,NULL,2,3,183,928,7,5,'LOADING SPRING VALLEY','2018-10-23 12:35:04','2018-10-23 12:35:04'),(39,'0000035',1,NULL,NULL,NULL,1558,2,160,9732,1,8,5,'BULKING','2018-10-23 12:54:37','2018-10-23 12:54:37'),(40,'0000036',1,NULL,NULL,7482,NULL,2,92,5596,927,7,5,'COLOUR SORTING AT BOLLORE','2018-10-23 12:58:10','2018-10-23 12:58:10'),(41,'0000037',1,NULL,NULL,NULL,1558,2,200,12165,1,8,5,'bulking','2018-10-23 14:22:56','2018-10-23 14:22:56'),(42,'0000038',1,2,0,NULL,1558,2,200,12165,1,8,5,'bulking kdi 1475','2018-10-23 14:51:39','2018-10-23 14:56:52'),(43,'0000039',1,NULL,NULL,NULL,1558,2,200,12180,1,7,29,'bulking','2018-10-24 05:56:46','2018-10-24 05:56:46'),(44,'0000040',1,NULL,NULL,NULL,1080,2,120,7304,934,8,11,'DISPATCHING TO BOLLORE.','2018-10-24 08:07:04','2018-10-24 08:07:04'),(45,'0000041',1,NULL,NULL,NULL,1080,2,65,3954,934,8,11,'DISPATCHING TO BOLLORE.','2018-10-24 08:36:22','2018-10-24 08:36:22'),(46,'0000042',1,NULL,NULL,NULL,1558,2,172,9799,1,8,11,'bulking','2018-10-24 09:18:41','2018-10-24 09:18:41'),(47,'0000043',1,NULL,NULL,7482,NULL,2,125,7633,935,7,11,'bollore for cs','2018-10-24 11:42:49','2018-10-24 11:42:49'),(48,'0000044',1,NULL,NULL,7482,NULL,2,125,7614,935,8,11,'COLOUR SORTING AT BOLLORE','2018-10-24 11:53:10','2018-10-24 11:53:10'),(49,'0000045',1,13,9,NULL,1080,2,148,9021,936,8,11,'DISPATCHING TO BOLLORE.','2018-10-25 07:07:05','2018-10-25 07:07:42'),(50,'0000046',1,13,9,NULL,1080,2,102,6221,936,5,11,'DISPATCHING TO BOLLORE.','2018-10-25 07:18:38','2018-10-25 07:19:20'),(51,'0000047',1,0,0,NULL,1599,2,200,12194,1,7,11,'bulking','2018-10-25 08:40:47','2018-10-25 08:41:46'),(52,'0000048',1,13,9,NULL,1080,2,125,7617,937,8,11,'DISPATCHING TO BOLLORE.','2018-10-25 09:08:33','2018-10-25 09:23:08'),(53,'0000049',1,13,9,NULL,1080,2,125,7611,937,8,11,'DISPATCHING TO BOLLORE.','2018-10-25 09:51:48','2018-10-25 09:57:45'),(54,'0000050',1,2,0,NULL,1623,2,160,9727,1,5,11,'STUFFING.','2018-10-25 10:13:42','2018-10-25 10:14:11'),(55,'0000051',1,NULL,NULL,NULL,1623,2,160,9721,1,8,11,'STUFFING.','2018-10-25 10:25:09','2018-10-25 10:25:09'),(56,'0000052',1,NULL,NULL,NULL,1599,2,200,12195,1,8,11,'bulking','2018-10-25 11:44:45','2018-10-25 11:44:45'),(57,'0000053',1,13,9,NULL,1080,2,125,7617,938,5,11,'DISPATCHING TO BOLLORE.','2018-10-25 11:59:10','2018-10-25 11:59:47'),(58,'0000054',1,13,9,NULL,1080,2,70,4187,938,5,11,'DISPATCHING TO BOLLORE.','2018-10-25 12:48:19','2018-10-25 12:48:51'),(59,'0000055',1,NULL,NULL,NULL,1599,2,164,9906,1,8,11,'BULKING','2018-10-25 13:00:26','2018-10-25 13:00:26'),(60,'0000056',1,13,9,NULL,1375,2,56,3416,938,7,11,'DISPATCHING TO BOLLORE.','2018-10-25 13:30:27','2018-10-25 13:31:14'),(61,'0000057',1,NULL,NULL,NULL,1525,2,200,12154,1,8,29,'stuffing','2018-10-25 13:54:43','2018-10-25 13:54:43'),(62,'0000058',1,13,0,9061,NULL,2,125,7595,939,5,11,'DISPATCHING TO BOLLORE.','2018-10-25 14:10:00','2018-10-25 14:10:22'),(63,'0000059',1,NULL,NULL,9061,NULL,2,125,0,939,0,11,'DISPATCHING TO BOLLORE.','2018-10-25 14:23:15','2018-10-25 14:23:15'),(64,'0000060',1,NULL,NULL,NULL,1525,2,120,7285,1,8,11,'stuffing SI2062','2018-10-25 14:35:24','2018-10-25 14:35:24'),(65,'0000061',1,13,9,NULL,1375,2,125,7621,939,5,11,'DISPATCHING TO BOLLORE.','2018-10-25 14:51:05','2018-10-25 14:51:48'),(66,'0000062',1,13,9,NULL,1375,2,133,8107,940,8,11,'DISPATCHING TO BOLLORE.','2018-10-25 15:23:26','2018-10-25 15:24:15'),(67,'0000063',1,13,9,NULL,1375,2,117,7126,940,5,11,'DISPATCHING TO BOLLORE.','2018-10-25 15:40:01','2018-10-25 15:40:34');
+/*!40000 ALTER TABLE `weight_note_wn` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `weight_scales_ws`
+--
+
+DROP TABLE IF EXISTS `weight_scales_ws`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `weight_scales_ws` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `agt_id` int(11) DEFAULT NULL,
+  `ws_station` varchar(45) DEFAULT NULL,
+  `ws_equipment_number` varchar(45) DEFAULT NULL,
+  `ws_baud_rate` int(11) DEFAULT NULL,
+  `ws_parity` int(11) DEFAULT NULL,
+  `ws_stop_bits` int(11) DEFAULT NULL,
+  `ws_data_bits` int(11) DEFAULT NULL,
+  `ws_port_name` varchar(45) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `weight_scales_ws`
+--
+
+LOCK TABLES `weight_scales_ws` WRITE;
+/*!40000 ALTER TABLE `weight_scales_ws` DISABLE KEYS */;
+INSERT INTO `weight_scales_ws` VALUES (3,4,'6','IBKCPO',9600,0,1,8,'COM1','2018-10-31 12:30:22',NULL),(4,4,'6','IBKCPO',9600,0,1,8,'COM6','2018-10-31 12:30:22','2018-08-02 08:11:05'),(5,4,'1','St 6/Dini Argeo 1',9600,0,1,8,'COM1','2018-10-31 12:30:22','2018-08-09 11:32:36'),(6,4,'1','NKG-PM0012-3',9600,0,1,8,'COM3','2018-10-31 12:30:22','2018-08-09 11:32:51'),(7,4,'7','St 7/Dini Argeo 1',9600,0,1,8,'COM1','2018-10-31 12:30:22',NULL),(8,4,'7','St 7/Dini Argeo 2',9600,0,1,8,'COM8','2018-10-31 12:30:22',NULL),(9,4,'1','St 6/Dini Argeo 2',9600,0,1,8,'COM5','2018-10-31 12:30:22','2018-08-09 11:32:36'),(10,4,'1','Test Indicator',9600,0,1,8,'COM8','2018-10-31 12:30:22','2018-08-09 11:32:36');
+/*!40000 ALTER TABLE `weight_scales_ws` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -3869,10 +4035,6 @@ UNLOCK TABLES;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
-/*!50112 SET @disable_bulk_load = IF (@is_rocksdb_supported, 'SET SESSION rocksdb_bulk_load = @old_rocksdb_bulk_load', 'SET @dummy_rocksdb_bulk_load = 0') */;
-/*!50112 PREPARE s FROM @disable_bulk_load */;
-/*!50112 EXECUTE s */;
-/*!50112 DEALLOCATE PREPARE s */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -3883,4 +4045,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-10-30 20:28:25
+-- Dump completed on 2018-11-02  0:59:58

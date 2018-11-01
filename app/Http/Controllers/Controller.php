@@ -16,6 +16,7 @@ use Ngea\OutturnNumberSettings;
 use Ngea\agent;
 use Ngea\WeightScales;
 use Ngea\Location;
+use Ngea\Grn;
 
 class Controller extends BaseController
 {
@@ -104,6 +105,32 @@ class Controller extends BaseController
         }
 
         return $ref_no;
+    }
+
+    public function generateGRN ($warehouse) {
+
+        try{
+            $cidmain = session('maincountry');
+            if ($cidmain != null) {
+                $grn_no = Grn::where('ctr_id', $cidmain)->where('agt_id', $warehouse)->orderBy('id', 'desc')->first();
+                if ($grn_no != NULL) {
+                    $grn_no = $grn_no->gr_number;            
+                    if (is_numeric($grn_no)) {
+                        $grn_number = sprintf("%07d", ($grn_no + 0000001));
+                    }
+                } else {
+                    $grn_number = sprintf("%07d", (0000001));
+                }
+            }
+            return json_encode($grn_number);                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     public function getOutturn ($item_id, $agent_id, $moisture) {
@@ -222,6 +249,24 @@ class Controller extends BaseController
         }
     }
 
+    public function checkScaleSession ($weigh_scale_session) {
+
+        try{
+            if(session()->has($weigh_scale_session)) {
+                return 1; 
+            } else {
+                return 0; 
+            }                   
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
     public function getWeight ($weigh_scales) {
 
         try{
@@ -246,10 +291,14 @@ class Controller extends BaseController
             $weight = curl_exec ($ch);           
             curl_close ($ch);   
             $batch_kilograms = $weight;  
+            $batch_kilograms = 100;  
             $weigh_scale_session = "scale - ".$weigh_scales."";
             session()->put($weigh_scale_session, $batch_kilograms);
-
-            return json_encode($batch_kilograms);                    
+            if (is_int($batch_kilograms)) {
+                return json_encode($batch_kilograms);     
+            } else {
+                return json_encode('error');
+            }
         
         }catch (\PDOException $e) {
             return response()->json([
@@ -287,7 +336,7 @@ class Controller extends BaseController
             $weigh_scale_session = "scale - ".$weigh_scales."";
 
             if (session()->has($weigh_scale_session) && $batch_kilograms === 0 ){
-                $request->session()->pull($weigh_scale_session); 
+                session()->pull($weigh_scale_session); 
             }     
 
             return json_encode($batch_kilograms); 

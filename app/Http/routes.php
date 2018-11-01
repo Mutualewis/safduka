@@ -122,8 +122,11 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/arrivalinformation/getLocations/{warehouse}', ['as'=>'arrivalinformation.getLocations','uses'=>'Controller@getLocations']);
 
 		
+		Route::get('/arrivalinformation/checkScaleSession/{weigh_scale_session}', ['as'=>'arrivalinformation.checkScaleSession','uses'=>'Controller@checkScaleSession']);
 		Route::get('/arrivalinformation/getWeight/{weigh_scales}', ['as'=>'arrivalinformation.getWeight','uses'=>'Controller@getWeight']);
 		Route::get('/arrivalinformation/reSetWeight/{weigh_scales}', ['as'=>'arrivalinformation.reSetWeight','uses'=>'Controller@reSetWeight']);
+		
+		Route::get('/arrivalinformation/generateGRN/{warehouse}', ['as'=>'arrivalinformation.generateGRN','uses'=>'Controller@generateGRN']);
 
 
 		Route::get('/arrivalqualityinformationlist', 'ArrivalQualityController@arrivalQualityInformationListForm'); 

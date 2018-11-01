@@ -26,7 +26,8 @@
         "h4cc/wkhtmltoimage-amd64": "0.12.x",
         "wemersonjanuario/wkhtmltopdf-windows": "0.12.2.3",
         "view-components/view-components": "^0.26.6",
-        "doctrine/dbal": "^2.5"
+        "doctrine/dbal": "^2.5",
+        "league/fractal": "^0.17.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
