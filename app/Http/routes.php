@@ -89,7 +89,6 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/weighbridge/getParking', ['as'=>'weighbridge.getParking','uses'=>'WeighbridgeController@getParking']);
 
 
-		Route::get('/arrivalinformation/getOutturn/{item_id}/{miller_id}', ['as'=>'arrivalinformation.getOutturn','uses'=>'Controller@getOutturn']);
 
 
 
@@ -117,6 +116,18 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::post('/arrivalinformation', 'WeighScaleController@arrivalInformation');
 		Route::get('/arrivalinformation/confirmArrivalInformation/{cid}/{grn_number}/{weighbridgeTK}/{outt_season}/{service}/{team}', ['as'=>'arrivalinformation.confirmArrivalInformation','uses'=>'WeighScaleController@confirmArrivalInformation']);
 		Route::get('/arrivalinformation/printMovementWithRate/{grn_number}/{service}/{team}', ['as'=>'arrivalinformation.printarrivalinformation','uses'=>'WeighScaleController@printarrivalinformation']);
+
+		Route::get('/arrivalinformation/getOutturn/{item_id}/{miller_id}/{moisture}', ['as'=>'arrivalinformation.getOutturn','uses'=>'Controller@getOutturn']);
+		Route::get('/arrivalinformation/getScales/{warehouse}', ['as'=>'arrivalinformation.getScales','uses'=>'Controller@getScales']);
+		Route::get('/arrivalinformation/getLocations/{warehouse}', ['as'=>'arrivalinformation.getLocations','uses'=>'Controller@getLocations']);
+
+		
+		Route::get('/arrivalinformation/checkScaleSession/{weigh_scale_session}', ['as'=>'arrivalinformation.checkScaleSession','uses'=>'Controller@checkScaleSession']);
+		Route::get('/arrivalinformation/getWeight/{weigh_scales}', ['as'=>'arrivalinformation.getWeight','uses'=>'Controller@getWeight']);
+		Route::get('/arrivalinformation/reSetWeight/{weigh_scales}', ['as'=>'arrivalinformation.reSetWeight','uses'=>'Controller@reSetWeight']);
+		
+		Route::get('/arrivalinformation/generateGRN/{warehouse}', ['as'=>'arrivalinformation.generateGRN','uses'=>'Controller@generateGRN']);
+
 
 		Route::get('/arrivalqualityinformationlist', 'ArrivalQualityController@arrivalQualityInformationListForm'); 
 		Route::post('/arrivalqualityinformationlist', 'ArrivalQualityController@arrivalQualityInformationList');

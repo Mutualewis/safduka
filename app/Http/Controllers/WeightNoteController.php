@@ -34,6 +34,7 @@ use Ngea\processrates;
 use Ngea\teams;
 use Ngea\processcharges;
 use Ngea\WeightNote;
+use Ngea\WeighbridgeInfo;
 
 
 
@@ -61,7 +62,7 @@ class WeightNoteController extends Controller {
         if ($cidmain != null) {
             $coffeeGrade = CoffeeGrade::where('ctr_id', $cidmain)->get();
             $basket = basket::where('ctr_id', $cidmain)->get();
-            $weighbridge_ticket = Weighbridge::where('ctr_id', $cidmain)->where(DB::Raw('LEFT(wb_time_in, 10)'), date("Y-m-d"))->orWhere('id', 1)->get();
+            $weighbridge_ticket = WeighbridgeInfo::where('ctr_id', $cidmain)->where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->orWhere('id', 1)->get();
             $wn_no = WeightNote::where('ctr_id', $cidmain)->orderBy('id', 'desc')->first();
 
             if ($wn_no != NULL) {
@@ -131,7 +132,7 @@ class WeightNoteController extends Controller {
         if ($cidmain != null) {
             $coffeeGrade = CoffeeGrade::where('ctr_id', $cidmain)->get();
             $basket = basket::where('ctr_id', $cidmain)->get();
-            $weighbridge_ticket = Weighbridge::where('ctr_id', $cidmain)->where(DB::Raw('LEFT(wb_time_in, 10)'), date("Y-m-d"))->orWhere('id', 1)->get();
+            $weighbridge_ticket = WeighbridgeInfo::where('ctr_id', $cidmain)->where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->orWhere('id', 1)->get();
             $wn_no = WeightNote::where('ctr_id', $cidmain)->orderBy('id', 'desc')->first();
             $warehouse_select = country::with('warehouse')->get()->find($cidmain);
 
@@ -211,7 +212,7 @@ class WeightNoteController extends Controller {
                 }
 
                 WeightNote::where('id', '=', $wn_id)
-                        ->update(['ctr_id' => $cidmain, 'cgrad_id' => $cgrad_id, 'bs_id' => $basket_id, 'st_id' => $stock_details->stid, 'pr_id' => $stock_details->prid, 'pkg_id' => $pkgid, 'wn_packages' => $packages_stock, 'wn_number' => $wn_number, 'wb_id' => $wbtk, 'ws_id' => $wsid, 'wn_purpose' => $purpose, 'wn_weight' => $batch_kilograms, 'usr_id' => $user]);
+                        ->update(['ctr_id' => $cidmain, 'cgrad_id' => $cgrad_id, 'bs_id' => $basket_id, 'st_id' => $stock_details->stid, 'pr_id' => $stock_details->prid, 'pkg_id' => $pkgid, 'wn_packages' => $packages_stock, 'wn_number' => $wn_number, 'wbi_id' => $wbtk, 'ws_id' => $wsid, 'wn_purpose' => $purpose, 'wn_weight' => $batch_kilograms, 'usr_id' => $user]);
 
           
             } else {
@@ -226,7 +227,7 @@ class WeightNoteController extends Controller {
                     }
                 }
                 $wn_id = WeightNote::insertGetId (
-                        ['ctr_id' => $cidmain, 'st_id' => $stock_details->stid, 'pr_id' => $stock_details->prid, 'pkg_id' => $pkgid, 'wn_packages' => $packages_stock, 'wn_number' => $wn_number, 'wb_id' => $wbtk, 'ws_id' => $wsid, 'wn_purpose' => $purpose, 'wn_weight' => $batch_kilograms, 'usr_id' => $user]);
+                        ['ctr_id' => $cidmain, 'st_id' => $stock_details->stid, 'pr_id' => $stock_details->prid, 'pkg_id' => $pkgid, 'wn_packages' => $packages_stock, 'wn_number' => $wn_number, 'wbi_id' => $wbtk, 'ws_id' => $wsid, 'wn_purpose' => $purpose, 'wn_weight' => $batch_kilograms, 'usr_id' => $user]);
 
             }
 
@@ -314,7 +315,7 @@ class WeightNoteController extends Controller {
                 ->leftJoin('stock_st AS st', 'st.id', '=', 'wn.st_id')
                 ->leftJoin('process_pr AS pr', 'pr.id', '=', 'wn.pr_id')
                 ->leftJoin('packaging_pkg AS pkg', 'pkg.id', '=', 'wn.pkg_id')
-                ->leftJoin('weighbridge_wb AS wb', 'wb.id', '=', 'wn.wb_id')
+                ->leftJoin('weighbridge_wb AS wb', 'wb.id', '=', 'wn.wbi_id')
                 ->leftJoin('weight_scales_ws AS ws', 'ws.id', '=', 'wn.ws_id')
                 ->leftJoin('warehouse_wr AS wr', 'wr.id', '=', 'ws.wr_id')
                 ->where('wn.wn_number', $wn_number)
@@ -329,16 +330,16 @@ class WeightNoteController extends Controller {
                 $client =  $weight_note_outturns->wr_name;
                 $weighing_date = $weight_note_outturns->weighing_date;
                 $weighing_date = date("d/m/Y", strtotime($weighing_date));
-                $movement_permit = $weight_note_outturns->wb_movement_permit;
-                $vehicle = $weight_note_outturns->wb_vehicle_plate;
-                $weighbridge_ticket = $weight_note_outturns->wb_ticket;
+                $movement_permit = $weight_note_outturns->wbi_movement_permit;
+                $vehicle = $weight_note_outturns->wbi_vehicle_plate;
+                $weighbridge_ticket = $weight_note_outturns->wbi_ticket;
                 $time_received = $weight_note_outturns->weighing_date;
                 $time_received_stop = $weight_note_outturns->end_date;
                 $time_received = date("H:i:s", strtotime($time_received));
                 $time_received_stop = date("H:i:s", strtotime($time_received_stop));
                 $received_by = $person_name;
-                $driver_name = $weight_note_outturns->wb_driver_name;
-                $driver_id = $weight_note_outturns->wb_driver_id;
+                $driver_name = $weight_note_outturns->wbi_driver_name;
+                $driver_id = $weight_note_outturns->wbi_driver_id;
                 $warehouse_manager = $weight_note_outturns->wr_att;
 
             }
@@ -402,7 +403,7 @@ class WeightNoteController extends Controller {
             ->leftJoin('stock_st AS st', 'st.id', '=', 'wn.st_id')
             ->leftJoin('process_pr AS pr', 'pr.id', '=', 'wn.pr_id')
             ->leftJoin('packaging_pkg AS pkg', 'pkg.id', '=', 'wn.pkg_id')
-            ->leftJoin('weighbridge_wb AS wb', 'wb.id', '=', 'wn.wb_id')
+            ->leftJoin('weighbridge_wb AS wb', 'wb.id', '=', 'wn.wbi_id')
             ->leftJoin('weight_scales_ws AS ws', 'ws.id', '=', 'wn.ws_id')
             ->leftJoin('warehouse_wr AS wr', 'wr.id', '=', 'ws.wr_id')
             ->where('wn.wn_number', $wn_number)

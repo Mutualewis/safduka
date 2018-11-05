@@ -30,6 +30,8 @@ use Ngea\Months;
 use Ngea\Sales_Contract_Summary;
 use Ngea\SalesContract;
 use Ngea\StuffingView;
+use Ngea\WeighbridgeInfo;
+use Ngea\agent;
 
 
 
@@ -180,11 +182,11 @@ class WarehouseController extends Controller {
 		$new_wrhse = Input::get('new_warehouse'); 
 
 		if ($wrhse !== NULL) {
-			$location = Location::where('wr_id', $wrhse)->get();			
+			$location = Location::where('agt_id', $wrhse)->get();			
 		}
 
 		if ($new_wrhse !== NULL) {
-			$new_location = Location::where('wr_id', $new_wrhse)->get();			
+			$new_location = Location::where('agt_id', $new_wrhse)->get();			
 		}
 
 
@@ -212,11 +214,11 @@ class WarehouseController extends Controller {
 			$batchview = BatchView::where('prc_id', $btdetails->prcid)->get();
 		}
 		if(Input::get('country') != NULL){
-		   	$Warehouse = warehouses_region::where('ctr_id', Input::get('country'))->where('wrt_id', '1')->get();
-		   	$NewWarehouse = warehouses_region::where('ctr_id', Input::get('country'))->where('wrt_id', '1')->get();
-			$Mill = mills_region::where('ctr_id', Input::get('country'))->get(); 		
+		   	$warehouse = agent::where('agtc_id', 4)->get();
+		   	$NewWarehouse = agent::where('agtc_id', 4)->get();
+			 		
 			$seller = seller::where('ctr_id', Input::get('country'))->get(); 		
-			$weighbridge_ticket = Weighbridge::where('ctr_id', Input::get('country'))->get(); 		
+			$weighbridge_ticket = WeighbridgeInfo::where('ctr_id', Input::get('country'))->get(); 		
 		}
     	$Season = Season::all(['id', 'csn_season']);
     	$country = country::all(['id', 'ctr_name', 'ctr_initial']);
@@ -271,8 +273,8 @@ class WarehouseController extends Controller {
 					// $prcid = $cdetails->prcid;	
 					$new_zone = Input::get('newzone'.$value);
 					$batchview_cf = BatchView::where('stid', $value)->get();
-			        $locrowdetails = Location::where('wr_id', $wrhse)->where('loc_row', $new_rw)->first(); 
-			        $loccoldetails = Location::where('wr_id', $wrhse)->where('loc_column', $new_column)->first(); 
+			        $locrowdetails = Location::where('agt_id', $wrhse)->where('loc_row', $new_rw)->first(); 
+			        $loccoldetails = Location::where('agt_id', $wrhse)->where('loc_column', $new_column)->first(); 
 
 			        $locrowid = $locrowdetails->id;
 			        $loccolid = $loccoldetails->id;
@@ -367,11 +369,11 @@ class WarehouseController extends Controller {
 		$new_wrhse = Input::get('new_warehouse'); 
 
 		if ($wrhse !== NULL) {
-			$location = Location::where('wr_id', $wrhse)->get();			
+			$location = Location::where('agt_id', $wrhse)->get();			
 		}
 
 		if ($new_wrhse !== NULL) {
-			$new_location = Location::where('wr_id', $new_wrhse)->get();			
+			$new_location = Location::where('agt_id', $new_wrhse)->get();			
 		}
 
 
@@ -399,11 +401,11 @@ class WarehouseController extends Controller {
 			$batchview = BatchView::where('prc_id', $btdetails->prcid)->get();
 		}
 		if(Input::get('country') != NULL){
-		   	$Warehouse = warehouses_region::where('ctr_id', Input::get('country'))->where('wrt_id', '1')->get();
-		   	$NewWarehouse = warehouses_region::where('ctr_id', Input::get('country'))->where('wrt_id', '1')->get();
-			$Mill = mills_region::where('ctr_id', Input::get('country'))->get(); 		
+		   	$warehouse = agent::where('agtc_id', 4)->get();
+		   	$NewWarehouse = agent::where('agtc_id', 4)->get();
+			 		
 			$seller = seller::where('ctr_id', Input::get('country'))->get(); 		
-			$weighbridge_ticket = Weighbridge::where('ctr_id', Input::get('country'))->get(); 		
+			$weighbridge_ticket = WeighbridgeInfo::where('ctr_id', Input::get('country'))->get(); 		
 		}
     	$Season = Season::all(['id', 'csn_season']);
     	$country = country::all(['id', 'ctr_name', 'ctr_initial']);
@@ -486,9 +488,9 @@ class WarehouseController extends Controller {
 								$stid = $valuebt->stid;
 								$previd = $valuebt->id;
 								if ($valuebt != NULL) {
-									$new_wr_id = Warehouse::where('wr_name', $valuebt->new_wr_name)->first();	
-									if ($new_wr_id != NULL) {
-										$new_wr_id = $new_wr_id->id;
+									$new_agt_id = Warehouse::where('wr_name', $valuebt->new_wr_name)->first();	
+									if ($new_agt_id != NULL) {
+										$new_agt_id = $new_agt_id->id;
 									}
 
 									$new_wr_row = $valuebt->new_loc_row;
@@ -500,8 +502,8 @@ class WarehouseController extends Controller {
 									$zone = $valuebt->new_zone;
 
 
-									if (null == $new_wr_id) {
-										$new_wr_id = Input::get('new_warehouse');
+									if (null == $new_agt_id) {
+										$new_agt_id = Input::get('new_warehouse');
 									}
 									if (null == $new_wr_row) {
 										$new_wr_row = Input::get('row');
@@ -513,8 +515,8 @@ class WarehouseController extends Controller {
 										$zone = Input::get('zone');
 									}
 
-									$locrowdetails = Location::where('wr_id', $new_wr_id)->where('loc_row', $new_wr_row)->first(); 
-			       					$loccoldetails = Location::where('wr_id', $new_wr_id)->where('loc_column', $new_wr_col)->first(); 
+									$locrowdetails = Location::where('agt_id', $new_agt_id)->where('loc_row', $new_wr_row)->first(); 
+			       					$loccoldetails = Location::where('agt_id', $new_agt_id)->where('loc_column', $new_wr_col)->first(); 
 
 							        $locrowid = null;
 							        $loccolid = null;
@@ -613,10 +615,10 @@ class WarehouseController extends Controller {
 
 
 
-			  //       $locrowdetails = Location::where('wr_id', $new_wr_id)->where('loc_row', $old_wr_row)->first(); 
-			  //       $loccoldetails = Location::where('wr_id', $new_wr_id)->where('loc_column', $old_wr_col)->first(); 
+			  //       $locrowdetails = Location::where('agt_id', $new_agt_id)->where('loc_row', $old_wr_row)->first(); 
+			  //       $loccoldetails = Location::where('agt_id', $new_agt_id)->where('loc_column', $old_wr_col)->first(); 
 
-			  //       // print_r($new_wr_id);
+			  //       // print_r($new_agt_id);
 
 			  //       $locrowid = $locrowdetails->id;
 			  //       $loccolid = $loccoldetails->id;
@@ -647,12 +649,12 @@ class WarehouseController extends Controller {
 				// Activity::log('Inserted Batch information with btid '.$btid. ' diff_weight '. $batch_kilograms. ' bags '. $bags. ' pockets '. $pockets. ' stid '. $stid);	
 
 
-				// // $new_wr_id = Warehouse::where('wr_name', $batchview_cf->new_wr_name)->first();	
-				// // $new_wr_id = $new_wr_id->id;
+				// // $new_agt_id = Warehouse::where('wr_name', $batchview_cf->new_wr_name)->first();	
+				// // $new_agt_id = $new_agt_id->id;
 
 
-		  //       $locrowdetails = Location::where('wr_id', $new_wr_id)->where('loc_row', $new_wr_row)->first(); 
-		  //       $loccoldetails = Location::where('wr_id', $new_wr_id)->where('loc_column', $new_wr_col)->first(); 
+		  //       $locrowdetails = Location::where('agt_id', $new_agt_id)->where('loc_row', $new_wr_row)->first(); 
+		  //       $loccoldetails = Location::where('agt_id', $new_agt_id)->where('loc_column', $new_wr_col)->first(); 
 
 		  //       $locrowid = $locrowdetails->id;
 		  //       $loccolid = $loccoldetails->id;
@@ -816,11 +818,11 @@ class WarehouseController extends Controller {
         $shipmentmonth = Months::all(['id', 'mth_name','mth_number']);
         $shipmentyear = Years::all(['id', 'yr_name','yr_number']);
 
-        $weighbridge_ticket = Weighbridge::where('ctr_id', Input::get('country'))->get();    
+        $weighbridge_ticket = WeighbridgeInfo::where('ctr_id', Input::get('country'))->get();    
 
         $SalesContractSummary = Sales_Contract_Summary::where('sct_number', Input::get('contract'))->get();
 
-        // $weighbridge_ticket = Weighbridge::where('ctr_id', Input::get('country'))->where(DB::Raw('LEFT(wb_time_in, 10)'), date("Y-m-d"))->orWhere('id', 1)->get(); 
+        // $weighbridge_ticket = WeighbridgeInfo::where('ctr_id', Input::get('country'))->where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->orWhere('id', 1)->get(); 
 
         $sctID= null;
         if ($contract != null) {
@@ -857,7 +859,7 @@ class WarehouseController extends Controller {
 
 	            if ($weight_note_no != null) {
 	                Stuffing::insert(
-	                    ['sct_id' => $sctID, 'st_id' => $instruction_id, 'stff_weight_note' => $weight_note_no, 'wb_id' => $wbtk, 'shpr_id' => $shipper, 'stff_weight' => $weight_staffed, 'stff_date' => $date, 'stff_container' => $container_number]);
+	                    ['sct_id' => $sctID, 'st_id' => $instruction_id, 'stff_weight_note' => $weight_note_no, 'wbi_id' => $wbtk, 'shpr_id' => $shipper, 'stff_weight' => $weight_staffed, 'stff_date' => $date, 'stff_container' => $container_number]);
 
 	                Activity::log('Added Stuffing sctID '. $sctID. ' weight_note_no '. $weight_note_no. ' wbtk '. $wbtk. ' shipper '. $shipper. ' weight_staffed '. $weight_staffed.' date '.$date.' container_number '.$container_number);
 	            }
@@ -889,17 +891,17 @@ class WarehouseController extends Controller {
 
                 $delivery_date = $SalesContractSummary->stuffing_date;
                 $delivery_date = date("d/m/Y", strtotime($delivery_date));
-                $movement_permit = $SalesContractSummary->wb_movement_permit;
-                $vehicle = $SalesContractSummary->wb_vehicle_plate;
-                $weighbridge_ticket = $SalesContractSummary->wb_ticket;
+                $movement_permit = $SalesContractSummary->wbi_movement_permit;
+                $vehicle = $SalesContractSummary->wbi_vehicle_plate;
+                $weighbridge_ticket = $SalesContractSummary->wbi_ticket;
                 $time_received = $SalesContractSummary->dp_start;
                 $time_received_stop = $SalesContractSummary->dp_end_date;
                 $time_received = date("H:i:s", strtotime($time_received));
                 $time_received_stop = date("H:i:s", strtotime($time_received_stop));
 
                 $received_by = $person_name;
-                $driver_name = $SalesContractSummary->wb_driver_name;
-                $driver_id = $SalesContractSummary->wb_driver_id;
+                $driver_name = $SalesContractSummary->wbi_driver_name;
+                $driver_id = $SalesContractSummary->wbi_driver_id;
                 $dp_number = $SalesContractSummary->dp_number;
 
                 $warehouse_manager = $SalesContractSummary->cl_name;
@@ -966,7 +968,7 @@ class WarehouseController extends Controller {
             }
 
             $dp_id = Dispatch::insertGetId (
-                                ['ctr_id' => $cid, 'st_id' => $instruction_id, 'wb_id' => $wbtk, 'csn_id' => $csn_id, 'sct_id' => $sctID, 'dp_number' => $dp_number, 'dp_confirmed_by' => $user]);
+                                ['ctr_id' => $cid, 'st_id' => $instruction_id, 'wbi_id' => $wbtk, 'csn_id' => $csn_id, 'sct_id' => $sctID, 'dp_number' => $dp_number, 'dp_confirmed_by' => $user]);
 
 
             if ($sum_stuffed < $stock_weight && $SalesContract->sct_stuffed == null && $sale_contract_id->st_disposed_by == null) {

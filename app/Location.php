@@ -18,6 +18,6 @@ class Location extends Model {
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['id', 'wr_id', 'loc_row', 'loc_column', 'loc_description', 'created_at', 'updated_at'];
+	protected $fillable = ['id', 'agt_id', 'loc_row', 'loc_column', 'loc_description', 'created_at', 'updated_at'];
 
 }
