@@ -241,37 +241,40 @@
 			  <div class="row">
 
 	        		
-				<div class="form-group col-md-4">
-					<div class="input-group custom-search-form">
-						<input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
+					<div class="form-group col-md-4">
+	                    <div class="input-group custom-search-form">
+	                        <input type="text" class="form-control" id="outt_number_green" name="outt_number_green" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
 
-							<span class="input-group-btn">
+		                        <span class="input-group-btn">
 
-							<button type="submit" id="search_button_green" name="search_button_green" class="btn btn-default">
-								<i class="fa fa-search"></i>
-							</button>
+		                        <button type="submit" id="search_button_green" name="search_button_green" class="btn btn-default">
+		                        	<i class="fa fa-search"></i>
+		                        </button>
 
-					</span>
-					</div>
-				</div>
-				<div class="form-group col-md-4">
-				<input type="text" class="form-control" id="grower" name="grower" style="text-transform:uppercase; " placeholder="Grower ..." value="{{ old('grower') }}"></input>
-				</div>	
+	                    </span>
+						<div class="alert-dismissible alert-info" id="outt_number_display_green"></div>
+	                    </div>
+	                </div>
+				
+		            <div class="form-group col-md-4">
+		                <select class="form-control" id="coffee_grade_green" name="coffee_grade_green" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
+		                	<option></option> 
+							@if (isset($partchment_types) && count($partchment_types) > 0)
+								@foreach ($partchment_types->all() as $partchment_type)											
+									<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
+								@endforeach									
+							@endif
+		                </select>	
 
-				<div class="form-group col-md-4">
-					<select class="form-control" id="coffee_grade" name="coffee_grade" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
-						<option></option> 
-						@if (isset($partchment_types) && count($partchment_types) > 0)
-							@foreach ($partchment_types->all() as $partchment_type)											
-								<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
-							@endforeach									
-						@endif
-					</select>	
+		                <input type="hidden" id="st_id" name="st_id">		
 
-					<input type="hidden" id="st_id" name="st_id">		
+		            </div>
+					<div class="alert-dismissible alert-info" id="coffee_grower_display_green"></div>        
+	        	</div>
 
-				</div>        
-				</div>
+				
+
+				
 
     			<input type="checkbox" id="dnt" name="dnt" >&nbsp&nbsp <strong style="font-size:35px; color:red;">Do Not Touch(DNT)</strong>
 
@@ -538,36 +541,34 @@
 			  <div class="row">
 
 	        		
-				<div class="form-group col-md-4">
-					<div class="input-group custom-search-form">
-						<input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
+					<div class="form-group col-md-4">
+	                    <div class="input-group custom-search-form">
+	                        <input type="text" class="form-control" id="outt_number_green" name="outt_number_green" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
 
-							<span class="input-group-btn">
+		                        <span class="input-group-btn">
 
-							<button type="submit" id="search_button_green" name="search_button_green" class="btn btn-default">
-								<i class="fa fa-search"></i>
-							</button>
+		                        <button type="submit" id="search_button_green" name="search_button_green" class="btn btn-default">
+		                        	<i class="fa fa-search"></i>
+		                        </button>
 
-					</span>
-					</div>
-				</div>
-				<div class="form-group col-md-4">
-				<input type="text" class="form-control" id="grower" name="grower" style="text-transform:uppercase; " placeholder="Grower ..." value="{{ old('grower') }}"></input>
-				</div>	
+	                    </span>
+						<div class="alert-dismissible alert-info" id="outt_number_display_green"></div>
+	                    </div>
+	                </div>
+				
+		            <div class="form-group col-md-4">
+		                <select class="form-control" id="coffee_grade_green" name="coffee_grade_green" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
+		                	<option></option> 
+							@if (isset($partchment_types) && count($partchment_types) > 0)
+								@foreach ($partchment_types->all() as $partchment_type)											
+									<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
+								@endforeach									
+							@endif
+		                </select>	
 
-				<div class="form-group col-md-4">
-					<select class="form-control" id="coffee_grade" name="coffee_grade" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
-						<option></option> 
-						@if (isset($partchment_types) && count($partchment_types) > 0)
-							@foreach ($partchment_types->all() as $partchment_type)											
-								<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
-							@endforeach									
-						@endif
-					</select>	
+		                <input type="hidden" id="st_id" name="st_id">		
 
-					<input type="hidden" id="st_id" name="st_id">		
-
-				</div>        
+		            </div>
 				</div>
 
 	        	<div class="row" >
@@ -1121,27 +1122,25 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 	   }
 	}
 
-	function displayGreen (event, value, cfd_id, direction, lot_number, outt_number, coffee_grade){
+	function displayGreen (event, value, st_id, direction , outt_number, coffee_grade, season){
 		event.preventDefault();
 		clearChildren(document.getElementById("green"));
 
-		var url = fetch_url(cfd_id, direction, lot_number, outt_number, coffee_grade); 
+		var url = fetch_url(st_id, direction , outt_number, coffee_grade);
 
         $.get(url, function(data, status){
 
             var obj = jQuery.parseJSON(data);
+			console.log(obj)
+		   $('#outt_number_display_green').html(obj.st_outturn);
 
-		    document.getElementById('lot_number').value = obj.cfd_lot_no;
+			//document.getElementById('coffee_grade').value = obj.pty_id;
 
-		    document.getElementById('outt_number').value = obj.cfd_outturn;
+			document.getElementById('st_id').value = obj.st_id;
 
-		    document.getElementById('coffee_grade').value = obj.cgrad_id;
+			$('#coffee_grower_display_green').html(obj.st_mark);
 
-		    document.getElementById('cfd_id').value = obj.cfd_id;
-
-		    document.getElementById('coffee_grower').value = obj.cfd_grower_mark;
-
-		    if (obj.cfd_dnt == 1) {
+		    if (obj.dont == 1) {
 
 		    	document.getElementById("dnt").checked = true;
 
@@ -1195,25 +1194,25 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 						document.getElementById(res_gs).checked = true;
 					}
 
-			    	var str1_pt = "process_type";
+			    	// var str1_pt = "process_type";
 
-					var str2_pt = obj.prcss_id;
+					// var str2_pt = obj.prcss_id;
 
-					var res_pt = str1_pt.concat(str2_pt);
+					// var res_pt = str1_pt.concat(str2_pt);
 
-					if (document.getElementById(res_pt) != null) {
+					// if (document.getElementById(res_pt) != null) {
 
-						document.getElementById(res_pt).checked = true;
-					}
+					// 	document.getElementById(res_pt).checked = true;
+					// }
 
-					if (obj.qltyd_prcss_value != null) {
+					// if (obj.qltyd_prcss_value != null) {
 
-						document.getElementById('process').value = obj.qltyd_prcss_value;
+					// 	document.getElementById('process').value = obj.qltyd_prcss_value;
 
-					} else {
+					// } else {
 
-						document.getElementById('process').value =  0;
-					}
+					// 	document.getElementById('process').value =  0;
+					// }
 
 	        
 
@@ -1247,7 +1246,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 				document.getElementById('comments').value = null;
 
-				document.getElementById('process').value =  0;
+				// document.getElementById('process').value =  0;
 
 			}
 
@@ -1403,7 +1402,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		$('#coffee_grower_display_partchment').html(obj.st_mark);
 
-		if (obj.cfd_dnt == 1) {
+		if (obj.dont == 1) {
 
 			document.getElementById("dnt").checked = true;
 
@@ -1585,11 +1584,11 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					if(response.updated) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
 						closeBootBox();
-						displayGreen(event, null, cfd_id, direction, null, null, null);
+						displayGreen(event, null, st_id, direction, null, null, null);
 					} else if(response.inserted) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
 						closeBootBox();
-						displayGreen(event, null, cfd_id, direction, null, null, null);
+						displayGreen(event, null, st_id, direction, null, null, null);
 					}else if(response.error) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
 						closeBootBox();
@@ -1729,11 +1728,11 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					if(response.updated) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
 						closeBootBox();
-						displayGreen(event, null, cfd_id, direction, null, null, null);
+						displayGreen(event, null, st_id, direction, null, null, null);
 					} else if(response.inserted) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
 						closeBootBox();
-						displayGreen(event, null, cfd_id, direction, null, null, null);
+						displayGreen(event, null, st_id, direction, null, null, null);
 					}else if(response.error) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
 						closeBootBox();
@@ -1747,7 +1746,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		$('#button_save_green').on('click', function(){
 			
-			var cfd_id = document.getElementById("cfd_id").value;
+			var st_id = document.getElementById("st_id").value;
 
 			var direction = 'Next';
 
@@ -1808,15 +1807,15 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		    process_type = JSON.stringify(process_type);
 
 
-			if (document.getElementById("process") != null) {
+			// if (document.getElementById("process") != null) {
 
-				var process_loss = document.getElementById("process").value;	
+			// 	var process_loss = document.getElementById("process").value;	
 
-			} else {
+			// } else {
 
-				var process_loss = null;
+			// 	var process_loss = null;
 
-			}
+			// }
 
 		    var raw = {};
 
@@ -1840,9 +1839,9 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			
 			
 
-			var url = '{{ route('cataloguequalitydetails.saveGreen',['cfd_id'=>":id",'dnt'=>":dnt",'greensize'=>":greensize",'greencolor'=>":greencolor",'greendefects'=>":greendefects",'process_type'=>":process_type",'process_loss'=>":process_loss",'raw'=>":raw", 'comments'=>":comments"]) }}';
+			var url = '{{ route('cataloguequalitydetails.saveGreen',['st_id'=>":id",'dnt'=>":dnt",'greensize'=>":greensize",'greencolor'=>":greencolor",'greendefects'=>":greendefects",'raw'=>":raw", 'comments'=>":comments"]) }}';
 
-			url = url.replace(':id', cfd_id);
+			url = url.replace(':id', st_id);
 
 			url = url.replace(':dnt', dnt);
 
@@ -1852,15 +1851,14 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			url = url.replace(':greendefects', greendefects);
 
-			url = url.replace(':process_type', process_type);
+			// url = url.replace(':process_type', process_type);
 
-			url = url.replace(':process_loss', process_loss);
+			// url = url.replace(':process_loss', process_loss);
 
 			url = url.replace(':raw', raw);
 
 			url = url.replace(':comments', comments);
 
-			console.log(url)
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
@@ -1873,11 +1871,11 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					if(response.updated) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
 						closeBootBox();
-						displayGreen(event, null, cfd_id, direction, null, null, null);
+						displayGreen(event, null, st_id, direction, null, null, null);
 					} else if(response.inserted) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
 						closeBootBox();
-						displayGreen(event, null, cfd_id, direction, null, null, null);
+						displayGreen(event, null, st_id, direction, null, null, null);
 					}else if(response.error) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
 						closeBootBox();
@@ -1889,44 +1887,45 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		});
 
-		$('#search_button_green').on('click', function(){
+		$('#search_button_green').on('click', function(e){
 
-			var direction = 'Search';
+		e.preventDefault();
+		var direction = 'Search';
 
-			var lot_number = null;
+		var season = null;
 
-			lot_number = document.getElementById("lot_number").value;
+		season = document.getElementById("crop_season").value;
+		
+		if (season == "") {
 
-			if (lot_number == "") {
+			season = 0;
 
-				lot_number = 0;
-
-			}
-
-
-			var outt_number = null;
-
-			outt_number = document.getElementById("outt_number").value;
-
-			if (outt_number == "") {
-
-				outt_number = 0;
-
-			}
-
-			var coffee_grade = null;
-
-			coffee_grade = document.getElementById("coffee_grade").value;
-
-			if (coffee_grade == "") {
-
-				coffee_grade = 0;
-
-			}
+		}
 
 
+		var outt_number = null;
 
-			displayGreen(event, null, null, direction, lot_number, outt_number, coffee_grade);
+		
+		 outt_number=$('#outt_number_green').val()
+		
+		if (outt_number == "") {
+
+			outt_number = 0;
+
+		}
+		
+		var coffee_grade = null;
+
+		coffee_grade =$("#coffee_grade_green").val();
+		
+		if (coffee_grade == "") {
+
+			coffee_grade = 0;
+
+		}
+
+
+			displayGreen(event, null, null, direction, outt_number, coffee_grade, season);
 
 		});
 

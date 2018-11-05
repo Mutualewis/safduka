@@ -193,7 +193,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/cataloguequalitydetails/getLots/{season}/{st_id}/{direction}/{outt_number}/{coffee_grade}', ['as'=>'cataloguequalitydetails.getLots','uses'=>'QualityController@getLots']); 
 
 	//tablet quality
-	Route::get('/cataloguequalitydetails/saveGreen/{cfd_id}/{dnt}/{greensize}/{greencolor}/{greendefects}/{process_type}/{process_loss}/{raw}/{comments}', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'QualityController@saveGreen']);
+	Route::get('/cataloguequalitydetails/saveGreen/{cfd_id}/{dnt}/{greensize}/{greencolor}/{greendefects}/{raw}/{comments}', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'QualityController@saveGreen']);
 
 
 	Route::get('/cataloguequalitydetails/saveScreen/{cfd_id}/{screen_size}/{screen}', ['as'=>'cataloguequalitydetails.saveScreen','uses'=>'QualityController@saveScreen']);
