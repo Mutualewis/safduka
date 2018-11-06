@@ -543,21 +543,21 @@
 	        		
 					<div class="form-group col-md-4">
 	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" id="outt_number_green" name="outt_number_green" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
+	                        <input type="text" class="form-control" id="outt_number_screen" name="outt_number_sreen" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
 
 		                        <span class="input-group-btn">
 
-		                        <button type="submit" id="search_button_green" name="search_button_green" class="btn btn-default">
+		                        <button type="submit" id="search_button_screen" name="search_button_screen" class="btn btn-default">
 		                        	<i class="fa fa-search"></i>
 		                        </button>
 
 	                    </span>
-						<div class="alert-dismissible alert-info" id="outt_number_display_green"></div>
+						<div class="alert-dismissible alert-info" id="outt_number_display_screen"></div>
 	                    </div>
 	                </div>
 				
 		            <div class="form-group col-md-4">
-		                <select class="form-control" id="coffee_grade_green" name="coffee_grade_green" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
+		                <select class="form-control" id="coffee_grade_screen" name="coffee_grade_screen" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
 		                	<option></option> 
 							@if (isset($partchment_types) && count($partchment_types) > 0)
 								@foreach ($partchment_types->all() as $partchment_type)											
@@ -570,7 +570,7 @@
 
 		            </div>
 				</div>
-
+				<div class="alert-dismissible alert-info" id="coffee_grower_display_screen"></div>      							
 	        	<div class="row" >
 		           
 		                <label>Screen Size</label></br>
@@ -1254,7 +1254,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 	}
 
-	function displayScreen(event, value, cfd_id, direction, lot_number, outt_number, coffee_grade){
+	function displayScreen(event, value, st_id, direction, outt_number, coffee_grade, season){
 
 		clearChildren(document.getElementById("screen_div"));
 
