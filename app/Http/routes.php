@@ -155,11 +155,6 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::post('/movementconfirmation', 'WarehouseController@movementConfirmation'); 
 
 
-
-
-		
-
-	
 	    Route::get('/settingsmenu', 'SettingsController@settingsMenuForm');
 	    Route::post('/settingsmenu', 'SettingsController@settingsMenu');
 	    Route::get('/settingsmenu/menu_delete/{menuID}', ['as'=>'settingsmenu.menu_delete','uses'=>'SettingsController@menu_delete']);
@@ -204,13 +199,11 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/cataloguequalitydetails/getLots/{season}/{st_id}/{direction}/{outt_number}/{coffee_grade}', ['as'=>'cataloguequalitydetails.getLots','uses'=>'QualityController@getLots']); 
 
 	//tablet quality
-	Route::get('/cataloguequalitydetails/saveGreen/{cfd_id}/{dnt}/{greensize}/{greencolor}/{greendefects}/{raw}/{comments}', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'QualityController@saveGreen']);
+	Route::get('/cataloguequalitydetails/saveGreen/{st_id}/{dnt}/{greensize}/{greencolor}/{greendefects}/{raw}/{comments}', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'QualityController@saveGreen']);
 
+	Route::post('/cataloguequalitydetails/saveScreen', ['as'=>'cataloguequalitydetails.saveScreen','uses'=>'QualityController@saveScreen']);
 
-	Route::get('/cataloguequalitydetails/saveScreen/{cfd_id}/{screen_size}/{screen}', ['as'=>'cataloguequalitydetails.saveScreen','uses'=>'QualityController@saveScreen']);
-
-
-	Route::get('/cataloguequalitydetails/saveCup/{cfd_id}/{cup}/{dnt_cp}/{acidity}/{body}/{flavour}/{comments_cp}', ['as'=>'cataloguequalitydetails.saveCup','uses'=>'QualityController@saveCup']);
+	Route::post('/cataloguequalitydetails/saveCup', ['as'=>'cataloguequalitydetails.saveCup','uses'=>'QualityController@saveCup']);
 
 	Route::get('/cataloguequalitydetails/saveParchment/{st_id}/{dnt}/{parchmentdesc}', ['as'=>'cataloguequalitydetails.saveParchment','uses'=>'QualityController@saveParchment']);
 

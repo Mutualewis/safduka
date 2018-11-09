@@ -191,11 +191,11 @@
 						</div>	
 
 			            <div class="form-group col-md-4">
-							<button class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalScreenCenter'onclick='displayScreen(event, this, null, null, null, null, null)' data-dprtname='{$value->dprt_name}'>Screen</button>
+							<button class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalScreenCenter'onclick='displayScreen(event, this, null, null, null, null, null)'>Screen</button>
 						</div>	
 
 			            <div class="form-group col-md-4">
-			            	<button  class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalCupCenter' onclick='displayCup(event, this, null, null, null, null, null)' data-dprtname='{$value->dprt_name}'>Cup</button>
+			            	<button  class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalCupCenter' onclick='displayCup(event, this, null, null, null, null, null)' >Cup</button>
 
 						</div>	
 
@@ -566,7 +566,7 @@
 							@endif
 		                </select>	
 
-		                <input type="hidden" id="st_id" name="st_id">		
+		                <input type="hidden" id="st_id_screen" name="st_id_screen">		
 
 		            </div>
 				</div>
@@ -618,38 +618,36 @@
 			  <div class="row">
 
 	        		
-				<div class="form-group col-md-4">
-					<div class="input-group custom-search-form">
-						<input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
+					<div class="form-group col-md-4">
+	                    <div class="input-group custom-search-form">
+	                        <input type="text" class="form-control" id="outt_number_cup" name="outt_number_cup" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
 
-							<span class="input-group-btn">
+		                        <span class="input-group-btn">
 
-							<button type="submit" id="search_button_green" name="search_button_green" class="btn btn-default">
-								<i class="fa fa-search"></i>
-							</button>
+		                        <button type="submit" id="search_button_cup" name="search_button_cup" class="btn btn-default">
+		                        	<i class="fa fa-search"></i>
+		                        </button>
 
-					</span>
-					</div>
-				</div>
-				<div class="form-group col-md-4">
-				<input type="text" class="form-control" id="grower" name="grower" style="text-transform:uppercase; " placeholder="Grower ..." value="{{ old('grower') }}"></input>
-				</div>	
+	                    </span>
+						<div class="alert-dismissible alert-info" id="outt_number_display_cup"></div>
+	                    </div>
+	                </div>
+				
+		            <div class="form-group col-md-4">
+		                <select class="form-control" id="coffee_grade_cup" name="coffee_grade_cup" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
+		                	<option></option> 
+							@if (isset($partchment_types) && count($partchment_types) > 0)
+								@foreach ($partchment_types->all() as $partchment_type)											
+									<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
+								@endforeach									
+							@endif
+		                </select>	
 
-				<div class="form-group col-md-4">
-					<select class="form-control" id="coffee_grade" name="coffee_grade" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
-						<option></option> 
-						@if (isset($partchment_types) && count($partchment_types) > 0)
-							@foreach ($partchment_types->all() as $partchment_type)											
-								<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
-							@endforeach									
-						@endif
-					</select>	
-
-					<input type="hidden" id="st_id" name="st_id">		
+		                <input type="hidden" id="st_id_cup" name="st_id_cup">		
 
 				</div>        
 				</div>
-												
+				<div class="alert-dismissible alert-info" id="coffee_grower_display_cup"></div> 						
     			<input type="checkbox" id="dnt_cp" name="dnt_cp"  onchange="this.form.submit()">&nbsp&nbsp <strong style="font-size:25px; color:red;">Do Not Touch(DNT)</strong>
 				
 				
@@ -712,7 +710,7 @@
 
 									}
 
-									echo '<td><label><input type="checkbox" id="gs'.$value->id.'" name="greensizes" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
+									echo '<td><label><input type="checkbox" id="cpacid'.$value->id.'" name="acidity" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
 
 								}
 
@@ -760,7 +758,7 @@
 
 									}
 
-									echo '<td><label><input type="checkbox" id="gc'.$value->id.'" name="greencolor" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
+									echo '<td><label><input type="checkbox" id="body'.$value->id.'" name="body" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
 
 								}
 
@@ -808,7 +806,7 @@
 
 									}
 
-									echo '<td><label><input type="checkbox" id="gd'.$value->id.'" name="greendefects" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
+									echo '<td><label><input type="checkbox" id="flv'.$value->id.'" name="flavour" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
 
 								}
 
@@ -858,7 +856,7 @@
 
 									}
 
-									echo '<label><input type="radio" id="raw'.$value->id.'" name="raw" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
+									echo '<label><input type="radio" id="cpq'.$value->id.'" name="cup" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
 
 									// echo '<td><label><input type="checkbox" id="raw'.$value->id.'" name="raw" value="'.$value->id.'">&nbsp&nbsp'.$value->rw_quality.'</input>&nbsp&nbsp </label>';
 
@@ -874,7 +872,7 @@
 
 				<div class="form-group col-md-12">
 					<label>Comments</label>
-					<textarea class="form-control" rows="3" id="comments" name="comments" value = "{{ old('comments') }}" style="text-transform:uppercase; font-size: 15px; font-weight: bold;"><?php echo htmlspecialchars($comments); ?></textarea>
+					<textarea class="form-control" rows="3" id="comments_cp" name="comments_cp" value = "{{ old('comments_cp') }}" style="text-transform:uppercase; font-size: 15px; font-weight: bold;"><?php echo htmlspecialchars($comments); ?></textarea>
 				</div>
 			</div>	 
 
@@ -943,7 +941,7 @@
 							@endif
 		                </select>	
 
-		                <input type="hidden" id="st_id" name="st_id">		
+		                <input type="hidden" id="st_id_parchment" name="st_id_parchment">		
 
 		            </div>
 					<div class="alert-dismissible alert-info" id="coffee_grower_display_partchment"></div>        
@@ -1253,126 +1251,166 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
         });
 
 	}
-
+	
 	function displayScreen(event, value, st_id, direction, outt_number, coffee_grade, season){
 
 		clearChildren(document.getElementById("screen_div"));
 
-		var url = fetch_url(cfd_id, direction, lot_number, outt_number, coffee_grade);
-
+		var url = fetch_url(st_id, direction , outt_number, coffee_grade);
         $.get(url, function(data, status){
 
             var obj = jQuery.parseJSON(data);
+			console.log(obj)
+		     $('#outt_number_display_screen').html(obj.st_outturn);
 
-		    document.getElementById('lot_number_screen').value = obj.cfd_lot_no;
+			//document.getElementById('coffee_grade').value = obj.pty_id;
 
-		    document.getElementById('outt_number_screen').value = obj.cfd_outturn;
+			document.getElementById('st_id_screen').value = obj.st_id;
 
-		    document.getElementById('coffee_grade_screen').value = obj.cgrad_id;
+			$('#coffee_grower_display_screen').html(obj.st_mark);
+			
+			var screen_data = null;
+			console.log(screen_data)
+			screen_data = '"'+obj.qualityParameterSCRID+'"'
+			console.log(JSON.parse(screen_data))
+			$.each(screen_data, function( index, value ) {
+				var str1_ss = "screen_size";
 
-		    document.getElementById('cfd_id_screen').value = obj.cfd_id;
+				var str2_ss = obj.index;
 
-		    document.getElementById('coffee_grower_screen').value = obj.cfd_grower_mark;
+				var res_ss = str1_ss.concat(str2_ss);
 
-	    	var str1_ss = "screen_size";
+				if (document.getElementById(res_ss) != null) {
 
-			var str2_ss = obj.scr_id;
-
-			var res_ss = str1_ss.concat(str2_ss);
-
-			if (document.getElementById(res_ss) != null) {
-
-				document.getElementById(res_ss).checked = true;
-			}
-
-			document.getElementById('screen').value = obj.qltyd_scr_value;
-
+					document.getElementById(res_ss).value = value;
+				}
+			});
+			
         });
 
 		event.preventDefault();
 
 	}
 
-	function displayCup(event, value, cfd_id, direction, lot_number, outt_number, coffee_grade){
+	function displayCup(event, value, st_id, direction, outt_number, coffee_grade, season){
 
 		event.preventDefault();
 
 		clearChildren(document.getElementById("cup_div"));
 
-		var url = fetch_url(cfd_id, direction, lot_number, outt_number, coffee_grade);
-
+		var url = fetch_url(st_id, direction , outt_number, coffee_grade);
         $.get(url, function(data, status){
-
+			
             var obj = jQuery.parseJSON(data);
-          
-			document.getElementById('rawscoreselected').innerHTML = '<h1>'+obj.rw_score+'</h1>';
+			console.log(obj)
+		     $('#outt_number_display_cup').html(obj.st_outturn);
 
-		    document.getElementById('lot_number_cup').value = obj.cfd_lot_no;
+			//document.getElementById('coffee_grade').value = obj.pty_id;
 
-		    document.getElementById('outt_number_cup').value = obj.cfd_outturn;
+			document.getElementById('st_id_cup').value = obj.st_id;
 
-		    document.getElementById('coffee_grade_cup').value = obj.cgrad_id;
+			$('#coffee_grower_display_cup').html(obj.st_mark);
+			var quality_params = null;
 
-		    document.getElementById('cfd_id_cup').value = obj.cfd_id;
+			quality_params = obj.qualityParameterCupID;
 
-		    document.getElementById('coffee_grower_cup').value = obj.cfd_grower_mark;
+			if (quality_params != null) {
 
-		    if (obj.cfd_dnt == 1) {
+				$.each(quality_params.split(","), function(i,e){
 
-		    	document.getElementById("dnt_cp").checked = true;
+					var str1_gd = "cpacid";
 
-		    } else {
+					var str2_gd = e;
 
-		    	document.getElementById("dnt_cp").checked = false;
+					var res_gd = str1_gd.concat(str2_gd);
 
-		    }
+					if (document.getElementById(res_gd) != null) {
+					
+						document.getElementById(res_gd).checked = true;
+					
+					}
 
-	    	var str1_cp = "cup";
+					var str1_gc = "body";
 
-			var str2_cp = obj.cp_id;
+					var str2_gc = e;
 
-			var res_cp = str1_cp.concat(str2_cp);
+					var res_gc = str1_gc.concat(str2_gc);
 
-			if (document.getElementById(res_cp) != null) {
+					if (document.getElementById(res_gc) != null) {
+					
+						document.getElementById(res_gc).checked = true;
+					
+					}
 
-				document.getElementById(res_cp).checked = true;
-			}
 
-			if (obj.qltyd_comments != null) {
+					var str1_gs = "flv";
 
-				document.getElementById('comments_cp').value = obj.qltyd_comments; 
+					var str2_gs = e;
+
+					var res_gs = str1_gs.concat(str2_gs);
+
+					if (document.getElementById(res_gs) != null) {
+
+						document.getElementById(res_gs).checked = true;
+					}
+
+					// var str1_pt = "process_type";
+
+					// var str2_pt = obj.prcss_id;
+
+					// var res_pt = str1_pt.concat(str2_pt);
+
+					// if (document.getElementById(res_pt) != null) {
+
+					// 	document.getElementById(res_pt).checked = true;
+					// }
+
+					// if (obj.qltyd_prcss_value != null) {
+
+					// 	document.getElementById('process').value = obj.qltyd_prcss_value;
+
+					// } else {
+
+					// 	document.getElementById('process').value =  0;
+					// }
+
+
+
+					var str1_rw = "cpq";
+
+					var str2_rw = obj.cup_quality;
+
+					var res_rw = str1_rw.concat(str2_rw);
+
+					if (document.getElementById(res_rw) != null) {
+
+						document.getElementById(res_rw).checked = true;
+					}
+
+
+					if (obj.qltyd_comments != null) {
+
+						document.getElementById('comments_cp').value = obj.qltyd_comments; 
+
+					} else {
+
+						document.getElementById('comments_cp').value = null;
+					}
+
+
+				});	
+
+
 
 			} else {
 
 				document.getElementById('comments_cp').value = null;
+
+				// document.getElementById('process').value =  0;
+
 			}
 
-			if (obj.qltyd_acidity != null) {
-
-				document.getElementById('acidity').value = obj.qltyd_acidity; 
-
-			} else {
-
-				document.getElementById('acidity').value = 0;
-			}
-
-			if (obj.qltyd_body != null) {
-
-				document.getElementById('body').value = obj.qltyd_body; 
-
-			} else {
-
-				document.getElementById('body').value = 0;
-			}
-
-			if (obj.qltyd_flavour != null) {
-
-				document.getElementById('flavour').value = obj.qltyd_flavour; 
-
-			} else {
-
-				document.getElementById('flavour').value = 0;
-			}
+			
 
 
         });	
@@ -1970,7 +2008,45 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		});
 
+		$('#search_button_screen').on('click', function(e){
+		e.preventDefault();
+		var direction = 'Search';
 
+		var season = null;
+
+		season = document.getElementById("crop_season").value;
+		
+		if (season == "") {
+
+			season = 0;
+
+		}
+
+
+		var outt_number = null;
+
+		
+		outt_number=$('#outt_number_screen').val()
+		
+		if (outt_number == "") {
+
+			outt_number = 0;
+
+		}
+		
+		var coffee_grade = null;
+
+		coffee_grade =$("#coffee_grade_screen").val();
+		
+		if (coffee_grade == "") {
+
+			coffee_grade = 0;
+
+		}
+		
+		displayScreen(event, null, null, direction, outt_number, coffee_grade, season);
+
+		});
 
 
 		$('#button_next_screen').on('click', function(){
@@ -2100,46 +2176,45 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		$('#button_save_screen').on('click', function(){
 
-			var cfd_id = document.getElementById("cfd_id_screen").value;
-
+			var st_id = document.getElementById("st_id_screen").value;
+			
 			var direction = 'Next';
 
-		    var screen_size = {};
+		    var screen_size = [];
+			
+			for (i=1 ; i<11 ; i++){
+				if (document.getElementById("screen_size"+i) != null) {
+				var id = i;
+				var screen = document.getElementById("screen_size"+i).value;
+				var screenobj = {id:id, screensize: screen}
+				} else {
 
-		    screen_size = $('input[name=screen_size]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-
-			if (document.getElementById("screen") != null) {
-
-				var screen = document.getElementById("screen").value;
-
-			} else {
-
+				var id = i;
 				var screen = null;
-
+				var screenobj = {id:id, screensize: screen}
+				}
+				screen_size.push(screenobj)	
 			}
 
 
-			var url = '{{ route('cataloguequalitydetails.saveScreen',['cfd_id'=>":id",'screen_size'=>":screen_size",'screen'=>":screen"]) }}';
+			var url = '{{ route('cataloguequalitydetails.saveScreen') }}';
 
-			url = url.replace(':id', cfd_id);
-
-			url = url.replace(':screen_size', screen_size);
-
-			url = url.replace(':screen', screen);
+			
 
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-						
-    
+
+			var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');		
+			let data = {_token: CSRF_TOKEN, screens:screen_size, st_id : st_id}
+			console.log(JSON.stringify(data))
 			$.ajax({
+				method: "POST",
 				url: url,
+				data: data,
 				dataType: 'json',
 				}).done(function(response) {
+					
 					if(response.updated) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
 						closeBootBox();
@@ -2153,50 +2228,14 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 						closeBootBox();
 					}
 				}).error(function(error) {
+					console.log(error)
 					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
 					closeBootBox();
 			});
 
 		});
 
-		$('#search_button_screen').on('click', function(){
 
-			var direction = 'Search';
-
-			var lot_number = null;
-
-			lot_number = document.getElementById("lot_number_screen").value;
-
-			if (lot_number == "") {
-
-				lot_number = 0;
-
-			}
-
-
-			var outt_number = null;
-
-			outt_number = document.getElementById("outt_number_screen").value;
-
-			if (outt_number == "") {
-
-				outt_number = 0;
-
-			}
-
-			var coffee_grade = null;
-
-			coffee_grade = document.getElementById("coffee_grade_screen").value;
-
-			if (coffee_grade == "") {
-
-				coffee_grade = 0;
-
-			}
-
-			displayScreen(event, null, null, direction, lot_number, outt_number, coffee_grade);
-
-		});
 
 
 
@@ -2205,21 +2244,42 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		$('#button_next_cup').on('click', function(){
 
- 			var cfd_id = document.getElementById("cfd_id_cup").value;
+ 			var st_id = document.getElementById("st_id_cup").value;
 
-		    var cup = {};
+			var cup = null;
 
-		    var direction = 'Next';
+			var flavour =[]
+			var acidity =[]
+			var body =[]
+			var taint =[]
 
-		    cup = $('input[name=cup]:checked').map(function(){
+			var direction = 'Next';
 
-		        return this.value;
+			acidity = $('input[name=acidity]:checked').map(function(){
 
-		    }).get();
+				return this.value;
+
+			}).get();
+			body = $('input[name=body]:checked').map(function(){
+
+			return this.value;
+
+			}).get();
+
+			flavour = $('input[name=flavour]:checked').map(function(){
+
+			return this.value;
+
+			}).get();
+
+			cup = $('input[name=cup]:checked').map(function(){
+
+			return this.value;
+
+			}).get();
 
 
 			var dont = document.getElementById("dnt_cp");
-			console.log(dont)
 
 			if (dont.checked) {
 
@@ -2233,35 +2293,6 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 
 
-			if (document.getElementById("acidity") != null) {
-
-				var acidity = document.getElementById("acidity").value;
-
-			} else {
-
-				var acidity = null;
-
-			}
-
-			if (document.getElementById("body") != null) {
-
-				var body = document.getElementById("body").value;
-
-			} else {
-
-				var body = null;
-
-			}
-
-			if (document.getElementById("flavour") != null) {
-
-				var flavour = document.getElementById("flavour").value;
-
-			} else {
-
-				var flavour = null;
-
-			}
 
 			if (document.getElementById("comments_cp").value != "") {
 
@@ -2273,39 +2304,33 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			}
 
-			var url = '{{ route('cataloguequalitydetails.saveCup',['cfd_id'=>":id",'cup'=>":cup",'dnt_cp'=>":dnt_cp",'acidity'=>":acidity",'body'=>":body",'flavour'=>":flavour",'comments_cp'=>":comments_cp"]) }}';
-
-			url = url.replace(':id', cfd_id);
-
-			url = url.replace(':cup', cup);
-
-			url = url.replace(':dnt_cp', dnt_cp);
-
-			url = url.replace(':acidity', acidity);
-
-			url = url.replace(':body', body);
-
-			url = url.replace(':flavour', flavour);
-
-			url = url.replace(':comments_cp', comments_cp);
+			var url = '{{ route('cataloguequalitydetails.saveCup') }}';
 
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-						
-    
+					
+
+			var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');	
+
+			datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp}
+
+			let data = {_token: CSRF_TOKEN, datacup:datacup, st_id : st_id}
+			console.log(JSON.stringify(data))
 			$.ajax({
+				method: "POST",
 				url: url,
+				data: data,
 				dataType: 'json',
 				}).done(function(response) {
 					if(response.updated) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
 						closeBootBox();
-						displayCup(event, null, cfd_id, direction, null, null, null);
+						displayCup(event, null, st_id, direction, null, null, null);
 					} else if(response.inserted) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
 						closeBootBox();
-						displayCup(event, null, cfd_id, direction, null, null, null);
+						displayCup(event, null, st_id, direction, null, null, null);
 					}else if(response.error) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
 						closeBootBox();
@@ -2315,135 +2340,144 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					closeBootBox();
 			});
 
-
-			
 
 		});
 
 		$('#button_previous_cup').on('click', function(){
 
- 			var cfd_id = document.getElementById("cfd_id_cup").value;
+ 		var st_id = document.getElementById("st_id_cup").value;
 
-		    var cup = {};
+		var cup = null;
 
-		    var direction = 'Previous';
+		var flavour =[]
+		var acidity =[]
+		var body =[]
+		var taint =[]
 
-		    cup = $('input[name=cup]:checked').map(function(){
+		var direction = 'Previous';
 
-		        return this.value;
+		acidity = $('input[name=acidity]:checked').map(function(){
 
-		    }).get();
+			return this.value;
+
+		}).get();
+		body = $('input[name=body]:checked').map(function(){
+
+		return this.value;
+
+		}).get();
+
+		flavour = $('input[name=flavour]:checked').map(function(){
+
+		return this.value;
+
+		}).get();
+
+		cup = $('input[name=cup]:checked').map(function(){
+
+		return this.value;
+
+		}).get();
 
 
-			var dont = document.getElementById("dnt_cp");
+		var dont = document.getElementById("dnt_cp");
 
-			if (dont.checked) {
+		if (dont.checked) {
 
-				var dnt_cp = document.getElementById("dnt_cp").value;
+			var dnt_cp = document.getElementById("dnt_cp").value;
 
-			} else {
+		} else {
 
-				var dnt_cp = null;
+			var dnt_cp = null;
 
-			}
+		}
 
 
-			if (document.getElementById("acidity") != null) {
 
-				var acidity = document.getElementById("acidity").value;
 
-			} else {
+		if (document.getElementById("comments_cp").value != "") {
 
-				var acidity = null;
+			var comments_cp = document.getElementById("comments_cp").value;
 
-			}
+		} else {
 
-			if (document.getElementById("body") != null) {
+			var comments_cp = null;
 
-				var body = document.getElementById("body").value;
+		}
 
-			} else {
+		var url = '{{ route('cataloguequalitydetails.saveCup') }}';
 
-				var body = null;
+		var dialog = bootbox.alert({
+			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+		}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+				
 
-			}
+		var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');	
 
-			if (document.getElementById("flavour") != null) {
+		datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp}
 
-				var flavour = document.getElementById("flavour").value;
-
-			} else {
-
-				var flavour = null;
-
-			}
-
-			if (document.getElementById("comments_cp").value != "") {
-
-				var comments_cp = document.getElementById("comments_cp").value;
-
-			} else {
-
-				var comments_cp = null;
-
-			}
-
-			var url = '{{ route('cataloguequalitydetails.saveCup',['cfd_id'=>":id",'cup'=>":cup",'dnt_cp'=>":dnt_cp",'acidity'=>":acidity",'body'=>":body",'flavour'=>":flavour",'comments_cp'=>":comments_cp"]) }}';
-
-			url = url.replace(':id', cfd_id);
-
-			url = url.replace(':cup', cup);
-
-			url = url.replace(':dnt_cp', dnt_cp);
-
-			url = url.replace(':acidity', acidity);
-
-			url = url.replace(':body', body);
-
-			url = url.replace(':flavour', flavour);
-
-			url = url.replace(':comments_cp', comments_cp);
-
-			var dialog = bootbox.alert({
-				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-						
-			$.ajax({
-				url: url,
-				dataType: 'json',
-				}).done(function(response) {
-					if(response.updated) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-						closeBootBox();
-						displayCup(event, null, cfd_id, direction, null, null, null);
-					} else if(response.inserted) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
-						closeBootBox();
-						displayCup(event, null, cfd_id, direction, null, null, null);
-					}else if(response.error) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
-						closeBootBox();
-					}
-				}).error(function(error) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+		let data = {_token: CSRF_TOKEN, datacup:datacup, st_id : st_id}
+		console.log(JSON.stringify(data))
+		$.ajax({
+			method: "POST",
+			url: url,
+			data: data,
+			dataType: 'json',
+			}).done(function(response) {
+				if(response.updated) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
 					closeBootBox();
-			});
+					displayCup(event, null, st_id, direction, null, null, null);
+				} else if(response.inserted) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
+					closeBootBox();
+					displayCup(event, null, st_id, direction, null, null, null);
+				}else if(response.error) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
+					closeBootBox();
+				}
+			}).error(function(error) {
+				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+				closeBootBox();
+		});
 
 		});
 
 		$('#button_save_cup').on('click', function(){
 
- 			var cfd_id = document.getElementById("cfd_id_cup").value;
+ 			var st_id = document.getElementById("st_id_cup").value;
 
-		    var cup = {};
+		    var cup = null;
+
+			var flavour =[]
+			var acidity =[]
+			var body =[]
+			var taint =[]
 
 		    var direction = 'Next';
 
-		    cup = $('input[name=cup]:checked').map(function(){
+		    acidity = $('input[name=acidity]:checked').map(function(){
 
 		        return this.value;
 
 		    }).get();
+			body = $('input[name=body]:checked').map(function(){
+
+			return this.value;
+
+			}).get();
+
+			flavour = $('input[name=flavour]:checked').map(function(){
+
+			return this.value;
+
+			}).get();
+
+			cup = $('input[name=cup]:checked').map(function(){
+
+			return this.value;
+
+			}).get();
 
 
 			var dont = document.getElementById("dnt_cp");
@@ -2459,35 +2493,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			}
 
 
-			if (document.getElementById("acidity") != null) {
-
-				var acidity = document.getElementById("acidity").value;
-
-			} else {
-
-				var acidity = null;
-
-			}
-
-			if (document.getElementById("body") != null) {
-
-				var body = document.getElementById("body").value;
-
-			} else {
-
-				var body = null;
-
-			}
-
-			if (document.getElementById("flavour") != null) {
-
-				var flavour = document.getElementById("flavour").value;
-
-			} else {
-
-				var flavour = null;
-
-			}
+			
 
 			if (document.getElementById("comments_cp").value != "") {
 
@@ -2498,40 +2504,34 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 				var comments_cp = null;
 
 			}
-
-			var url = '{{ route('cataloguequalitydetails.saveCup',['cfd_id'=>":id",'cup'=>":cup",'dnt_cp'=>":dnt_cp",'acidity'=>":acidity",'body'=>":body",'flavour'=>":flavour",'comments_cp'=>":comments_cp"]) }}';
-
-			url = url.replace(':id', cfd_id);
-
-			url = url.replace(':cup', cup);
-
-			url = url.replace(':dnt_cp', dnt_cp);
-
-			url = url.replace(':acidity', acidity);
-
-			url = url.replace(':body', body);
-
-			url = url.replace(':flavour', flavour);
-
-			url = url.replace(':comments_cp', comments_cp);
+			
+			var url = '{{ route('cataloguequalitydetails.saveCup') }}';
 
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 					
     
+			var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');	
+
+			datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp}
+
+			let data = {_token: CSRF_TOKEN, datacup:datacup, st_id : st_id}
+			console.log(JSON.stringify(data))
 			$.ajax({
+				method: "POST",
 				url: url,
+				data: data,
 				dataType: 'json',
 				}).done(function(response) {
 					if(response.updated) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
 						closeBootBox();
-						displayCup(event, null, cfd_id, direction, null, null, null);
+						displayCup(event, null, st_id, direction, null, null, null);
 					} else if(response.inserted) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
 						closeBootBox();
-						displayCup(event, null, cfd_id, direction, null, null, null);
+						displayCup(event, null, st_id, direction, null, null, null);
 					}else if(response.error) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
 						closeBootBox();
@@ -2613,19 +2613,21 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			var direction = 'Search';
 
-			var lot_number = null;
+			var season = null;
 
-			lot_number = document.getElementById("lot_number_cup").value;
+			season = document.getElementById("crop_season").value;
 
-			if (lot_number == "") {
+			if (season == "") {
 
-				lot_number = 0;
+				season = 0;
 
 			}
 
+
 			var outt_number = null;
 
-			outt_number = document.getElementById("outt_number_cup").value;
+
+			outt_number=$('#outt_number_cup').val()
 
 			if (outt_number == "") {
 
@@ -2635,7 +2637,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			var coffee_grade = null;
 
-			coffee_grade = document.getElementById("coffee_grade_cup").value;
+			coffee_grade =$("#coffee_grade_cup").val();
 
 			if (coffee_grade == "") {
 
@@ -2643,7 +2645,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			}
 
-			displayCup(event, null, null, direction, lot_number, outt_number, coffee_grade);
+			displayCup(event, null, null, direction, outt_number, coffee_grade, season);
 
 		}); 
 		
