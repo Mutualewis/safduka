@@ -4,14 +4,14 @@ use Illuminate\Database\Eloquent\Model;
 
 // use Illuminate\Auth\Reminders\RemindableInterface;
 
-class greencomments extends Model {
+class cupcomments extends Model {
 
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'green_comments_grcm';
+	protected $table = 'cup_comments';
 
 	public $timestamps = false;
 	/**

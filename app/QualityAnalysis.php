@@ -24,6 +24,6 @@ class QualityAnalysis extends Model {
 	//'qtyp_id',  'oqlty_outturn_id',  'cc_id ct_id',  'oqlty_moisture',  'oqlty_milling_loss',  'oqlty_remarks',  'oqlty_aqr_serial'
 
 
-	protected $fillable = ['acat_id',  'oqlty_id',  'qanl_value'];
+	protected $fillable = ['acat_id',  'qltyd_id',  'qanl_value'];
            
 }
