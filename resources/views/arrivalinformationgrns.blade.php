@@ -32,7 +32,7 @@
 
 	if(session('maincountry')!=NULL){
 		$cidmain=session('maincountry');
-	}
+	}	
 
 	$autosubmit=false;
 	if (old('country') != NULL) {
@@ -107,7 +107,11 @@
 		$wbtk = NULL;
 	}
 	if (!isset($ot_season )) {
-		$ot_season = NULL;
+		if (isset($active_season )) {
+			$ot_season = $active_season;
+		} else {
+			$ot_season = NULL;
+		}
 	}
 	if (!isset($rlno )) {
 		$rlno = NULL;
@@ -151,9 +155,6 @@
 	if (!isset($st_quality_check)) {
 		$st_quality_check = NULL;
 	}
-	if (!isset($timeout)) {
-		$timeout = 1000;
-	}	
 
 	$screen = 0;
 	$process = 0;
@@ -174,116 +175,33 @@
 	$pkg_status = NULL;
 
 
-	if (isset($coffee_details) && !isset($st_quality_check)){
-
-		$ignore_partial = true;
-
-		$sif_lot = $coffee_details->lot;
-
-		$outt_number = $coffee_details->outturn;
-
-		$bskt = $coffee_details->bsid;
-
-		$rlno = $coffee_details->rl_no;
-
-		$grade = $coffee_details->grade;
-
-		$coffee_grower = $coffee_details->mark;		
-
-		$partial = $coffee_details->partial_delivey;	
-
-		$bought_weight = $coffee_details->weight;	
-
-		$packages_stock = CEIL($bought_weight/60);
-
-		$dispatch_kilograms = $bought_weight;	
-
-		$delivery_kilograms = $bought_weight;	
-
-		if ($coffee_details->st_dispatch_date != null) {
-
-			$dispatch_date = $coffee_details->st_dispatch_date;
-
-			$dispatch_date = date("m/d/Y", strtotime($dispatch_date));
-
-		}	
-
-
-		if (isset($stock_details)){
-			
-			$partial = $stock_details->st_partial_delivery;	
-
-			$pkg_status = $stock_details->st_package_status;
-
-		}
-
-
-
-	} else if (isset($stock_details)){
-
-		$sif_lot = $stock_details->cfd_lot_no;
-
-		$outt_number = $stock_details->cfd_outturn;
-
-		$bskt = $stock_details->bsid;
-
-		if ($bskt == null){
-
-			$bskt = $stock_details->bs_id;	
-
-		}
-
-		$partial = $stock_details->st_partial_delivery;	
-
-		$pkg_status = $stock_details->st_package_status;
-			
-		$grade = $stock_details->cgrad_name;
-
-		$coffee_grower = $stock_details->cfd_grower_mark;		
-
-		if ($coffee_grower == null){
-
-			$coffee_grower = $stock_details->st_mark;	
-
-		}
-
-		$bought_weight = $stock_details->inv_weight;
-
-		$pkg_status = $stock_details->st_package_status;
-
-		$st_quality_check = $stock_details->st_quality_check;	
-
-		$packages_stock = $stock_details->st_packages;
-
-		$dispatch_kilograms = $stock_details->st_dispatch_net;	
-
-		$delivery_kilograms = $stock_details->st_gross;		
-
-		$tare_kilograms = $stock_details->st_tare;	
-
+	if (isset($stock_details)){
+		$warehouse_id = $stock_details->warehouse_id;
+		$grower_id = $stock_details->cgr_id;
+		$item_id = $stock_details->it_id;
+		$miller_id = $stock_details->miller_id;
+		$miller_by_id = $stock_details->milled_by;
+		$material_id = $stock_details->mt_id;
 		$moisture = $stock_details->st_moisture;
-
-		$pkg = $stock_details->pkg_id;		
-
-		if ($stock_details->st_dispatch_date != null) {
-
-			$dispatch_date = $stock_details->st_dispatch_date;
-
-			$dispatch_date = date("m/d/Y", strtotime($dispatch_date));
-			
-		}	
-
+		$outt_number = $stock_details->st_outturn;
+		$basket_id = $stock_details->bs_id;
+		$pkg = $stock_details->pkg_id;
+		$partial = $stock_details->st_partial_delivery;
+		$ot_season = $stock_details->csn_id;	
 	}
 		
+
+
 	if(isset($grn_details)){
 
 		$grn_number = $grn_details->gr_number;	
-
-		$wbtk = $grn_details->wb_id;		
-
+		$wbtk = $grn_details->wbi_id;		
 		$grnConfirmed = $grn_details->gr_confirmed_by;	
-
-		$ot_season = $grn_details->csn_id;	
+		$warehouse_id = $grn_details->agt_id;
+		$grower_id = $grn_details->cgr_id;
+		$item_id = $grn_details->it_id;
+		$miller_id = $grn_details->miller_id;
+		$miller_by_id = $grn_details->milled_by;
 
 	}
 
@@ -292,9 +210,7 @@
 	if (isset($grnsview)){
 
 		foreach ($grnsview as $value) {
-
 			$gr_confirmed_by = $value->gr_confirmed_by;
-
 		}
 
 	}
@@ -314,6 +230,30 @@
 		$team_id   = NULL;
 	}
 
+	if (!isset($grower_id )) {
+		$grower_id   = NULL;
+	}
+
+	if (!isset($item_id )) {
+		$item_id   = NULL;
+	}
+
+	if (!isset($miller_id )) {
+		$miller_id   = NULL;
+	}
+
+	if (!isset($material_id )) {
+		$material_id   = NULL;
+	}
+
+	if (!isset($basket_id )) {
+		$basket_id   = NULL;
+	}
+
+	if (!isset($warehouse_id )) {
+		$warehouse_id   = NULL;
+	}
+
 ?>
 
     <div class="col-md-14">
@@ -322,20 +262,20 @@
 
 		        <div class="row">
 		            <div class="form-group col-md-12">
-		            	<label>Weighbridge Ticket</label>
-		                <select class="form-control" id="weighbridgeTK" name="weighbridgeTK">
-		               		<option></option>
-							@if (isset($weighbridge_ticket))
-										@foreach ($weighbridge_ticket->all() as $value)
-										@if ($wbtk ==  $value->id)
-											<option value="{{ $value->id }}" selected="selected">{{ $value->wb_ticket}}</option>
-										@else
-											<option value="{{ $value->id }}">{{ $value->wb_ticket}}</option>
-										@endif
-										@endforeach
-									
-							@endif
-		                </select>
+		                <label>Warehouse</label>
+		                <select class="form-control" id="warehouse" name="warehouse" onchange='fetchWarehouseDetails()'>
+		                	<option></option> 
+								@if (isset($warehouse))
+											@foreach ($warehouse->all() as $value)
+											@if ($warehouse_id ==  $value->id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->agt_name}}</option>
+											@else
+												<option value="{{ $value->id }}">{{ $value->agt_name}}</option>
+											@endif
+											@endforeach
+										
+								@endif
+	            		</select>
 		            </div>
 		        </div>
 
@@ -359,99 +299,142 @@
 
 	            <div class="row">
 		        	<div class="form-group col-md-12">
-		                <label>Warehouse</label>
-		                <select class="form-control" id="warehouse" name="warehouse">
-		                	<option></option> 
-
-					        	<?php
-
-					        		for ($i=0; $i < $warehouse_count; $i++) {  
-
-					        			$id = 0;
-
-					        			$name = null;
-
-					        			foreach ($warehouse[0][$i] as $key => $value) {
-
-					        				if ($key == 'id') {
-
-					        					$id = $value;
-					        				}
-
-					        				if ($key == 'wr_name') {
-					        					
-					        					$name = $value;
-					        				}
-					        			}
-					        			if ($wrhse ==  $id){
-
-					        				echo '<option value="'.$id.'" selected="selected">'.$name.'</option>';
-
-					        			} else {
-
-					        				echo '<option value="'.$id.'" >'.$name.'</option>';
-
-					        			}
-					        			
-					        		}
-
-	            				?>
-	            		</select>
+		            	<label>Vehicle</label>
+		                <select class="form-control" id="weighbridgeTK" name="weighbridgeTK">
+		               		<option></option>
+							@if (isset($weighbridge_ticket))
+										@foreach ($weighbridge_ticket->all() as $value)
+										@if ($wbtk ==  $value->id)
+											<option value="{{ $value->id }}" selected="selected">{{ $value->wbi_vehicle_plate."( ".$value->wbi_ticket.")"}}</option>
+										@else
+											<option value="{{ $value->id }}">{{ $value->wbi_vehicle_plate." (".$value->wbi_ticket.")"}}</option>
+										@endif
+										@endforeach
+									
+							@endif
+		                </select>
             		</div>
             	</div>
 
 	        	<div class="row">
 
 	        		<div class="form-group col-md-12">
-	        			<label>Sale-Lot-Outturn-Grade</label>
+		            	<label>Season</label>
+		                <select class="form-control" id="outt_season" name="outt_season">
+							@if (isset($Season))
+										@foreach ($Season->all() as $season)
+										@if ($ot_season ==  $season->id)
+											<option value="{{ $season->id }}" selected="selected">{{ $season->csn_season}}</option>
+										@else
+											<option value="{{ $season->id }}">{{ $season->csn_season}}</option>
+										@endif
+										@endforeach
+									
+							@endif
+		                </select>
+	                </div>	
+	            </div>
 
-		                <select class="form-control" id="outt_number_search" name="outt_number_search" placeholder="Select Outturn" data-search="true" onchange=AjaxFunction();>
-		             
+	            <div class="row">
+		            <div class="form-group col-md-12">
+		                <label>Item Name</label>
+		                <select class="form-control searchable" id="select_items" name="select_items" onchange="getMaterials()";>
 		                	<option></option> 
-							@if (isset($expected_arrival) && count($expected_arrival) > 0)
-										@foreach ($expected_arrival as $value)
-											@if ($stock_id ==  $value->id)
-												<option value="{{ $value->id }}" selected="selected">{{ $value->sale.'-'.$value->lot.'-'.$value->outturn.'-'.$value->grade}}</option>
+							@if (isset($items) && count($items) > 0)
+										@foreach ($items->all() as $value)
+											@if ($value->id == $item_id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->it_name}}</option>
 											@else
-												<option value="{{ $value->id }}">{{ $value->sale.'-'.$value->lot.'-'.$value->outturn.'-'.$value->grade}}</option>
+												<option value="{{ $value->id }}">{{ $value->it_name}}</option>
 											@endif
 
 										@endforeach
 									
 							@endif
 		                </select>
-
-	                </div>	
-	            </div>
-	            <div class="row">
-		            <div class="form-group col-md-12">
-		           		<label>Mark</label>
-		                <input type="text"  class="form-control" id="coffee_grower" name="coffee_grower" style="text-transform:uppercase" placeholder="Grower Mark" value="{{ old('coffee_grower'). $coffee_grower }}" readonly>	                
-		            </div> 
+		            </div>
 		        </div>
 		        <div class="row">
 		            <div class="form-group col-md-12">
-		                <label>Basket</label>
-		                <select class="form-control" id="basket"  name="basket" disabled>
-		               		<option></option>
-							@if (count($basket) > 0)
-										@foreach ($basket->all() as $value)
-										@if ($bskt ==  $value->id)
-											<option value="{{ $value->id }}" selected="selected">{{ $value->bs_code}}</option>
-										@else
-											<option value="{{ $value->id }}">{{ $value->bs_code}}</option>
-										@endif
+		                <label>Grower</label>
+		                <select class="form-control searchable" id="coffee_grower" name="coffee_grower">
+		                	<option></option> 
+							@if (isset($growers) && count($growers) > 0)
+										@foreach ($growers->all() as $value)
+											@if ($grower_id ==  $value->id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->cgr_grower." (".$value->cgr_code.")"}}</option>
+											@else
+												<option value="{{ $value->id }}">{{ $value->cgr_grower. "(".$value->cgr_code.")"}}</option>
+											@endif
+
 										@endforeach
 									
 							@endif
-		                </select>
+		                </select>	
+		            </div>
+	        	</div>
+		        <div class="row">
+		            <div class="form-group col-md-12">
+		                <label>Miller</label>
+		                <select class="form-control searchable" id="select_miller" name="select_miller" onchange=fetchOutturnNumber();>
+		                	<option></option> 
+							@if (isset($millers) && count($millers) > 0)
+										@foreach ($millers->all() as $value)
+											@if ($value->id == $miller_id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->agt_name}}</option>
+											@else
+												<option value="{{ $value->id }}">{{ $value->agt_name}}</option>
+											@endif
+
+										@endforeach
+									
+							@endif
+		                </select>		                
 		            </div>
 	        	</div>
 
 		        <div class="row">
+		            <div class="form-group col-md-12">
+		                <label>Milled By</label>
+		                <select class="form-control" id="milled_by" name="milled_by" >
+		                	<option></option> 
+			<!-- 				@if (isset($items) && count($items) > 0)
+										@foreach ($items->all() as $value)
+											@if ($value->id == $item_id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->it_name}}</option>
+											@else
+												<option value="{{ $value->id }}">{{ $value->it_name}}</option>
+											@endif
+
+										@endforeach
+									
+							@endif -->
+		                </select>                
+		            </div>
+	        	</div>
+
+	            <div class="row">
+		            <div class="form-group col-md-12">
+		           		<label>Outturn</label>
+	                    <div class="input-group custom-search-form">
+	                        <input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Add/Search Outturn..."  value="{{ old('outt_number'). $outt_number }}" onchange="getMaterialsInOutturn()"></input>
+	                        <input type="hidden" class="form-control" id="outt_number_search" name="outt_number_search" style="text-transform:uppercase; " placeholder="Add/Search Outturn..."  value="{{ old('outt_number'). $outt_number }}" ></input>
+
+		                        <span class="input-group-btn">
+
+		                        <button type="submit" name="searchButton" class="btn btn-default">
+		                        	<i class="fa fa-search"></i>
+		                        </button>
+
+	                    </span>
+	                    </div>          
+		            </div> 
+		        </div>
+
+		        <div class="row">
 
 		            <div class="form-group col-md-6">
-		            	<button type="submit" id ="deliverydetails" name="deliverydetails" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalDeliveryCenter'onclick='displayDeliveryDetails(event, this)' data-dprtname='{$value->dprt_name}'>Delivery Details</button>
+		            	<button type="submit" id ="deliverydetails" name="deliverydetails" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalDeliveryCenter'onclick='displayDeliveryDetails(event, this)' data-dprtname='{$value->dprt_name}'>Add Material</button>
 					</div>	
 
 		            <div class="form-group col-md-6">
@@ -464,29 +447,32 @@
 				<div class="row">
 					<div class="col-md-12 col-md-offset-0 pre-scrollable" style="max-height: 800px;">
 						<h3>Outturn(s) In GRN</h3>
-						<table class="table table-striped">
+						<table class="table table-striped" id="grn_outturns">
 						<thead>
 						<tr>	
 							<th>
-								Lot
+								No.
 							</th>
 							<th>
 								Outturn
 							</th>
 							<th>
-								Mark
+								Material
 							</th>
 							<th>
-								Grade
+								Packages
 							</th>
 							<th>
 								Gross Weight
 							</th>
 							<th>
+								Tare
+							</th>
+							<th>
 								Net Weight
 							</th>
 							<th>
-								Warrant no.
+								Moisture
 							</th>
 			                <?php
 		                	if ($role == $admin) {
@@ -502,67 +488,6 @@
 						</thead>
 						<tbody>
 
-							<?php
-								$total_bags = 0;
-								$total_pkts = 0;
-								$count = 0;
-								$count_green = 0;
-								$count_process = 0;
-								$count_screen = 0;
-								$count_cup = 0;
-								$total_price = 0;
-								$total = 0;
-								$total_gross = 0;
-								
-								if (isset($grnsview)) {
-
-									foreach ($grnsview as $value) {
-
-										$total_gross += $value->st_gross; 
-
-										$total += $value->st_net_weight; 
-
-										$count += 1;
-
-										$id = $value->id;
-
-										$total_bags += $value->st_bags;
-
-										$total_pkts += $value->st_pockets;
-
-										echo "<tr>";
-
-											echo "<td>".$value->cfd_lot_no."</td>";
-											echo "<td>".$value->st_outturn."</td>";
-											echo "<td>".$value->st_mark."</td>";
-											echo "<td>".$value->cgrad_name."</td>";
-											echo "<td>".$value->st_gross."</td>";
-											echo "<td>".$value->st_net_weight."</td>";
-											echo "<td>".$value->war_no."</td>";
-											if ($role == $admin) {
-		                	
-												echo "<td>"."<a href='/outturn_delete/{$value->stid}'  class='btn btn-success btn-danger' >Delete</a>";
-											}
-										echo "</tr>";
-
-									}
-								}
-							?>
-							  <tr>
-							    <?php
-								    echo "<td>".$count." Lot(s)</td>";
-								    echo "<td></td>";
-								    echo "<td></td>";
-								    echo "<td></td>";
-							   		echo "<td>".$total_gross." KG(s)</td>";
-								    echo "<td>".$total." KG(s)</td>";
-								    echo "<td></td>";
-								    if ($role == $admin) {
-								    echo "<td></td>";
-									}
-								?>
-								
-							  </tr>
 						</tbody>
 						</table>
 					</div>
@@ -684,86 +609,48 @@
       <div class="modal-body" id = "delivery_modal" style="font-size: 35px;">
 
             <div class="form-group">
-                <label>Dispatch Net Weight</label>
-                <input class="form-control"  id="dispatch_kilograms"  name="dispatch_kilograms" oninput="myFunction()" value="{{ old('dispatch_kilograms').$dispatch_kilograms  }}" required>
+                <label>Outturn Type</label>
+                <select class="form-control" id="outturn_type" name="outturn_type" onchange='fetchOutturnNumber()'>
+                	<option></option> 
+					@if (isset($material) && count($material) > 0)
+								@foreach ($material->all() as $value)
+									@if ($value->id == $material_id)
+										<option value="{{ $value->id }}" selected="selected">{{ $value->mt_name}}</option>
+									@else
+										<option value="{{ $value->id }}">{{ $value->mt_name}}</option>
+									@endif
+
+								@endforeach
+							
+					@endif
+                </select>	
             </div>
 
-            <div class="form-group">
-            	<label>Dispatch Date</label>
-           		<input class="form-control"  id="date"  name="date" value="{{ old('dispatch_date').$dispatch_date  }}" required>
-            </div>	  
-            <div class="form-group">
-            	<input class="form-control" type="hidden"  id="delivery_kilograms"  name="delivery_kilograms" oninput="myFunction()" value="{{ old('delivery_kilograms').$delivery_kilograms  }}" required>
-        	</div>
             <div class="form-group">
                 <label>Moisture(%)</label>
-                <input class="form-control"  id="moisture"  name="moisture" oninput="myFunction()" value="{{ old('moisture').$moisture  }}" required>
+                <input class="form-control"  id="moisture"  name="moisture" value="{{ old('moisture').$moisture  }}" required  onchange='fetchOutturnNumber()'>	
             </div>
 
             <div class="form-group">
-                <label>Packaging Check</label>
-                <select class="form-control" name="package_status" required>
-                	<option></option> 
-						@if ($pkg_status ==  0)
-							<option value="0" selected="selected">Okay</option>
-						@else
-							<option value="0" >Okay</option>
-						@endif
-
-						@if ($pkg_status ==  1)
-							<option value="1" selected="selected">Not Okay</option>
-						@else
-							<option value="1" >Not Okay</option>
-						@endif
-
-
-
-                </select>		
+                <label>Basket</label>
+                <select class="form-control" id="basket" name="basket">
+               		<option></option>
+					@if (isset($basket))
+								@foreach ($basket->all() as $value)
+								@if ($basket_id ==  $value->id)
+									<option value="{{ $value->id }}" selected="selected">{{ $value->bs_code. " (". $value->bs_quality.")"}}</option>
+								@else
+									<option value="{{ $value->id }}">{{ $value->bs_code. " (". $value->bs_quality.")"}}</option>
+								@endif
+								@endforeach
+							
+					@endif
+                </select>
             </div>
-
-            <div class="form-group">
-                <label>Packaging</label>
-                <select class="form-control" name="packaging" required>
-                	<option></option> 
-						@if (isset($packaging))
-									@foreach ($packaging->all() as $value)
-									@if ($pkg ==  $value->id)
-										<option value="{{ $value->id }}" selected="selected">{{ $value->pkg_name}}</option>
-										<?php $pkg_weight = $value->pkg_weight; ?>
-									@else
-										<option value="{{ $value->id }}">{{ $value->pkg_name}}</option>
-									@endif
-									@endforeach
-								
-						@endif
-                </select>		
-            </div>
-
-            <div class="form-group">
-	                <label >Packages</label>
-	                <input class="form-control"  id="packages_stock"  name="packages_stock" oninput="calculateValue()" value="{{ old('packages_stock').$packages_stock  }}" required>		            
-            </div>	
-
-            <div class="form-group">
-                <label style="color: red;" >Partial</label>
-                <?php
-                	if ($partial == null) {
-
-                		echo "<input class='form-control' type='checkbox' name='partial' value='1' />";
-
-                	} else {
-
-                		echo "<input class='form-control' type='checkbox' name='partial' value='1' checked/>";
-
-                	}		                	
-
-                ?>
-            </div>	
-
 				
       </div>
       <div class="modal-footer">
-        <button type="button" name="add_items" id="add_items" class="btn btn-primary btn-block" style="font-size: 35px;">Add</button>
+        <button type="button" name="add_items_delivery" id="add_items_delivery" class="btn btn-primary btn-block" style="font-size: 35px;">Add</button>
         <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal" style="font-size: 35px;">Close</button>
       </div>
     </div>
@@ -777,7 +664,7 @@
         <h3 class="modal-title" id="title">
         <div class="alert alert-info" role="alert">
 		  <h4 class="alert-heading">Batch Details</h4>
-			<button type="button" name="add_items" id="add_items" class="btn btn-primary btn-prev" style="font-size: 35px;">Add</button>
+			<button type="button" name="submitbatch" id="submitbatch" class="btn btn-primary btn-prev" style="font-size: 35px;">Add</button>
 			<button type="button" class="btn btn-secondary btn-next" data-dismiss="modal" style="font-size: 35px;">Close</button>
 
 		</div>
@@ -789,54 +676,71 @@
       <div class="modal-body" id = "batch_modal" style="font-size: 35px;">
 	      	<div>
 	        	<div class="row">
-					<div class="form-group col-md-4">
-					    <label>Weigh Scale</label>
-					    <select class="form-control" id="weigh_scales" name="weigh_scales">
-					    	<option></option>
-					        	<?php
-					        		for ($i=0; $i < $weigh_scales_count; $i++) {  
-					        			$id = 0;
-					        			$name = null;
-					        			foreach ($weigh_scales[0][$i] as $key => $value) {
-					        				if ($key == 'id') {
-					        					$id = $value;
-					        				}
-					        				if ($key == 'ws_equipment_number') {		        					
-					        					$name = $value;
-					        				}
-					        			}
-					        			if ($wsid ==  $id){
-					        				echo '<option value="'.$id.'" selected="selected">'.$name.'</option>';
-					        			} else {
-					        				echo '<option value="'.$id.'" >'.$name.'</option>';
-					        			}
-					        			
-					        		}
+		            <div class="form-group col-md-6">
+		                <label>Outturn Type</label>
+		                <select class="form-control" id="outturn_type_batch" name="outturn_type_batch" onchange="populateBatches()" >
+		                	<option></option> 
+							@if (isset($material) && count($material) > 0)
+										@foreach ($material->all() as $value)
+											@if ($value->id == $material_id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->mt_name}}</option>
+											@else
+												<option value="{{ $value->id }}">{{ $value->mt_name}}</option>
+											@endif
 
-								?>
+										@endforeach
+									
+							@endif
+		                </select>	
+		            </div>
 
-						</select>
+					<div class="form-group col-md-6">
+		                <label>Weigh Scale</label>
+		                <select class="form-control" id="weigh_scales" name="weigh_scales"  onchange='checkIfReset()'>
+		                	<option></option> 
+	            		</select>
 					</div>
 
-			        <div class="form-group col-md-4">
-			            <label >Zone</label>
-			            <input class="form-control"  id="zone"  name="zone" oninput="myFunction()" value="{{ old('zone').$zone  }}">
-			        </div>	
+				</div>
 
-			        <div class="form-group col-md-4">
-			                <label >Packages</label>
-			                <input class="form-control"  id="packages_batch"  name="packages_batch" oninput="calculateValue()" value="{{ old('packages_batch').$packages_batch  }}">		            
+				<div class="row">
+			        <div class="form-group col-md-6">
+		                <label >Zone</label>
+		                <input class="form-control"  id="zone"  name="zone" value="{{ old('zone').$zone  }}">
+			        </div>	
+	  
+		            <div class="form-group col-md-6">
+		                <label>Packaging</label>
+		                <select class="form-control" id="packaging"  name="packaging" required>
+		                	<option></option> 
+								@if (isset($packaging))
+											@foreach ($packaging->all() as $value)
+											@if ($pkg ==  $value->id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->pkg_name}}</option>
+												<?php $pkg_weight = $value->pkg_weight; ?>
+											@else
+												<option value="{{ $value->id }}">{{ $value->pkg_name}}</option>
+											@endif
+											@endforeach
+										
+								@endif
+		                </select>	
+		        	</div>
+		        </div>
+		        <div class="row">
+			        <div class="form-group col-md-6">
+		                <label >Packages</label>
+		                <input class="form-control"  id="packages_batch"  name="packages_batch" oninput="calculateValue()" value="{{ old('packages_batch') }}">		            
 			        </div>		
 
-			        <div class="form-group col-md-4">
-			            <label>Weight (KGS)</label>
-			            <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" oninput="arrivalBags()" value="{{ old('batch_kilograms').$batch_kilograms  }}" disabled>
-			            <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" oninput="arrivalBags()" value="{{ old('batch_kilograms').$batch_kilograms  }}" hidden>
+			        <div class="form-group col-md-6">
+		                <label>Weight (KGS)</label>
+		                <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" oninput="arrivalBags()" value="{{ old('batch_kilograms').$batch_kilograms  }}" disabled>
+		                <input type="hidden"  class="form-control"  id="batch_kilograms_hidden"  name="batch_kilograms_hidden" oninput="arrivalBags()" value="{{ old('batch_kilograms')  }}" >
 			        </div>
-			        <div class="form-group col-md-4" id="btn_weight">
+			        <div class="form-group col-md-6" id="btn_weight">
 			        	<label></label>
-						<button type="submit" id="fetch_weight" name="fetchweight" class="btn btn-lg btn-success btn-block" onclick='fetchWeight()'>Fetch</button>
-		       
+						<button type="submit" id="fetch_weight" name="fetchweight" class="btn btn-lg btn-success btn-block" onclick='fetchWeight()'>Fetch</button>		       
 					</div>
 				</div>
 				<h3  data-toggle="collapse" data-target="#tabpanel">Location</h3> 
@@ -858,17 +762,12 @@
 
 				    <div class="tab-content">
 			            <div role="tabpanel" class="tab-pane active" class="tab-pane" id="tab-row">
-					        <div class="row">		        	
-					            <div class="form-group col-md-12" id="row_list" name="row_list">
-								
-					            </div>
+					        <div class="row" id="row_list">		        	
 					        </div>
 					    </div>
 
 			            <div role="tabpanel" class="tab-pane" class="tab-pane" id="tab-column">
-					        <div class="row">		        	
-					            <div class="form-group col-md-12" id="column_list" name="column_list">
-					            </div>
+					        <div class="row" id="column_list">	
 					        </div>
 					    </div>
 
@@ -933,6 +832,7 @@
 
 @push('scripts')
 <script>
+	
 
 	$( "#deliverydetails" ).click(function(event){
 		event.preventDefault();
@@ -942,7 +842,191 @@
 		event.preventDefault();
 	})
 
+
+	$(document).ready(function (){ 
+		
+	    $(".searchable").searchable({
+	        maxListSize: 100,                       // if list size are less than maxListSize, show them all
+	        maxMultiMatch: 50,                      // how many matching entries should be displayed
+	        exactMatch: false,                      // Exact matching on search
+	        wildcards: true,                        // Support for wildcard characters (*, ?)
+	        ignoreCase: true,                       // Ignore case sensitivity
+	        latency: 200,                           // how many millis to wait until starting search
+	        warnMultiMatch: 'top {0} matches ...',  // string to append to a list of entries cut short by maxMultiMatch
+	        warnNoMatch: 'no matches ...',          // string to show in the list when no entries match
+	        zIndex: 'auto'                          // zIndex for elements generated by this plugin
+	    });
+
+	    fetchWarehouseDetails();
+	    checkIfReset();
+	    refreshOutturnsTable();
+	    getMaterials();
+
+	    var warehouse = $('#warehouse');
+	    var coffee_grower = $('#coffee_grower');
+	    var select_miller = $('#select_miller');
+	    var select_items = $('#select_items');
+	    var milled_by = $('#milled_by');
+	    var outturn_type = $('#outturn_type');
+	    var moisture = $('#moisture');
+	    var outt_number = $('#outt_number');
+	    var outt_number_search = $('#outt_number_search');
+	    var basket = $('#basket');
+	    var packaging = $('#packaging');
+	    var grn_number = $('#grn_number');
+
+		$('#warehouse option').eq(<?php echo json_encode($warehouse_id); ?>).prop('selected', true);
+		coffee_grower.val(<?php echo json_encode($grower_id); ?>).prop('selected', true);
+		select_items.val(<?php echo json_encode($item_id); ?>).prop('selected', true);
+		select_miller.val(<?php echo json_encode($miller_id); ?>).prop('selected', true);
+		outturn_type.val(<?php echo json_encode($material_id); ?>).prop('selected', true);
+		basket.val(<?php echo json_encode($basket_id); ?>).prop('selected', true);
+		packaging.val(<?php echo json_encode($pkg); ?>).prop('selected', true);
+		warehouse.val(<?php echo json_encode($warehouse_id); ?>).prop('selected', true);
+		moisture.val(<?php echo json_encode($moisture); ?>);
+		outt_number.val(<?php echo json_encode($outt_number); ?>);
+		outt_number_search.val(<?php echo json_encode($outt_number); ?>);
+		
+		grn_number.val(<?php echo json_encode($grn_number); ?>);
+
+
+		$( "#add_items_delivery" ).on('click', function(){
+
+			var outt_number = $('#outt_number').val();
+			var outt_season = $('#outt_season').val();
+			var coffee_grower = $('#coffee_grower').val();
+			var outturn_type = $('#outturn_type').val();
+			var moisture = $('#moisture').val();
+			var basket = $('#basket').val();
+			var packaging = null;
+	    	var grn_number = $('#grn_number').val();
+
+
+
+			var url="{{ route('arrivalinformation.addDispatch',['grn_number'=>":grn_number", 'outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type'=>":outturn_type",'moisture'=>":moisture", 'basket'=>":basket", 'packaging'=>":packaging"]) }}";
+
+			url = url.replace(':grn_number', grn_number);
+			url = url.replace(':outt_number', outt_number);
+			url = url.replace(':outt_season', outt_season);
+			url = url.replace(':coffee_grower', coffee_grower);
+			url = url.replace(':outturn_type', outturn_type);
+			url = url.replace(':moisture', moisture);
+			url = url.replace(':fetch_weight', fetch_weight);
+			url = url.replace(':basket', basket);
+			url = url.replace(':packaging', packaging);
+
+
+			var dialog = bootbox.alert({
+				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+						
+			$.ajax({
+			url: url,
+			type: 'GET',
+			}).success(function(response) {
+				if (response != null) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+					closeBootBox();
+				} else {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+					closeBootBox();
+				}
+
+				refreshOutturnsTable();
+
+			}).error(function(error) {
+				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+				closeBootBox();
+			});  
+
+
+
+			event.preventDefault();
+		})
+
+		$( "#submitbatch" ).on('click', function(){
+
+			var outt_number = $('#outt_number').val();
+			var outt_season = $('#outt_season').val();
+			var coffee_grower = $('#coffee_grower').val();
+
+			var outturn_type_batch = $('#outturn_type_batch').val();
+			var weigh_scales = $('#weigh_scales').val();
+			var packaging = $('#packaging').val();
+			var zone = $('#zone').val();
+			var packages_batch = $('#packages_batch').val();
+			var batch_kilograms = $('#batch_kilograms').val();
+			var batch_kilograms_hidden = $('#batch_kilograms_hidden').val();
+
+			alert(packaging);
+
+			var selectedRow = "";
+			var selected = $("input[type='radio'][name='row_id']:checked");
+			if (selected.length > 0) {
+			    selectedRow = selected.val();
+			}
+
+
+			var selectedColumn = "";
+			var selected_col = $("input[type='radio'][name='column_id']:checked");
+			if (selected_col.length > 0) {
+			    selectedColumn = selected_col.val();
+			}
+
+
+			var url="{{ route('arrivalinformation.addBatch',['outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type_batch'=>":outturn_type_batch", 'weigh_scales'=>":weigh_scales", 'packaging'=>":packaging", 'zone'=>":zone", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'batch_kilograms_hidden'=>":batch_kilograms_hidden", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn"]) }}";
+
+			url = url.replace(':grn_number', grn_number);
+			url = url.replace(':outt_number', outt_number);
+			url = url.replace(':outt_season', outt_season);
+			url = url.replace(':coffee_grower', coffee_grower);
+			url = url.replace(':outturn_type_batch', outturn_type_batch);
+			url = url.replace(':weigh_scales', weigh_scales);
+			url = url.replace(':packaging', packaging);
+			url = url.replace(':zone', zone);
+			url = url.replace(':packages_batch', packages_batch);
+			url = url.replace(':batch_kilograms', batch_kilograms);
+			url = url.replace(':batch_kilograms_hidden', batch_kilograms_hidden);
+			url = url.replace(':selectedRow', selectedRow);
+			url = url.replace(':selectedColumn', selectedColumn);
+
+
+			var dialog = bootbox.alert({
+				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+						
+			$.ajax({
+			url: url,
+			type: 'GET',
+			}).success(function(response) {
+				if (response != null) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+					closeBootBox();
+				} else {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+					closeBootBox();
+				}
+
+				refreshOutturnsTable();
+				displayBatch();
+			}).error(function(error) {
+				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+				closeBootBox();
+			});  
+
+
+
+			event.preventDefault();
+		})
+
+
+
+
+	});
+
 </script>
+
+
 <script>
 	var autosubmit = <?php echo json_encode($autosubmit); ?>;
 	console.log(autosubmit)
@@ -1080,6 +1164,7 @@
 
 		
 	}
+
 	function closeBootBox () {
 
 		var $timeout = <?php echo $timeout; ?>;
@@ -1111,6 +1196,7 @@
 	      }
 	   }
 	}
+
 	function fetch_url(outt_number_search) {
 		var outt_number_search = $('#outt_number_search').val();
 		var grn_number = $('#grn_number').val();
@@ -1129,18 +1215,21 @@
 	}
 
 	function fetch_url_locations(warehouse) {
-		var url="{{ route('arrivalinformationgrns.getLocations',['warehouse'=>":warehouse"]) }}";
+		var url="{{ route('arrivalinformation.getLocations',['warehouse'=>":warehouse"]) }}";
 		url = url.replace(':warehouse', warehouse);
 		return url;
 
 	}
 
 	function fetch_url_batches() {
-		var outt_number_search = $('#outt_number_search').val();
-		var grn_number = $('#grn_number').val();
-		var url="{{ route('arrivalinformationgrns.getBatch',['outt_number_search'=>":outt_number_search", 'grn_number'=>":grn_number"]) }}";
-		url = url.replace(':outt_number_search', outt_number_search);
-		url = url.replace(':grn_number', grn_number);
+		var outt_number = $('#outt_number').val();
+		var outt_season = $('#outt_season').val();
+		var outturn_type_batch = $('#outturn_type_batch').val();
+
+		var url="{{ route('arrivalinformationgrns.getBatch',['outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'outturn_type_batch'=>":outturn_type_batch"]) }}";
+		url = url.replace(':outt_number', outt_number);
+		url = url.replace(':outt_season', outt_season);
+		url = url.replace(':outturn_type_batch', outturn_type_batch);
 		return url;
 
 	}
@@ -1174,14 +1263,12 @@
 
 	}	
 
-
 	function displayBatch(event, value){
 
 		clearChildren(document.getElementById("batch_modal"));
 		var warehouse = $('#warehouse').val();
 		var url_scales = fetch_url_scales(warehouse); 
 		var url_location = fetch_url_locations(warehouse); 
-		var url_batches = fetch_url_batches(); 
 
         $.get(url_scales, function(data, status){
 			var scales = jQuery.parseJSON(data);
@@ -1199,12 +1286,14 @@
 
         $.get(url_location, function(data, status){
 			var locations = jQuery.parseJSON(data);
+             $("#row_list").empty();
+             $("#column_list").empty();
 
 			$.each(locations,function(key, value) 
 			{
 				if (value["loc_row"] != null) {
 
-                    var rdb_row = "<label style='font-size: 35px;'><input id=row." + value['id'] + "  onclick=RecordCheck(this) type=radio name=row  value=" + value['id'] + ">&nbsp&nbsp"+ value['loc_row'] +"</label></br>";
+                    var rdb_row = "<label style='font-size: 35px;' class='row_label'><input id=row." + value['id'] + "  onclick=RecordCheck(this) type=radio name=row_id  value=" + value['id'] + ">&nbsp&nbsp"+ value['loc_row'] +"</label></br>";
 
                     $('#row_list').append(rdb_row); 
 
@@ -1212,7 +1301,7 @@
 				
 				if (value["loc_column"] != null && (value["loc_column"] != 0)) {
 
-                    var rdb_row = "<label style='font-size: 35px;' ><input id=column." + value['id'] + "  onclick=RecordCheck(this) type=radio name=column  value=" + value['id'] + ">&nbsp&nbsp"+ value['loc_column'] +"</label></br>";
+                    var rdb_row = "<label style='font-size: 35px;' ><input id=column." + value['id'] + "  onclick=RecordCheck(this) type=radio name=column_id  value=" + value['id'] + ">&nbsp&nbsp"+ value['loc_column'] +"</label></br>";
 
                     $('#column_list').append(rdb_row); 
 				}
@@ -1221,7 +1310,13 @@
       
 		});
 
-		
+
+        event.preventDefault();
+
+	}
+
+	function populateBatches(){
+		var url_batches = fetch_url_batches(); 
         $.get(url_batches, function(data, status){
 			var batch = jQuery.parseJSON(data);
 
@@ -1238,9 +1333,8 @@
 			$('#batch_table tr').first().after(html);
 		});
 
-        event.preventDefault();
-
 	}
+
 	function populateFooter(){
 
         var btn_add = "<button id=add_items class='btn btn-primary btn-block' style='font-size: 35px;'>Add</button></br>";
@@ -1249,68 +1343,323 @@
         var btn_add = "<button id=add_items class='btn btn-secondary btn-block' style='font-size: 35px;'>Close</Close></br>";
         $('#footer').append(btn_add); 
 	}
-	function fetchWeight(){
-		var weighscale = document.getElementById("weigh_scales").value;	
-		var url="{{ route('arrivalinformationgrns.fetchWeight',['weighscale'=>":weighscale"]) }}";
-		url = url.replace(':weighscale', weighscale);
-		var dialog = bootbox.alert({
-			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-		}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+
+
+</script>
+
+
+
+
+<script type="text/javascript">
+
+
+	
+
+	function getMaterials()
+	{
+		var item_id = $('#select_items').val();
+		var outturn_type = $('#outturn_type');
+
+
+		if (item_id != '') {
+			var url="{{ route('arrivalinformation.getMaterials',['item_id'=>":item_id"]) }}";
+			
+			url = url.replace(':item_id', item_id);
+			outturn_type.find('option').remove(); 
+
+			$.ajax({
+			url: url,
+			type: 'GET',
+			}).success(function(response) {
+				var material = jQuery.parseJSON(response);
+				outturn_type.append('<option></option>');
+
+				$.each(material,function(key, value) 
+				{	
+					outturn_type.append('<option value=' + key + '>&nbsp;&nbsp;&nbsp;' + value + '</option>');
+
+				});		
+				getMaterialsInOutturn();	
+
+			}).error(function(error) {
+				console.log(error)
+			});
+
+		}			
+
+		fetchOutturnNumber();
+
+	}
+
+
+	function getMaterialsInOutturn()
+	{
+		var item_id = $('#select_items').val();
+		var outt_number = $('#outt_number').val();
+		var outt_season = $('#outt_season').val();
+    	var grn_number = $('#grn_number').val();
+
+		var outturn_type_batch = $('#outturn_type_batch');
+
+		if (item_id != '') {
+			var url="{{ route('arrivalinformation.getMaterialsInOutturn',['item_id'=>":item_id", 'outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'grn_number'=>":grn_number"] ) }}";			
+			url = url.replace(':item_id', item_id);
+			url = url.replace(':outt_number', outt_number);
+			url = url.replace(':outt_season', outt_season);
+			url = url.replace(':grn_number', grn_number);
+
+			outturn_type_batch.find('option').remove(); 
+
+			$.ajax({
+			url: url,
+			type: 'GET',
+			}).success(function(response) {
+				var material = jQuery.parseJSON(response);
+				outturn_type_batch.append('<option></option>');
+
+				$.each(material,function(key, value) 
+				{	
+					outturn_type_batch.append('<option value=' + key + '>&nbsp;&nbsp;&nbsp;' + value + '</option>');
+
+				});			
+
+			}).error(function(error) {
+				console.log(error)
+			});
+
+		}
+
+	}
+
+	function refreshOutturnsTable()
+	{
+    	var grn_number = $('#grn_number').val();
+
+    	if (grn_number == '') {
+    		grn_number = <?php echo json_encode($grn_number); ?>;
+    	}
+
+		var url="{{ route('arrivalinformation.getGRNContents',[ 'grn_number'=>":grn_number"] ) }}";		
+		url = url.replace(':grn_number', grn_number);
+
+
 
 		$.ajax({
-			url: url,
-			dataType: 'json',
-			}).done(function(response) {
-				if(response.found) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Success</i></div>');
-					$("#batch_kilograms").val(response.weight);
-					$("#fetch_weight").remove();
-			        var btn_add = "<button type='submit' id='reset_weight' name='resetweight' class='btn btn-lg btn-danger btn-block' onclick='resetWeight()' >Reset</button>";
-			        $('#btn_weight').append(btn_add); 
-					closeBootBox();
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			var outturns = jQuery.parseJSON(response);
 
-				}else if(response.error) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
-					closeBootBox();
-				}
-			}).error(function(error) {
-				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
-				closeBootBox();
+			$('#grn_outturns tr').not(':first').not(':last').remove();
+			var html = '';
+			var count = 0;
+			var packages = 0;
+			var gross = 0;
+			var tare = 0;
+			var net = 0;
+
+			$.each(outturns,function(key, value) 
+			{	
+				
+				count += 1;
+				packages = parseInt(packages) + parseInt(value["st_packages"]);
+				gross = parseInt(gross) + parseInt(value["st_gross"]);
+				tare = parseInt(tare) + parseInt(value["st_tare"]);
+				net = parseInt(net) + parseInt(value["st_net_weight"]);
+
+          		html += '<tr><td>' + count + 
+                    '</td><td>' + value["st_outturn"] + '</td><td>' + value["mt_name"] + '</td><td>' + value["st_packages"] + '</td><td>' + value["st_gross"] + '</td><td>' + value["st_tare"] + '</td><td>' + value["st_net_weight"] + '</td><td>' + value["st_moisture"] + '</td><td><a href="/outturn_delete/' + value["stid"] + '"  class="btn btn-success btn-danger">Delete</a></td></tr>';
+
+
+			});		
+
+      		html += '<tr><td>' + count + 
+                ' Outturn(s)</td><td></td><td></td><td>' + packages + '</td><td>' + gross + '</td><td>' + tare + '</td><td>' + net + '</td><td></td><td></td></tr>';
+
+			$('#grn_outturns tr').first().after(html);	
+
+		}).error(function(error) {
+			console.log(error)
+		});
+
+
+
+
+	}
+
+
+
+	function fetchOutturnNumber()
+	{
+		var item_id = $('#select_items').val();
+		var miller_id = $('#select_miller').val();
+		var moisture = $('#moisture').val();
+		var input = $('#outt_number');
+
+		if (moisture != ''){
+			if (item_id != '' && miller_id != '') {
+				var url="{{ route('arrivalinformation.getOutturn',['item_id'=>":item_id", 'miller_id'=>":miller_id", 'moisture'=>":moisture"]) }}";
+				url = url.replace(':item_id', item_id);
+				url = url.replace(':miller_id', miller_id);
+				url = url.replace(':moisture', moisture);
+
+				$.ajax({
+				url: url,
+				type: 'GET',
+				}).success(function(response) {
+					var outturn = jQuery.parseJSON(response);
+					if (outturn != null) {
+						input.val('');
+						input.val(outturn);
+					}
+					
+					input.prop('disabled', false);
+
+				}).error(function(error) {
+					input.val('');
+					// input.prop('disabled', false);
+					console.log(error)
+				});
+
+			}			
+		}
+
+	}
+
+	function fetchWarehouseDetails()
+	{
+		var warehouse = $('#warehouse').val();
+		var weigh_scales = $('#weigh_scales');
+		var row = $('#row');
+		var column = $('#column');
+		var grn_number = $('#grn_number');
+
+		weigh_scales.find('option').remove();   
+		row.find('option').remove();   
+		column.find('option').remove();   
+
+
+		var url="{{ route('arrivalinformation.getScales',['warehouse'=>":warehouse"]) }}";
+		url = url.replace(':warehouse', warehouse);
+
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			var scales = jQuery.parseJSON(response);
+			weigh_scales.append('<option></option>');
+			$.each(scales,function(key, value) 
+			{	
+				weigh_scales.append('<option value=' + value["id"] + '>&nbsp;&nbsp;&nbsp;' + value["ws_equipment_number"] + '</option>');
+
+			});
+		}).error(function(error) {
+			console.log(error)
+		});  
+
+		var url_grns="{{ route('arrivalinformation.generateGRN',['warehouse'=>":warehouse"]) }}";
+		url_grns = url_grns.replace(':warehouse', warehouse);
+		grn_number.val('');
+
+		$.ajax({
+		url: url_grns,
+		type: 'GET',
+		}).success(function(response) {
+			var grn = jQuery.parseJSON(response);
+			if (<?php echo json_encode($grn_number); ?> == null) {
+				grn_number.val(grn);
+			}
+		}).error(function(error) {
+			console.log(error)
 		});
 
 	}
 
-	function resetWeight(){
-		var weighscale = document.getElementById("weigh_scales").value;	
-		var url="{{ route('arrivalinformationgrns.resetWeight',['weighscale'=>":weighscale"]) }}";
-		url = url.replace(':weighscale', weighscale);
-		var dialog = bootbox.alert({
-			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-		}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+
+	function checkIfReset()
+	{
+		var weigh_scales = $('#weigh_scales').val();
+		var weigh_scale_session = "scale - "+weigh_scales+"";
+
+		var url="{{ route('arrivalinformation.checkScaleSession',['weigh_scale_session'=>":weigh_scale_session"]) }}";
+		url = url.replace(':weigh_scale_session', weigh_scale_session);
 
 		$.ajax({
-			url: url,
-			dataType: 'json',
-			}).done(function(response) {
-				if(response.found) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Success</i></div>');
-					$("#batch_kilograms").val('');
-					$("#reset_weight").remove();
-			        var btn_add = "<button type='submit' id='fetch_weight' name='fetchweight' class='btn btn-lg btn-success btn-block' onclick='fetchWeight()'>Fetch</button>";
-			        $('#btn_weight').append(btn_add); 
-					closeBootBox();
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			var session = jQuery.parseJSON(response);
+			if (session == 1) {
+				$("#fetchweight").replaceWith("<button type='button' id='resetweight' name='resetweight' class='btn btn-lg btn-danger btn-block' formnovalidate onclick='resetWeight()'>Reset</button>");
+			} else {
+				$("#resetweight").replaceWith("<button type='button' id='fetchweight' name='fetchweight' class='btn btn-lg btn-success btn-block' onclick='fetchWeight()'>Fetch</button>");
+			}
 
-				}else if(response.error) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
-					closeBootBox();
-				}
-			}).error(function(error) {
-				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
-				closeBootBox();
-		});
+		}).error(function(error) {
+			console.log(error)
+		});  
 
 
 	}
+
+
+	function fetchWeight()
+	{
+		var weigh_scales = $('#weigh_scales').val();
+		var batch_kilograms = $('#batch_kilograms');
+		var batch_kilograms_hidden = $('#batch_kilograms_hidden');
+		var submitbatch = $('#submitbatch');
+
+		batch_kilograms.val('');
+
+		var url="{{ route('arrivalinformation.getWeight',['weigh_scales'=>":weigh_scales"]) }}";
+		url = url.replace(':weigh_scales', weigh_scales);
+
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			var weight = jQuery.parseJSON(response);
+			if (weight != 'error') {
+				batch_kilograms.val(weight);
+				batch_kilograms_hidden.val(weight);
+				checkIfReset();
+				submitbatch.prop('disabled', false);
+			}
+		}).error(function(error) {
+			console.log(error)
+		});  
+
+	}
+
+	function resetWeight()
+	{
+		var weigh_scales = $('#weigh_scales').val();
+		var batch_kilograms = $('#batch_kilograms');
+		var batch_kilograms_hidden = $('#batch_kilograms_hidden');
+		var submitbatch = $('#submitbatch');
+
+		var url="{{ route('arrivalinformation.reSetWeight',['weigh_scales'=>":weigh_scales"]) }}";
+		url = url.replace(':weigh_scales', weigh_scales);
+		alert(url);
+
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			var weight = jQuery.parseJSON(response);
+			if (weight != 'error') {
+				batch_kilograms.val(weight);
+				batch_kilograms_hidden.val(weight);
+				checkIfReset();
+				submitbatch.prop('disabled', true);
+			}
+		}).error(function(error) {
+			console.log(error)
+		});  
+
+	}
+
 	
 </script>
 

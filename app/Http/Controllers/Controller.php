@@ -16,7 +16,10 @@ use Ngea\OutturnNumberSettings;
 use Ngea\agent;
 use Ngea\WeightScales;
 use Ngea\Location;
+use Ngea\Material;
+use Ngea\ItemsMaterial;
 use Ngea\Grn;
+use Ngea\StockWarehouse;
 
 class Controller extends BaseController
 {
@@ -46,33 +49,23 @@ class Controller extends BaseController
     public function checkThreshold($threshold_name, $first_weight, $second_weight, $identifier){
 
     	if ($first_weight == 0) {
-
     		$first_weight = 1;
-
     	}
     	if ($second_weight == 0) {
-
     		$second_weight = 1;
-
     	}
+
     	$threshold_details = Thresholds::where('th_name', $threshold_name)->first();
-
     	$percentage = $threshold_details->th_percentage;
-
     	$discepancy = (($first_weight-$second_weight)/$first_weight)*100;
 
     	if ($discepancy > $percentage) {
 
-	        $data = array('name'=>"Admin Department", "discrepancy"=>$discepancy, "identifier"=>$identifier, "first_weight"=>$first_weight, "second_weight"=>$second_weight);    
-
+	        $data = array('name'=>"Admin Department", "discrepancy"=>$discepancy, "identifier"=>$identifier, "first_weight"=>$first_weight, "second_weight"=>$second_weight);   
 	        Mail::send(['text'=>'maildiscrepancy'], $data, function($message) {
-
 	            $message->to('caroline.njambi@nkg.coffee', 'Discrepancy-TZ')->subject('Discrepancy');
-
                 $message->cc('lewis.mutua@nkg.coffee');
-
 	            $message->from('lewis.mutua@nkg.coffee','Ibero Database');
-
 	        });
 
     	}
@@ -131,6 +124,62 @@ class Controller extends BaseController
                 'error' => $e->getMessage()
             ]);
         }
+    
+    }
+
+    public function getMaterials ($item_id) {
+
+        try{
+            $materials = array();
+            $item_details = ItemsMaterial::where('it_id', $item_id)->get();
+
+            foreach($item_details as $items){
+
+                $material_details = Material::where('id', $items->mt_id)->first();
+                $materials[$material_details->id] = $material_details->mt_name;
+
+            }
+            return json_encode($materials);    
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    
+    }
+
+    public function getMaterialsInOutturn ($item_id, $outt_number, $outt_season, $grn_number) {
+
+        try{
+            $grn_id = null;
+            $materials = array();
+            $cid = session('maincountry');
+
+            $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->first(); 
+            if ($grn_details != null) {
+                $grn_id = $grn_details->id;
+            } 
+
+
+            $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->get();
+
+            foreach($stock_details as $items){
+
+                $material_details = Material::where('id', $items->mt_id)->first();
+                $materials[$material_details->id] = $material_details->mt_name;
+
+            }
+            return json_encode($materials);    
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    
     }
 
     public function getOutturn ($item_id, $agent_id, $moisture) {
@@ -267,11 +316,11 @@ class Controller extends BaseController
         }
     }
 
-    public function getWeight ($weigh_scales) {
+    public function getWeight ($weighscale) {
+        
+        try {
 
-        try{
-
-            $weigh_scales_details = WeightScales::where('id', $weigh_scales)->first();
+            $weigh_scales_details = WeightScales::where('id', $weighscale)->first();
 
             if ($weigh_scales_details != null) {
                 $strBaudRate = $weigh_scales_details->ws_baud_rate;
@@ -281,33 +330,41 @@ class Controller extends BaseController
                 $strPortName = $weigh_scales_details->ws_port_name;
             }
 
-            $ch = curl_init();
-            $ip_address = $this->get_client_ip();
-            curl_setopt($ch, CURLOPT_URL,"http://".$ip_address."//weighscale/api.php");
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS,
-                        "strBaudRate=".$strBaudRate."&strParity=".$strParity."&strStopBits=".$strStopBits."&strDataBits=".$strDataBits."&strPortName=".$strPortName."");
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $weight = curl_exec ($ch);           
-            curl_close ($ch);   
-            $batch_kilograms = $weight;  
-            $batch_kilograms = 100;  
-            $weigh_scale_session = "scale - ".$weigh_scales."";
-            session()->put($weigh_scale_session, $batch_kilograms);
-            if (is_int($batch_kilograms)) {
-                return json_encode($batch_kilograms);     
+            $execute = shell_exec('C://GetIndicatorWeight.exe '.$strBaudRate.' '.$strParity.' '. $strStopBits.' '. $strDataBits.' '.$strPortName );
+            $execute = preg_replace("/[^0-9\.]/", '', $execute);
+            $weight = NULL;
+
+            return 100;
+
+            if ($execute == NULL) {
+                $weight = "Unstable wait...";
+                return response()->json([
+                    'exists' => false,
+                    'found' => false
+                ]);
             } else {
-                return json_encode('error');
-            }
+                $weight = $execute;
+            }           
+
+            $batch_kilograms = $weight;  
+            $weigh_scale_session = "scale - ".$weighscale."";
+
+            return response()->json([
+                'exists' => false,
+                'found' => true,
+                'weight' => $weight
+            ]);                 
         
         }catch (\PDOException $e) {
             return response()->json([
                 'exists' => false,
-                'inserted' => false,
+                'found' => false,
                 'error' => $e->getMessage()
             ]);
         }
+
     }
+
 
     public function reSetWeight ($weigh_scales) {
 
