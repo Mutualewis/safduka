@@ -266,7 +266,7 @@
 							@endif
 		                </select>	
 
-		                <input type="hidden" id="st_id" name="st_id">		
+		                <input type="hidden" id="st_id_green" name="st_id_green">		
 
 		            </div>
 					<div class="alert-dismissible alert-info" id="coffee_grower_display_green"></div>        
@@ -941,7 +941,7 @@
 							@endif
 		                </select>	
 
-		                <input type="hidden" id="st_id_parchment" name="st_id_parchment">		
+		                <input type="hidden" id="st_id_partchment" name="st_id_partchment">		
 
 		            </div>
 					<div class="alert-dismissible alert-info" id="coffee_grower_display_partchment"></div>        
@@ -999,7 +999,7 @@
 
 						                				}
 
-						                				echo '<td><label><input type="checkbox" id="gd'.$value->id.'" name="parchmentquality" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
+						                				echo '<td><label><input type="checkbox" id="pq'.$value->id.'" name="parchmentquality" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
 
 						                			}
 
@@ -1134,7 +1134,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			//document.getElementById('coffee_grade').value = obj.pty_id;
 
-			document.getElementById('st_id').value = obj.st_id;
+			document.getElementById('st_id_green').value = obj.st_id;
 
 			$('#coffee_grower_display_green').html(obj.st_mark);
 
@@ -1216,7 +1216,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			    	var str1_rw = "raw";
 
-					var str2_rw = obj.rw_id;
+					var str2_rw = obj.cup_quality;
 
 					var res_rw = str1_rw.concat(str2_rw);
 
@@ -1270,16 +1270,19 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			$('#coffee_grower_display_screen').html(obj.st_mark);
 			
 			var screen_data = null;
+			screen_data = obj.qualityParameterSCRID
+			
+			newTemp = screen_data.replace(/'/g, '\"');
+			screen_data = JSON.parse(newTemp)
 			console.log(screen_data)
-			screen_data = '"'+obj.qualityParameterSCRID+'"'
-			console.log(JSON.parse(screen_data))
-			$.each(screen_data, function( index, value ) {
+			$.each(screen_data, function( index, data ) {
 				var str1_ss = "screen_size";
-
-				var str2_ss = obj.index;
+				var key = Object.keys(data)[0];
+  				var value = data[key];
+				var str2_ss = key;
 
 				var res_ss = str1_ss.concat(str2_ss);
-
+				console.log(res_ss)
 				if (document.getElementById(res_ss) != null) {
 
 					document.getElementById(res_ss).value = value;
@@ -1436,7 +1439,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		//document.getElementById('coffee_grade').value = obj.pty_id;
 
-		document.getElementById('st_id').value = obj.st_id;
+		document.getElementById('st_id_partchment').value = obj.st_id;
 
 		$('#coffee_grower_display_partchment').html(obj.st_mark);
 
@@ -1459,16 +1462,16 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			$.each(quality_params.split(","), function(i,e){
 
 
-				// var str1_rw = "raw";
+				var str1_rw = "pq";
 
-				// var str2_rw = obj.rw_id;
+				var str2_rw = obj.pct_id;
 
-				// var res_rw = str1_rw.concat(str2_rw);
+				var res_rw = str1_rw.concat(str2_rw);
 
-				// if (document.getElementById(res_rw) != null) {
+				if (document.getElementById(res_rw) != null) {
 
-				// 	document.getElementById(res_rw).checked = true;
-				// }
+					document.getElementById(res_rw).checked = true;
+				}
 
 
 				// if (obj.qltyd_comments != null) {
@@ -1498,7 +1501,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		$('#button_next_green').on('click', function(){
 
-			var cfd_id = document.getElementById("cfd_id").value;
+			var st_id = document.getElementById("st_id_green").value;
 
 			var direction = 'Next';
 
@@ -1515,69 +1518,69 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			}
 
 
-		    var greensize = {};
+			var greensize = {};
 
-		    greensize = $('input[name=greensizes]:checked').map(function(){
+			greensize = $('input[name=greensizes]:checked').map(function(){
 
-		        return this.value;
+				return this.value;
 
-		    }).get();
+			}).get();
 
-		    greensize = JSON.stringify(greensize);
-
-
-		    var greencolor = {};
-
-		    greencolor = $('input[name=greencolor]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-
-		    greencolor = JSON.stringify(greencolor);
+			greensize = JSON.stringify(greensize);
 
 
-		    var greendefects = {};
+			var greencolor = {};
 
-		    greendefects = $('input[name=greendefects]:checked').map(function(){
+			greencolor = $('input[name=greencolor]:checked').map(function(){
 
-		        return this.value;
+				return this.value;
 
-		    }).get();
+			}).get();
 
-		    greendefects = JSON.stringify(greendefects);
-
-
-		    var process_type = {};
-
-		    process_type = $('input[name=process_type]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-
-		    process_type = JSON.stringify(process_type);
+			greencolor = JSON.stringify(greencolor);
 
 
-			if (document.getElementById("process") != null) {
+			var greendefects = {};
 
-				var process_loss = document.getElementById("process").value;	
+			greendefects = $('input[name=greendefects]:checked').map(function(){
 
-			} else {
+				return this.value;
 
-				var process_loss = null;
+			}).get();
 
-			}
+			greendefects = JSON.stringify(greendefects);
 
-		    var raw = {};
 
-		    raw = $('input[name=raw]:checked').map(function(){
+			var process_type = {};
 
-		        return this.value;
+			process_type = $('input[name=process_type]:checked').map(function(){
 
-		    }).get();
+				return this.value;
 
-		    raw = JSON.stringify(raw);
+			}).get();
+
+			process_type = JSON.stringify(process_type);
+
+
+			// if (document.getElementById("process") != null) {
+
+			// 	var process_loss = document.getElementById("process").value;	
+
+			// } else {
+
+			// 	var process_loss = null;
+
+			// }
+
+			var raw = {};
+
+			raw = $('input[name=raw]:checked').map(function(){
+
+				return this.value;
+
+			}).get();
+
+			raw = JSON.stringify(raw);
 
 			if (document.getElementById("comments").value != "") {
 
@@ -1590,9 +1593,10 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			}
 
 
-			var url = '{{ route('cataloguequalitydetails.saveGreen',['cfd_id'=>":id",'dnt'=>":dnt",'greensize'=>":greensize",'greencolor'=>":greencolor",'greendefects'=>":greendefects",'process_type'=>":process_type",'process_loss'=>":process_loss",'raw'=>":raw", 'comments'=>":comments"]) }}';
 
-			url = url.replace(':id', cfd_id);
+			var url = '{{ route('cataloguequalitydetails.saveGreen',['st_id'=>":id",'dnt'=>":dnt",'greensize'=>":greensize",'greencolor'=>":greencolor",'greendefects'=>":greendefects",'raw'=>":raw", 'comments'=>":comments"]) }}';
+
+			url = url.replace(':id', st_id);
 
 			url = url.replace(':dnt', dnt);
 
@@ -1602,19 +1606,19 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			url = url.replace(':greendefects', greendefects);
 
-			url = url.replace(':process_type', process_type);
+			// url = url.replace(':process_type', process_type);
 
-			url = url.replace(':process_loss', process_loss);
+			// url = url.replace(':process_loss', process_loss);
 
 			url = url.replace(':raw', raw);
 
 			url = url.replace(':comments', comments);
-			
+
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 						
-    		
+
 			$.ajax({
 				url: url,
 				dataType: 'json',
@@ -1635,12 +1639,11 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
 					closeBootBox();
 			});
-
 		});
 
 		$('#button_previous_green').on('click', function(){
 
-			var cfd_id = document.getElementById("cfd_id").value;
+			var st_id = document.getElementById("st_id_green").value;
 
 			var direction = 'Previous';
 
@@ -1657,70 +1660,69 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			}
 
 
+			var greensize = {};
 
-		    var greensize = {};
+			greensize = $('input[name=greensizes]:checked').map(function(){
 
-		    greensize = $('input[name=greensizes]:checked').map(function(){
+				return this.value;
 
-		        return this.value;
+			}).get();
 
-		    }).get();
-
-		    greensize = JSON.stringify(greensize);
-
-
-		    var greencolor = {};
-
-		    greencolor = $('input[name=greencolor]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-
-		    greencolor = JSON.stringify(greencolor);
+			greensize = JSON.stringify(greensize);
 
 
-		    var greendefects = {};
+			var greencolor = {};
 
-		    greendefects = $('input[name=greendefects]:checked').map(function(){
+			greencolor = $('input[name=greencolor]:checked').map(function(){
 
-		        return this.value;
+				return this.value;
 
-		    }).get();
+			}).get();
 
-		    greendefects = JSON.stringify(greendefects);
-
-
-		    var process_type = {};
-
-		    process_type = $('input[name=process_type]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-
-		    process_type = JSON.stringify(process_type);
+			greencolor = JSON.stringify(greencolor);
 
 
-			if (document.getElementById("process") != null) {
+			var greendefects = {};
 
-				var process_loss = document.getElementById("process").value;	
+			greendefects = $('input[name=greendefects]:checked').map(function(){
 
-			} else {
+				return this.value;
 
-				var process_loss = null;
+			}).get();
 
-			}
+			greendefects = JSON.stringify(greendefects);
 
-		    var raw = {};
 
-		    raw = $('input[name=raw]:checked').map(function(){
+			var process_type = {};
 
-		        return this.value;
+			process_type = $('input[name=process_type]:checked').map(function(){
 
-		    }).get();
+				return this.value;
 
-		    raw = JSON.stringify(raw);
+			}).get();
+
+			process_type = JSON.stringify(process_type);
+
+
+			// if (document.getElementById("process") != null) {
+
+			// 	var process_loss = document.getElementById("process").value;	
+
+			// } else {
+
+			// 	var process_loss = null;
+
+			// }
+
+			var raw = {};
+
+			raw = $('input[name=raw]:checked').map(function(){
+
+				return this.value;
+
+			}).get();
+
+			raw = JSON.stringify(raw);
 
 			if (document.getElementById("comments").value != "") {
 
@@ -1733,9 +1735,10 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			}
 
 
-			var url = '{{ route('cataloguequalitydetails.saveGreen',['cfd_id'=>":id",'dnt'=>":dnt",'greensize'=>":greensize",'greencolor'=>":greencolor",'greendefects'=>":greendefects",'process_type'=>":process_type",'process_loss'=>":process_loss",'raw'=>":raw", 'comments'=>":comments"]) }}';
 
-			url = url.replace(':id', cfd_id);
+			var url = '{{ route('cataloguequalitydetails.saveGreen',['st_id'=>":id",'dnt'=>":dnt",'greensize'=>":greensize",'greencolor'=>":greencolor",'greendefects'=>":greendefects",'raw'=>":raw", 'comments'=>":comments"]) }}';
+
+			url = url.replace(':id', st_id);
 
 			url = url.replace(':dnt', dnt);
 
@@ -1745,20 +1748,19 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			url = url.replace(':greendefects', greendefects);
 
-			url = url.replace(':process_type', process_type);
+			// url = url.replace(':process_type', process_type);
 
-			url = url.replace(':process_loss', process_loss);
+			// url = url.replace(':process_loss', process_loss);
 
 			url = url.replace(':raw', raw);
 
 			url = url.replace(':comments', comments);
 
-
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-			console.log(url)			
-    
+						
+
 			$.ajax({
 				url: url,
 				dataType: 'json',
@@ -1779,12 +1781,11 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
 					closeBootBox();
 			});
-
 		});
 
 		$('#button_save_green').on('click', function(){
 			
-			var st_id = document.getElementById("st_id").value;
+			var st_id = document.getElementById("st_id_green").value;
 
 			var direction = 'Next';
 
@@ -2051,123 +2052,120 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		$('#button_next_screen').on('click', function(){
 
-			var cfd_id = document.getElementById("cfd_id_screen").value;
-
+			var st_id = document.getElementById("st_id_screen").value;
+			
 			var direction = 'Next';
 
-		    var screen_size = {};
+		    var screen_size = [];
+			
+			for (i=1 ; i<11 ; i++){
+				if (document.getElementById("screen_size"+i) != null) {
+				var id = i;
+				var screen = document.getElementById("screen_size"+i).value;
+				var screenobj = {id:id, screensize: screen}
+				} else {
 
-		    screen_size = $('input[name=screen_size]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-
-			if (document.getElementById("screen") != null) {
-
-				var screen = document.getElementById("screen").value;
-
-			} else {
-
+				var id = i;
 				var screen = null;
-
+				var screenobj = {id:id, screensize: screen}
+				}
+				screen_size.push(screenobj)	
 			}
 
 
-			var url = '{{ route('cataloguequalitydetails.saveScreen',['cfd_id'=>":id",'screen_size'=>":screen_size",'screen'=>":screen"]) }}';
+			var url = '{{ route('cataloguequalitydetails.saveScreen') }}';
 
-			url = url.replace(':id', cfd_id);
-
-			url = url.replace(':screen_size', screen_size);
-
-			url = url.replace(':screen', screen);
+			
 
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-						
-    
+
+			var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');		
+			let data = {_token: CSRF_TOKEN, screens:screen_size, st_id : st_id}
+			console.log(JSON.stringify(data))
 			$.ajax({
+				method: "POST",
 				url: url,
+				data: data,
 				dataType: 'json',
 				}).done(function(response) {
+					
 					if(response.updated) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
 						closeBootBox();
-						displayScreen(event, null, cfd_id, direction, null, null, null);
+						displayScreen(event, null, st_id, direction, null, null, null);
 					} else if(response.inserted) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
 						closeBootBox();
-						displayScreen(event, null, cfd_id, direction, null, null, null);
+						displayScreen(event, null, st_id, direction, null, null, null);
 					}else if(response.error) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
 						closeBootBox();
 					}
 				}).error(function(error) {
+					console.log(error)
 					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
 					closeBootBox();
 			});
-
-
-
 		});
 
 
 		$('#button_previous_screen').on('click', function(){
 
-			var cfd_id = document.getElementById("cfd_id_screen").value;
-
+				var st_id = document.getElementById("st_id_screen").value;
+			
 			var direction = 'Previous';
 
-		    var screen_size = {};
+		    var screen_size = [];
+			
+			for (i=1 ; i<11 ; i++){
+				if (document.getElementById("screen_size"+i) != null) {
+				var id = i;
+				var screen = document.getElementById("screen_size"+i).value;
+				var screenobj = {id:id, screensize: screen}
+				} else {
 
-		    screen_size = $('input[name=screen_size]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-
-			if (document.getElementById("screen") != null) {
-
-				var screen = document.getElementById("screen").value;
-
-			} else {
-
+				var id = i;
 				var screen = null;
-
+				var screenobj = {id:id, screensize: screen}
+				}
+				screen_size.push(screenobj)	
 			}
 
 
-			var url = '{{ route('cataloguequalitydetails.saveScreen',['cfd_id'=>":id",'screen_size'=>":screen_size",'screen'=>":screen"]) }}';
+			var url = '{{ route('cataloguequalitydetails.saveScreen') }}';
 
-			url = url.replace(':id', cfd_id);
-
-			url = url.replace(':screen_size', screen_size);
-
-			url = url.replace(':screen', screen);
+			
 
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-						
-    
+
+			var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');		
+			let data = {_token: CSRF_TOKEN, screens:screen_size, st_id : st_id}
+			console.log(JSON.stringify(data))
 			$.ajax({
+				method: "POST",
 				url: url,
+				data: data,
 				dataType: 'json',
 				}).done(function(response) {
+					
 					if(response.updated) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
 						closeBootBox();
-						displayScreen(event, null, cfd_id, direction, null, null, null);
+						displayScreen(event, null, st_id, direction, null, null, null);
 					} else if(response.inserted) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
 						closeBootBox();
-						displayScreen(event, null, cfd_id, direction, null, null, null);
+						displayScreen(event, null, st_id, direction, null, null, null);
 					}else if(response.error) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
 						closeBootBox();
 					}
 				}).error(function(error) {
+					console.log(error)
 					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
 					closeBootBox();
 			});
@@ -2218,11 +2216,11 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					if(response.updated) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
 						closeBootBox();
-						displayScreen(event, null, cfd_id, direction, null, null, null);
+						displayScreen(event, null, st_id, direction, null, null, null);
 					} else if(response.inserted) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
 						closeBootBox();
-						displayScreen(event, null, cfd_id, direction, null, null, null);
+						displayScreen(event, null, st_id, direction, null, null, null);
 					}else if(response.error) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
 						closeBootBox();
@@ -2545,7 +2543,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		
 		$('#button_save_parchment').on('click', function(e){
 			e.prevent
-			var st_id = document.getElementById("st_id").value;
+			var st_id = document.getElementById("st_id_partchment").value;
 
 			var direction = 'Next';
 
@@ -2608,6 +2606,138 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			});
 
 		});
+
+		$('#button_next_parchment').on('click', function(e){
+			e.prevent
+			var st_id = document.getElementById("st_id_partchment").value;
+
+			var direction = 'Next';
+
+			var dont = document.getElementById("dnt");
+
+			if (dont.checked) {
+
+				var dnt = document.getElementById("dnt").value;
+
+			} else {
+
+				var dnt = null;
+
+			}
+
+
+		    var parchmentdesc = {};
+
+		    parchmentdesc = $('input[name=parchmentquality]:checked').map(function(){
+
+		        return this.value;
+
+		    }).get();
+
+		    parchmentdesc = JSON.stringify(parchmentdesc);	
+
+			var url = '{{ route('cataloguequalitydetails.saveParchment',['st_id'=>":id",'dnt'=>":dnt",'parchmentdesc'=>":parchmentdesc"]) }}';
+
+			url = url.replace(':id', st_id);
+
+			url = url.replace(':dnt', dnt);
+
+			url = url.replace(':parchmentdesc', parchmentdesc);
+
+			
+			var dialog = bootbox.alert({
+				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+						
+    
+			$.ajax({
+				url: url,
+				dataType: 'json',
+				}).done(function(response) {
+					if(response.updated) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+						closeBootBox();
+						displayParchment(event, null, st_id, direction, null, null, null);
+					} else if(response.inserted) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
+						closeBootBox();
+						displayParchment(event, null, st_id, direction, null, null, null);
+					}else if(response.error) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
+						closeBootBox();
+					}
+				}).error(function(error) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+					closeBootBox();
+			});
+
+		});
+
+		$('#button_previous_parchment').on('click', function(e){
+			e.prevent
+			var st_id = document.getElementById("st_id_partchment").value;
+
+			var direction = 'Previous';
+
+			var dont = document.getElementById("dnt");
+
+			if (dont.checked) {
+
+				var dnt = document.getElementById("dnt").value;
+
+			} else {
+
+				var dnt = null;
+
+			}
+
+
+		    var parchmentdesc = {};
+
+		    parchmentdesc = $('input[name=parchmentquality]:checked').map(function(){
+
+		        return this.value;
+
+		    }).get();
+
+		    parchmentdesc = JSON.stringify(parchmentdesc);	
+
+			var url = '{{ route('cataloguequalitydetails.saveParchment',['st_id'=>":id",'dnt'=>":dnt",'parchmentdesc'=>":parchmentdesc"]) }}';
+
+			url = url.replace(':id', st_id);
+
+			url = url.replace(':dnt', dnt);
+
+			url = url.replace(':parchmentdesc', parchmentdesc);
+
+			
+			var dialog = bootbox.alert({
+				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+						
+    
+			$.ajax({
+				url: url,
+				dataType: 'json',
+				}).done(function(response) {
+					if(response.updated) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+						closeBootBox();
+						displayParchment(event, null, st_id, direction, null, null, null);
+					} else if(response.inserted) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
+						closeBootBox();
+						displayParchment(event, null, st_id, direction, null, null, null);
+					}else if(response.error) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
+						closeBootBox();
+					}
+				}).error(function(error) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+					closeBootBox();
+			});
+
+		})
 
 		$('#search_button_cup').on('click', function(){
 
