@@ -106,9 +106,10 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/arrivalinformationgrns/printMovementWithRate/{grn_number}/{service}/{team}', ['as'=>'arrivalinformationgrns.printarrivalinformation','uses'=>'GRNSController@printarrivalinformation']);
 
 		Route::get('/arrivalinformationgrns/getOutturnDetails/{outt_number_search}/{grn_number}', ['as'=>'arrivalinformationgrns.getOutturnDetails','uses'=>'GRNSController@getOutturnDetails']);
-		Route::get('/arrivalinformationgrns/getBatch/{outt_number_search}/{grn_number}', ['as'=>'arrivalinformationgrns.getBatch','uses'=>'GRNSController@getBatch']);
+
+		Route::get('/arrivalinformationgrns/getBatch/{outt_number}/{outt_season}/{outturn_type_batch}', ['as'=>'arrivalinformationgrns.getBatch','uses'=>'GRNSController@getBatch']);
 		Route::get('/arrivalinformationgrns/getScales/{warehouse}', ['as'=>'arrivalinformationgrns.getScales','uses'=>'GRNSController@getScales']);
-		Route::get('/arrivalinformationgrns/getLocations/{warehouse}', ['as'=>'arrivalinformationgrns.getLocations','uses'=>'GRNSController@getLocations']);
+		// Route::get('/arrivalinformationgrns/getLocations/{warehouse}', ['as'=>'arrivalinformationgrns.getLocations','uses'=>'GRNSController@getLocations']);
 		Route::get('/arrivalinformationgrns/fetchWeight/{weighscale}', ['as'=>'arrivalinformationgrns.fetchWeight','uses'=>'GRNSController@fetchWeight']);
 		Route::get('/arrivalinformationgrns/resetWeight/{weighscale}', ['as'=>'arrivalinformationgrns.resetWeight','uses'=>'GRNSController@resetWeight']);
 
@@ -118,6 +119,17 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/arrivalinformation/printMovementWithRate/{grn_number}/{service}/{team}', ['as'=>'arrivalinformation.printarrivalinformation','uses'=>'WeighScaleController@printarrivalinformation']);
 
 		Route::get('/arrivalinformation/getOutturn/{item_id}/{miller_id}/{moisture}', ['as'=>'arrivalinformation.getOutturn','uses'=>'Controller@getOutturn']);
+		Route::get('/arrivalinformation/getMaterials/{item_id}', ['as'=>'arrivalinformation.getMaterials','uses'=>'Controller@getMaterials']);
+
+		Route::get('/arrivalinformation/getGRNContents/{grn_number}', ['as'=>'arrivalinformation.getGRNContents','uses'=>'GRNSController@getGRNContents']);
+
+		Route::get('/arrivalinformation/outturn_delete/{id}', ['as'=>'arrivalinformation.outturn_delete','uses'=>'GRNSController@outturn_delete']);
+		Route::get('/arrivalinformation/batch_delete/{id}', ['as'=>'arrivalinformation.batch_delete','uses'=>'GRNSController@batch_delete']);
+
+
+		Route::get('/arrivalinformation/getMaterialsInOutturn/{item_id}/{outt_number}/{outt_season}/{grn_number}', ['as'=>'arrivalinformation.getMaterialsInOutturn','uses'=>'Controller@getMaterialsInOutturn']);
+
+
 		Route::get('/arrivalinformation/getScales/{warehouse}', ['as'=>'arrivalinformation.getScales','uses'=>'Controller@getScales']);
 		Route::get('/arrivalinformation/getLocations/{warehouse}', ['as'=>'arrivalinformation.getLocations','uses'=>'Controller@getLocations']);
 
@@ -131,6 +143,13 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/arrivalqualityinformationlist', 'ArrivalQualityController@arrivalQualityInformationListForm'); 
 		Route::post('/arrivalqualityinformationlist', 'ArrivalQualityController@arrivalQualityInformationList');
+
+		Route::get('/arrivalinformation/addDispatch/{grn_number}/{outt_number}/{outt_season}/{coffee_grower}/{outturn_type}/{moisture}/{basket}/{packaging}', ['as'=>'arrivalinformation.addDispatch','uses'=>'GRNSController@addDispatch']);
+
+
+		Route::get('/arrivalinformation/addBatch/{outt_number}/{outt_season}/{coffee_grower}/{outturn_type_batch}/{weigh_scales}/{packaging}/{zone}/{packages_batch}/{batch_kilograms}/{batch_kilograms_hidden}/{selectedRow}/{selectedColumn}', ['as'=>'arrivalinformation.addBatch','uses'=>'GRNSController@addBatch']);
+
+
 
 		Route::get('/weighnote', 'WeightNoteController@weighNoteForm'); 
 		Route::post('/weighnote', 'WeightNoteController@weighNote');

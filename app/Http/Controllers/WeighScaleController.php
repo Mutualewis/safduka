@@ -253,6 +253,7 @@ class WeighScaleController extends Controller {
         $milled_by = Input::get('milled_by');
         $outturn_type = Input::get('outturn_type');
         $basket = Input::get('basket');
+        $cid = session('maincountry');
 
 
         $dispatch_date=date_create($dispatch_date);

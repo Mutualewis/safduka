@@ -552,8 +552,8 @@
 	        	<div class="row">
 
 		            <div class="form-group col-md-4">
-			                <label >Packages</label>
-			                <input class="form-control"  id="packages_batch"  name="packages_batch" oninput="calculateValue()" value="{{ old('packages_batch') }}">		            
+		                <label >Packages</label>
+		                <input class="form-control"  id="packages_batch"  name="packages_batch" oninput="calculateValue()" value="{{ old('packages_batch') }}">		            
 		            </div>		
 
 		            <div class="form-group col-md-4">
@@ -967,9 +967,12 @@
 			console.log(error)
 		});
 
+
 		var url_grns="{{ route('arrivalinformation.generateGRN',['warehouse'=>":warehouse"]) }}";
 		url_grns = url_grns.replace(':warehouse', warehouse);
 		grn_number.val('');
+		
+		alert(url_grns);
 
 		$.ajax({
 		url: url_grns,
