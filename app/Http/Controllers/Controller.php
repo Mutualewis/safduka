@@ -334,7 +334,7 @@ class Controller extends BaseController
             $execute = preg_replace("/[^0-9\.]/", '', $execute);
             $weight = NULL;
 
-            return 100;
+            $execute = 100;
 
             if ($execute == NULL) {
                 $weight = "Unstable wait...";
@@ -348,12 +348,9 @@ class Controller extends BaseController
 
             $batch_kilograms = $weight;  
             $weigh_scale_session = "scale - ".$weighscale."";
+            session()->put($weigh_scale_session, $batch_kilograms);
 
-            return response()->json([
-                'exists' => false,
-                'found' => true,
-                'weight' => $weight
-            ]);                 
+            return $batch_kilograms;                 
         
         }catch (\PDOException $e) {
             return response()->json([

@@ -191,29 +191,23 @@
 	}
 		
 
+	$gr_confirmed_by = NULL;
 
 	if(isset($grn_details)){
-
+		$warehouse_id = $grn_details->agt_id;
 		$grn_number = $grn_details->gr_number;	
 		$wbtk = $grn_details->wbi_id;		
 		$grnConfirmed = $grn_details->gr_confirmed_by;	
-		$warehouse_id = $grn_details->agt_id;
 		$grower_id = $grn_details->cgr_id;
 		$item_id = $grn_details->it_id;
 		$miller_id = $grn_details->miller_id;
 		$miller_by_id = $grn_details->milled_by;
+		$gr_confirmed_by = $grn_details->gr_confirmed_by;
 
 	}
 
-	$gr_confirmed_by = NULL;
 
-	if (isset($grnsview)){
 
-		foreach ($grnsview as $value) {
-			$gr_confirmed_by = $value->gr_confirmed_by;
-		}
-
-	}
 
 	if (old('rate') != NULL) {
 		$rate_id = old('rate');
@@ -438,7 +432,7 @@
 					</div>	
 
 		            <div class="form-group col-md-6">
-						<button type="submit" id ="batchdetails" name="batchdetails" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalBatchCenter'onclick='displayBatch(event, this)' data-dprtname='{$value->dprt_name}'>Add Batch</button>
+						<button type="submit" id ="batchdetails" name="batchdetails" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalBatchCenter'onclick='displayBatch()' data-dprtname='{$value->dprt_name}'>Add Batch</button>
 					</div>	
 
 				</div>
@@ -679,18 +673,6 @@
 		            <div class="form-group col-md-6">
 		                <label>Outturn Type</label>
 		                <select class="form-control" id="outturn_type_batch" name="outturn_type_batch" onchange="populateBatches()" >
-		                	<option></option> 
-							@if (isset($material) && count($material) > 0)
-										@foreach ($material->all() as $value)
-											@if ($value->id == $material_id)
-												<option value="{{ $value->id }}" selected="selected">{{ $value->mt_name}}</option>
-											@else
-												<option value="{{ $value->id }}">{{ $value->mt_name}}</option>
-											@endif
-
-										@endforeach
-									
-							@endif
 		                </select>	
 		            </div>
 
@@ -958,8 +940,6 @@
 			var batch_kilograms = $('#batch_kilograms').val();
 			var batch_kilograms_hidden = $('#batch_kilograms_hidden').val();
 
-			alert(packaging);
-
 			var selectedRow = "";
 			var selected = $("input[type='radio'][name='row_id']:checked");
 			if (selected.length > 0) {
@@ -990,7 +970,6 @@
 			url = url.replace(':selectedRow', selectedRow);
 			url = url.replace(':selectedColumn', selectedColumn);
 
-
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
@@ -999,16 +978,11 @@
 			url: url,
 			type: 'GET',
 			}).success(function(response) {
-				if (response != null) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-					closeBootBox();
-				} else {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
-					closeBootBox();
-				}
-
+				dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+				closeBootBox();
 				refreshOutturnsTable();
-				displayBatch();
+				populateBatches();
+
 			}).error(function(error) {
 				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
 				closeBootBox();
@@ -1029,7 +1003,6 @@
 
 <script>
 	var autosubmit = <?php echo json_encode($autosubmit); ?>;
-	console.log(autosubmit)
 
 
 	$( "#confirmgrnsbtn" ).click(function(event){
@@ -1043,7 +1016,7 @@
 
 	function postConfirmMovement(){
 		var t=null;
-		var cid = $('#country').val();
+		var cid = <?php echo json_encode($cidmain); ?>;
 
 		var grn_number = $('#grn_number').val();
 
@@ -1054,7 +1027,6 @@
 		var service = $('#service').val();
 		var team = $('#team').val();
 
-		console.log("post confirm")
 				if(cid==''){
 					bootbox.alert("Please select country")
 				return
@@ -1084,7 +1056,7 @@
 				confirmurl = confirmurl.replace(':outt_season', outt_season);
 				confirmurl = confirmurl.replace(':service', service);
 				confirmurl = confirmurl.replace(':team', team);
-				console.log(confirmurl)
+				alert(confirmurl);
 				var dialog = bootbox.dialog({
 					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
   					backdrop: true,
@@ -1095,7 +1067,6 @@
 						url: confirmurl,
 						type: 'GET',
 						}).success(function(response) {
-						console.log(response)
 						if(parseFloat(response.bagstopay)===0){
 							dialog.find('.bootbox-body').html('<div class="alert alert-danger" role="alert"><h4 class="alert-heading"><i class="fa fa-exclamation-triangle fa-2x">Cannot confirm. Instruction has 0 packages</i></div>');
 						}else{
@@ -1263,31 +1234,34 @@
 
 	}	
 
-	function displayBatch(event, value){
+	function displayBatch(){
 
 		clearChildren(document.getElementById("batch_modal"));
 		var warehouse = $('#warehouse').val();
+		if (warehouse == '') {
+			warehouse = <?php echo json_encode($warehouse_id); ?>;
+		}
 		var url_scales = fetch_url_scales(warehouse); 
 		var url_location = fetch_url_locations(warehouse); 
 
         $.get(url_scales, function(data, status){
 			var scales = jQuery.parseJSON(data);
 
-			var $select = $('#weigh_scales');
-			$select.find('option').remove();   
-			$select.append('<option></option>');
+			var select = $('#weigh_scales');
+			select.find('option').remove();   
+			select.append('<option></option>');
 
 			$.each(scales,function(key, value) 
 			{	
-				$select.append('<option value=' + value["id"] + '>' + value["ws_equipment_number"] + '</option>');
+				select.append('<option value=' + value["id"] + '>' + value["ws_equipment_number"] + '</option>');
 			});
 
 		});
 
         $.get(url_location, function(data, status){
 			var locations = jQuery.parseJSON(data);
-             $("#row_list").empty();
-             $("#column_list").empty();
+            $("#row_list").empty();
+            $("#column_list").empty();
 
 			$.each(locations,function(key, value) 
 			{
@@ -1311,14 +1285,13 @@
 		});
 
 
-        event.preventDefault();
-
 	}
 
 	function populateBatches(){
 		var url_batches = fetch_url_batches(); 
         $.get(url_batches, function(data, status){
 			var batch = jQuery.parseJSON(data);
+			$("#batch_table tbody").empty();
 
 			$('#batch_table tr').not(':first').not(':last').remove();
 			var html = '';
@@ -1327,7 +1300,8 @@
 			{	
 
           		html += '<tr><td>' + value["btc_weight"] + 
-                    '</td><td>' + value["btc_tare"] + '</td><td>' + value["btc_net_weight"] + '</td><td>' + value["btc_packages"] + '</td><td>' + value["wr_name"] + '</td><td>' + value["loc_row"] + '</td><td>' + value["loc_column"] + '</td><td>' + value["btc_zone"] + '</td><td><a href="/batch_delete/' + value["btcid"] + '"  class="btn btn-success btn-danger">Delete</a></td></tr>';
+                    '</td><td>' + value["btc_tare"] + '</td><td>' + value["btc_net_weight"] + '</td><td>' + value["btc_packages"] + '</td><td>' + value["wr_name"] + '</td><td>' + value["loc_row"] + '</td><td>' + value["loc_column"] + '</td><td>' + value["btc_zone"] + '</td><td><button type="button" onclick="batch_delete(' + value["btcid"] + ')" class="btn btn-success btn-danger">Delete</button></td></tr>';
+
 
 			});
 			$('#batch_table tr').first().after(html);
@@ -1351,9 +1325,6 @@
 
 
 <script type="text/javascript">
-
-
-	
 
 	function getMaterials()
 	{
@@ -1379,7 +1350,6 @@
 					outturn_type.append('<option value=' + key + '>&nbsp;&nbsp;&nbsp;' + value + '</option>');
 
 				});		
-				getMaterialsInOutturn();	
 
 			}).error(function(error) {
 				console.log(error)
@@ -1449,6 +1419,7 @@
 		type: 'GET',
 		}).success(function(response) {
 			var outturns = jQuery.parseJSON(response);
+			$('#grn_outturns tr').empty();
 
 			$('#grn_outturns tr').not(':first').not(':last').remove();
 			var html = '';
@@ -1468,14 +1439,16 @@
 				net = parseInt(net) + parseInt(value["st_net_weight"]);
 
           		html += '<tr><td>' + count + 
-                    '</td><td>' + value["st_outturn"] + '</td><td>' + value["mt_name"] + '</td><td>' + value["st_packages"] + '</td><td>' + value["st_gross"] + '</td><td>' + value["st_tare"] + '</td><td>' + value["st_net_weight"] + '</td><td>' + value["st_moisture"] + '</td><td><a href="/outturn_delete/' + value["stid"] + '"  class="btn btn-success btn-danger">Delete</a></td></tr>';
-
+                    '</td><td>' + value["st_outturn"] + '</td><td>' + value["mt_name"] + '</td><td>' + value["st_packages"] + '</td><td>' + value["st_gross"] + '</td><td>' + value["st_tare"] + '</td><td>' + value["st_net_weight"] + '</td><td>' + value["st_moisture"] + '</td><td><button type="button" onclick="outturn_delete(' + value["stid"] + ')"  class="btn btn-success btn-danger">Delete</button></td></tr>';
 
 			});		
 
-      		html += '<tr><td>' + count + 
-                ' Outturn(s)</td><td></td><td></td><td>' + packages + '</td><td>' + gross + '</td><td>' + tare + '</td><td>' + net + '</td><td></td><td></td></tr>';
+			if (count > 0) {
 
+	      		html += '<tr><td>' + count + 
+	                ' Outturn(s)</td><td></td><td></td><td>' + packages + '</td><td>' + gross + '</td><td>' + tare + '</td><td>' + net + '</td><td></td><td></td></tr>';
+
+			}
 			$('#grn_outturns tr').first().after(html);	
 
 		}).error(function(error) {
@@ -1487,7 +1460,60 @@
 
 	}
 
+	function outturn_delete(stock_id)
+	{
+		var url="{{ route('arrivalinformation.outturn_delete',['stock_id'=>":stock_id"] ) }}";		
+		url = url.replace(':stock_id', stock_id);
 
+		
+		var dialog = bootbox.alert({
+			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+		}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+					
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			if (response != null) {
+				dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+				closeBootBox();
+			} else {
+				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+				closeBootBox();
+			}
+
+			refreshOutturnsTable();
+			displayBatch();
+		}).error(function(error) {
+			dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+			closeBootBox();
+		});  
+
+	}
+
+	function batch_delete(batch_id)
+	{
+		var url="{{ route('arrivalinformation.batch_delete',['batch_id'=>":batch_id"] ) }}";		
+		url = url.replace(':batch_id', batch_id);
+
+		var dialog = bootbox.alert({
+			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+		}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+			refreshOutturnsTable();
+			populateBatches();
+			closeBootBox();
+		}).error(function(error) {
+			dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+			closeBootBox();
+		});  
+
+	}
 
 	function fetchOutturnNumber()
 	{
@@ -1589,10 +1615,11 @@
 		type: 'GET',
 		}).success(function(response) {
 			var session = jQuery.parseJSON(response);
+
 			if (session == 1) {
-				$("#fetchweight").replaceWith("<button type='button' id='resetweight' name='resetweight' class='btn btn-lg btn-danger btn-block' formnovalidate onclick='resetWeight()'>Reset</button>");
+				$("#fetch_weight").replaceWith("<button type='button' id='resetweight' name='resetweight' class='btn btn-lg btn-danger btn-block' formnovalidate onclick='resetWeight()'>Reset</button>");
 			} else {
-				$("#resetweight").replaceWith("<button type='button' id='fetchweight' name='fetchweight' class='btn btn-lg btn-success btn-block' onclick='fetchWeight()'>Fetch</button>");
+				$("#resetweight").replaceWith("<button type='button' id='fetch_weight' name='fetchweight' class='btn btn-lg btn-success btn-block' onclick='fetchWeight()'>Fetch</button>");
 			}
 
 		}).error(function(error) {
@@ -1641,7 +1668,6 @@
 
 		var url="{{ route('arrivalinformation.reSetWeight',['weigh_scales'=>":weigh_scales"]) }}";
 		url = url.replace(':weigh_scales', weigh_scales);
-		alert(url);
 
 		$.ajax({
 		url: url,

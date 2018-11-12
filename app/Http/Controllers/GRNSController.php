@@ -115,6 +115,7 @@ class GRNSController extends Controller {
         $select_miller = Input::get('select_miller');
         $milled_by = Input::get('milled_by');
         $outturn_type = Input::get('outturn_type');
+        $outturn_type_batch = Input::get('outturn_type_batch');
         $basket = Input::get('basket');
         $cid = session('maincountry');
 
@@ -253,66 +254,40 @@ class GRNSController extends Controller {
 
         } else if (NULL !== Input::get('printgrns')) {            
 
-            $grnsview_summary = DB::table('stock_st AS st')
-                ->select('*','st.id as stid', 'prc.bs_id as bsid', 'gr.created_at as gr_date', 'gr.updated_at as gr_end_date')
-                ->leftJoin('purchases_prc AS prc', 'st.prc_id', '=', 'prc.id')
-                ->leftJoin('coffee_details_cfd AS cfd', 'prc.cfd_id', '=', 'cfd.id')
-                ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'cfd.cgrad_id')
-                ->leftJoin('warrants_war AS war', 'war.id', '=', 'prc.war_id')
-                ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'st.gr_id')
-                ->leftJoin('weighbridge_wb AS wb', 'wb.id', '=', 'gr.wbi_id')
-                ->leftJoin('warehouse_wr AS wr', 'wr.id', '=', 'cfd.wr_id')                
-                ->where('st.gr_id', $grn_id)
-                ->first();  
+            $grnsview_summary = DB::table('grn_gr AS gr')
+            ->select('*', 'agt_name as wr_name', 'gr.created_at as gr_date', 'gr.updated_at as gr_end_date', 'agt_att as wr_att')
+            ->leftJoin('stock_warehouse_st AS st', 'st.grn_id', '=', 'gr.id')
+            ->leftJoin('agent_agt AS agt', 'agt.id', '=', 'gr.agt_id')
+            ->leftJoin('weighbridge_info_wbi AS wb', 'wb.id', '=', 'gr.wbi_id')
+            ->where('gr.id', $grn_id)
+            ->first(); 
 
             $person_details = Person::where('id', $per_id)->first();
 
             $person_name = $person_details->per_fname.' '.$person_details->per_sname;
 
             if ($grnsview_summary != null) {
-
                 $client =  $grnsview_summary->wr_name;
-
                 $delivery_date = $grnsview_summary->gr_date;
-
                 $delivery_date = date("d/m/Y", strtotime($delivery_date));
-
                 $movement_permit = $grnsview_summary->wbi_movement_permit;
-
                 $vehicle = $grnsview_summary->wbi_vehicle_plate;
-
                 $weighbridge_ticket = $grnsview_summary->wbi_ticket;
-
                 $time_received = $grnsview_summary->gr_date;
-
                 $time_received_stop = $grnsview_summary->gr_end_date;
-
                 $time_received = date("H:i:s", strtotime($time_received));
-
                 $time_received_stop = date("H:i:s", strtotime($time_received_stop));
-
                 $received_by = $person_name;
-
                 $driver_name = $grnsview_summary->wbi_driver_name;
-
                 $driver_id = $grnsview_summary->wbi_driver_id;
-
                 $warehouse_manager = $grnsview_summary->wr_att;
-
             }
 
-            $grnsview = DB::table('stock_st AS st')
-                ->select('*','st.id as stid', 'prc.bs_id as bsid')
-                ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'st.gr_id')
-                ->leftJoin('purchases_prc AS prc', 'st.prc_id', '=', 'prc.id')
-                ->leftJoin('coffee_details_cfd AS cfd', 'prc.cfd_id', '=', 'cfd.id')
-                ->leftJoin('sale_sl AS sl', 'sl.id', '=', 'cfd.sl_id')
-                ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'cfd.cgrad_id')
-                ->leftJoin('warrants_war AS war', 'war.id', '=', 'prc.war_id')
-                ->leftJoin('weighbridge_wb AS wb', 'wb.id', '=', 'gr.wbi_id')
-                ->where('st.gr_id', $grn_id)
-                ->get();  
-
+            $grnsview = DB::table('stock_warehouse_st AS st')
+                ->select('*')
+                ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+                ->where('st.grn_id', $grn_id)
+                ->get(); ;  
 
             $pdf = PDF::loadView('pdf.print_grns', compact('grnsview','client', 'delivery_date', 'movement_permit', 'vehicle', 'weighbridge_ticket', 'time_received', 'received_by', 'driver_name', 'time_received_stop', 'driver_id', 'grn_number', 'warehouse_manager'));
 
@@ -338,8 +313,13 @@ class GRNSController extends Controller {
         $items = items::all(['id', 'it_name']);
         $weighbridge_ticket = WeighbridgeInfo::where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->get(); 
 
+        $outturn_type_selected = $outturn_type;
+        if ($outturn_type_selected == null) {
+           $outturn_type_selected = $outturn_type_batch;
+        }
+
         if ($stid == null) {
-            $stock_details_stid = StockWarehouse::where('csn_id', '=', $outt_season)->where('it_id', '=', $select_items)->where('cgr_id', '=', $coffee_grower)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
+            $stock_details_stid = StockWarehouse::where('csn_id', '=', $outt_season)->where('mt_id', '=', $outturn_type_selected)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
             if ($stock_details_stid != null) {
                 $stid = $stock_details_stid->id;
             }
@@ -538,7 +518,7 @@ class GRNSController extends Controller {
                     $milled_by = $stock_details->milled_by;
                     $wrhse = $stock_details->warehouse_id;
 
-                    $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'cgr_id' => $coffee_grower, 'it_id' => $select_items , 'miller_id' => $select_miller , 'milled_by' => $milled_by, 'warehouse_id' => $wrhse]);
+                    $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'warehouse_id' => $wrhse]);
 
                 } else {
                     $st_id = "Please update Outturn information first.";
@@ -579,11 +559,7 @@ class GRNSController extends Controller {
             $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('mt_id', '=', $outturn_type_batch)->first();
 
             if ($stock_details != null) {
-
-                // $packaging = $stock_details->pkg_id;
                 $package_weight = Packaging::where('id', $packaging)->first();
-                print_r($packaging);
-
                 if ($package_weight != NULL) {            
                     $tare_batch = ($package_weight->pkg_weight) * $packages_batch;
                 } 
@@ -616,7 +592,7 @@ class GRNSController extends Controller {
                 $bags_batch = floor($net_weight_batch/60);
                 $pockets_batch = floor($net_weight_batch % 60);         
                 StockWarehouse::where('id', '=', $stock_item_id)
-                            ->update([ 'pkg_id' => $packaging, 'st_net_weight' => $net_weight_batch ,'st_tare' => $tare_batch, 'st_bags' => $bags_batch, 'st_pockets' => $pockets_batch, 'st_gross' => $batch_kilograms]);
+                            ->update([ 'pkg_id' => $packaging, 'st_net_weight' => $net_weight_batch ,'st_tare' => $tare_batch, 'st_bags' => $bags_batch, 'st_pockets' => $pockets_batch, 'st_gross' => $batch_kilograms, 'st_packages' => $packages_batch]);
 
                 Activity::log('Inserted Batch information with btid '.$btid. ' batch_kilograms '. $batch_kilograms. ' bags '. $bags_batch. ' pockets '. $pockets_batch. ' stid '. $stock_item_id.' btc_tare '.$tare_batch.' btc_net_weight '.$net_weight_batch);
 
@@ -813,41 +789,81 @@ class GRNSController extends Controller {
     }
 
     public function outturn_delete($id)
-    {   
+    {  
+        try { 
 
-        $stock_details = StockWarehouse::where('id', $id)->first();  
+            $stock_details = StockWarehouse::where('id', $id)->first();  
 
-        if ($stock_details) {
+            if ($stock_details) {
 
-            StockWarehouse::where('id', $id)->delete();
+                StockWarehouse::where('id', $id)->delete();
+            }
+
+            return $id;
+
+        } catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
         }
 
-        return redirect('arrivalinformationgrns');
         
     }
 
     public function batch_delete($id)
     {   
+        try { 
+            $batch_details = Batch::where('id', $id)->first();  
+            $st_id = null;
+            $batch_kilograms = null;
+            $tare_batch = null;
+            $net_weight_batch = null;
+            $packages_batch = null;
+            $bags_batch = null;
+            $pockets_batch = null;
 
-        $batch_details = Batch::where('id', $id)->first();  
+            if ($batch_details) {
+                $btc_id = $batch_details->id;
+                $st_id = $batch_details->st_id;
+                $location_details = StockLocation::where('bt_id', $btc_id)->first();
+                if ($location_details) {
+                    $location_details->delete();
+                }
+                Batch::where('id', $id)->delete();
+                $preious_batch = Batch::where('st_id', $st_id)->get();
 
-        if ($batch_details) {
+                if ($preious_batch != null) {
 
-            $btc_id = $batch_details->id;
+                    foreach ($preious_batch as $key_pb => $value_pb) {
+                        $batch_kilograms += $value_pb->btc_weight;
+                        $tare_batch += $value_pb->btc_tare;
+                        $net_weight_batch += $value_pb->btc_net_weight;
+                        $packages_batch += $value_pb->btc_packages;
+                        $bags_batch += $value_pb->bags_batch;
+                        $pockets_batch += $value_pb->btc_pockets;
 
-            $location_details = StockLocation::where('bt_id', $btc_id)->first();
+                    }
 
-            if ($location_details) {
+                }
 
-                $location_details->delete();
+                $bags_batch = floor($net_weight_batch/60);
+                $pockets_batch = floor($net_weight_batch % 60);         
+                StockWarehouse::where('id', '=', $st_id)
+                            ->update([ 'st_net_weight' => $net_weight_batch ,'st_tare' => $tare_batch, 'st_bags' => $bags_batch, 'st_pockets' => $pockets_batch, 'st_gross' => $batch_kilograms, 'st_packages' => $packages_batch]);
 
             }
+            return $id;
 
-            Batch::where('id', $id)->delete();
-
+        } catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
         }
 
-        return redirect('arrivalinformationgrns');        
         
     }
 
@@ -915,7 +931,7 @@ class GRNSController extends Controller {
                 Activity::log('Inserted Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wbi_id '. $weighbridgeTK . 'grn_number' . $grn_number );
             }
 
-            $stock_details = stock::where('gr_id', $grn_id)->get();
+            $stock_details = StockWarehouse::where('grn_id', $grn_id)->get();
 
             $packages = 0;
 
@@ -985,7 +1001,7 @@ class GRNSController extends Controller {
                 ]);
             }
         
-        }catch (\PDOException $e) {
+        } catch (\PDOException $e) {
             return response()->json([
                 'exists' => false,
                 'inserted' => false,

@@ -123,9 +123,8 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/arrivalinformation/getGRNContents/{grn_number}', ['as'=>'arrivalinformation.getGRNContents','uses'=>'GRNSController@getGRNContents']);
 
-
-		Route::get('/outturn_delete/{id}', 'GRNSController@outturn_delete'); 
-		Route::get('/batch_delete/{id}', 'GRNSController@batch_delete'); 
+		Route::get('/arrivalinformation/outturn_delete/{id}', ['as'=>'arrivalinformation.outturn_delete','uses'=>'GRNSController@outturn_delete']);
+		Route::get('/arrivalinformation/batch_delete/{id}', ['as'=>'arrivalinformation.batch_delete','uses'=>'GRNSController@batch_delete']);
 
 
 		Route::get('/arrivalinformation/getMaterialsInOutturn/{item_id}/{outt_number}/{outt_season}/{grn_number}', ['as'=>'arrivalinformation.getMaterialsInOutturn','uses'=>'Controller@getMaterialsInOutturn']);
