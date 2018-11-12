@@ -20,6 +20,9 @@ use Ngea\Material;
 use Ngea\ItemsMaterial;
 use Ngea\Grn;
 use Ngea\StockWarehouse;
+use Ngea\StockMill;
+use Ngea\ParchmentType;
+use Ngea\AgentCategory;
 
 class Controller extends BaseController
 {
@@ -104,6 +107,7 @@ class Controller extends BaseController
 
         try{
             $cidmain = session('maincountry');
+            $grn_number = null;
             if ($cidmain != null) {
                 $grn_no = Grn::where('ctr_id', $cidmain)->where('agt_id', $warehouse)->orderBy('id', 'desc')->first();
                 if ($grn_no != NULL) {
@@ -113,6 +117,7 @@ class Controller extends BaseController
                     }
                 } else {
                     $grn_number = sprintf("%07d", (0000001));
+
                 }
             }
             return json_encode($grn_number);                    
@@ -150,20 +155,26 @@ class Controller extends BaseController
     
     }
 
-    public function getMaterialsInOutturn ($item_id, $outt_number, $outt_season, $grn_number) {
+    public function getMaterialsInOutturn ($item_id, $outt_number, $outt_season, $grn_number, $warehouse) {
 
         try{
             $grn_id = null;
+            $agent_type = null;
             $materials = array();
             $cid = session('maincountry');
 
-            $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->first(); 
+            $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->where('agt_id', $warehouse)->first(); 
             if ($grn_details != null) {
                 $grn_id = $grn_details->id;
             } 
+            $agent_type = $this->getAgentType($warehouse);
 
-
-            $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->get();
+            if ($agent_type == 'Miller') {
+                $stock_details = StockMill::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->get();
+            } else {
+                $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->get();
+            }
+            
 
             foreach($stock_details as $items){
 
@@ -182,6 +193,19 @@ class Controller extends BaseController
     
     }
 
+    public function getAgentType($warehouse){
+
+        $agent_details = Agent::where('id', $warehouse)->first();
+        if ($agent_details != null) {
+            $agent_category_details = AgentCategory::where('id', $agent_details->agtc_id)->first();
+            if ($agent_category_details != null) {
+                $agent_type = $agent_category_details->agtc_name;
+            }
+            
+        }      
+
+        return $agent_type;  
+    }
     public function getOutturn ($item_id, $agent_id, $moisture) {
 
         try{
@@ -192,43 +216,43 @@ class Controller extends BaseController
             if ($threshold_details != null) {
                 $moisture_threshold = $threshold_details->th_percentage;
             }
-            if ($moisture > $moisture_threshold) {
-                $outturn = 'REDRY';
-            } else {
-                $agt_code = null;
-                $prefix = null;
-                $padding_character = null;
-                $previous_week = null;
-                $previous_number = null;
-                $delivery_number = null;
-                $length = null;
+            // if ($moisture > $moisture_threshold) {
+            //     $outturn = 'REDRY';
+            // } else {
+            $agt_code = null;
+            $prefix = null;
+            $padding_character = null;
+            $previous_week = null;
+            $previous_number = null;
+            $delivery_number = null;
+            $length = null;
 
-                $week_of_year = $this->returnWeekOfYear();
-                $agent = agent::where('id', $agent_id)->first();
-                if ($agent != null) {
-                    $agt_code = $agent->agt_code;
-                }
-
-
-                $outturnNumberSettings = OutturnNumberSettings::where('it_id', $item_id)->first();
-                if ($outturnNumberSettings != null) {
-                    $prefix = $outturnNumberSettings->ons_prefix;
-                    $padding_character = $outturnNumberSettings->ons_padding_character;
-                    $previous_week = $outturnNumberSettings->ons_previous_week;
-                    $previous_number = $outturnNumberSettings->ons_previous_number;
-                    $length = $outturnNumberSettings->ons_length;
-                }
-
-                if ($previous_week == $week_of_year) {
-                    $delivery_number = sprintf("%0".$length."d", ($previous_number + 1));
-                } else {
-                    $delivery_number = sprintf("%0".$length."d", (001));
-                }
-
-                if ($week_of_year != null && $agt_code != null && $prefix != null && $delivery_number != null) {
-                    $outturn = $week_of_year . $agt_code . $prefix . $delivery_number;
-                }                 
+            $week_of_year = $this->returnWeekOfYear();
+            $agent = agent::where('id', $agent_id)->first();
+            if ($agent != null) {
+                $agt_code = $agent->agt_code;
             }
+
+
+            $outturnNumberSettings = OutturnNumberSettings::where('it_id', $item_id)->first();
+            if ($outturnNumberSettings != null) {
+                $prefix = $outturnNumberSettings->ons_prefix;
+                $padding_character = $outturnNumberSettings->ons_padding_character;
+                $previous_week = $outturnNumberSettings->ons_previous_week;
+                $previous_number = $outturnNumberSettings->ons_previous_number;
+                $length = $outturnNumberSettings->ons_length;
+            }
+
+            if ($previous_week == $week_of_year) {
+                $delivery_number = sprintf("%0".$length."d", ($previous_number + 1));
+            } else {
+                $delivery_number = sprintf("%0".$length."d", (001));
+            }
+
+            if ($week_of_year != null && $agt_code != null && $prefix != null && $delivery_number != null) {
+                $outturn = $week_of_year . $agt_code . $prefix . $delivery_number;
+            }                 
+            // }
 
             
           

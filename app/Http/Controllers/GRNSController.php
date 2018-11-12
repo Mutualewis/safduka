@@ -41,6 +41,12 @@ use Ngea\Items;
 use Ngea\agent;
 use Ngea\Material;
 use Ngea\StockWarehouse;
+use Ngea\StockMill;
+use Ngea\ParchmentType;
+use Ngea\Thresholds;
+use Ngea\AgentCategory;
+use Ngea\BatchMill;
+use Ngea\StockLocationBatch;
 
 use Yajra\Datatables\Datatables;
 use niklasravnsborg\LaravelPdf\Facades\Pdf as PDF;
@@ -57,7 +63,7 @@ class GRNSController extends Controller {
         $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_code']);
         $material = Material::all(['id', 'mt_name']);
         $basket = basket::all(['id', 'bs_code', 'bs_quality']);
-        $warehouse = agent::where('agtc_id', 4)->get();
+        $warehouse = agent::where('agtc_id', 4)->orWhere('agtc_id', 1)->get();
 
         $packaging = packaging::all(['id', 'pkg_name', 'pkg_description']);
         $millers = agent::where('agtc_id', 1)->get();
@@ -135,11 +141,13 @@ class GRNSController extends Controller {
         $grn_id = NULL;
         $rates    = processrates::all(['id', 'service']);
         $teams   = teams::all(['id', 'tms_grpname']);
-        $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->first(); 
+        $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->where('agt_id', $wrhse)->first(); 
+
         $stid = null;
         if ($grn_details != null) {
             $grn_id = $grn_details->id;
         } 
+
 
         if (NULL !==  Input::get('confirmgrns')) { 
 
@@ -175,7 +183,7 @@ class GRNSController extends Controller {
         } else if (NULL !== Input::get('submitlot')) {
 
             $grn_id = null;
-            $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->first(); 
+            $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->where('agt_id', $wrhse)->first(); 
             if ($grn_details != NULL) {
                 $grn_id = $grn_details->id;
                 Grn::where('id', '=', $grn_id)
@@ -300,7 +308,7 @@ class GRNSController extends Controller {
         $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_code']);
         $material = Material::all(['id', 'mt_name']);
         $basket = basket::all(['id', 'bs_code', 'bs_quality']);
-        $warehouse = agent::where('agtc_id', 4)->get();
+        $warehouse = agent::where('agtc_id', 4)->orWhere('agtc_id', 1)->get();
 
         $packaging = packaging::all(['id', 'pkg_name', 'pkg_description']);
         $millers = agent::where('agtc_id', 1)->get();
@@ -327,12 +335,11 @@ class GRNSController extends Controller {
 
         $stock_details = StockWarehouse::where('id', '=', $stid)->first();
 
-        $grn_details = Grn::where('id', $grn_id)->first(); 
-
         $grn_details = DB::table('grn_gr AS gr')
-            ->select('*')
+            ->select('*', 'gr.agt_id as agtid')
             ->leftJoin('stock_warehouse_st AS st', 'st.grn_id', '=', 'gr.id')
             ->where('gr.id', $grn_id)
+            ->where('gr.agt_id', $wrhse)
             ->first(); 
 
         if ($grn_details != null) {
@@ -341,10 +348,10 @@ class GRNSController extends Controller {
                 ->select('*')
                 ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
                 ->where('st.grn_id', $grn_id)
+                ->where('st.agt_id', $wrhse)
                 ->get(); 
         }
 
-        // print_r($stid);
 
         return View::make('arrivalinformationgrns', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'grn_details', 'coffeeGrade', 'sale', 'coffee_details', 'saleid', 'basket', 'packaging', 'stock_details', 'warehouse', 'warehouse_count', 'wrhse', 'location', 'weigh_scales', 'weigh_scales_count', 'wsid', 'rw', 'clm', 'zone', 'packages_batch', 'batch_kilograms', 'grnsview', 'batchview', 'expected_arrival', 'stock_id', 'st_quality_check', 'rates', 'teams', 'wbtk', 'ot_season', 'active_season', 'growers', 'items', 'millers', 'material', 'basket', 'packaging', 'warehouse', 'role', 'admin', 'timeout', 'grn_content')); 
 
@@ -412,22 +419,34 @@ class GRNSController extends Controller {
     }
 
 
-    public function getGRNContents($grn_number){
+    public function getGRNContents($grn_number, $warehouse){
         
         try {
 
             $grn_id = null;
-            $grn_details = Grn::where('gr_number', $grn_number)->first(); 
+            $agent_type = null;
+            $grn_details = Grn::where('gr_number', $grn_number)->where('agt_id', $warehouse)->first(); 
             if ($grn_details != null) {
                 $grn_id = $grn_details->id;
             } 
+            $agent_type = $this->getAgentType($warehouse);
+
             if ($grn_details != null) {
 
-                $grn_content = DB::table('stock_warehouse_st AS st')
-                    ->select('*', 'st.id as stid')
-                    ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
-                    ->where('st.grn_id', $grn_id)
-                    ->get(); 
+                if ($agent_type == 'Miller') {
+                    $grn_content = DB::table('stock_mill_st AS st')
+                        ->select('*', 'st.id as stid')
+                        ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+                        ->where('st.grn_id', $grn_id)
+                        ->get(); 
+                } else {
+                    $grn_content = DB::table('stock_warehouse_st AS st')
+                        ->select('*', 'st.id as stid')
+                        ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+                        ->where('st.grn_id', $grn_id)
+                        ->get(); 
+
+                }
             }
 
             return json_encode($grn_content);                    
@@ -443,7 +462,19 @@ class GRNSController extends Controller {
 
     }
 
+    public function getAgentType($warehouse){
 
+        $agent_details = Agent::where('id', $warehouse)->first();
+        if ($agent_details != null) {
+            $agent_category_details = AgentCategory::where('id', $agent_details->agtc_id)->first();
+            if ($agent_category_details != null) {
+                $agent_type = $agent_category_details->agtc_name;
+            }
+            
+        }      
+
+        return $agent_type;  
+    }
 
     public function getBatch($outt_number, $outt_season, $outturn_type_batch){
         
@@ -481,7 +512,7 @@ class GRNSController extends Controller {
     }
 
 
-    public function addDispatch($grn_number, $outt_number, $outt_season, $coffee_grower, $outturn_type, $moisture, $basket, $packaging)
+    public function addDispatch($grn_number, $outt_number, $outt_season, $coffee_grower, $outturn_type, $moisture, $basket, $packaging, $warehouse)
     {   
 
         try{
@@ -492,44 +523,88 @@ class GRNSController extends Controller {
             $purchase_details = null;
             $st_mark = null;
             $select_items = null;
+            $agent_type = null;
             $select_miller = null;
             $milled_by = null;
+            $item_id = null;
             $wrhse = null;
+            $parchment_type = null;
+            $outturn_type_name = null;
+            $parchment_type_id = null;
             $cid = session('maincountry');
             $user_data = Auth::user();
             $user = $user_data->id;
 
 
-            $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->first(); 
+            $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->where('agt_id', $warehouse)->first(); 
             if ($grn_details != null) {
                 $grn_id = $grn_details->id;
+                $item_id = $grn_details->it_id;
             } 
 
-            $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('mt_id', '=', $outturn_type)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
+            $agent_type = $this->getAgentType($warehouse);
+            
+            $material_details = Material::where('id', $outturn_type)->first();
+            if ($material_details != null) {
+                $outturn_type_name = $material_details->mt_name;
+            }
+            
+            $parchment_type_details = ParchmentType::where('pty_name', $outturn_type_name)->first();
+            if ($material_details != null) {
+                $parchment_type_id = $parchment_type_details->id;
+            }
+            
+            $moisture_threshold = null;
+            $outturn = null;
+            $st_mark = $outt_number.'/'.$outt_season;
 
-            if ($stock_details == null) {
-
-                $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
-                if ($stock_details != null) {
-
-                    $st_mark = $stock_details->st_mark;
-                    $select_items = $stock_details->it_id;
-                    $select_miller = $stock_details->miller_id;
-                    $milled_by = $stock_details->milled_by;
-                    $wrhse = $stock_details->warehouse_id;
-
-                    $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'warehouse_id' => $wrhse]);
-
-                } else {
-                    $st_id = "Please update Outturn information first.";
-                }
-
+            $threshold_details = Thresholds::where('th_name', 'Moisture')->where('it_id', $item_id)->first();
+            if ($threshold_details != null) {
+                $moisture_threshold = $threshold_details->th_percentage;
+            }
+            if ($moisture > $moisture_threshold) {
+                $st_id = "Moisture content does not meet the required threshold.";
             } else {
 
-                $st_id = $stock_details->id;
-                StockWarehouse::where('id', '=', $stock_details->id)
-                            ->update(['mt_id' => $outturn_type, 'st_moisture' => $moisture, 'bs_id' => $basket, 'pkg_id' => $packaging]);
+                if ($agent_type == 'Miller') {
+                    $stock_details = StockMill::where('csn_id', '=', $outt_season)->where('mt_id', '=', $outturn_type)->where('pty_id', '=', $parchment_type_id)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
+                    if ($stock_details == null) {
+                        // $stock_details = StockMill::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
+                        // if ($stock_details != null) {
 
+                            $st_id = StockMill::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'warehouse_id' => $warehouse]);
+
+                        // } else {
+                        //     $st_id = "Please update Outturn information first.";
+                        // }
+
+                    } else {
+
+                        $st_id = $stock_details->id;
+                        StockMill::where('id', '=', $stock_details->id)
+                                    ->update([ 'st_mark' => $st_mark, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id, 'st_moisture' => $moisture, 'bs_id' => $basket, 'pkg_id' => $packaging]);
+
+                    }  
+                } else {
+                    // $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('mt_id', '=', $outturn_type)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
+                    if ($stock_details == null) {
+                        // $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
+                        // if ($stock_details != null) {
+                            $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'warehouse_id' => $warehouse]);
+
+                        // } else {
+                        //     $st_id = "Please update Outturn information first.";
+                        // }
+
+                    } else {
+
+                        $st_id = $stock_details->id;
+                        StockWarehouse::where('id', '=', $stock_details->id)
+                                    ->update(['mt_id' => $outturn_type, 'st_moisture' => $moisture, 'bs_id' => $basket, 'pkg_id' => $packaging]);
+
+                    }                
+                }
+            
             }
 
 
@@ -546,7 +621,7 @@ class GRNSController extends Controller {
     }
 
 
-    public function addBatch($outt_number, $outt_season, $coffee_grower, $outturn_type_batch, $weigh_scales, $packaging, $zone, $packages_batch, $batch_kilograms, $batch_kilograms_hidden, $selectedRow, $selectedColumn)
+    public function addBatch($outt_number, $outt_season, $coffee_grower, $outturn_type_batch, $weigh_scales, $packaging, $zone, $packages_batch, $batch_kilograms, $batch_kilograms_hidden, $selectedRow, $selectedColumn, $warehouse)
     {   
 
         try{
@@ -555,8 +630,15 @@ class GRNSController extends Controller {
             $stock_details = null;
             $prc_id = null;
             $gr_id = null;
-            
-            $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('mt_id', '=', $outturn_type_batch)->first();
+            $agent_type = null;
+            $agent_type = $this->getAgentType($warehouse);
+
+            if ($agent_type == 'Miller') {
+                $stock_details = StockMill::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('mt_id', '=', $outturn_type_batch)->first();
+            } else {
+                $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('mt_id', '=', $outturn_type_batch)->first();
+            }
+
 
             if ($stock_details != null) {
                 $package_weight = Packaging::where('id', $packaging)->first();
@@ -569,37 +651,79 @@ class GRNSController extends Controller {
                 $bags_batch = floor($net_weight_batch/60);
                 $pockets_batch = floor($net_weight_batch % 60);
                 $coffee_details = NULL;
-                $preious_batch = Batch::where('st_id', $stock_item_id)->get();
-
-                $btid = Batch::insertGetId (
-                ['st_id' => $stock_item_id, 'btc_weight' => $batch_kilograms, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $weigh_scales]);
 
 
-                if ($preious_batch != null) {
 
-                    foreach ($preious_batch as $key_pb => $value_pb) {
-                        $batch_kilograms += $value_pb->btc_weight;
-                        $tare_batch += $value_pb->btc_tare;
-                        $net_weight_batch += $value_pb->btc_net_weight;
-                        $packages_batch += $value_pb->btc_packages;
-                        $bags_batch += $value_pb->bags_batch;
-                        $pockets_batch += $value_pb->btc_pockets;
+                if ($agent_type == 'Miller') {
+
+                    $preious_batch = BatchMill::where('st_id', $stock_item_id)->get();
+
+                    $btid = BatchMill::insertGetId (
+                    ['st_id' => $stock_item_id, 'btc_weight' => $batch_kilograms, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $weigh_scales]);
+
+
+                    if ($preious_batch != null) {
+
+                        foreach ($preious_batch as $key_pb => $value_pb) {
+                            $batch_kilograms += $value_pb->btc_weight;
+                            $tare_batch += $value_pb->btc_tare;
+                            $net_weight_batch += $value_pb->btc_net_weight;
+                            $packages_batch += $value_pb->btc_packages;
+                            $bags_batch += $value_pb->bags_batch;
+                            $pockets_batch += $value_pb->btc_pockets;
+
+                        }
 
                     }
 
+                    $bags_batch = floor($net_weight_batch/60);
+                    $pockets_batch = floor($net_weight_batch % 60);         
+                    StockMill::where('id', '=', $stock_item_id)
+                                ->update([ 'pkg_id' => $packaging, 'st_net_weight' => $net_weight_batch ,'st_tare' => $tare_batch, 'st_bags' => $bags_batch, 'st_pockets' => $pockets_batch, 'st_gross' => $batch_kilograms, 'st_packages' => $packages_batch]);
+
+                    Activity::log('Inserted Batch information with btid '.$btid. ' batch_kilograms '. $batch_kilograms. ' bags '. $bags_batch. ' pockets '. $pockets_batch. ' stid '. $stock_item_id.' btc_tare '.$tare_batch.' btc_net_weight '.$net_weight_batch);
+
+                    $stlocid = StockLocationBatch::insertGetId (
+                    ['bt_id' => $btid, 'loc_row_id' => $selectedRow, 'loc_column_id' => $selectedColumn, 'btc_zone' => $zone]);
+
+                    Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $selectedRow. ' loccolid '. $selectedColumn. ' zone '. $zone); 
+                } else {
+
+                    $preious_batch = Batch::where('st_id', $stock_item_id)->get();
+
+
+                    $btid = Batch::insertGetId (
+                    ['st_id' => $stock_item_id, 'btc_weight' => $batch_kilograms, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $weigh_scales]);
+
+
+                    if ($preious_batch != null) {
+
+                        foreach ($preious_batch as $key_pb => $value_pb) {
+                            $batch_kilograms += $value_pb->btc_weight;
+                            $tare_batch += $value_pb->btc_tare;
+                            $net_weight_batch += $value_pb->btc_net_weight;
+                            $packages_batch += $value_pb->btc_packages;
+                            $bags_batch += $value_pb->bags_batch;
+                            $pockets_batch += $value_pb->btc_pockets;
+
+                        }
+
+                    }
+
+                    $bags_batch = floor($net_weight_batch/60);
+                    $pockets_batch = floor($net_weight_batch % 60);         
+                    StockWarehouse::where('id', '=', $stock_item_id)
+                                ->update([ 'pkg_id' => $packaging, 'st_net_weight' => $net_weight_batch ,'st_tare' => $tare_batch, 'st_bags' => $bags_batch, 'st_pockets' => $pockets_batch, 'st_gross' => $batch_kilograms, 'st_packages' => $packages_batch]);
+
+                    Activity::log('Inserted Batch information with btid '.$btid. ' batch_kilograms '. $batch_kilograms. ' bags '. $bags_batch. ' pockets '. $pockets_batch. ' stid '. $stock_item_id.' btc_tare '.$tare_batch.' btc_net_weight '.$net_weight_batch);
+
+                    $stlocid = StockLocation::insertGetId (
+                    ['bt_id' => $btid, 'loc_row_id' => $selectedRow, 'loc_column_id' => $selectedColumn, 'btc_zone' => $zone]);
+
+                    Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $selectedRow. ' loccolid '. $selectedColumn. ' zone '. $zone); 
+
                 }
 
-                $bags_batch = floor($net_weight_batch/60);
-                $pockets_batch = floor($net_weight_batch % 60);         
-                StockWarehouse::where('id', '=', $stock_item_id)
-                            ->update([ 'pkg_id' => $packaging, 'st_net_weight' => $net_weight_batch ,'st_tare' => $tare_batch, 'st_bags' => $bags_batch, 'st_pockets' => $pockets_batch, 'st_gross' => $batch_kilograms, 'st_packages' => $packages_batch]);
-
-                Activity::log('Inserted Batch information with btid '.$btid. ' batch_kilograms '. $batch_kilograms. ' bags '. $bags_batch. ' pockets '. $pockets_batch. ' stid '. $stock_item_id.' btc_tare '.$tare_batch.' btc_net_weight '.$net_weight_batch);
-
-                $stlocid = StockLocation::insertGetId (
-                ['bt_id' => $btid, 'loc_row_id' => $selectedRow, 'loc_column_id' => $selectedColumn, 'btc_zone' => $zone]);
-
-                Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $selectedRow. ' loccolid '. $selectedColumn. ' zone '. $zone); 
 
             }
 

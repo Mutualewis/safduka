@@ -194,7 +194,7 @@
 	$gr_confirmed_by = NULL;
 
 	if(isset($grn_details)){
-		$warehouse_id = $grn_details->agt_id;
+		$warehouse_id = $grn_details->agtid;
 		$grn_number = $grn_details->gr_number;	
 		$wbtk = $grn_details->wbi_id;		
 		$grnConfirmed = $grn_details->gr_confirmed_by;	
@@ -882,10 +882,11 @@
 			var basket = $('#basket').val();
 			var packaging = null;
 	    	var grn_number = $('#grn_number').val();
+	    	var warehouse = $('#warehouse').val();
 
 
 
-			var url="{{ route('arrivalinformation.addDispatch',['grn_number'=>":grn_number", 'outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type'=>":outturn_type",'moisture'=>":moisture", 'basket'=>":basket", 'packaging'=>":packaging"]) }}";
+			var url="{{ route('arrivalinformation.addDispatch',['grn_number'=>":grn_number", 'outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type'=>":outturn_type",'moisture'=>":moisture", 'basket'=>":basket", 'packaging'=>":packaging", 'warehouse'=>":warehouse"]) }}";
 
 			url = url.replace(':grn_number', grn_number);
 			url = url.replace(':outt_number', outt_number);
@@ -896,6 +897,7 @@
 			url = url.replace(':fetch_weight', fetch_weight);
 			url = url.replace(':basket', basket);
 			url = url.replace(':packaging', packaging);
+			url = url.replace(':warehouse', warehouse);
 
 
 			var dialog = bootbox.alert({
@@ -931,6 +933,7 @@
 			var outt_number = $('#outt_number').val();
 			var outt_season = $('#outt_season').val();
 			var coffee_grower = $('#coffee_grower').val();
+			var warehouse = $('#warehouse').val();
 
 			var outturn_type_batch = $('#outturn_type_batch').val();
 			var weigh_scales = $('#weigh_scales').val();
@@ -954,7 +957,7 @@
 			}
 
 
-			var url="{{ route('arrivalinformation.addBatch',['outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type_batch'=>":outturn_type_batch", 'weigh_scales'=>":weigh_scales", 'packaging'=>":packaging", 'zone'=>":zone", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'batch_kilograms_hidden'=>":batch_kilograms_hidden", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn"]) }}";
+			var url="{{ route('arrivalinformation.addBatch',['outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type_batch'=>":outturn_type_batch", 'weigh_scales'=>":weigh_scales", 'packaging'=>":packaging", 'zone'=>":zone", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'batch_kilograms_hidden'=>":batch_kilograms_hidden", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'warehouse' =>":warehouse"]) }}";
 
 			url = url.replace(':grn_number', grn_number);
 			url = url.replace(':outt_number', outt_number);
@@ -969,6 +972,7 @@
 			url = url.replace(':batch_kilograms_hidden', batch_kilograms_hidden);
 			url = url.replace(':selectedRow', selectedRow);
 			url = url.replace(':selectedColumn', selectedColumn);
+			url = url.replace(':warehouse', warehouse);
 
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
@@ -1179,7 +1183,7 @@
 	}
 
 	function fetch_url_scales(warehouse) {
-		var url="{{ route('arrivalinformationgrns.getScales',['warehouse'=>":warehouse"]) }}";
+		var url="{{ route('arrivalinformation.getScales',['warehouse'=>":warehouse"]) }}";
 		url = url.replace(':warehouse', warehouse);
 		return url;
 
@@ -1257,7 +1261,6 @@
 			});
 
 		});
-
         $.get(url_location, function(data, status){
 			var locations = jQuery.parseJSON(data);
             $("#row_list").empty();
@@ -1350,6 +1353,7 @@
 					outturn_type.append('<option value=' + key + '>&nbsp;&nbsp;&nbsp;' + value + '</option>');
 
 				});		
+				getMaterialsInOutturn();
 
 			}).error(function(error) {
 				console.log(error)
@@ -1368,15 +1372,17 @@
 		var outt_number = $('#outt_number').val();
 		var outt_season = $('#outt_season').val();
     	var grn_number = $('#grn_number').val();
+    	var warehouse = $('#warehouse').val();
 
 		var outturn_type_batch = $('#outturn_type_batch');
 
 		if (item_id != '') {
-			var url="{{ route('arrivalinformation.getMaterialsInOutturn',['item_id'=>":item_id", 'outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'grn_number'=>":grn_number"] ) }}";			
+			var url="{{ route('arrivalinformation.getMaterialsInOutturn',['item_id'=>":item_id", 'outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'grn_number'=>":grn_number", 'warehouse'=>":warehouse"] ) }}";			
 			url = url.replace(':item_id', item_id);
 			url = url.replace(':outt_number', outt_number);
 			url = url.replace(':outt_season', outt_season);
 			url = url.replace(':grn_number', grn_number);
+			url = url.replace(':warehouse', warehouse);
 
 			outturn_type_batch.find('option').remove(); 
 
@@ -1404,13 +1410,19 @@
 	function refreshOutturnsTable()
 	{
     	var grn_number = $('#grn_number').val();
+    	var warehouse = $('#warehouse').val();
 
     	if (grn_number == '') {
     		grn_number = <?php echo json_encode($grn_number); ?>;
     	}
 
-		var url="{{ route('arrivalinformation.getGRNContents',[ 'grn_number'=>":grn_number"] ) }}";		
+    	if (warehouse == '') {
+    		warehouse = <?php echo json_encode($warehouse_id); ?>;
+    	}
+
+		var url="{{ route('arrivalinformation.getGRNContents',[ 'grn_number'=>":grn_number", 'warehouse'=>":warehouse"] ) }}";		
 		url = url.replace(':grn_number', grn_number);
+		url = url.replace(':warehouse', warehouse);
 
 
 
@@ -1521,8 +1533,11 @@
 		var miller_id = $('#select_miller').val();
 		var moisture = $('#moisture').val();
 		var input = $('#outt_number');
+		if (moisture == ''){
+			moisture = 0;
+		}
 
-		if (moisture != ''){
+		// if (moisture != ''){
 			if (item_id != '' && miller_id != '') {
 				var url="{{ route('arrivalinformation.getOutturn',['item_id'=>":item_id", 'miller_id'=>":miller_id", 'moisture'=>":moisture"]) }}";
 				url = url.replace(':item_id', item_id);
@@ -1548,7 +1563,7 @@
 				});
 
 			}			
-		}
+		// }
 
 	}
 
