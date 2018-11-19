@@ -15,7 +15,7 @@
 
 	    <div style="text-align: center; margin-top: 0.5cm;">
 		    <h2>
-		   		WAREHOUSE - GOODS RECEIVED NOTE &nbsp;&nbsp;&nbsp;&nbsp; <?php echo 'EGR-'.$grn_number; ?>
+		   		<?php if(isset($agent_description)) echo strtoupper($agent_description); ?> - GOODS RECEIVED NOTE &nbsp;&nbsp;&nbsp;&nbsp; <?php if(isset($agent_initial)) echo strtoupper($agent_initial); echo 'GR-'.$grn_number; ?>
 
 		    </h2>
 	    </div>
@@ -223,7 +223,7 @@
 			<br>
 		<p>
 		</p>
-			<i style="text-align: left; font-size: 13px">For Ibero Kenya Ltd:</i>
+			<i style="text-align: left; font-size: 13px">For NKG Coffee Mills Kenya Ltd:</i>
 			<br>
 			<br>
 			<table style="text-align: left; font-size: 13px" >
@@ -266,7 +266,7 @@
 			<br>
 
 		<!-- <htmlpagefooter name="page-footer" align="left"> -->
-		    <div style="text-align: left; border-top: 1px solid #000000; font-size: 11pt;"><strong>Ibero Kenya Ltd</strong></div>
+		    <div style="text-align: left; border-top: 1px solid #000000; font-size: 11pt;"><strong>NKG Coffee Mills Kenya Ltd</strong></div>
 		    <div style="text-align: left; font-size: 10pt;">A Company of Neumann Kaffee Gruppe</div>
 		    <div style="text-align: left; font-size: 10pt;">Sukari Industrial Estate - Northern Bypass Road - Ruiru/Nairobi</div>
 		    <div style="text-align: left; font-size: 10pt;">P.O.BOX 47882-00100 - Nairobi - Kenya</div>

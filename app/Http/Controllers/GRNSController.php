@@ -47,6 +47,7 @@ use Ngea\Thresholds;
 use Ngea\AgentCategory;
 use Ngea\BatchMill;
 use Ngea\StockLocationBatch;
+use Ngea\OutturnNumberSettings;
 
 use Yajra\Datatables\Datatables;
 use niklasravnsborg\LaravelPdf\Facades\Pdf as PDF;
@@ -267,6 +268,8 @@ class GRNSController extends Controller {
             ->leftJoin('stock_warehouse_st AS st', 'st.grn_id', '=', 'gr.id')
             ->leftJoin('agent_agt AS agt', 'agt.id', '=', 'gr.agt_id')
             ->leftJoin('weighbridge_info_wbi AS wb', 'wb.id', '=', 'gr.wbi_id')
+            ->leftJoin('agent_category_agtc AS agtc', 'agtc.id', '=', 'agt.agtc_id')
+            ->leftJoin('coffee_growers_cgr AS cgr', 'cgr.id', '=', 'gr.cgr_id')
             ->where('gr.id', $grn_id)
             ->first(); 
 
@@ -275,7 +278,9 @@ class GRNSController extends Controller {
             $person_name = $person_details->per_fname.' '.$person_details->per_sname;
 
             if ($grnsview_summary != null) {
-                $client =  $grnsview_summary->wr_name;
+                $client =  $grnsview_summary->cgr_grower;
+                $agent_description =  $grnsview_summary->agtc_description;
+                $agent_initial =  $grnsview_summary->agtc_initial;
                 $delivery_date = $grnsview_summary->gr_date;
                 $delivery_date = date("d/m/Y", strtotime($delivery_date));
                 $movement_permit = $grnsview_summary->wbi_movement_permit;
@@ -295,9 +300,21 @@ class GRNSController extends Controller {
                 ->select('*')
                 ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
                 ->where('st.grn_id', $grn_id)
-                ->get(); ;  
+                ->get(); 
 
-            $pdf = PDF::loadView('pdf.print_grns', compact('grnsview','client', 'delivery_date', 'movement_permit', 'vehicle', 'weighbridge_ticket', 'time_received', 'received_by', 'driver_name', 'time_received_stop', 'driver_id', 'grn_number', 'warehouse_manager'));
+            if($grnsview == null){
+
+                $grnsview = DB::table('stock_mill_st AS st')
+                    ->select('*')
+                    ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+                    ->where('st.grn_id', $grn_id)
+                    ->get(); 
+            }
+
+            $pdf = PDF::loadView('pdf.print_grns', compact('grnsview','client', 'delivery_date', 'movement_permit', 'vehicle', 'weighbridge_ticket', 'time_received', 'received_by', 'driver_name', 'time_received_stop', 'driver_id', 'grn_number', 'warehouse_manager', 'agent_description', 'agent_initial'));
+
+            
+
 
             return $pdf->stream('print_grn.pdf');
 
@@ -607,6 +624,7 @@ class GRNSController extends Controller {
             
             }
 
+            $this->updateOutturnSettings($item_id);
 
             return $st_id;
 
@@ -1016,7 +1034,7 @@ class GRNSController extends Controller {
        
         try{
        
-            $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->first(); 
+            $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->where('agt_id', $outt_season)->first(); 
 
             $grn_id = NULL;
 
@@ -1056,6 +1074,10 @@ class GRNSController extends Controller {
             }
 
             $stock_details = StockWarehouse::where('grn_id', $grn_id)->get();
+            if($stock_details == null){
+                $stock_details = StockMill::where('grn_id', $grn_id)->get();
+            }
+            
 
             $packages = 0;
 
