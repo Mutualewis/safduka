@@ -717,7 +717,7 @@
 
 			        <div class="form-group col-md-6">
 		                <label>Weight (KGS)</label>
-		                <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" oninput="arrivalBags()" value="{{ old('batch_kilograms').$batch_kilograms  }}" disabled>
+		                <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" oninput="arrivalBags()" value="{{ old('batch_kilograms').$batch_kilograms  }}" >
 		                <input type="hidden"  class="form-control"  id="batch_kilograms_hidden"  name="batch_kilograms_hidden" oninput="arrivalBags()" value="{{ old('batch_kilograms')  }}" >
 			        </div>
 			        <div class="form-group col-md-6" id="btn_weight">
@@ -943,6 +943,12 @@
 			var batch_kilograms = $('#batch_kilograms').val();
 			var batch_kilograms_hidden = $('#batch_kilograms_hidden').val();
 
+			if (batch_kilograms_hidden == '') {
+				batch_kilograms_hidden = batch_kilograms;
+			} else if (batch_kilograms == '') {
+				batch_kilograms = batch_kilograms_hidden;
+			} 
+
 			var selectedRow = "";
 			var selected = $("input[type='radio'][name='row_id']:checked");
 			if (selected.length > 0) {
@@ -1060,7 +1066,6 @@
 				confirmurl = confirmurl.replace(':outt_season', outt_season);
 				confirmurl = confirmurl.replace(':service', service);
 				confirmurl = confirmurl.replace(':team', team);
-				alert(confirmurl);
 				var dialog = bootbox.dialog({
 					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
   					backdrop: true,

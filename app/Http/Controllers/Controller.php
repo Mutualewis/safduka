@@ -233,7 +233,6 @@ class Controller extends BaseController
                 $agt_code = $agent->agt_code;
             }
 
-
             $outturnNumberSettings = OutturnNumberSettings::where('it_id', $item_id)->first();
             if ($outturnNumberSettings != null) {
                 $prefix = $outturnNumberSettings->ons_prefix;
@@ -251,7 +250,8 @@ class Controller extends BaseController
 
             if ($week_of_year != null && $agt_code != null && $prefix != null && $delivery_number != null) {
                 $outturn = $week_of_year . $agt_code . $prefix . $delivery_number;
-            }                 
+            }    
+
             // }
 
             
@@ -267,6 +267,45 @@ class Controller extends BaseController
         }
     }
 
+
+    public function updateOutturnSettings ($item_id) {
+
+        $moisture_threshold = null;
+        $outturn = null;
+
+        $threshold_details = Thresholds::where('th_name', 'Moisture')->where('it_id', $item_id)->first();
+        if ($threshold_details != null) {
+            $moisture_threshold = $threshold_details->th_percentage;
+        }
+
+        $prefix = null;
+        $padding_character = null;
+        $previous_week = null;
+        $previous_number = null;
+        $delivery_number = null;
+        $length = null;
+
+        $week_of_year = $this->returnWeekOfYear();
+        $outturnNumberSettings = OutturnNumberSettings::where('it_id', $item_id)->first();
+        if ($outturnNumberSettings != null) {
+            $prefix = $outturnNumberSettings->ons_prefix;
+            $padding_character = $outturnNumberSettings->ons_padding_character;
+            $previous_week = $outturnNumberSettings->ons_previous_week;
+            $previous_number = $outturnNumberSettings->ons_previous_number;
+            $length = $outturnNumberSettings->ons_length;
+        }
+
+        if ($previous_week == $week_of_year) {
+            $delivery_number = sprintf("%0".$length."d", ($previous_number + 1));
+        } else {
+            $delivery_number = sprintf("%0".$length."d", (001));
+        }
+               
+      
+        OutturnNumberSettings::where('id', '=', $item_id)
+            ->update(['ons_previous_week' => $week_of_year, 'ons_previous_number' => $delivery_number]);
+
+    }
     public function returnWeekOfYear () {
 
         $month = date('m');
