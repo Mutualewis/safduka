@@ -163,9 +163,9 @@
 							@if (isset($warehouse))
 										@foreach ($warehouse->all() as $value)
 										@if ($wrhse ==  $value->id)
-											<option value="{{ $value->id }}" selected="selected">{{ $value->wr_name}}</option>
+											<option value="{{ $value->id }}" selected="selected">{{ $value->agt_name}}</option>
 										@else
-											<option value="{{ $value->id }}">{{ $value->wr_name}}</option>
+											<option value="{{ $value->id }}">{{ $value->agt_name}}</option>
 										@endif
 										@endforeach
 									
@@ -269,7 +269,7 @@
 										Name
 									</th>		
 									<th>
-										Grade
+										Material
 									</th>
 									<th>
 										Weight
@@ -322,8 +322,8 @@
 											
 
 												echo "<tr>";
-													echo "<td>".$value->name."</td>";
-													echo "<td>".$value->grade."</td>";
+													echo "<td>".$value->st_outturn."</td>";
+													echo "<td>".$value->mt_name."</td>";
 													echo "<td><input size = '5' style='text-align:center;' type='text'  value='".$value->btc_weight."' disabled></td>";
 													echo "<td>".$value->btc_bags."</td>";
 													echo "<td>".$value->btc_pockets."</td>";
@@ -544,14 +544,14 @@
 
 			    var labelOutt = document.createElement("label");
 
-			    labelOutt.innerHTML = "&nbsp;<strong>Outturn:</strong>&nbsp;" +obj[i].outturn;
+			    labelOutt.innerHTML = "&nbsp;<strong>Outturn:</strong>&nbsp;" +obj[i].st_outturn;
 
 			    news.appendChild(labelOutt);
 
 
 			    var labelGrade = document.createElement("label");
 
-			    labelGrade.innerHTML = "&nbsp;<strong>Grade:</strong>&nbsp;" +obj[i].grade;
+			    labelGrade.innerHTML = "&nbsp;<strong>Material:</strong>&nbsp;" +obj[i].mt_name;
 
 			    news.appendChild(labelGrade);
 
@@ -687,6 +687,8 @@
 			url = url.replace(':movementType', movementType);
 			
 			url = url.replace(':reasonForMovement', reasonForMovement);
+
+			alert(url);
 
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'

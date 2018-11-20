@@ -214,8 +214,8 @@ class WarehouseController extends Controller {
 			$batchview = BatchView::where('prc_id', $btdetails->prcid)->get();
 		}
 		if(Input::get('country') != NULL){
-		   	$warehouse = agent::where('agtc_id', 4)->get();
-		   	$NewWarehouse = agent::where('agtc_id', 4)->get();
+		   	$warehouse = agent::where('agtc_id', 4)->orWhere('agtc_id', 1)->get();
+		   	$NewWarehouse = agent::where('agtc_id', 4)->orWhere('agtc_id', 1)->get();
 			 		
 			$seller = seller::where('ctr_id', Input::get('country'))->get(); 		
 			$weighbridge_ticket = WeighbridgeInfo::where('ctr_id', Input::get('country'))->get(); 		
@@ -341,10 +341,8 @@ class WarehouseController extends Controller {
     	$Certification = Certification::all(['id', 'crt_name']);
     	$buyer = buyer::all(['id', 'cb_name']);   	
 
-
-    	$Warehouse = NULL;
-    	$Mill = NULL;
-    	
+    	$Warehouse = agent::where('agtc_id', 4)->orWhere('agtc_id', 1)->get();
+    	$Mill = NULL;    	
     	$cid = NULL;
     	$csn_season = NULL;
     	$sale_cb_id = NULL;
@@ -390,23 +388,16 @@ class WarehouseController extends Controller {
 			$season_name = $season_name->csn_season;
 		}
 
-		if ($sif_lot != NULL) {
-			$btdetails = sale_lots::where('lot', $sif_lot)->where('csn_season',$season_name)->where('slid', $saleid)->first(); 
-		} else if ($outt_number != NULL) {
-			$btdetails = sale_lots::where('outturn', $outt_number)->where('csn_season',$season_name)->where('slid', $saleid)->first(); 
-			
-		}
-		$batchview = NULL;
-		if ($btdetails != NULL) {
-			$batchview = BatchView::where('prc_id', $btdetails->prcid)->get();
-		}
 		if(Input::get('country') != NULL){
-		   	$warehouse = agent::where('agtc_id', 4)->get();
-		   	$NewWarehouse = agent::where('agtc_id', 4)->get();
+		   	$warehouse = agent::where('agtc_id', 4)->orWhere('agtc_id', 1)->get();
+		   	$NewWarehouse =  agent::where('agtc_id', 4)->orWhere('agtc_id', 1)->get();
 			 		
 			$seller = seller::where('ctr_id', Input::get('country'))->get(); 		
 			$weighbridge_ticket = WeighbridgeInfo::where('ctr_id', Input::get('country'))->get(); 		
 		}
+
+		$Warehouse = $warehouse;
+
     	$Season = Season::all(['id', 'csn_season']);
     	$country = country::all(['id', 'ctr_name', 'ctr_initial']);
     	$CoffeeGrade = CoffeeGrade::all(['id','cgrad_name']);
@@ -457,9 +448,9 @@ class WarehouseController extends Controller {
 		    		$request->session()->flash('alert-warning', 'Please Select At List One Object!');
 
 			    	if (NULL != Input::get('warehouse') && NULL != Input::get('row') && NULL != Input::get('column') ) {
-			    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
-			    		$wrname = $wrname->wr_name;
-			    		$stlocdetails = StockLocationView::where('wr_name', $wrname)->where('loc_row', $rw)->where('loc_column', $clm)->leftJoin('sale_lots', 'sale_lots.prcid', '=', 'stock_locations.prc_id')->get();
+			    		$wrname = agent::where('id', Input::get('warehouse'))->first();
+			    		$wrname = $wrname->agt_name;
+			    		$stlocdetails = StockLocationView::where('wr_name', $wrname)->where('loc_row', $rw)->where('loc_column', $clm)->get();
 			    	}
 
 					return View::make('movementconfirmation', compact('id', 
@@ -488,7 +479,7 @@ class WarehouseController extends Controller {
 								$stid = $valuebt->stid;
 								$previd = $valuebt->id;
 								if ($valuebt != NULL) {
-									$new_agt_id = Warehouse::where('wr_name', $valuebt->new_wr_name)->first();	
+									$new_agt_id = agent::where('agt_name', $valuebt->new_wr_name)->first();	
 									if ($new_agt_id != NULL) {
 										$new_agt_id = $new_agt_id->id;
 									}
@@ -576,129 +567,10 @@ class WarehouseController extends Controller {
 
 				}
 
-				// $diff_weight = $old_weight-$batch_kilograms;
-
-				// $otbid = NULL;	 
-
-				// if ($diff_weight < 0) {
-				// 	$request->session()->flash('alert-warning', 'Verify your weights, bags and pockets!');
-				// 	return View::make('movementconfirmation', compact('id', 
-				// 		'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'Packaging', 'wrhse', 'location', 'rw', 'clm', 'grn_number', 'weighbridge_ticket', 'wbtk', 'rlno', 'ot_season', 'cdetails', 'grndetails', 'stdetails', 'grnsview', 'batchview'));				
-				// } else {
-				// 	$otbid = OutturnTotalBatch::insertGetId (
-				// 	['otb_weight' => $batch_kilograms,'otb_confirmed_by' => $user]);
-				// 	Activity::log('Inserted OutturnTotal information with batch_kilograms '.$batch_kilograms. ' user '. $user);	
-
-				// }
-
-				// if ($diff_weight > 0 ) {
-
-				// 	$bt_no = Batch::orderBy('btc_number', 'desc')->pluck('btc_number');
-				// 	foreach ($bt_no as $bt) {
-				// 	    $bt_no = $bt;
-				// 	}	
-				// 	if ($bt_no != NULL && is_numeric($bt_no)) {					
-				// 		$bt_no = $bt_no;
-				// 	} else {
-				// 		$bt_no = 1;
-				// 	}
-
-					// $diff_bags = ROUND($diff_weight/60);
-					// $diff_pkts = ROUND($diff_weight%60);
-
-
-					// $btid = Batch::insertGetId (
-					// ['btc_number' => $bt_no, 'st_id' => $stid, 'btc_weight' => $diff_weight, 'btc_bags' => $diff_bags, 'btc_pockets' => $diff_pkts, 'otb_id' => $otbid, 'btc_prev_id' => $previd]);
-					// Activity::log('Inserted Batch information with btid '.$btid. ' diff_weight '. $diff_weight. ' bags '. $diff_bags. ' pockets '. $diff_pkts. ' stid '. $stid);
-
-
-
-
-
-			  //       $locrowdetails = Location::where('agt_id', $new_agt_id)->where('loc_row', $old_wr_row)->first(); 
-			  //       $loccoldetails = Location::where('agt_id', $new_agt_id)->where('loc_column', $old_wr_col)->first(); 
-
-			  //       // print_r($new_agt_id);
-
-			  //       $locrowid = $locrowdetails->id;
-			  //       $loccolid = $loccoldetails->id;
-
-
-					// $stlocid = StockLocation::insertGetId (
-					// ['bt_id' => $btid, 'loc_row_id' => $locrowid, 'loc_column_id' => $loccolid, 'btc_zone' => $zone]);
-					// Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $locrowid. ' loccolid '. $loccolid. ' zone '. $zone);
-
-				// } 
-
-				// $bt_no = Batch::orderBy('btc_number', 'desc')->pluck('btc_number');
-				// foreach ($bt_no as $bt) {
-				//     $bt_no = $bt;
-				// }	
-				// if ($bt_no != NULL && is_numeric($bt_no)) {					
-				// 	$bt_no = $bt_no;
-				// } else {
-				// 	$bt_no = 1;
-				// }
-
-				// $batch_kilograms = Input::get('batch_kilograms');
-				// $bags = ROUND($batch_kilograms/60);
-				// $pockets = ROUND($batch_kilograms%60);
-
-				// $btid = Batch::insertGetId (
-				// ['btc_number' => $bt_no, 'st_id' => $stid, 'btc_weight' => $batch_kilograms, 'btc_bags' => $bags, 'btc_pockets' => $pockets, 'otb_id' => $otbid, 'btc_prev_id' => $previd]);
-				// Activity::log('Inserted Batch information with btid '.$btid. ' diff_weight '. $batch_kilograms. ' bags '. $bags. ' pockets '. $pockets. ' stid '. $stid);	
-
-
-				// // $new_agt_id = Warehouse::where('wr_name', $batchview_cf->new_wr_name)->first();	
-				// // $new_agt_id = $new_agt_id->id;
-
-
-		  //       $locrowdetails = Location::where('agt_id', $new_agt_id)->where('loc_row', $new_wr_row)->first(); 
-		  //       $loccoldetails = Location::where('agt_id', $new_agt_id)->where('loc_column', $new_wr_col)->first(); 
-
-		  //       $locrowid = $locrowdetails->id;
-		  //       $loccolid = $loccoldetails->id;
-
-				// $stlocid = StockLocation::insertGetId (
-				// ['bt_id' => $btid, 'loc_row_id' => $locrowid, 'loc_column_id' => $loccolid, 'btc_zone' => $new_zone]);
-				// Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $locrowid. ' loccolid '. $loccolid. ' zone '. $new_zone);
-			
-
-
-
-	 	 	
-		  //    	 foreach ($batchlocation as $key => $value) {
-		  //    	 	// $batchview_cf = BatchView::where('stid', $value)->get();
-				// 	if ($batchview_cf != NULL) {
-
-			 //     	 	foreach ($batchview_cf as $keybt => $valuebt) {
-			 //     	 		// print_r($user."<br>");
-			 //     	 		Batch::where('id', '=', $valuebt->id)
-				// 				->update(['btc_ended_by' => $user]);
-				// 		}
-
-				// 	}
-		 
-		  //    	 }	    
-
-				// $grnsview = GrnsView::where('stid', $stid)->first();
-				// $grnsview = GrnsView::where('stid', $stid)->get();
-				// $stlocdetails = NULL;
-				// $stlocdetails = NULL;
-	   //  		$rw = Input::get('row');
-	   //  		$clm = Input::get('column');
-
-		  //   	if (NULL != Input::get('warehouse') && NULL != Input::get('row') && NULL != Input::get('column') ) {
-		  //   		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
-		  //   		$wrname = $wrname->wr_name;
-
-		  //   		$stlocdetails = StockLocationView::where('wr_name', $wrname)->where('loc_row', $rw)->where('loc_column', $clm)->whereNotNull('btc_instructed_by')->get();
-		  //   	}
-
 
 		    	if (NULL != Input::get('warehouse') /*&& NULL != Input::get('row') && NULL != Input::get('column') */) {
-		    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
-		    		$wrname = $wrname->wr_name;
+		    		$wrname = agent::where('id', Input::get('warehouse'))->first();
+		    		$wrname = $wrname->agt_name;
 
 		    		$stlocdetails = StockLocationView::where('wr_name', $wrname)/*->where('loc_row', $rw)->where('loc_column', $clm)*/->whereNotNull('btc_instructed_by')->get();
 		    	}
@@ -715,8 +587,8 @@ class WarehouseController extends Controller {
 
 
 		    	if (NULL != Input::get('warehouse') /*&& NULL != Input::get('row') && NULL != Input::get('column') */) {
-		    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
-		    		$wrname = $wrname->wr_name;
+		    		$wrname = agent::where('id', Input::get('warehouse'))->first();
+		    		$wrname = $wrname->agt_name;
 
 		    		$stlocdetails = StockLocationView::where('wr_name', $wrname)/*->where('loc_row', $rw)->where('loc_column', $clm)*/->whereNotNull('btc_instructed_by')->get();
 		    	}

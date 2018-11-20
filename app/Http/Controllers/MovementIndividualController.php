@@ -129,43 +129,28 @@ use delete;
 use Ngea\processrates;
 use Ngea\processcharges;
 use Ngea\teams;
+use Ngea\agent;
 
 class MovementIndividualController extends Controller {
 
     public function movementIndividualForm (Request $request){
 
     	$id = NULL;
-
     	$Season = Season::all(['id', 'csn_season']);
-
     	$country = country::all(['id', 'ctr_name', 'ctr_initial']);
-
     	$CoffeeGrade = CoffeeGrade::all(['id','cgrad_name']);
-
     	$Certification = Certification::all(['id', 'crt_name']);
-
     	$buyer = buyer::all(['id', 'cb_name']);   	
-
 		$rates = processrates::all(['id', 'service']);
-
         $teams = teams::all(['id', 'tms_grpname']);
-
-        $warehouse = Warehouse::where('wrt_id', 1)->get();
-
-    	$Mill = NULL;
-    	
+        $warehouse = agent::where('agtc_id', 4)->orWhere('agtc_id', 1)->get();
+    	$Mill = NULL;    	
     	$cid = NULL;
-
     	$csn_season = NULL;
-
     	$sale_cb_id = NULL;
-
     	$trp = NULL;
-
     	$release_no = NULL;
-
     	$date = NULL;
-
     	$ref_no = $this->generateRef();
 
     	$timeout = $this->dialog_timeout;
@@ -178,85 +163,48 @@ class MovementIndividualController extends Controller {
     public function movementIndividual (Request $request){
 
     	$id = NULL;
-
     	$Season = Season::all(['id', 'csn_season']);
-
     	$country = country::all(['id', 'ctr_name', 'ctr_initial']);
-
     	$CoffeeGrade = CoffeeGrade::all(['id','cgrad_name']);
-
     	$Certification = Certification::all(['id', 'crt_name']);
-
 		$rates = processrates::all(['id', 'service']);
-
         $teams = teams::all(['id', 'tms_grpname']);
-
-        $warehouse = Warehouse::where('wrt_id', 1)->get();
-
+        $warehouse = agent::where('agtc_id', 4)->orWhere('agtc_id', 1)->get();
     	$Mill = NULL;
-    	
     	$cid = NULL;
-
     	$csn_season = NULL;
-
     	$sale_cb_id = NULL;
-
     	$trp = NULL;
-
     	$release_no = NULL;
-
-    	$date = NULL;
-
-    	
+    	$date = NULL;    	
     	
     	$wrhse = Input::get('warehouse'); 
-
     	$cid = Input::get('country'); 
-
     	$movementInstructionType = MovementInstructionType::all(['id', 'mit_name']);
-
     	$timeout = $this->dialog_timeout;
 
 		if ($wrhse !== NULL) {
-
 			$location = Location::where('agt_id', $wrhse)->get();	
-
 		}
 
     	$ref_no = Input::get('ref_no'); 
 
     	if ($ref_no == null) {
-
     		$ref_no = $this->generateRef();
-
     	}
 
-		
-
 		$rates    = processrates::all(['id', 'service']);
-
-		$teams   = teams::all(['id', 'tms_grpname']);   	
-
+		$teams   = teams::all(['id', 'tms_grpname']);   
 		$selectedMovementType = Input::get('MovementType');
-
 		$sif_lot = Input::get('sif_lot');
-
 		$outt_number = Input::get('outt_number');
-
 		$btdetails = NULL;
-
 		$season_name = NULL;
-
     	$country = country::all(['id', 'ctr_name', 'ctr_initial']);
-
         $user_data = Auth::user();
-
         $user = $user_data ->id;
 
-
-
 		if (NULL !== Input::get('instructmovement')){
-
 	     	$this->validate($request, [
 		            'country' => 'required', 'reasonForMovement' => 'required', 'MovementType' => 'required', 'ref_no' => 'required',
 		        ]);
@@ -435,8 +383,8 @@ class MovementIndividualController extends Controller {
     		$clm = Input::get('column');
 
 	    	if (NULL != Input::get('warehouse')) {
-	    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
-	    		$wrname = $wrname->wr_name;
+	    		$wrname = agent::where('id', Input::get('warehouse'))->first();
+	    		$wrname = $wrname->agt_name;
 	    		$stlocdetails = StockLocationView::where('insloc_ref', $ref_no)->get();
 	    	}
 
@@ -451,10 +399,9 @@ class MovementIndividualController extends Controller {
 
     public function getLots($countryID, $warehouse, $new_row, $new_column, $ref_no)
     {	
-
 		if (NULL != $warehouse) {
 
-			$stlocdetails = StockLocationView::where('wrid', $warehouse)->where('loc_rowid', $new_row)->where('loc_columnid', $new_column)->where('insloc_ref', $ref_no)->orWhereNull('insloc_ref')->where('wrid', $warehouse)->where('loc_rowid', $new_row)->where('loc_columnid', $new_column)->orderBY('btc_zone',' desc')->orderBY('grade',' desc')->get();
+			$stlocdetails = StockLocationView::where('wrid', $warehouse)->where('loc_rowid', $new_row)->where('loc_columnid', $new_column)->where('insloc_ref', $ref_no)->orWhereNull('insloc_ref')->where('wrid', $warehouse)->where('loc_rowid', $new_row)->where('loc_columnid', $new_column)->orderBY('btc_zone',' desc')->orderBY('mt_name',' desc')->get();
 		}
 
 

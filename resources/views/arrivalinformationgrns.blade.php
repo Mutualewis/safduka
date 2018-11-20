@@ -604,7 +604,7 @@
 
             <div class="form-group">
                 <label>Outturn Type</label>
-                <select class="form-control" id="outturn_type" name="outturn_type" onchange='fetchOutturnNumber()'>
+                <select class="form-control" id="outturn_type" name="outturn_type"><!--  onchange='fetchOutturnNumber()'> -->
                 	<option></option> 
 					@if (isset($material) && count($material) > 0)
 								@foreach ($material->all() as $value)
@@ -622,7 +622,7 @@
 
             <div class="form-group">
                 <label>Moisture(%)</label>
-                <input class="form-control"  id="moisture"  name="moisture" value="{{ old('moisture').$moisture  }}" required  onchange='fetchOutturnNumber()'>	
+                <input class="form-control"  id="moisture"  name="moisture" value="{{ old('moisture').$moisture  }}">	<!--  onchange='fetchOutturnNumber()'> -->
             </div>
 
             <div class="form-group">
@@ -879,7 +879,8 @@
 			var coffee_grower = $('#coffee_grower').val();
 			var outturn_type = $('#outturn_type').val();
 			var moisture = $('#moisture').val();
-			var basket = $('#basket').val();
+			// var basket = $('#basket').val();
+			var basket = 0;
 			var packaging = null;
 	    	var grn_number = $('#grn_number').val();
 	    	var warehouse = $('#warehouse').val();
@@ -1579,6 +1580,10 @@
 		var row = $('#row');
 		var column = $('#column');
 		var grn_number = $('#grn_number');
+
+		if (warehouse == null) {
+			warehouse = <?php echo json_encode($warehouse); ?>;
+		}
 
 		weigh_scales.find('option').remove();   
 		row.find('option').remove();   
