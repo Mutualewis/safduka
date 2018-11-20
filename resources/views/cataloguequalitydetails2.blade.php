@@ -1,5 +1,5 @@
 @extends ('layouts.dashboard')
-@section('page_heading','Arrival Quality Details')
+@section('page_heading','Arrival Quality Details 2')
 @section('section')
 <div class="col-sm-14 col-md-offset-0">
 			<div class="row">
@@ -182,22 +182,16 @@
 
 			        <div class="row">
 
-						 <div class="form-group col-md-4">
-			            	<button  class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalParchmentCenter'onclick='displayParchment(event, this, null, null, null, null, null)' >Parchment</button>
-						</div>	
-
-			            <div class="form-group col-md-4">
-			            	<button class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalGreenCenter'onclick='displayGreen(event, this, null, null, null, null, null)' >Green</button>
-						</div>	
+						 	
 
 			            <div class="form-group col-md-4">
 							<button class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalScreenCenter'onclick='displayScreen(event, this, null, null, null, null, null)'>Screen</button>
 						</div>	
 
-			            <!-- <div class="form-group col-md-4">
+			            <div class="form-group col-md-4">
 			            	<button  class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalCupCenter' onclick='displayCup(event, this, null, null, null, null, null)' >Cup</button>
 
-						</div>	 -->
+						</div>	
 
 					</div>
 
@@ -539,9 +533,10 @@
 	      <div class="modal-body" id="screen_div"  style="font-size: 35px;">
 	      	<div>
 			  <div class="row">
-
-	        		
-					<div class="form-group col-md-4">
+                
+              
+    
+    	<div class="form-group col-md-4">
 	                    <div class="input-group custom-search-form">
 	                        <input type="text" class="form-control" id="outt_number_screen" name="outt_number_sreen" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
 
@@ -573,17 +568,146 @@
 				<div class="alert-dismissible alert-info" id="coffee_grower_display_screen"></div>      							
 	        	<div class="row" >
 		           
-		                <label>Screen Size</label></br>
-							@if (isset($screensanalysis) && count($screensanalysis) > 0)
-										@foreach ($screensanalysis->all() as $value)
-										@if ($value->acat_level==1)		<div class="form-group col-md-6">							
-											<label>{{ $value->acat_name }}</label>
-											<input type="number" id="screen_size{{ $value->id }}" name="screen_size" value="{{ $value->id }}">
-											</div>
-											 </br>
-											 @endif
-										@endforeach									
-							@endif
+                <div class="tabpanel">  
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+
+                @if (isset($screensanalysis) && count($screensanalysis) > 0)
+                                                        @foreach ($screensanalysis->all() as $indexKey => $value)
+                                                        @if ($value->acat_level==2)
+                                                        @if ($indexKey==0)
+                                                        <li role="presentation" class="active">
+                    <a href="#tab-{{ $value->id }}" aria-controls="#tab-{{ $value->id }}" role="tab" data-toggle="tab"> {{ $value->acat_name }}</a>
+                   
+                </li>
+                @else	
+                <li role="presentation" >
+                    <a href="#tab-{{ $value->id }}" aria-controls="#tab-{{ $value->id }}" role="tab" data-toggle="tab"> {{ $value->acat_name }}</a>
+                   
+                </li>	                               @endif
+                                                            @endif
+                                                        @endforeach									
+                                            @endif
+
+                </ul>
+	        		
+	</div>			
+ 
+    
+    <div class="tab-content">
+                <?php $count=1; ?>
+                @if (isset($screensanalysis) && count($screensanalysis) > 0)    
+                                                        @foreach ($screensanalysis->all() as $indexKey => $value)
+                                                        @if ($value->acat_level==2)
+                                                      
+                                                        @if ($count==1)
+                                                      
+                                                                  
+                                                      <!-- Tab panes -->
+
+
+<div role="tabpanel" class="tab-pane active" class="tab-pane" id="tab-{{ $value->id }}">
+
+    <div class="row" >
+        <div class="form-group col-md-12">
+
+            <table align="left">		                	
+                <?php
+
+if (isset($coffeeclass) && count($coffeeclass) > 0){
+                        
+    $count2 = 0;
+
+    foreach ($coffeeclass->all() as $value2){
+        
+        $count2 += 1;
+
+        if ($count2 >4) {
+
+            $count2 = 1;
+
+            echo "</tr>";
+
+            echo "<tr>";
+
+        } else if ($count2 == 0) {
+
+            echo "<tr>";
+
+        }
+
+        echo '<td><label><input type="checkbox" id="cpacid'.$value->id.'" name="acidity" value="'.$value2->id.'">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'.$value2->cc_name.'</input>&nbsp&nbsp </label></td>';
+
+    }
+
+
+}
+
+                ?>	      
+                </tr>          	
+            </table>
+        </div>
+    </div>
+
+
+</div>
+@else
+<div role="tabpanel" class="tab-pane" class="tab-pane" id="tab-{{ $value->id }}">
+
+    <div class="row" >
+        <div class="form-group col-md-12">
+
+            <table align="left">		                	
+                <?php
+               
+                    if (isset($coffeeclass) && count($coffeeclass) > 0){
+                        
+                        $count2 = 0;
+
+                        foreach ($coffeeclass->all() as $value2){
+                            
+                            $count2 += 1;
+
+                            if ($count2 >4) {
+
+                                $count2 = 1;
+
+                                echo "</tr>";
+
+                                echo "<tr>";
+
+                            } else if ($count2 == 0) {
+
+                                echo "<tr>";
+
+                            }
+
+                            echo '<td><label><input type="checkbox" id="cpacid'.$value->id.'" name="acidity" value="'.$value2->id.'">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'.$value2->cc_name.'</input>&nbsp&nbsp </label></td>';
+
+                        }
+
+
+                    }
+
+                ?>	      
+                </tr>          	
+            </table>
+        </div>
+    </div>
+
+
+</div>
+                                          
+                                                                                   @endif
+                                                                                   <?php $count++; ?>  
+                                                            @endif
+                                                        @endforeach									
+                                            @endif
+
+    
+    </div>
+    
+    
 		           
 		        </div>
 		              	
@@ -1276,7 +1400,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			
 			newTemp = screen_data.replace(/'/g, '\"');
 			screen_data = JSON.parse(newTemp)
-			
+			console.log(screen_data)
 			$.each(screen_data, function( index, data ) {
 				var str1_ss = "screen_size";
 				var key = Object.keys(data)[0];
