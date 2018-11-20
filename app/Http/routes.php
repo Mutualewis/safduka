@@ -225,7 +225,49 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 	Route::post('/cataloguequalitydetails/saveCup', ['as'=>'cataloguequalitydetails.saveCup','uses'=>'QualityController@saveCup']);
 
 	Route::get('/cataloguequalitydetails/saveParchment/{st_id}/{dnt}/{parchmentdesc}', ['as'=>'cataloguequalitydetails.saveParchment','uses'=>'QualityController@saveParchment']);
+	
+	Route::get('/processinginstructions', 'ProcessingController@processingInstructionsForm'); 
+		Route::get('/processinginstructions/getstockview/{countryID}/{ref_no}', ['as'=>'processinginstructions.getstockview','uses'=>'ProcessingController@getstockview']); 
+		Route::post('/processinginstructions', 'ProcessingController@processingInstructions');
+		Route::get('/processingtests', 'ProcessingController@processingtestsForm'); 
 
+		Route::get('/processingprovisional', 'ProvisionalController@provisionalInstructionsForm'); 	
+		Route::get('/processingprovisional/getstockpurchasedview/{countryID}/{ref_no}', ['as'=>'processingprovisional.getstockpurchasedview','uses'=>'ProvisionalController@getstockpurchasedview']); 
+		Route::post('/processingprovisional', 'ProvisionalController@processingProvisional');
+
+
+		Route::get('/processingprovisionalview', 'ProcessingProvisionalViewController@processingProvisionalViewForm'); 
+		Route::get('/processingprovisionalview/getprocessview', ['as'=>'processingprovisionalview.getprocessview','uses'=>'ProcessingProvisionalViewController@getprocessview']); 
+		Route::get('/amendprovisional/{id}', 'ProcessingProvisionalViewController@amend'); 
+		Route::get('/clear/{id}', 'ProcessingProvisionalViewController@clear'); 		
+
+
+		Route::get('/processinghooper', 'HooperResultsController@processingHooperForm'); 	
+		Route::get('/processinghooper/getstockview/{countryID}/{ref_no}', ['as'=>'processinghooper.getstockview','uses'=>'HooperResultsController@getstockview']); 
+		Route::post('/processinghooper', 'HooperResultsController@processingHooper');
+
+
+		Route::get('/processinginstructionsview', 'ProcessingInstructionsViewController@processingInstructionsViewForm'); 	
+		Route::get('/processinginstructionsview/getprocessview', ['as'=>'processinginstructionsview.getprocessview','uses'=>'ProcessingInstructionsViewController@getprocessview']); 
+
+		Route::post('/processinginstructionsview', 'ProcessingInstructionsViewController@processinginstructionsview');
+		Route::get('/hooper/{id}', 'ProcessingInstructionsViewController@hooper'); 
+		Route::get('/results/{id}', 'ProcessingInstructionsViewController@results'); 
+		Route::get('/amend/{id}', 'ProcessingInstructionsViewController@amend'); 
+		Route::get('/pre_shipment/{id}', 'ProcessingInstructionsViewController@pre_shipment'); 
+		Route::get('/pre_shipment_all/{id}', 'ProcessingInstructionsViewController@pre_shipment_all'); 
+
+		Route::get('/processingresults', 'ProcessingController@processingResultsForm'); 
+		Route::post('/processingresults', 'ProcessingController@processingResults');	
+
+
+		Route::get('/processingresultsquality', 'ProcessingResultsQualityController@processingResultsQualityForm'); 
+		Route::post('/processingresultsquality', 'ProcessingResultsQualityController@processingResultsQuality');
+
+		Route::get('/processrates/CalculateProcessResultsRate/{ref}/{processingType}/{service}/{team}', ['as'=>'processrates.calculateprocessresultsrate','uses'=>'RatesController@CalculateProcessResultsRate']);
+
+
+		Route::get('/processrates/printProcessWithRate/{ref}/{service}/{team}', ['as'=>'processrates.printprocesswithrate','uses'=>'RatesController@printProcessWithRate']);
 });
 
 

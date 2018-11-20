@@ -18,6 +18,6 @@ class ProcessResults extends Model {
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['id', 'pr_id', 'prt_id', 'prts_weight', 'prts_packages', 'created_at', 'updated_at'];
+	protected $fillable = ['id', 'pr_id', 'prt_id', 'prts_weight', 'prts_packages', 'prts_bags', 'prts_pockets', 'created_at', 'updated_at'];
 
 }

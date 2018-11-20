@@ -697,15 +697,11 @@ class QualityController extends Controller {
 
 			  }
 
-
-
             return response()->json([
                 'exists' => false,
                 'inserted' => true,
                 'error' => 'null'
-            ]);
-		
-			
+            ]);			
 
         } catch (\PDOException $e) {
             return response()->json([

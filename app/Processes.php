@@ -18,6 +18,6 @@ class Processes extends Model {
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['id', 'ctrid', 'process', 'process_initial', 'process_description', 'process_number', 'process_instructions', 'process_other_instructions', 'result_type', 'results_initials', 'resulsts_description', 'weight_in', 'weight_out', 'packages_out', 'pr_confirmed_by'];
+	protected $fillable = ['id', 'ctrid', 'process', 'process_initial', 'process_description', 'process_number', 'process_instructions', 'process_other_instructions', 'result_type', 'results_initials', 'resulsts_description', 'weight_in', 'weight_out', 'packages_out', 'pr_confirmed_by', 'bags', 'pockets'];
 
 }
