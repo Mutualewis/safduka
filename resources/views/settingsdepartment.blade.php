@@ -446,7 +446,7 @@ $(document).ready(function (){
 			});
 			
 			var jArray=rowno;
-			
+			console.log(jArray)
 			for(var i=1;i<=jArray;i++){
 			    	var str1 = "#selectroles";
 					var str2 = i;

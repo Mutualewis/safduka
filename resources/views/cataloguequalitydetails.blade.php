@@ -183,7 +183,7 @@
 			        <div class="row">
 
 						 <div class="form-group col-md-4">
-			            	<button  class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalParchmentCenter'onclick='displayParchment(event, this, null, null, null, null, null)' data-dprtname='{$value->dprt_name}'>Parchment</button>
+			            	<button  class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalParchmentCenter'onclick='displayParchment(event, this, null, null, null, null, null)' >Parchment</button>
 						</div>	
 
 			            <div class="form-group col-md-4">
@@ -999,7 +999,7 @@
 
 						                				}
 
-						                				echo '<td><label><input type="checkbox" id="pq'.$value->id.'" name="parchmentquality" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
+						                				echo '<td><label><input type="radio" id="pq'.$value->id.'" name="parchmentquality" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
 
 						                			}
 
@@ -1429,11 +1429,11 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 	clearChildren(document.getElementById("parchment"));
 	
 	var url = fetch_url(st_id, direction , outt_number, coffee_grade); 
-	
+	console.log(url)
 	$.get(url, function(data, status){
 
 		var obj = jQuery.parseJSON(data);
-		
+		console.log(obj)
 		if(!jQuery.isEmptyObject(obj)){
 		$('#outt_number_display_partchment').html(obj.st_outturn);
 
@@ -1614,7 +1614,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			url = url.replace(':comments', comments);
 
-			var dialog = bootbox.alert({
+			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 						
@@ -1756,7 +1756,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			url = url.replace(':comments', comments);
 
-			var dialog = bootbox.alert({
+			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 						
@@ -1898,7 +1898,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			url = url.replace(':comments', comments);
 
-			var dialog = bootbox.alert({
+			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 						
@@ -2077,7 +2077,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			
 
-			var dialog = bootbox.alert({
+			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 
@@ -2138,7 +2138,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			
 
-			var dialog = bootbox.alert({
+			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 
@@ -2199,7 +2199,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			
 
-			var dialog = bootbox.alert({
+			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 
@@ -2304,7 +2304,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			var url = '{{ route('cataloguequalitydetails.saveCup') }}';
 
-			var dialog = bootbox.alert({
+			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 					
@@ -2405,7 +2405,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		var url = '{{ route('cataloguequalitydetails.saveCup') }}';
 
-		var dialog = bootbox.alert({
+		var dialog = bootbox.dialog({
 			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 		}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 				
@@ -2505,7 +2505,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			
 			var url = '{{ route('cataloguequalitydetails.saveCup') }}';
 
-			var dialog = bootbox.alert({
+			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 					
@@ -2544,7 +2544,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		$('#button_save_parchment').on('click', function(e){
 			e.prevent
 			var st_id = document.getElementById("st_id_partchment").value;
-
+			console.log(st_id)
 			var direction = 'Next';
 
 			var dont = document.getElementById("dnt");
@@ -2568,6 +2568,10 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		    }).get();
 
+			if(jQuery.isEmptyObject(parchmentdesc)){
+				bootbox.alert('Nothing selected!');
+				return false
+			}
 		    parchmentdesc = JSON.stringify(parchmentdesc);	
 
 			var url = '{{ route('cataloguequalitydetails.saveParchment',['st_id'=>":id",'dnt'=>":dnt",'parchmentdesc'=>":parchmentdesc"]) }}';
@@ -2579,7 +2583,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			url = url.replace(':parchmentdesc', parchmentdesc);
 
 			
-			var dialog = bootbox.alert({
+			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 						
@@ -2633,6 +2637,11 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		        return this.value;
 
 		    }).get();
+			
+			if(jQuery.isEmptyObject(parchmentdesc)){
+				bootbox.alert('Nothing selected!');
+				return false
+			}
 
 		    parchmentdesc = JSON.stringify(parchmentdesc);	
 
@@ -2645,7 +2654,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			url = url.replace(':parchmentdesc', parchmentdesc);
 
 			
-			var dialog = bootbox.alert({
+			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 						
@@ -2699,6 +2708,11 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		        return this.value;
 
 		    }).get();
+			console.log(parchmentdesc)
+			if(jQuery.isEmptyObject(parchmentdesc)){
+				bootbox.alert('Nothing selected!');
+				return false
+			}
 
 		    parchmentdesc = JSON.stringify(parchmentdesc);	
 
@@ -2711,7 +2725,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			url = url.replace(':parchmentdesc', parchmentdesc);
 
 			
-			var dialog = bootbox.alert({
+			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 						

@@ -298,9 +298,9 @@ class QualityController extends Controller {
 
     	} else if ($direction == "Search") {
 
-	        $sale_lots= DB::table('sale_sl AS sl')
+	        $sale_lots= DB::table('stock_mill_st AS st')
 			->select('*', 'st.id as st_id', DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'), DB::Raw('GROUP_CONCAT(DISTINCT `ccmts`.`qp_id` SEPARATOR ",") as qualityParameterCupID'), DB::Raw('CONCAT("[", GROUP_CONCAT(DISTINCT   CONCAT("{\'",`qanl`.`acat_id`,"\':\'",`qanl`.`qanl_value`,"\'}") SEPARATOR ","),"]") as qualityParameterSCRID'))
-				->from('stock_mill_st AS st')
+				
 				->leftJoin('parchment_type_pty AS pty', 'pty.id', '=', 'st.pty_id')
 				// ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'st.cgrad_id')
 				// ->leftJoin('coffee_certification_ccrt AS ccrt', 'ccrt.st_id', '=', 'st.id')
