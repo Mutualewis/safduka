@@ -321,7 +321,7 @@
 						<table id="stocks-table" class="table table-condensed table-striped" style="width: 100%;" >
 						    <thead>
 						        <tr>
-									<th style='text-align:center; display: none;' >
+									<th style='text-align:center; ' >
 										<input type='checkbox' name='select_all' value='1' id='example-select-all'>
 									</th>	
 									<th>
@@ -336,20 +336,20 @@
 										Grade
 									</th>
 									<th>
-										Empty Bag Weight
-									</th>
-									<th>
 										Instructed Weight							
 									</th>
 									<th>
+										Empty Bag Weight
+									</th>
+									<th>
 																
-																									</th>
+									</th>																</th>
 									
 						        </tr>
 						    </thead>
 						    <tfoot style="display: table-header-group; text-align:left; width: inherit; width:100%;">
 						        <tr>
-									<th style="display: none;">
+									<th >
 										Select
 									</th>	
 									<th>
@@ -364,10 +364,10 @@
 										Grade
 									</th>
 									<th>
-										Empty Bag Weight
+										Instructed Weight							
 									</th>
 									<th>
-										Instructed Weight							
+										Empty Bag Weight
 									</th>
 									<th>
 																
@@ -392,10 +392,10 @@
 	$(document).ready(function (){   
 
 	var url = '{{ route('processinghooper.getstockview',['countryID'=>":id",'ref_no'=>":rf"]) }}';
-	console.log(url)
+	
 	url = url.replace(':id', countryID);
 	url = url.replace(':rf', ref_no);
-
+	console.log(url)
     var table = $('#stocks-table').DataTable({
 		dom: 'Bfrtip',      	
    		type: 'POST',
@@ -411,7 +411,7 @@
             { data: 'outturn', name: 'outturn' },
             { data: 'grade', name: 'grade'},
             { data: 'weight', name: 'weight', searchable: false},
-            { data: 'weight', name: 'weight'},
+            { data: 'bagweight', name: 'bagweight'},
             
             { data: 'id', name: 'tobewithdrawn' , searchable: false}
            
@@ -429,12 +429,12 @@
         },
 
         columnDefs: [
-        	{targets: 2,
-				'visible':false
-			},
-        	{targets: 3,
-				'visible':false
-			},
+        	// {targets: 2,
+			// 	'visible':false
+			// },
+        	// {targets: 3,
+			// 	'visible':false
+			// },
         	
         	
 			{targets: 0,
@@ -442,59 +442,75 @@
 				'orderable':false,
 				'className': 'dt-body-center',
 				'render': function (data, type, full, meta, row){
-				var ended = table.cell(meta.row,16).data();
-				if (ended == null) {
+				// var ended = table.cell(meta.row,16).data();
+				// if (ended == null) {
 					return '<input type="checkbox" class="chk" name="tobeprocessed[]" value="' + $('<div/>').text(data).html() + '" >';
-				} else {
-					var viewedfield = '<input type="hidden" name="tobeprocessed[]" value="' + $('<div/>').text(data).html() + '" >';
-					var hiddenfield = '<input type="checkbox" checked="checked" value="' + $('<div/>').text(data).html() + '" disabled>';
-					var combined = viewedfield.concat(hiddenfield);
-					return combined;
-				}
+				// } else {
+				// 	var viewedfield = '<input type="hidden" name="tobeprocessed[]" value="' + $('<div/>').text(data).html() + '" >';
+				// 	var hiddenfield = '<input type="checkbox" checked="checked" value="' + $('<div/>').text(data).html() + '" disabled>';
+				// 	var combined = viewedfield.concat(hiddenfield);
+				// 	return combined;
+				// }
 
 				
 			}},
 
-			{targets: 6, 
+			{targets: 5, 
 				'searchable':true,
 				'orderable': true,
 				'render': function (data, type, full, meta, row){
 					return '<input size = "5" style="text-align:center;" type="text" name="'+"cweight"+ table.cell(meta.row,0).data()+'" id="'+"cweight"+ table.cell(meta.row,0).data()+'" value="' + $('<div/>').text(data).html() + '">';
 			}},
 
-			
+			{targets: 6,
+				'searchable':false,
+				'orderable':false,
+				'className': 'dt-body-center',
+				'render': function (data, type, full, meta, row){
+				// var ended = table.cell(meta.row,16).data();
+				// if (ended == null) {
+					return '<input type="checkbox" class="chk" name="tobewithdrawn[]" value="' + $('<div/>').text(data).html() + '" >';
+				// } else {
+				// 	var viewedfield = '<input type="hidden" name="tobeprocessed[]" value="' + $('<div/>').text(data).html() + '" >';
+				// 	var hiddenfield = '<input type="checkbox" checked="checked" value="' + $('<div/>').text(data).html() + '" disabled>';
+				// 	var combined = viewedfield.concat(hiddenfield);
+				// 	return combined;
+				// }
+
+				
+			}},
 
 			
       ],
 
 
 
-        fnRowCallback: function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {           
-            $('td:eq("0")', nRow).addClass('collapse');   
+        // fnRowCallback: function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {           
+        //     $('td:eq("0")', nRow).addClass('collapse');   
 
-        },
+        // },
 
-        initComplete: function () {
-            this.api().columns().every( function () {
-                var column = this;
-                var select = $('<select style="width: 100%; text-align: left;"><option value=""></option></select>')
-                    .appendTo( $(column.footer()).empty() )
-                    .on( 'change', function () {
-                        var val = $.fn.dataTable.util.escapeRegex(
-                            $(this).val()
-                        );
+        // initComplete: function () {
+        //     this.api().columns().every( function () {
+        //         var column = this;
+        //         var select = $('<select style="width: 100%; text-align: left;"><option value=""></option></select>')
+        //             .appendTo( $(column.footer()).empty() )
+        //             .on( 'change', function () {
+        //                 var val = $.fn.dataTable.util.escapeRegex(
+        //                     $(this).val()
+        //                 );
  
-                        column
-                            .search( val ? '^'+val+'$' : '', true, false )
-                            .draw();
-                    } );
+        //                 column
+        //                     .search( val ? '^'+val+'$' : '', true, false )
+        //                     .draw();
+        //             } );
  
-                column.data().unique().sort().each( function ( d, j ) {
-                    select.append( '<option value="'+d+'">'+d+'</option>' )
-                } );
-            } );
+        //         column.data().unique().sort().each( function ( d, j ) {
+        //             select.append( '<option value="'+d+'">'+d+'</option>' )
+        //         } );
+        //     } );
 
-        },
+        // },
 
 
 
@@ -527,14 +543,16 @@
     
    $('#stocksForm').on('submit', function(e){
       var form = this;
-
+	
+	
       // Iterate over all checkboxes in the table
       table.$('input[type="checkbox"]').each(function(){
          // If checkbox doesn't exist in DOM
          if(!$.contains(document, this)){
             // If checkbox is checked
             if(this.checked){
-               // Create a hidden element 
+               // Create a hidden element
+			   console.log(this) 
                $(form).append(
                   $('<input>')
                      .attr('type', 'hidden')
@@ -544,6 +562,8 @@
             }
          } 
       });
+	  
+
    });
 
 });

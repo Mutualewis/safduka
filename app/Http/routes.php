@@ -263,6 +263,11 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/processingresultsquality', 'ProcessingResultsQualityController@processingResultsQualityForm'); 
 		Route::post('/processingresultsquality', 'ProcessingResultsQualityController@processingResultsQuality');
+
+		Route::get('/processrates/CalculateProcessResultsRate/{ref}/{processingType}/{service}/{team}', ['as'=>'processrates.calculateprocessresultsrate','uses'=>'RatesController@CalculateProcessResultsRate']);
+
+
+		Route::get('/processrates/printProcessWithRate/{ref}/{service}/{team}', ['as'=>'processrates.printprocesswithrate','uses'=>'RatesController@printProcessWithRate']);
 });
 
 

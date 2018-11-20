@@ -20,6 +20,6 @@ class Processing_Results extends Model {
 	 * @var array
 	 */
 	
-	protected $fillable = ['id', 'st_outturn', 'st_processed_id', 'st_outturn_processed', 'current_weight', 'initial_weight', 'allocated_weight', 'prt_name'];
+	protected $fillable = ['id', 'st_outturn', 'st_processed_id', 'st_outturn_processed', 'current_weight', 'initial_weight', 'allocated_weight', 'prt_name', 'prts_bags', 'prts_pockets'];
            
 }

@@ -553,11 +553,11 @@
 
         columns: [
             { data: 'id', name: 'tobeprocessed', searchable: false },
-            { data: 'csn_id', name: 'csn_season'},
-			{ data: 'cgr_id', name: 'grower'},
-            { data: 'st_outturn', name: 'outturn' },
-            { data: 'st_mark', name: 'mark' },
-            { data: 'pty_id', name: 'grade'},
+            { data: 'csn_season', name: 'csn_season'},
+			{ data: 'mark', name: 'grower'},
+            { data: 'outturn', name: 'outturn' },
+            { data: 'mark', name: 'mark' },
+            { data: 'grade', name: 'grade'},
             
             { data: 'st_net_weight', name: 'weight'},
 			{ data: 'st_net_weight', name: 'st_net_weight'},

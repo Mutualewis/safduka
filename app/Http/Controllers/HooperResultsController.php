@@ -205,7 +205,7 @@ class HooperResultsController extends Controller
         //$selectedContract = SalesContract::where('id', '=', $contractID)->first();
 
         $tobeprocessed = Input::get('tobeprocessed');
-       
+        
         if (null !== Input::get('submitresults')) {
             $this->validate($request, [
                 'country' => 'required',
@@ -254,11 +254,11 @@ class HooperResultsController extends Controller
 
                     $cweight       = Input::get('cweight'.$value);
 
-                    $tags       = Input::get('tags'.$value);
+                    //$tags       = Input::get('tags'.$value);
 
-                    $packages    = ceil($cweight / 60);
+                    //$packages    = ceil($cweight / 60);
 
-                    $processAllocationDetails = ProcessAllocation::where('st_id', $value)->where('pr_id', $prid)->first();
+                    $processAllocationDetails = ProcessAllocation::where('st_mill_id', $value)->where('pr_id', $prid)->first();
 
                     if ($cweight != null) {
 
@@ -267,10 +267,10 @@ class HooperResultsController extends Controller
                             $processAllocationID = $processAllocationDetails->id;
 
                             ProcessAllocation::where('id', '=', $processAllocationID)
-                                ->update([ 'pall_processed_weight' => $cweight, 'pall_tags' => $tags ]);
+                                ->update([  'pall_empty_bag_weight' => $cweight ]);
 
                             $request->session()->flash('alert-success', 'Process Information Updated!!');
-                            Activity::log('Updated process allocation information with id ' . $processAllocationID . ' pall_processed_weight ' . $cweight .'pall_packages' .'pall_processed_weight' .$packages. ' tags ' . $tags );
+                            Activity::log('Updated process allocation information with id ' . $processAllocationID . ' pall_empty_weight ' . $cweight  );
 
                         } 
                         
@@ -279,33 +279,33 @@ class HooperResultsController extends Controller
             }
 
 
-            if ($tobewithdrawn != null) {
-                foreach ($tobewithdrawn as $key => $value) {
-                    $stockViewALLCount = StockViewALL::where('id', $value)->whereNotNull('process_number')->get();
-                    $countProcess = 0;
-                    foreach ($stockViewALLCount as $keycount => $valuecount) {
+            // if ($tobewithdrawn != null) {
+            //     foreach ($tobewithdrawn as $key => $value) {
+            //         $stockViewALLCount = StockViewALL::where('id', $value)->whereNotNull('process_number')->get();
+            //         $countProcess = 0;
+            //         foreach ($stockViewALLCount as $keycount => $valuecount) {
                         
-                        $countProcess += 1;
-                    }
+            //             $countProcess += 1;
+            //         }
 
-                    if ($countProcess < 2) {
-                        Stock::where('id', '=', $value)
-                              ->update(['st_ended_by' => null, 'pr_id' => null]);
-                    }
+            //         if ($countProcess < 2) {
+            //             Stock::where('id', '=', $value)
+            //                   ->update(['st_ended_by' => null, 'pr_id' => null]);
+            //         }
 
-                    $processAllocation = ProcessAllocation::where('st_id',$value)->where('pr_id', $prid);    
-                    $processAllocation->delete(); 
-                }
+            //         $processAllocation = ProcessAllocation::where('st_id',$value)->where('pr_id', $prid);    
+            //         $processAllocation->delete(); 
+            //     }
 
 
-            }
+            // }
             $prdetails = Process::where('pr_instruction_number', $ref_no)->first();
             if ($prdetails != null) {
 
                 $prc                = $prdetails->prcss_id;
                 $other_instructions = $prdetails->pr_other_instructions;
 
-                $processing_instruction = processing_instruction::where('prcss_id', $prc)->get();
+                $processing_instruction = ProcessAllocation::where('prcss_id', $prc)->get();
                 if (isset($processing_instruction)) {
                     foreach ($processing_instruction->all() as $value) {
                         $input_type = $value->prg_input_type;
@@ -315,13 +315,13 @@ class HooperResultsController extends Controller
                 }
 
                 $prid       = $prdetails->id;
-                $pridetails = ProcessInstructions::where('pr_id', $prid)->get();
-                $pridetails_one = ProcessInstructions::where('pr_id', $prid)->first();
+                $pridetails = ProcessAllocation::where('pr_id', $prid)->get();
+                $pridetails_one = ProcessAllocation::where('pr_id', $prid)->first();
                 $processing_instruction_selected = NULL;
                 $instructions_checked = array();
 
                 if ($pridetails_one != NULL) {
-                    $processing_instruction_selected = processing_instruction::where('id', $pridetails_one->pri_id)->first();
+                    $processing_instruction_selected = ProcessAllocation::where('id', $pridetails_one->pri_id)->first();
                     if ($processing_instruction_selected->prgid == 1) {
                         foreach ($pridetails as $key => $value) {
                             $instructions_checked[] = $value->pri_id;

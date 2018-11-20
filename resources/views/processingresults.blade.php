@@ -323,13 +323,13 @@
 		            ?>
 
 		            <div class="form-group col-md-4">
-		                <label>Weight</label>
-		                <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" oninput="myFunction()" value="{{ old('batch_kilograms').$batch_kilograms  }}">
+		                <label>Bags</label>
+		                <input class="form-control"  id="batch_bags"  name="batch_bags" oninput="myFunction()" value="{{ old('batch_bags')  }}">
 		            </div>
 
 		            <div class="form-group col-md-4">
-		                <label >Packages</label>
-		                <input class="form-control"  id="packages"  name="packages" oninput="myFunction()" value="{{ old('packages').$packages  }}">
+		                <label >Pockets</label>
+		                <input class="form-control"  id="pockets"  name="pockets" oninput="myFunction()" value="{{ old('pockets')  }}">
 		            </div>	            
 	            </div>	
 
@@ -438,11 +438,11 @@
 		            </div>
 		        </div>
 
-				<div class="row">
+				<!-- <div class="row">
 		            <div class="form-group col-md-12">
 		           		<button type="submit" name="confirminstruction" id="generatechargesbtn" class="btn btn-lg btn-danger btn-block">Generate Charges</button>
 		            </div>
-		        </div>		
+		        </div>		 -->
 			
 
 	</div>
@@ -452,17 +452,12 @@
 				<table class="table table-striped">
 				<thead>
 				<tr>				  
-					<th>
-						Sale
-					</th>
-					<th>
-						Lot
-					</th>
+					
 					<th>
 						Outturn
 					</th>
 					<th>
-						Cert
+						Mark
 					</th>
 
 					<th>
@@ -498,7 +493,7 @@
 						$count_cup = 0;
 						$total_price = 0;
 						$total = 0;
-
+						
 						if (isset($StockView)) {
 							foreach ($StockView->all() as $value) {
 								$total += $value->weight; 
@@ -516,10 +511,10 @@
 
 								echo "<tr>";
 
-									echo "<td>".$value->sale."</td>";
-									echo "<td>".$value->lot."</td>";
-									echo "<td>".$value->name."</td>";
-									echo "<td>".$value->cert."</td>";
+									// echo "<td>".$value->sale."</td>";
+									// echo "<td>".$value->lot."</td>";
+									echo "<td>".$value->outturn."</td>";
+									echo "<td>".$value->mark."</td>";
 									echo "<td>".$value->grade."</td>";
 									echo "<td>".$value->weight."</td>";
 									echo "<td>".$value->bags."</td>";
@@ -579,6 +574,12 @@
 						Packages
 					</th>
 					<th>
+						Bags
+					</th>
+					<th>
+						Pockets
+					</th>
+					<th>
 						Warehouse
 					</th>
 					<th>
@@ -606,7 +607,7 @@
 						$count_cup = 0;
 						$total_price = 0;
 						$total = 0;
-
+						
 						if (isset($ProcessResults) && count($ProcessResults) > 0) {
 
 							foreach ($ProcessResults->all() as $value) {
@@ -623,6 +624,8 @@
 									echo "<td>".$value->result_type."</td>";								
 									echo "<td>".$value->weight_out."</td>";
 									echo "<td>".$value->packages_out."</td>";
+									echo "<td>".$value->bags."</td>";
+									echo "<td>".$value->pockets."</td>";
 									echo "<td>".$value->wr_name."</td>";
 									echo "<td>".$value->loc_row."</td>";
 									echo "<td>".$value->loc_column."</td>";

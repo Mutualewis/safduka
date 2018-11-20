@@ -1082,11 +1082,7 @@ class ProcessingController extends Controller
         $date       = null;
         $release_no = null;
 
-        $ref_no = release::orderBy('previous_no', 'asc')->pluck('previous_no');
-        foreach ($ref_no as $ref) {
-            $ref_no = $ref;
-        }
-        $ref_no = "IBR-" . sprintf("%07d", ($ref_no + 0000001));
+        
 
         return View::make('processingresults', compact('id',
             'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'rates', 'teams'));
@@ -1110,6 +1106,8 @@ class ProcessingController extends Controller
         $rfid            = Input::get('ref_no');
         $rtid            = Input::get('results_type');
         $batch_kilograms = Input::get('batch_kilograms');
+        $pockets        = Input::get('pockets');
+        $batch_bags = Input::get('batch_bags');
         $packages        = Input::get('packages');
         $rw              = Input::get('row');
         $clm             = Input::get('column');
@@ -1118,7 +1116,7 @@ class ProcessingController extends Controller
 
         $returnToStock   = $request->input('returnToStock');
 
-
+        
 
         $BULKING_PROCESS = 4;
         $INTERNAL_BULK = 1;
@@ -1134,8 +1132,8 @@ class ProcessingController extends Controller
         $StockView = null;
         $warehouse_att = null;
 
-        $basket = InternalBaskets::where('ctr_id', Input::get('country'))->get();
-        $CoffeeGrade = CoffeeGrade::where('ctr_id', Input::get('country'))->get();
+        // $basket = InternalBaskets::where('ctr_id', Input::get('country'))->get();
+        // $CoffeeGrade = CoffeeGrade::where('ctr_id', Input::get('country'))->get();
 
         $user_data = Auth::user();
         $user      = $user_data->id;
@@ -1366,16 +1364,16 @@ class ProcessingController extends Controller
             if ($bsid == NULL) {
                 $bsid = $ProcessResultsDetails->bs_id;                
             }
-
+            
             if ($check_results !== null) {
                 $pridt = $check_results->id;
                 ProcessResults::where('id', '=', $pridt)
-                    ->update(['prts_weight' => $batch_kilograms, 'prts_packages' => $packages, 'wr_id' => $wrhse, 'loc_row' => $locrowid, 'loc_column' => $loccolid, 'btc_zone' => $zone, 'cgrad_id' => $cgradid, 'bs_id' => $bsid, 'prts_return_to_stock' => $returnToStock]);
+                    ->update(['prts_weight' => $batch_kilograms, 'prts_packages' => $packages, 'prts_bags' => $batch_bags, 'prts_pockets' => $pockets, 'wr_id' => $wrhse, 'loc_row' => $locrowid, 'loc_column' => $loccolid, 'btc_zone' => $zone, 'cgrad_id' => $cgradid, 'bs_id' => $bsid, 'prts_return_to_stock' => $returnToStock]);
                 $request->session()->flash('alert-success', 'Processing Results Updated!!');
                 Activity::log('Updated ProcessResults for id ' . $pridt . ' rtid ' . $rtid . ' batch_kilograms ' . $batch_kilograms . ' packages ' . $packages . ' by user ' . $user . ' wr_id ' . $wrhse . 'loc_row' . $locrowid . 'loc_column' . $loccolid . 'btc_zone' . $zone. 'cgradid' . $cgradid. 'bsid' . $bsid. 'returnToStock'. $returnToStock);
             } else {
                 $pridt = ProcessResults::insertGetId(
-                    ['pr_id' => $rfid, 'prt_id' => $rtid, 'prts_weight' => $batch_kilograms, 'prts_packages' => $packages, 'wr_id' => $wrhse, 'loc_row' => $locrowid, 'loc_column' => $loccolid, 'btc_zone' => $zone, 'cgrad_id' => $cgradid, 'bs_id' => $bsid, 'prts_return_to_stock' => $returnToStock]);
+                    ['pr_id' => $rfid, 'prt_id' => $rtid, 'prts_weight' => $batch_kilograms, 'prts_packages' => $packages, 'prts_bags' => $batch_bags, 'prts_pockets' => $pockets, 'wr_id' => $wrhse, 'loc_row' => $locrowid, 'loc_column' => $loccolid, 'btc_zone' => $zone, 'cgrad_id' => $cgradid, 'bs_id' => $bsid, 'prts_return_to_stock' => $returnToStock]);
                 $request->session()->flash('alert-success', 'Processing Results Added!!');
                 Activity::log('Inserted ProcessResults for id ' . $pridt . ' rtid ' . $rtid . ' batch_kilograms ' . $batch_kilograms . ' packages ' . $packages . ' by user ' . $user . ' wr_id ' . $wrhse . 'loc_row' . $locrowid . 'loc_column' . $loccolid . 'btc_zone' . $zone. 'cgradid' . $cgradid. 'bsid' . $bsid . 'returnToStock'. $returnToStock);
             }
@@ -1391,6 +1389,7 @@ class ProcessingController extends Controller
                         $ProcessResults = Processes::where('id', $rfid)->where('ctrid', $cid)->whereNotNull('result_type')->get();
                     }
                 }
+               
                 $Warehouse = warehouses_region::where('ctr_id', Input::get('country'))->where('wrt_id', '1')->get();
 
             }
