@@ -3,7 +3,7 @@
 @section('section')
 <div class="col-sm-14 col-md-offset-0">
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-12">
 					@if (count($errors) > 0)
 						<div class="alert alert-danger">
 							<strong>Whoops!</strong> There were some problems with your input.<br><br>
@@ -88,8 +88,6 @@
 	$dont = NULL;
 	$weight = NULL;
 
-
-
 	if (isset($cdetails)){
 		$sif_lot = $cdetails->lot;
 		$outt_number = $cdetails->outturn;
@@ -98,24 +96,17 @@
 		$grade = $cdetails->grade;
 		$coffee_grower = $cdetails->mark;
 	}
-	//old('outt_number'). $outt_number }}
+
 
 ?>
-    <div class="col-md-5">
+    <div class="col-md-12">
 	        <form role="form" method="POST" action="movementconfirmation" id="movementconfirmationform">
 
 	        	<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 
-
-<!-- 				<div class="row">
-		            <div class="form-group col-md-6">
-			            <h3>Select Country</h3>						
-		            </div>
-		        </div> -->
-
 				<div class="row">
-		            <div class="form-group col-md-4">
+		            <div class="form-group col-md-12">
 		                <label>Country</label>
 		                <select class="form-control" name="country"  onchange="this.form.submit()">
 		                	<option></option> 
@@ -132,17 +123,19 @@
 							@endif
 		                </select>		
 		            </div>	
+		        </div>
 
-		            <div class="form-group col-md-4">
+		        <div class="row">
+		            <div class="form-group col-md-12">
 		                <label>Warehouse</label>
 		                <select class="form-control" name="warehouse" onchange="this.form.submit()">
 		                	<option></option> 
 							@if (isset($Warehouse))
 										@foreach ($Warehouse->all() as $value)
-										@if ($wrhse ==  $value->wrid)
-											<option value="{{ $value->wrid }}" selected="selected">{{ $value->wr_name}}</option>
+										@if ($wrhse ==  $value->id)
+											<option value="{{ $value->id }}" selected="selected">{{ $value->agt_name}}</option>
 										@else
-											<option value="{{ $value->wrid }}">{{ $value->wr_name}}</option>
+											<option value="{{ $value->id }}">{{ $value->agt_name}}</option>
 										@endif
 										@endforeach
 									
@@ -160,10 +153,10 @@
 		                	<option></option> 
 							@if (isset($NewWarehouse))
 										@foreach ($NewWarehouse->all() as $value)
-										@if ($new_wrhse ==  $value->wrid)
-											<option value="{{ $value->wrid }}" selected="selected">{{ $value->wr_name}}</option>
+										@if ($new_wrhse ==  $value->id)
+											<option value="{{ $value->id }}" selected="selected">{{ $value->agt_name}}</option>
 										@else
-											<option value="{{ $value->wrid }}">{{ $value->wr_name}}</option>
+											<option value="{{ $value->id }}">{{ $value->agt_name}}</option>
 										@endif
 										@endforeach
 									
@@ -204,11 +197,11 @@
 
 		        </div>
 		        <div class="row">
-		            <div class="form-group col-md-4">
+		            <div class="form-group col-md-6">
 		                <label >Zone Moved To</label>
 		                <input class="form-control"  name="zone">
 		            </div>	     
-		            <div class="form-group col-md-4">
+		            <div class="form-group col-md-6">
 		                <label>Weight Moved</label>
 		                <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" oninput="myFunction()" value="{{ old('batch_kilograms').$batch_kilograms  }}" disabled>
 		            </div>      	
@@ -233,7 +226,7 @@
 
 	</div>
 
-	<div class="col-md-7 col-md-offset-0 pre-scrollable" style="max-height: 800px;">
+	<div class="col-md-12 col-md-offset-0 pre-scrollable" style="max-height: 800px;">
 		<!-- <form role="form" method="POST" action="arrivalinformation"> -->
 				<h3>Select Outturn(s) to Confirm</h3>
 				<table class="table table-striped">
@@ -340,12 +333,12 @@
 
 @push('scripts')
 <script>
-var autosubmit = <?php echo json_encode($autosubmit); ?>;
-console.log(autosubmit)
-	$(document).ready(function (){ 
-		if(autosubmit){
-			$( "#movementconfirmationform" ).submit();
-		}
-	})
+// var autosubmit = <?php echo json_encode($autosubmit); ?>;
+// console.log(autosubmit)
+// 	$(document).ready(function (){ 
+// 		if(autosubmit){
+// 			$( "#movementconfirmationform" ).submit();
+// 		}
+// 	})
 </script>
 @endpush
