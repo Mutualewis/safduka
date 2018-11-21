@@ -1323,12 +1323,12 @@ class ProcessingController extends Controller
             $this->validate($request, [
                 'country' => 'required', 'results_type' => 'required', 'results_type' => 'required', 'outturn' => 'required' 
             ]);
-            
+            $st_id = Input::get('outturn');
             if ($prc == $BULKING_PROCESS ) {
                 // checkBulkOutturnProcess
                 foreach ($StockView as $key => $value) {
                     $process_allocation = ProcessAllocation::where('st_id', $value->id)->get();
-                    $st_id = $outturn;
+                   
                     foreach ($process_allocation as $key => $value_process) {
                         if ($value_process != null) {
                             $checkConfirmed = Process::where('id', $value_process->pr_id)->where('prcss_id', '!=', $BULKING_PROCESS)->first();
@@ -1348,7 +1348,7 @@ class ProcessingController extends Controller
                 }
             }
 
-            $check_results = ProcessResults::where('pr_id', $rfid)->where('prt_id', $rtid)->first();
+            $check_results = ProcessResults::where('pr_id', $rfid)->where('prt_id', $rtid)->where('st_mill_id', $st_id)->first();
 
             $locrowdetails = Location::where('wr_id', $wrhse)->where('loc_row', $rw)->first();
             $loccoldetails = Location::where('wr_id', $wrhse)->where('loc_column', $clm)->first();
