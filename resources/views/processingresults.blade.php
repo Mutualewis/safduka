@@ -30,7 +30,7 @@
 	if (old('rate') != NULL) {
 		$rate_id = old('rate');
 	}
-
+	
 	if (!isset($rate_id )) {
 		$rate_id   = NULL;
 	}
@@ -48,12 +48,16 @@
 	if (old('country') != NULL) {
 		$cid = old('country');
 	}
+	
 	if (!isset($cid)){
 		$cid=$cidmain;
 		$autosubmit=true;
 	}
 	if (!isset($cid)) {
 		$cid = NULL;
+	}
+	if (!isset($otttid)) {
+		$otttid = NULL;
 	}
 	if (!isset($saleid )) {
 		$saleid   = NULL;
@@ -82,6 +86,11 @@
 	if (old('country') != NULL) {
 		$cid = old('country');
 	}
+	
+	if (old('outturn') != NULL) {
+		$otttid = old('outturn');
+	}
+	$otttid = $st_id_selected;
 	if (!isset($saleid )) {
 		$saleid   = NULL;
 	}
@@ -157,10 +166,11 @@
 	if (!isset($pockets )) {
 		$pockets = NULL;
 	}
-
+	
 	if (!isset($rtid )) {
 		$rtid = NULL;
 	}
+	
 	if (!isset($rfid)) {
 		$rfid = NULL;
 	}
@@ -270,6 +280,32 @@
 
 	        	</div>
 
+							<h3>Outturns</h3>
+	
+	<div class="row">
+			<div class="form-group col-md-4">
+				<label>Outturns</label>
+				<select class="form-control" name="outturn" onchange="this.form.submit()">
+					<option></option> 
+					@if (isset($StockView) && count($StockView) > 0)
+								@foreach ($StockView->all() as $value)
+									@if ($otttid ==  $value->id)
+										<option value="{{ $value->id }}" selected="selected">{{ $value->outturn}}</option>
+									@else
+										<option value="{{ $value->id }}">{{ $value->outturn}}</option>
+									@endif
+
+								@endforeach
+							
+					@endif
+				</select>		
+			</div>
+	
+	
+
+					
+	</div>	
+
  				<h3>Results</h3>
 	
 	        	<div class="row">
@@ -332,6 +368,8 @@
 		                <input class="form-control"  id="pockets"  name="pockets" oninput="myFunction()" value="{{ old('pockets')  }}">
 		            </div>	            
 	            </div>	
+
+	
 
 				<h3>New Location</h3>
 		        <div class="row">
@@ -563,7 +601,10 @@
 				<h3>Instruction Results</h3>
 				<table class="table table-striped">
 				<thead>
-				<tr>				  
+				<tr>
+					<th>
+						Outturn
+					</th>				  
 					<th>
 						Result Type
 					</th>
@@ -609,7 +650,7 @@
 						$total = 0;
 						
 						if (isset($ProcessResults) && count($ProcessResults) > 0) {
-
+							
 							foreach ($ProcessResults->all() as $value) {
 								$count += 1;
 								$id = $value->id;
@@ -620,6 +661,8 @@
 								
 
 								echo "<tr>";
+
+								echo "<td>".$value->outturn."</td>";					
 
 									echo "<td>".$value->result_type."</td>";								
 									echo "<td>".$value->weight_out."</td>";
@@ -638,6 +681,7 @@
 						}
 					?>
 					  <tr>
+					  <td></td>
 					  	<!-- <td>Total:</td> -->
 					    <?php
 						    echo "<td>".$count." Results</td>";
