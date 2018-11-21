@@ -259,7 +259,7 @@ class HooperResultsController extends Controller
                     //$packages    = ceil($cweight / 60);
 
                     $processAllocationDetails = ProcessAllocation::where('st_mill_id', $value)->where('pr_id', $prid)->first();
-
+                   
                     if ($cweight != null) {
 
                         if ($processAllocationDetails != null) {
@@ -305,7 +305,7 @@ class HooperResultsController extends Controller
                 $prc                = $prdetails->prcss_id;
                 $other_instructions = $prdetails->pr_other_instructions;
 
-                $processing_instruction = ProcessAllocation::where('prcss_id', $prc)->get();
+                $processing_instruction = ProcessAllocation::where('pr_id', $prc)->get();
                 if (isset($processing_instruction)) {
                     foreach ($processing_instruction->all() as $value) {
                         $input_type = $value->prg_input_type;
@@ -319,22 +319,22 @@ class HooperResultsController extends Controller
                 $pridetails_one = ProcessAllocation::where('pr_id', $prid)->first();
                 $processing_instruction_selected = NULL;
                 $instructions_checked = array();
+               
+                // if ($pridetails_one != NULL) {
+                //     $processing_instruction_selected = ProcessAllocation::where('id', $pridetails_one->pri_id)->first();
+                //     if ($processing_instruction_selected->prgid == 1) {
+                //         foreach ($pridetails as $key => $value) {
+                //             $instructions_checked[] = $value->pri_id;
+                //         }                    
+                //     } else if ($processing_instruction_selected->prgid == 2) {
+                //         foreach ($pridetails as $key => $value) {
+                //             $instructions_selected = $value->pri_id;
+                //         }                    
+                //     }
 
-                if ($pridetails_one != NULL) {
-                    $processing_instruction_selected = ProcessAllocation::where('id', $pridetails_one->pri_id)->first();
-                    if ($processing_instruction_selected->prgid == 1) {
-                        foreach ($pridetails as $key => $value) {
-                            $instructions_checked[] = $value->pri_id;
-                        }                    
-                    } else if ($processing_instruction_selected->prgid == 2) {
-                        foreach ($pridetails as $key => $value) {
-                            $instructions_selected = $value->pri_id;
-                        }                    
-                    }
+                // }
 
-                }
-
-                $date = $prdetails->pr_date;
+                // $date = $prdetails->pr_date;
             }
 
 
