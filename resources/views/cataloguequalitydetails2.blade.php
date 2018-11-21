@@ -636,7 +636,7 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 
         }
 
-        echo '<td><label><input type="checkbox" id="cpacid'.$value->id.'" name="acidity" value="'.$value2->id.'">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'.$value2->cc_name.'</input>&nbsp&nbsp </label></td>';
+        echo '<td><label><input type="checkbox" id="cpacid'.$value2->id.'" name="acidity" data-screenid=id="'.$value->id.'" value="'.$value2->id.'">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'.$value2->cc_name.'</input>&nbsp&nbsp </label></td>';
 
     }
 
@@ -2181,22 +2181,28 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			var st_id = document.getElementById("st_id_screen").value;
 			
 			var direction = 'Next';
+            var screen_sizes = {};
 
+            screen_sizes = $('input[name=screen_size]:checked').map(function(){
+
+                return this.value;
+
+            }).get();
 		    var screen_size = [];
-			
-			for (i=1 ; i<11 ; i++){
-				if (document.getElementById("screen_size"+i) != null) {
-				var id = i;
-				var screen = document.getElementById("screen_size"+i).value;
-				var screenobj = {id:id, screensize: screen}
-				} else {
+			console.log(screen_sizes)
+			// for (i=1 ; i<11 ; i++){
+			// 	if (document.getElementById("screen_size"+i) != null) {
+			// 	var id = i;
+			// 	var screen = document.getElementById("screen_size"+i).value;
+			// 	var screenobj = {id:id, screensize: screen}
+			// 	} else {
 
-				var id = i;
-				var screen = null;
-				var screenobj = {id:id, screensize: screen}
-				}
-				screen_size.push(screenobj)	
-			}
+			// 	var id = i;
+			// 	var screen = null;
+			// 	var screenobj = {id:id, screensize: screen}
+			// 	}
+			// 	screen_size.push(screenobj)	
+			// }
 
 
 			var url = '{{ route('cataloguequalitydetails.saveScreen') }}';
@@ -2319,8 +2325,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 				}
 				screen_size.push(screenobj)	
 			}
-
-
+            
 			var url = '{{ route('cataloguequalitydetails.saveScreen') }}';
 
 			

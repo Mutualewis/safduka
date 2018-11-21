@@ -799,7 +799,7 @@ class ProcessingController extends Controller
             $this->validate($request, [
                 'country' => 'required',
             ]);
-
+            
             $ref_no    = Input::get('ref_no');
             $reference_no = $ref_no;
 
@@ -1043,7 +1043,7 @@ class ProcessingController extends Controller
     {
         if ($countryID != null) {
             if($ref_no != null){
-                $stockview = StockViewALL::select('*');
+                $stockview = StockViewALL::select('*')->whereNull('st_ended_by');
             } else {
                 $stockview = StockViewALL::select('*')->where('ctr_id', $countryID)->whereNull('st_ended_by');
             }
@@ -1081,11 +1081,11 @@ class ProcessingController extends Controller
         $release_no = null;
         $date       = null;
         $release_no = null;
-
+        $st_id_selected = null;
         
 
         return View::make('processingresults', compact('id',
-            'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'rates', 'teams'));
+            'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'rates', 'teams', 'st_id_selected'));
 
     }
 
@@ -1116,7 +1116,7 @@ class ProcessingController extends Controller
 
         $returnToStock   = $request->input('returnToStock');
 
-        
+        $st_id_selected  = Input::get('outturn');
 
         $BULKING_PROCESS = 4;
         $INTERNAL_BULK = 1;
@@ -1179,8 +1179,9 @@ class ProcessingController extends Controller
         if ($rtid != null) {
             $results_view = ProcessResults::where('pr_id', $rfid)->where('prt_id', $rtid)->first();
         }
-
+        
         if (null !== Input::get('confirmresults')) {
+           
             $process_results = ProcessResults::where('pr_id', $rfid)->get();
             $total_kilos_processed = null;
 
@@ -1316,17 +1317,18 @@ class ProcessingController extends Controller
             $prdetails = Process::where('id', $rfid)->first();
             $batch_kilograms = null;
             return View::make('processingresults', compact('id',
-                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'rfid', 'prc', 'processing_instruction', 'input_type', 'title', 'refno', 'resultsType', 'rtid', 'StockView', 'ProcessResults', 'wrhse', 'location', 'prdetails', 'isInBulk', 'batch_kilograms', 'packages', 'rtid', 'results_view', 'rates', 'teams'));
+                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'rfid', 'prc', 'processing_instruction', 'input_type', 'title', 'refno', 'resultsType', 'rtid', 'StockView', 'ProcessResults', 'wrhse', 'location', 'prdetails', 'isInBulk', 'batch_kilograms', 'packages', 'rtid', 'results_view', 'rates', 'teams', 'st_id_selected'));
         } else if (null !== Input::get('submitresults')) {
+         
             $this->validate($request, [
-                'country' => 'required', 'results_type' => 'required', 
+                'country' => 'required', 'results_type' => 'required', 'results_type' => 'required', 'outturn' => 'required' 
             ]);
-
+            $st_id = Input::get('outturn');
             if ($prc == $BULKING_PROCESS ) {
                 // checkBulkOutturnProcess
                 foreach ($StockView as $key => $value) {
                     $process_allocation = ProcessAllocation::where('st_id', $value->id)->get();
-
+                   
                     foreach ($process_allocation as $key => $value_process) {
                         if ($value_process != null) {
                             $checkConfirmed = Process::where('id', $value_process->pr_id)->where('prcss_id', '!=', $BULKING_PROCESS)->first();
@@ -1336,7 +1338,7 @@ class ProcessingController extends Controller
                                     $request->session()->flash('alert-warning', 'Please confirm process '.$checkConfirmed->pr_instruction_number.' first!!');
 
                                     return View::make('processingresults', compact('id',
-                                        'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'rfid', 'prc', 'processing_instruction', 'input_type', 'title', 'refno', 'resultsType', 'rtid', 'StockView', 'ProcessResults', 'wrhse', 'location', 'prdetails', 'isInBulk', 'batch_kilograms', 'packages', 'results_view', 'rates', 'teams'));
+                                        'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'rfid', 'prc', 'processing_instruction', 'input_type', 'title', 'refno', 'resultsType', 'rtid', 'StockView', 'ProcessResults', 'wrhse', 'location', 'prdetails', 'isInBulk', 'batch_kilograms', 'packages', 'results_view', 'rates', 'teams', 'st_id_selected'));
                                     
                                 }
                             }
@@ -1346,7 +1348,7 @@ class ProcessingController extends Controller
                 }
             }
 
-            $check_results = ProcessResults::where('pr_id', $rfid)->where('prt_id', $rtid)->first();
+            $check_results = ProcessResults::where('pr_id', $rfid)->where('prt_id', $rtid)->where('st_mill_id', $st_id)->first();
 
             $locrowdetails = Location::where('wr_id', $wrhse)->where('loc_row', $rw)->first();
             $loccoldetails = Location::where('wr_id', $wrhse)->where('loc_column', $clm)->first();
@@ -1364,7 +1366,7 @@ class ProcessingController extends Controller
             if ($bsid == NULL) {
                 $bsid = $ProcessResultsDetails->bs_id;                
             }
-            
+            $st_id = Input::get('outturn');
             if ($check_results !== null) {
                 $pridt = $check_results->id;
                 ProcessResults::where('id', '=', $pridt)
@@ -1373,7 +1375,7 @@ class ProcessingController extends Controller
                 Activity::log('Updated ProcessResults for id ' . $pridt . ' rtid ' . $rtid . ' batch_kilograms ' . $batch_kilograms . ' packages ' . $packages . ' by user ' . $user . ' wr_id ' . $wrhse . 'loc_row' . $locrowid . 'loc_column' . $loccolid . 'btc_zone' . $zone. 'cgradid' . $cgradid. 'bsid' . $bsid. 'returnToStock'. $returnToStock);
             } else {
                 $pridt = ProcessResults::insertGetId(
-                    ['pr_id' => $rfid, 'prt_id' => $rtid, 'prts_weight' => $batch_kilograms, 'prts_packages' => $packages, 'prts_bags' => $batch_bags, 'prts_pockets' => $pockets, 'wr_id' => $wrhse, 'loc_row' => $locrowid, 'loc_column' => $loccolid, 'btc_zone' => $zone, 'cgrad_id' => $cgradid, 'bs_id' => $bsid, 'prts_return_to_stock' => $returnToStock]);
+                    ['pr_id' => $rfid, 'st_mill_id' => $st_id, 'prt_id' => $rtid, 'prts_weight' => $batch_kilograms, 'prts_packages' => $packages, 'prts_bags' => $batch_bags, 'prts_pockets' => $pockets, 'wr_id' => $wrhse, 'loc_row' => $locrowid, 'loc_column' => $loccolid, 'btc_zone' => $zone, 'cgrad_id' => $cgradid, 'bs_id' => $bsid, 'prts_return_to_stock' => $returnToStock]);
                 $request->session()->flash('alert-success', 'Processing Results Added!!');
                 Activity::log('Inserted ProcessResults for id ' . $pridt . ' rtid ' . $rtid . ' batch_kilograms ' . $batch_kilograms . ' packages ' . $packages . ' by user ' . $user . ' wr_id ' . $wrhse . 'loc_row' . $locrowid . 'loc_column' . $loccolid . 'btc_zone' . $zone. 'cgradid' . $cgradid. 'bsid' . $bsid . 'returnToStock'. $returnToStock);
             }
@@ -1395,7 +1397,7 @@ class ProcessingController extends Controller
             }
             $batch_kilograms = null;
             return View::make('processingresults', compact('id',
-                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'rfid', 'prc', 'processing_instruction', 'input_type', 'title', 'refno', 'resultsType', 'rtid', 'StockView', 'ProcessResults', 'wrhse', 'location', 'prdetails', 'isInBulk', 'batch_kilograms', 'packages', 'rtid', 'results_view', 'rates', 'teams'));
+                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'rfid', 'prc', 'processing_instruction', 'input_type', 'title', 'refno', 'resultsType', 'rtid', 'StockView', 'ProcessResults', 'wrhse', 'location', 'prdetails', 'isInBulk', 'batch_kilograms', 'packages', 'rtid', 'results_view', 'rates', 'teams', 'st_id_selected'));
 
         } else if (null !== Input::get('printresults')) {
             $this->validate($request, ['country' => 'required', 
@@ -1491,8 +1493,9 @@ class ProcessingController extends Controller
             return $pdf->stream($ref_no . ' processing_results.pdf');
 
         } else {
+          
             return View::make('processingresults', compact('id',
-                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'rfid', 'prc', 'processing_instruction', 'input_type', 'title', 'refno', 'resultsType', 'rtid', 'StockView', 'ProcessResults', 'wrhse', 'location', 'prdetails', 'isInBulk', 'batch_kilograms', 'packages', 'rtid', 'results_view', 'rates', 'teams'));
+                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'rfid', 'prc', 'processing_instruction', 'input_type', 'title', 'refno', 'resultsType', 'rtid', 'StockView', 'ProcessResults', 'wrhse', 'location', 'prdetails', 'isInBulk', 'batch_kilograms', 'packages', 'rtid', 'results_view', 'rates', 'teams', 'st_id_selected'));
         }
 
     }
