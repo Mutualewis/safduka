@@ -1141,7 +1141,7 @@ class ProcessingController extends Controller
 
         if ($cid != null) {
             if ($prc != null) {
-                $refno       = Process::where('prcss_id', $prc)->where('ctr_id', $cid)->whereNotNull('pr_supervisor')->whereNull('pr_confirmed_by')->orderBy('pr_instruction_number')->get();
+                $refno       = Process::where('prcss_id', $prc)->where('ctr_id', $cid)->orderBy('pr_instruction_number')->get();
                 $resultsType = ProcessResultsType::where('prcss_id', $prc)->get();
                 if ($rfid != null) {
                     $StockView      = StockViewALL::where('prcssid', $rfid)->where('processtype', $prc)->get();
@@ -1301,7 +1301,7 @@ class ProcessingController extends Controller
             }
             if ($cid != null) {
                 if ($prc != null) {
-                    $refno       = Process::where('prcss_id', $prc)->where('ctr_id', $cid)->whereNotNull('pr_supervisor')->whereNull('pr_confirmed_by')->orderBy('pr_instruction_number')->get();
+                    $refno       = Process::where('prcss_id', $prc)->where('ctr_id', $cid)->orderBy('pr_instruction_number')->get();
                     $resultsType = ProcessResultsType::where('prcss_id', $prc)->get();
                     if ($rfid != null) {
                         $StockView      = StockViewALL::where('prcssid', $rfid)->get();
@@ -1384,7 +1384,7 @@ class ProcessingController extends Controller
 
             if ($cid != null) {
                 if ($prc != null) {
-                    $$refno       = Process::where('prcss_id', $prc)->where('ctr_id', $cid)->whereNotNull('pr_supervisor')->whereNull('pr_confirmed_by')->orderBy('pr_instruction_number')->get();
+                    $refno       = Process::where('prcss_id', $prc)->where('ctr_id', $cid)->orderBy('pr_instruction_number')->get();
                     $resultsType = ProcessResultsType::where('prcss_id', $prc)->get();
                     if ($rfid != null) {
                         $StockView      = StockViewALL::where('prcssid', $rfid)->get();
