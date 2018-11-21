@@ -180,6 +180,8 @@ class QualityController extends Controller {
 			
 			$cupscorecomments = cupscorecomments::all(['id', 'cp_score', 'cp_quality']);
 
+			$coffee_class_cc = CoffeeClass::all(['id', 'cc_name']);
+
 	    	$seller = seller::where('ctr_id', $cidmain)->get(); 		
 
 			$sale = Sale::where('ctr_id', '=', $cidmain)->where('sltyp_id',  '2')->whereNull('sl_quality_confirmedby')->get();
@@ -200,7 +202,137 @@ class QualityController extends Controller {
 
   		}
 
-    	return View::make('cataloguequalitydetails', compact('id', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'largest', 'greensize', 'greencolor', 'greendefects', 'processing', 'cupscore', 'rawscore', 'screens', 'seller', 'sale', 'sale_lots', 'sale_season', 'cid', 'sale_id', 'seller_id', 'cupscorecomments', 'partchment', 'coffeequality', 'screensanalysis', 'partchment_types'));
+    	return View::make('cataloguequalitydetails2', compact('id', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'largest', 'greensize', 'greencolor', 'greendefects', 'processing', 'cupscore', 'rawscore', 'screens', 'seller', 'sale', 'sale_lots', 'sale_season', 'cid', 'sale_id', 'seller_id', 'cupscorecomments', 'partchment', 'coffeequality', 'screensanalysis', 'partchment_types'));
+
+    
+	}
+	
+	public function qualityForm2 (Request $request){
+
+		if(session('maincountry')!=NULL){
+		
+			$cidmain=session('maincountry');
+		
+		}
+
+    	$id = NULL;
+    	
+    	$Season = Season::all(['id', 'csn_season']);
+    	
+		$country = country::all(['id', 'ctr_name', 'ctr_initial']);
+		
+		$coffeeclass = CoffeeClass::all(['id', 'cc_name']);
+    	
+    	$CoffeeGrade = CoffeeGrade::all(['id','cgrad_name']);
+    	
+    	$Certification = Certification::all(['id', 'crt_name']);
+    	
+    	$Warehouse = NULL;
+    	
+    	$Mill = NULL;
+
+    	$greensize = quality_parameters::where('qg_id', '1')->get();
+    	
+    	$greencolor = quality_parameters::where('qg_id', '2')->get();
+    	
+		$greendefects = quality_parameters::where('qg_id', '3')->orderBy('qp_parameter', 'ASC')->get();
+
+		$acidities = quality_parameters::where('qg_id', '7')->orderBy('qp_parameter', 'ASC')->get();
+    	
+    	$flavours = quality_parameters::where('qg_id', '10')->orderBy('qp_parameter', 'ASC')->get();
+    	
+		$bodies = quality_parameters::where('qg_id', '8')->orderBy('qp_parameter', 'ASC')->get();
+
+    	$processing = processing::where('prcss_auction', '1')->get();
+    	
+    	$screens = screens::all(['id', 'scr_name']);
+
+		$cupscore = cupscore::all(['id', 'cp_score', 'cp_quality']);
+
+		$cupscorecomments = cupscorecomments::all(['id', 'cp_score', 'cp_quality']);
+    	
+    	$rawscore = rawscore::all(['id', 'rw_score', 'rw_quality']);
+
+    	$seller = seller::where('ctr_id', $cidmain)->get(); 		
+
+		$sale = Sale::where('ctr_id', '=', $cidmain)->where('sltyp_id',  '1')->whereNull('sl_quality_confirmedby')->get();
+
+		$timeout = $this->dialog_timeout;
+
+		$partchment = quality_parameters::where('qg_id', '13')->orderBy('qp_parameter', 'ASC')->get();
+
+		$partchment_types = ParchmentType::orderBy('pty_name', 'ASC')->get();
+
+		$coffeequality = quality_parameters::where('qg_id', '11')->orderBy('qp_parameter', 'ASC')->get();
+		$screensanalysis = analysis_categories::orderBy('id', 'ASC')->get();
+
+    	return View::make('cataloguequalitydetails2', compact('id', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'largest', 'greensize', 'greencolor', 'greendefects', 'processing', 'cupscore', 'rawscore', 'screens', 'seller', 'sale', 'sale_lots', 'serve', 'timeout', 'partchment', 'cupscorecomments', 'coffeequality', 'acidities', 'bodies', 'flavours', 'screensanalysis', 'partchment_types', 'coffeeclass'));
+
+    }
+
+    public function addQualityDetails2 (Request $request){
+  
+  		if (NULL !== Input::get('searchButton')) {
+
+			if(session('maincountry')!=NULL){
+			
+				$cidmain=session('maincountry');
+			
+			}
+
+	    	$id = NULL;
+	    	
+	    	$Season = Season::all(['id', 'csn_season']);
+	    	
+	    	$country = country::all(['id', 'ctr_name', 'ctr_initial']);
+	    	
+	    	$CoffeeGrade = CoffeeGrade::all(['id','cgrad_name']);
+	    	
+	    	$Certification = Certification::all(['id', 'crt_name']);
+	    	
+	    	$Warehouse = NULL;
+	    	
+	    	$Mill = NULL;
+
+	    	$greensize = quality_parameters::where('qg_id', '1')->get();
+	    	
+	    	$greencolor = quality_parameters::where('qg_id', '2')->get();
+	    	
+	    	$greendefects = quality_parameters::where('qg_id', '3')->get();
+
+	    	$processing = processing::where('prcss_auction', '1')->get();
+	    	
+	    	$screens = screens::all(['id', 'scr_name']);
+
+	    	$cupscore = cupscore::all(['id', 'cp_score', 'cp_quality']);
+	    	
+			$rawscore = rawscore::all(['id', 'rw_score', 'rw_quality']);
+
+			$coffeeclass = CoffeeClass::all(['id', 'cc_name']);
+			
+			$cupscorecomments = cupscorecomments::all(['id', 'cp_score', 'cp_quality']);
+
+	    	$seller = seller::where('ctr_id', $cidmain)->get(); 		
+
+			$sale = Sale::where('ctr_id', '=', $cidmain)->where('sltyp_id',  '2')->whereNull('sl_quality_confirmedby')->get();
+
+			$cid = Input::get('country');
+
+			$sale_season = Input::get('sale_season');
+
+			$sale_id = Input::get('sale');
+
+			$seller_id = Input::get('seller'); 
+
+			$partchment = quality_parameters::where('qg_id', '13')->get();
+			$coffeequality = quality_parameters::where('qg_id', '11')->get();
+			$screensanalysis = analysis_categories::orderBy('id', 'ASC')->get();
+
+			$partchment_types = ParchmentType::orderBy('pty_name', 'ASC')->get();
+
+  		}
+
+    	return View::make('cataloguequalitydetails', compact('id', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'largest', 'greensize', 'greencolor', 'greendefects', 'processing', 'cupscore', 'rawscore', 'screens', 'seller', 'sale', 'sale_lots', 'sale_season', 'cid', 'sale_id', 'seller_id', 'cupscorecomments', 'partchment', 'coffeequality', 'screensanalysis', 'partchment_types', 'coffeeclass'));
 
     
     }
@@ -210,7 +342,7 @@ class QualityController extends Controller {
 
     	if ($direction == 'null') {
 
-			$sale_lots= DB::table('sale_sl AS sl')
+			$sale_lots= DB::table('stock_mill_st AS st')
 			->select('*', 'st.id as st_id', DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'), DB::Raw('GROUP_CONCAT(DISTINCT `ccmts`.`qp_id` SEPARATOR ",") as qualityParameterCupID'), DB::Raw('CONCAT("[", GROUP_CONCAT(DISTINCT   CONCAT("{\'",`qanl`.`acat_id`,"\':\'",`qanl`.`qanl_value`,"\'}") SEPARATOR ","),"]") as qualityParameterSCRID'))
 			->from('stock_mill_st AS st')
 			->leftJoin('parchment_type_pty AS pty', 'pty.id', '=', 'st.pty_id')
@@ -240,7 +372,7 @@ class QualityController extends Controller {
 
     		$st_id = $st_id + 1;
 
-			$sale_lots= DB::table('sale_sl AS sl')
+			$sale_lots= DB::table('stock_mill_st AS st')
 			->select('*', 'st.id as st_id', DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'), DB::Raw('GROUP_CONCAT(DISTINCT `ccmts`.`qp_id` SEPARATOR ",") as qualityParameterCupID'), DB::Raw('CONCAT("[", GROUP_CONCAT(DISTINCT   CONCAT("{\'",`qanl`.`acat_id`,"\':\'",`qanl`.`qanl_value`,"\'}") SEPARATOR ","),"]") as qualityParameterSCRID'))
 			->from('stock_mill_st AS st')
 			->leftJoin('parchment_type_pty AS pty', 'pty.id', '=', 'st.pty_id')
@@ -270,7 +402,7 @@ class QualityController extends Controller {
 
     		$st_id = $st_id - 1;
 
-			$sale_lots= DB::table('sale_sl AS sl')
+			$sale_lots= DB::table('stock_mill_st AS st')
 			->select('*', 'st.id as st_id', DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'), DB::Raw('GROUP_CONCAT(DISTINCT `ccmts`.`qp_id` SEPARATOR ",") as qualityParameterCupID'), DB::Raw('CONCAT("[", GROUP_CONCAT(DISTINCT   CONCAT("{\'",`qanl`.`acat_id`,"\':\'",`qanl`.`qanl_value`,"\'}") SEPARATOR ","),"]") as qualityParameterSCRID'))
 			->from('stock_mill_st AS st')
 			->leftJoin('parchment_type_pty AS pty', 'pty.id', '=', 'st.pty_id')
