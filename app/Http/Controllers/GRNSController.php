@@ -75,7 +75,7 @@ class GRNSController extends Controller {
         $grn_number = null;
         $active_season = $this->getActiveSeason();
         $items = items::all(['id', 'it_name']);
-        $weighbridge_ticket = WeighbridgeInfo::where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->get(); 
+        $weighbridge_ticket = WeighbridgeInfo::where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->orwhere('id', 1)->get(); 
 
         $user_data = Auth::user();
         $user = $user_data->id;
@@ -195,6 +195,34 @@ class GRNSController extends Controller {
                         ['ctr_id' => $cid, 'agt_id' => $wrhse, 'gr_number' => $grn_number, 'wbi_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'agt_id' => $wrhse, 'cgr_id' => $coffee_grower, 'it_id' => $select_items, 'miller_id' => $select_miller, 'milled_by' => $milled_by, 'csn_id' => $outt_season]);
                 Activity::log('Inserted Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wbi_id '. $weighbridgeTK . 'grn_number' . $grn_number );
             }
+            if (NULL !== Input::get('outt_number_select')) {
+
+                $outturns = DB::table('process_results_prts AS prts')
+                    ->select('*', 'prts.id as prtsid')
+                    ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
+                    ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+                    ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
+                    ->where('prts.id', Input::get('outt_number_select'))
+                    ->first(); 
+
+                $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse]);
+
+                // $btid = Batch::insertGetId (
+                // ['st_id' => $st_id, 'btc_weight' => $batch_kilograms, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $weigh_scales]);
+
+                // $stlocid = StockLocation::insertGetId (
+                //     ['bt_id' => $btid, 'loc_row_id' => $selectedRow, 'loc_column_id' => $selectedColumn, 'btc_zone' => $zone]);
+
+
+            }
+
+                    // id, pr_id, st_id, st_mill_id, cfd_id, prt_id, prts_weight, prts_packages, prts_bags, prts_pockets, cgrad_id, bs_id, wr_id, loc_row, loc_column, btc_zone, prts_return_to_stock, cp_id, sqltyd_acidity, sqltyd_body, sqltyd_flavour, sqltyd_description, created_at, updated_at
+
+            // $outturns = DB::table('process_results_prts AS prts')
+            //     ->select('*', 'prts.id as prtsid')
+            //     ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
+            //     ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+            //     ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
 
 
         } else if (NULL !== Input::get('submitbatch')) {            
@@ -336,7 +364,7 @@ class GRNSController extends Controller {
         $grn_number = null;
         $active_season = $this->getActiveSeason();
         $items = items::all(['id', 'it_name']);
-        $weighbridge_ticket = WeighbridgeInfo::where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->get(); 
+        $weighbridge_ticket = WeighbridgeInfo::where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->orwhere('id', 1)->get(); 
 
         $outturn_type_selected = $outturn_type;
         if ($outturn_type_selected == null) {
@@ -374,6 +402,30 @@ class GRNSController extends Controller {
 
     
     }
+    
+    public function getOuttturns(){
+        try {
+
+            $outturns = DB::table('process_results_prts AS prts')
+                ->select('*', 'prts.id as prtsid')
+                ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
+                ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+                ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
+                ->get(); 
+
+            return json_encode($outturns);                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+
+
+    }
+
 
     public function getOutturnDetails($outt_number_search, $grn_id){
 
