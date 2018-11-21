@@ -294,7 +294,7 @@
 	            <div class="row">
 		        	<div class="form-group col-md-12">
 		            	<label>Vehicle</label>
-		                <select class="form-control" id="weighbridgeTK" name="weighbridgeTK">
+		                <select class="form-control" id="weighbridgeTK" name="weighbridgeTK" onchange="getOuttturns()">
 		               		<option></option>
 							@if (isset($weighbridge_ticket))
 										@foreach ($weighbridge_ticket->all() as $value)
@@ -410,13 +410,13 @@
 	            <div class="row">
 		            <div class="form-group col-md-12">
 		           		<label>Outturn</label>
-	                    <div class="input-group custom-search-form">
+	                    <div class="input-group custom-search-form" id="outt_number_div" name="outt_number_div" >
 	                        <input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Add/Search Outturn..."  value="{{ old('outt_number'). $outt_number }}" onchange="getMaterialsInOutturn()"></input>
 	                        <input type="hidden" class="form-control" id="outt_number_search" name="outt_number_search" style="text-transform:uppercase; " placeholder="Add/Search Outturn..."  value="{{ old('outt_number'). $outt_number }}" ></input>
 
 		                        <span class="input-group-btn">
 
-		                        <button type="submit" name="searchButton" class="btn btn-default">
+		                        <button type="submit" id="searchButtonOuttturn" name="searchButton" class="btn btn-default">
 		                        	<i class="fa fa-search"></i>
 		                        </button>
 
@@ -720,6 +720,14 @@
 		                <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" oninput="arrivalBags()" value="{{ old('batch_kilograms').$batch_kilograms  }}" >
 		                <input type="hidden"  class="form-control"  id="batch_kilograms_hidden"  name="batch_kilograms_hidden" oninput="arrivalBags()" value="{{ old('batch_kilograms')  }}" >
 			        </div>
+			    </div>
+				<div class="row">	
+			        <div class="form-group col-md-6">
+		                <label>Palette (KGS)</label>
+		                <input class="form-control"  id="pallet_kgs"  name="pallet_kgs" >	
+			        </div>
+				</div>
+				<div class="row">	
 			        <div class="form-group col-md-6" id="btn_weight">
 			        	<label></label>
 						<button type="submit" id="fetch_weight" name="fetchweight" class="btn btn-lg btn-success btn-block" onclick='fetchWeight()'>Fetch</button>		       
@@ -843,6 +851,7 @@
 	    checkIfReset();
 	    refreshOutturnsTable();
 	    getMaterials();
+	    getOuttturns();
 
 	    var warehouse = $('#warehouse');
 	    var coffee_grower = $('#coffee_grower');
@@ -935,6 +944,14 @@
 			var outt_season = $('#outt_season').val();
 			var coffee_grower = $('#coffee_grower').val();
 			var warehouse = $('#warehouse').val();
+			var pallet_kgs = $('#pallet_kgs').val();
+
+			if (outt_number == '') {
+				outt_number = $("#outt_number_select option:selected").text();
+				outt_number = outt_number.substr(0, outt_number.indexOf('-')); 
+			}
+
+
 
 			var outturn_type_batch = $('#outturn_type_batch').val();
 			var weigh_scales = $('#weigh_scales').val();
@@ -950,6 +967,10 @@
 				batch_kilograms = batch_kilograms_hidden;
 			} 
 
+			batch_kilograms = batch_kilograms-pallet_kgs;
+			batch_kilograms_hidden = batch_kilograms_hidden-pallet_kgs;
+
+
 			var selectedRow = "";
 			var selected = $("input[type='radio'][name='row_id']:checked");
 			if (selected.length > 0) {
@@ -962,6 +983,13 @@
 			if (selected_col.length > 0) {
 			    selectedColumn = selected_col.val();
 			}
+
+
+			if (packaging == 3) {
+				selectedRow = 0;
+			    selectedColumn = 0;
+			}
+
 
 
 			var url="{{ route('arrivalinformation.addBatch',['outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type_batch'=>":outturn_type_batch", 'weigh_scales'=>":weigh_scales", 'packaging'=>":packaging", 'zone'=>":zone", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'batch_kilograms_hidden'=>":batch_kilograms_hidden", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'warehouse' =>":warehouse"]) }}";
@@ -1379,8 +1407,12 @@
 		var outt_season = $('#outt_season').val();
     	var grn_number = $('#grn_number').val();
     	var warehouse = $('#warehouse').val();
-
 		var outturn_type_batch = $('#outturn_type_batch');
+
+		if (outt_number == '') {
+			outt_number = $("#outt_number_select option:selected").text();
+			outt_number = outt_number.substr(0, outt_number.indexOf('-')); 
+		}
 
 		if (item_id != '') {
 			var url="{{ route('arrivalinformation.getMaterialsInOutturn',['item_id'=>":item_id", 'outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'grn_number'=>":grn_number", 'warehouse'=>":warehouse"] ) }}";			
@@ -1571,6 +1603,48 @@
 			}			
 		// }
 
+	}
+
+	function getOuttturns(){
+		var weighbridgeTK = $('#weighbridgeTK').val();
+		var outt_number_div = $('#outt_number_div');
+		var outt_number = $('#outt_number');
+		var searchButtonOuttturn = $('#searchButtonOuttturn');
+		var deliverydetails = $('#deliverydetails');
+		var batchdetails = $('#batchdetails');
+		
+
+		if (weighbridgeTK == 1) {
+			outt_number.hide();			
+			searchButtonOuttturn.hide();			
+			deliverydetails.hide();			
+			// batchdetails.hide();			
+			var url="{{ route('arrivalinformationgrns.getOuttturns') }}";
+
+			var sel = $('<select id ="outt_number_select" name ="outt_number_select" width="100%" onchange="getMaterialsInOutturn()" >').appendTo(outt_number_div);
+			sel.append($("<option>").attr('value','').text(''));
+
+			$.ajax({
+			url: url,
+			type: 'GET',
+			}).success(function(response) {
+				var outturns = jQuery.parseJSON(response);
+				$.each(outturns,function(key, value) 
+				{	
+					sel.append($("<option>").attr('value',value["prtsid"]).text(value["st_outturn"]+'-'+value["prt_name"]));
+
+				});
+			}).error(function(error) {
+				console.log(error)
+			});  
+
+		} else {
+			outt_number.show();			
+			searchButtonOuttturn.show();			
+			deliverydetails.show();			
+			batchdetails.show();	
+		}
+		
 	}
 
 	function fetchWarehouseDetails()
