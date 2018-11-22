@@ -181,6 +181,21 @@ class GRNSController extends Controller {
                 Activity::log('Inserted Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wbi_id '. $weighbridgeTK . 'grn_number' . $grn_number );
             }
 
+                // $outturns = DB::table('process_results_prts AS prts')
+                //     ->select('*', 'prts.id as prtsid')
+                //     ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
+                //     ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+                //     ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
+                //     ->where('prts.id', Input::get('outt_number_select'))
+                //     ->first(); 
+
+                // DB::table('process_results_prts')->update([
+                //         [
+                //             'prts_confirmed_by'      => $user
+                //         ]
+                // ])->where('id', $outturns->prtsid);
+
+
         } else if (NULL !== Input::get('submitlot')) {
 
             $grn_id = null;
@@ -206,6 +221,7 @@ class GRNSController extends Controller {
                     ->first(); 
 
                 $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse]);
+
 
                 // $btid = Batch::insertGetId (
                 // ['st_id' => $st_id, 'btc_weight' => $batch_kilograms, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $weigh_scales]);
@@ -411,6 +427,7 @@ class GRNSController extends Controller {
                 ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
                 ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
                 ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
+                ->whereNull('prts_confirmed_by')
                 ->get(); 
 
             return json_encode($outturns);                    
@@ -425,6 +442,31 @@ class GRNSController extends Controller {
 
 
     }
+
+    public function getGrower($outt_number_select){
+        try {
+
+            $outturns = DB::table('process_results_prts AS prts')
+                ->select('*', 'prts.id as prtsid')
+                ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
+                ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+                ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
+                ->where('prts.id', $outt_number_select)
+                ->first(); 
+
+            return json_encode($outturns->cgr_id);                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+
+
+    }
+
 
 
     public function getOutturnDetails($outt_number_search, $grn_id){
@@ -708,8 +750,6 @@ class GRNSController extends Controller {
             } else {
                 $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('mt_id', '=', $outturn_type_batch)->first();
             }
-
-
             if ($stock_details != null) {
                 $package_weight = Packaging::where('id', $packaging)->first();
                 if ($package_weight != NULL) {            

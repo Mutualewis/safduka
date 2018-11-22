@@ -397,7 +397,7 @@ class Controller extends BaseController
             $execute = preg_replace("/[^0-9\.]/", '', $execute);
             $weight = NULL;
 
-            $execute = 100;
+            // $execute = 100;
 
             if ($execute == NULL) {
                 $weight = "Unstable wait...";
@@ -439,16 +439,16 @@ class Controller extends BaseController
                 $strPortName = $weigh_scales_details->ws_port_name;
             }
 
-            $ch = curl_init();
-            $ip_address = $this->get_client_ip();
-            curl_setopt($ch, CURLOPT_URL,"http://".$ip_address."//weighscale/api.php");
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS,
-                        "strBaudRate=".$strBaudRate."&strParity=".$strParity."&strStopBits=".$strStopBits."&strDataBits=".$strDataBits."&strPortName=".$strPortName."");
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $weight = curl_exec ($ch);
-            curl_close ($ch);   
-            $batch_kilograms = $weight;  
+            // $ch = curl_init();
+            // $ip_address = $this->get_client_ip();
+            // curl_setopt($ch, CURLOPT_URL,"http://".$ip_address."//weighscale/api.php");
+            // curl_setopt($ch, CURLOPT_POST, 1);
+            // curl_setopt($ch, CURLOPT_POSTFIELDS,
+            //             "strBaudRate=".$strBaudRate."&strParity=".$strParity."&strStopBits=".$strStopBits."&strDataBits=".$strDataBits."&strPortName=".$strPortName."");
+            // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            // $weight = curl_exec ($ch);
+            // curl_close ($ch);   
+            // $batch_kilograms = $weight;  
             $batch_kilograms = 0;  
             $weigh_scale_session = "scale - ".$weigh_scales."";
 
@@ -456,7 +456,7 @@ class Controller extends BaseController
                 session()->pull($weigh_scale_session); 
             }     
 
-            return json_encode($batch_kilograms); 
+            return json_encode(0); 
         
         }catch (\PDOException $e) {
             return response()->json([

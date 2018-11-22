@@ -132,6 +132,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/arrivalinformation/getMaterialsInOutturn/{item_id}/{outt_number}/{outt_season}/{grn_number}/{warehouse}', ['as'=>'arrivalinformation.getMaterialsInOutturn','uses'=>'Controller@getMaterialsInOutturn']);
 
+		Route::get('/arrivalinformation/getGrower/{outt_number_select}', ['as'=>'arrivalinformation.getGrower','uses'=>'GRNSController@getGrower']);
 
 		Route::get('/arrivalinformation/getScales/{warehouse}', ['as'=>'arrivalinformation.getScales','uses'=>'Controller@getScales']);
 		Route::get('/arrivalinformation/getLocations/{warehouse}', ['as'=>'arrivalinformation.getLocations','uses'=>'Controller@getLocations']);

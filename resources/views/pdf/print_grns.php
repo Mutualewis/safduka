@@ -229,7 +229,7 @@
 			<table style="text-align: left; font-size: 13px" >
 				<tr>
 					<td width="100px" align="left">
-						<strong>Receiving Clerk:</strong> <?php if(isset($received_by))  echo $received_by; ?>
+						<strong>Receiving Clerk:</strong> Nancy Kariuki
 					</td>
 					<td width="50px" align="left">
 						<strong>Signature:</strong> <?php echo " _________________________" ?> <br>
@@ -243,7 +243,7 @@
 				</tr>
 				<tr>
 					<td width="100px" align="left">
-						<strong>Supervisor:</strong> <?php echo "Nelson" ?>
+						<strong>Supervisor:</strong> <?php echo "Rotich" ?>
 					</td>
 					<td width="50px" align="left">
 						<strong>Signature:</strong> <?php echo " _________________________"; ?> <br>

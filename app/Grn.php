@@ -17,7 +17,7 @@ class Grn extends Model {
 
 	protected static $logOnlyDirty = true;
 
-	// public $timestamps = false;
+	public $timestamps = true;
 	/**
 	 * The attributes that are mass assignable.
 	 *

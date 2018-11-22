@@ -1009,6 +1009,8 @@
 			url = url.replace(':selectedColumn', selectedColumn);
 			url = url.replace(':warehouse', warehouse);
 
+			alert(url);
+
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
@@ -1045,8 +1047,10 @@
 
 
 	$( "#confirmgrnsbtn" ).click(function(event){
+		// event.preventDefault();
+		// $("#ratesModalCenter").modal();	
 		event.preventDefault();
-		$("#ratesModalCenter").modal();	
+		postConfirmMovement()
 	})
 	$( "#confirmgrnsModalbtn" ).click(function(event){
 		event.preventDefault();
@@ -1065,6 +1069,9 @@
 
 		var service = $('#service').val();
 		var team = $('#team').val();
+
+		var service = 1;
+		var team = 1;
 
 				if(cid==''){
 					bootbox.alert("Please select country")
@@ -1234,6 +1241,10 @@
 		var outt_number = $('#outt_number').val();
 		var outt_season = $('#outt_season').val();
 		var outturn_type_batch = $('#outturn_type_batch').val();
+		if (outt_number == '') {
+			outt_number = $("#outt_number_select option:selected").text();
+			outt_number = outt_number.substr(0, outt_number.indexOf('-')); 
+		}
 
 		var url="{{ route('arrivalinformationgrns.getBatch',['outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'outturn_type_batch'=>":outturn_type_batch"]) }}";
 		url = url.replace(':outt_number', outt_number);
@@ -1332,16 +1343,17 @@
 
 			$('#batch_table tr').not(':first').not(':last').remove();
 			var html = '';
-		
+			if (batch != null && batch.length < 1) {
 			$.each(batch,function(key, value) 
-			{	
+				{	
 
-          		html += '<tr><td>' + value["btc_weight"] + 
-                    '</td><td>' + value["btc_tare"] + '</td><td>' + value["btc_net_weight"] + '</td><td>' + value["btc_packages"] + '</td><td>' + value["wr_name"] + '</td><td>' + value["loc_row"] + '</td><td>' + value["loc_column"] + '</td><td>' + value["btc_zone"] + '</td><td><button type="button" onclick="batch_delete(' + value["btcid"] + ')" class="btn btn-success btn-danger">Delete</button></td></tr>';
+	          		html += '<tr><td>' + value["btc_weight"] + 
+	                    '</td><td>' + value["btc_tare"] + '</td><td>' + value["btc_net_weight"] + '</td><td>' + value["btc_packages"] + '</td><td>' + value["wr_name"] + '</td><td>' + value["loc_row"] + '</td><td>' + value["loc_column"] + '</td><td>' + value["btc_zone"] + '</td><td><button type="button" onclick="batch_delete(' + value["btcid"] + ')" class="btn btn-success btn-danger">Delete</button></td></tr>';
 
 
-			});
-			$('#batch_table tr').first().after(html);
+				});
+				$('#batch_table tr').first().after(html);
+			}
 		});
 
 	}
@@ -1408,7 +1420,8 @@
     	var grn_number = $('#grn_number').val();
     	var warehouse = $('#warehouse').val();
 		var outturn_type_batch = $('#outturn_type_batch');
-
+		
+		getGrower();
 		if (outt_number == '') {
 			outt_number = $("#outt_number_select option:selected").text();
 			outt_number = outt_number.substr(0, outt_number.indexOf('-')); 
@@ -1424,6 +1437,7 @@
 
 			outturn_type_batch.find('option').remove(); 
 
+
 			$.ajax({
 			url: url,
 			type: 'GET',
@@ -1434,6 +1448,7 @@
 				$.each(material,function(key, value) 
 				{	
 					outturn_type_batch.append('<option value=' + key + '>&nbsp;&nbsp;&nbsp;' + value + '</option>');
+					
 
 				});			
 
@@ -1444,6 +1459,31 @@
 		}
 
 	}
+
+	function getGrower()
+	{
+		var coffee_grower = $('#coffee_grower');
+		
+		var outt_number_select = $('#outt_number_select').val();
+		var url="{{ route('arrivalinformation.getGrower',['outt_number_select'=>":outt_number_select"] ) }}";			
+		url = url.replace(':outt_number_select', outt_number_select);
+
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			var grower = jQuery.parseJSON(response);
+			coffee_grower.val(grower).prop('selected', true);
+
+		}).error(function(error) {
+			console.log(error)
+		});
+
+
+	
+		// coffee_grower.val(value["cgr_id"]).prop('selected', true);
+	}
+
 
 	function refreshOutturnsTable()
 	{
@@ -1461,8 +1501,6 @@
 		var url="{{ route('arrivalinformation.getGRNContents',[ 'grn_number'=>":grn_number", 'warehouse'=>":warehouse"] ) }}";		
 		url = url.replace(':grn_number', grn_number);
 		url = url.replace(':warehouse', warehouse);
-
-
 
 		$.ajax({
 		url: url,
@@ -1612,6 +1650,7 @@
 		var searchButtonOuttturn = $('#searchButtonOuttturn');
 		var deliverydetails = $('#deliverydetails');
 		var batchdetails = $('#batchdetails');
+		var coffee_grower = $('#coffee_grower');
 		
 
 		if (weighbridgeTK == 1) {
@@ -1632,11 +1671,15 @@
 				$.each(outturns,function(key, value) 
 				{	
 					sel.append($("<option>").attr('value',value["prtsid"]).text(value["st_outturn"]+'-'+value["prt_name"]));
-
 				});
 			}).error(function(error) {
 				console.log(error)
 			});  
+
+			var miller_id = $('#select_miller');
+			var select_items = $('#select_items');			
+			miller_id.val('1').prop('selected', true);
+			select_items.val('3').prop('selected', true);
 
 		} else {
 			outt_number.show();			
