@@ -48,6 +48,7 @@ use Ngea\AgentCategory;
 use Ngea\BatchMill;
 use Ngea\StockLocationBatch;
 use Ngea\OutturnNumberSettings;
+use Ngea\DispatchType;
 
 use Yajra\Datatables\Datatables;
 use niklasravnsborg\LaravelPdf\Facades\Pdf as PDF;
@@ -55,9 +56,9 @@ use Activity;
 use Excel;
 use Auth;
 
-class GRNSController extends Controller {
+class DispatchController extends Controller {
 
-    public function arrivalInformationGRNSForm (Request $request){
+    public function movementDispatchForm (Request $request){
 
         $Season = Season::all(['id', 'csn_season']);
         $country = country::all(['id', 'ctr_name', 'ctr_initial']);
@@ -74,6 +75,8 @@ class GRNSController extends Controller {
         $teams   = teams::all(['id', 'tms_grpname']);
         $grn_number = null;
         $active_season = $this->getActiveSeason();
+        $dispatch_type = DispatchType::all(['id', 'dt_name']);
+
         $items = items::all(['id', 'it_name']);
         $weighbridge_ticket = WeighbridgeInfo::where(DB::Raw('LEFT(wbi_time_in, 10)'), date("Y-m-d"))->orwhere('id', 1)->get(); 
 
@@ -84,12 +87,18 @@ class GRNSController extends Controller {
         $admin = 1;
         $timeout = $this->dialog_timeout;
 
-        return View::make('arrivalinformationgrns', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'expected_arrival', 'rates', 'teams', 'active_season', 'growers', 'items', 'millers', 'material', 'basket', 'packaging', 'warehouse', 'role', 'admin', 'timeout'));    
+        $dispatch_queue = DB::table('stock_warehouse_st AS st')
+            ->select('*', 'st.id as stid')
+            ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+            ->whereNotNull('st.st_to_dispatch')
+            ->get(); 
+
+        return View::make('movementdispatch', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'expected_arrival', 'rates', 'teams', 'active_season', 'growers', 'items', 'millers', 'material', 'basket', 'packaging', 'warehouse', 'role', 'admin', 'timeout', 'dispatch_type', 'dispatch_queue'));    
 
     }
 
 
-    public function arrivalInformationGRNS (Request $request) {
+    public function movementDispatch (Request $request) {
         $active_season = $this->getActiveSeason();
         $grn_number = Input::get('grn_number');
         $weighbridgeTK = Input::get('weighbridgeTK');
@@ -414,10 +423,45 @@ class GRNSController extends Controller {
         }
 
 
-        return View::make('arrivalinformationgrns', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'grn_details', 'coffeeGrade', 'sale', 'coffee_details', 'saleid', 'basket', 'packaging', 'stock_details', 'warehouse', 'warehouse_count', 'wrhse', 'location', 'weigh_scales', 'weigh_scales_count', 'wsid', 'rw', 'clm', 'zone', 'packages_batch', 'batch_kilograms', 'grnsview', 'batchview', 'expected_arrival', 'stock_id', 'st_quality_check', 'rates', 'teams', 'wbtk', 'ot_season', 'active_season', 'growers', 'items', 'millers', 'material', 'basket', 'packaging', 'warehouse', 'role', 'admin', 'timeout', 'grn_content')); 
+        return View::make('arrivalinformationgrns', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'grn_details', 'coffeeGrade', 'sale', 'coffee_details', 'saleid', 'basket', 'packaging', 'stock_details', 'warehouse', 'warehouse_count', 'wrhse', 'location', 'weigh_scales', 'weigh_scales_count', 'wsid', 'rw', 'clm', 'zone', 'packages_batch', 'batch_kilograms', 'grnsview', 'batchview', 'expected_arrival', 'stock_id', 'st_quality_check', 'rates', 'teams', 'wbtk', 'ot_season', 'active_season', 'growers', 'items', 'millers', 'material', 'basket', 'packaging', 'warehouse', 'role', 'admin', 'timeout', 'grn_content', 'dispatch_type')); 
 
     
     }
+
+    public function getDispatch($dispatch_type){
+        try {
+
+            $dispatchType = DB::table('agent_agt AS agt')
+                ->select('*', 'dt.id as dtid')
+                ->leftJoin('agent_category_agtc AS agtc', 'agtc.id', '=', 'agt.agtc_id')
+                ->leftJoin('dispatch_type_dt AS dt', 'agtc.id', '=', 'dt.agt_id')
+                ->where('dt.id', $dispatch_type)
+                ->get(); 
+            $agent_name = null;
+
+            foreach ($dispatchType as $key => $value) {
+               $agent_name = $value->agtc_name;
+            }
+
+            return response()->json([
+                'dispatchType' => $dispatchType,
+                'agent_name' =>  $agent_name
+            ]);
+
+            // return json_encode($dispatchType);                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+
+
+    }
+
+
     
     public function getOuttturns(){
         try {
@@ -446,22 +490,17 @@ class GRNSController extends Controller {
 
     }
 
-    public function getGrower($outt_number_select){
+    public function getGrower($outt_number_search){
         try {
 
-            $outturns = DB::table('process_results_prts AS prts')
-                ->select('*', 'prts.id as prtsid', 'grm.cgr_id as cgrid')
-                ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
-                ->leftJoin('grn_gr AS grm', 'grm.id', '=', 'st.grn_id')
-                ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
-                ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
-                ->leftJoin('stock_warehouse_st AS stw', 'stw.prts_id', '=', 'prts.id')
-                ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'stw.grn_id')
-                ->where('prts.id', $outt_number_select)
+            $outturns = DB::table('stock_warehouse_st AS st')
+                ->select('*')
+                ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'st.grn_id')
+                ->where('st.id', $outt_number_search)
                 ->first(); 
 
             return response()->json([
-                'grower' => $outturns->cgrid,
+                'grower' => $outturns->cgr_id,
                 'to_dispatch' => $outturns->st_to_dispatch
             ]);                 
         

@@ -1,5 +1,5 @@
 @extends ('layouts.dashboard')
-@section('page_heading','Arrival Information')
+@section('page_heading','Dispatch Information')
 @section('section')
 <div class="col-sm-14 col-md-offset-0">
 			<div class="row">
@@ -228,8 +228,8 @@
 		$grower_id   = NULL;
 	}
 
-	if (!isset($item_id )) {
-		$item_id   = NULL;
+	if (!isset($dispatch_type_id )) {
+		$dispatch_type_id   = NULL;
 	}
 
 	if (!isset($miller_id )) {
@@ -238,6 +238,11 @@
 
 	if (!isset($material_id )) {
 		$material_id   = NULL;
+	}
+
+
+	if (!isset($item_id )) {
+		$item_id   = NULL;
 	}
 
 	if (!isset($basket_id )) {
@@ -251,7 +256,7 @@
 ?>
 
     <div class="col-md-14">
-	        <form role="form" method="POST" action="arrivalinformationgrns">
+	        <form role="form" method="POST" action="movementdispatch">
 	        	<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 		        <div class="row">
@@ -275,9 +280,9 @@
 
 		        <div class="row">
 			    	<div class="form-group col-md-12">
-			    		<label>GRN</label>
+			    		<label>GDN</label>
 	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" id="grn_number" name="grn_number" name="grn_number" style="text-transform:uppercase; " placeholder="Search/Enter GRN..."  value="{{ $grn_number}}"></input>
+	                        <input type="text" class="form-control" id="grn_number" name="grn_number" name="grn_number" style="text-transform:uppercase; " placeholder="Search/Enter GDN..."  value="{{ $grn_number}}"></input>
 
 		                        <span class="input-group-btn">
 
@@ -294,7 +299,7 @@
 	            <div class="row">
 		        	<div class="form-group col-md-12">
 		            	<label>Vehicle</label>
-		                <select class="form-control" id="weighbridgeTK" name="weighbridgeTK" onchange="getOuttturns()">
+		                <select class="form-control" id="weighbridgeTK" name="weighbridgeTK">
 		               		<option></option>
 							@if (isset($weighbridge_ticket))
 										@foreach ($weighbridge_ticket->all() as $value)
@@ -331,15 +336,15 @@
 
 	            <div class="row">
 		            <div class="form-group col-md-12">
-		                <label>Item Name</label>
-		                <select class="form-control searchable" id="select_items" name="select_items" onchange="getMaterials()";>
+		                <label>Dispatch Type</label>
+		                <select class="form-control searchable" id="dispatch_type" name="dispatch_type" onchange="getDispatch()";>
 		                	<option></option> 
-							@if (isset($items) && count($items) > 0)
-										@foreach ($items->all() as $value)
-											@if ($value->id == $item_id)
-												<option value="{{ $value->id }}" selected="selected">{{ $value->it_name}}</option>
+							@if (isset($dispatch_type) && count($dispatch_type) > 0)
+										@foreach ($dispatch_type->all() as $value)
+											@if ($value->id == $dispatch_type_id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->dt_name}}</option>
 											@else
-												<option value="{{ $value->id }}">{{ $value->it_name}}</option>
+												<option value="{{ $value->id }}">{{ $value->dt_name}}</option>
 											@endif
 
 										@endforeach
@@ -348,6 +353,47 @@
 		                </select>
 		            </div>
 		        </div>
+
+		        <div class="row">
+		            <div class="form-group col-md-12" id="agent_type" name="agent_type">
+		           <!--      <label>Warehouse To</label>
+		                <select class="form-control" id="warehouse" name="warehouse" onchange='fetchWarehouseDetails()'>
+		                	<option></option> 
+								@if (isset($warehouse))
+											@foreach ($warehouse->all() as $value)
+											@if ($warehouse_id ==  $value->id)
+												<option value="{{ $value->id }}" selected="selected">{{ $value->agt_name}}</option>
+											@else
+												<option value="{{ $value->id }}">{{ $value->agt_name}}</option>
+											@endif
+											@endforeach
+										
+								@endif
+	            		</select> -->
+		            </div>
+		        </div>
+
+
+	            <div class="row">
+		            <div class="form-group col-md-12">
+	        			<label>Outturn-Grade</label>
+		                <select class="form-control" id="outt_number_search" name="outt_number_search" placeholder="Select Outturn" data-search="true" onchange="getGrower();">
+		                	<option></option> 
+							@if (isset($dispatch_queue) && count($dispatch_queue) > 0)
+										@foreach ($dispatch_queue as $value)
+											@if ($stock_id ==  $value->id)
+												<option value="{{ $value->stid }}" selected="selected">{{ $value->st_outturn.'-'.$value->mt_name}}</option>
+											@else
+												<option value="{{ $value->stid }}">{{ $value->st_outturn.'-'.$value->mt_name}}</option>
+											@endif
+
+										@endforeach
+									
+							@endif
+		                </select>      
+		            </div> 
+		        </div>
+
 		        <div class="row">
 		            <div class="form-group col-md-12">
 		                <label>Grower</label>
@@ -367,87 +413,10 @@
 		                </select>	
 		            </div>
 	        	</div>
-		        <div class="row">
-		            <div class="form-group col-md-12">
-		                <label>Miller</label>
-		                <select class="form-control searchable" id="select_miller" name="select_miller" onchange=fetchOutturnNumber();>
-		                	<option></option> 
-							@if (isset($millers) && count($millers) > 0)
-										@foreach ($millers->all() as $value)
-											@if ($value->id == $miller_id)
-												<option value="{{ $value->id }}" selected="selected">{{ $value->agt_name}}</option>
-											@else
-												<option value="{{ $value->id }}">{{ $value->agt_name}}</option>
-											@endif
-
-										@endforeach
-									
-							@endif
-		                </select>		                
-		            </div>
-	        	</div>
-
-		        <div class="row">
-		            <div class="form-group col-md-12">
-		                <label>Milled By</label>
-		                <select class="form-control" id="milled_by" name="milled_by" >
-		                	<option></option> 
-			<!-- 				@if (isset($items) && count($items) > 0)
-										@foreach ($items->all() as $value)
-											@if ($value->id == $item_id)
-												<option value="{{ $value->id }}" selected="selected">{{ $value->it_name}}</option>
-											@else
-												<option value="{{ $value->id }}">{{ $value->it_name}}</option>
-											@endif
-
-										@endforeach
-									
-							@endif -->
-		                </select>                
-		            </div>
-	        	</div>
-
-	            <div class="row">
-		            <div class="form-group col-md-12">
-		           		<label>Outturn</label>
-	                    <div class="input-group custom-search-form" id="outt_number_div" name="outt_number_div" >
-	                        <input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Add/Search Outturn..."  value="{{ old('outt_number'). $outt_number }}" onchange="getMaterialsInOutturn()"></input>
-	                        <input type="hidden" class="form-control" id="outt_number_search" name="outt_number_search" style="text-transform:uppercase; " placeholder="Add/Search Outturn..."  value="{{ old('outt_number'). $outt_number }}" ></input>
-
-		                        <span class="input-group-btn">
-
-		                        <button type="submit" id="searchButtonOuttturn" name="searchButton" class="btn btn-default">
-		                        	<i class="fa fa-search"></i>
-		                        </button>
-
-	                    </span>
-	                    </div>          
-		            </div> 
-		        </div>
-
-		        <div class="row">
-		        	<div class="form-group col-md-12">
-		        		<label id='to_dispatch_label' >To Dispatch</label>
-		        		<input class='form-control' type='checkbox' id='to_dispatch' name='to_dispatch' value='1' />
-		        	</div>
-		        </div>
-
-		        <div class="row">
-
-		            <div class="form-group col-md-6">
-		            	<button type="submit" id ="deliverydetails" name="deliverydetails" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalDeliveryCenter'onclick='displayDeliveryDetails(event, this)' data-dprtname='{$value->dprt_name}'>Add Material</button>
-					</div>	
-
-		            <div class="form-group col-md-6">
-						<button type="submit" id ="batchdetails" name="batchdetails" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalBatchCenter'onclick='displayBatch()' data-dprtname='{$value->dprt_name}'>Add Batch</button>
-					</div>	
-
-				</div>
-
 
 				<div class="row">
 					<div class="col-md-12 col-md-offset-0 pre-scrollable" style="max-height: 800px;">
-						<h3>Outturn(s) In GRN</h3>
+						<h3>Outturn(s) In GDN</h3>
 						<table class="table table-striped" id="grn_outturns">
 						<thead>
 						<tr>	
@@ -496,7 +465,7 @@
 
 				<div class="row">
 		            <div class="form-group col-md-12">
-						<button type="submit" name="submitlot" class="btn btn-lg btn-success btn-block">Add/Update Arrival</button>						 
+						<button type="submit" name="submitlot" class="btn btn-lg btn-success btn-block">Add/Update Dispatch</button>						 
 		            </div>	
 		        </div>
 
@@ -513,7 +482,7 @@
 
 			        ?>
 			            <div class="form-group col-md-12">
-							<button type="submit" id="confirmgrnsbtn" name="confirmgrns" class="btn btn-lg btn-danger btn-block" formnovalidate>Confirm GRN</button>	           		
+							<button type="submit" id="confirmgrnsbtn" name="confirmgrns" class="btn btn-lg btn-danger btn-block" formnovalidate>Confirm GDN</button>	           		
 			            </div>	
 
 			        <?php
@@ -526,300 +495,6 @@
 	</div>
 
 </div>	
-<!-- Modal -->
-<div class="modal fade" id="ratesModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="title">
-        <div class="alert alert-info" role="alert">
-		  <h4 class="alert-heading">
-		  Please select service and team</h4>
-		</div>
-    	</h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-
-						
-						
-		    <div class="form-group">
-			                <label>Service</label>
-			                <select class="form-control" name="service" id="service">
-			                	<option></option> 
-								@if (isset($rates) && count($rates) > 0)
-											@foreach ($rates->all() as $rate)
-												@if ($rate_id ==  $rate->id)
-													<option value="{{ $rate->id }}" selected="selected">{{ $rate->service}}</option>
-												@else
-												<option value="{{ $rate->id }}" >{{ $rate->service}}</option>
-												@endif
-
-											@endforeach
-										
-								@endif
-			                </select>	
-			                <!-- <input type="hidden" name="country" id="country" value="{{ $cid }}">	 -->
-			            </div>
-						<div class="form-group">
-			                <label>Team</label>
-			                <select class="form-control" name="team" id="team">
-			                	<option></option> 
-								@if (isset($teams) && count($teams) > 0)
-											@foreach ($teams->all() as $team)
-												@if ($team_id ==  $team->id)
-													<option value="{{ $team->id }}" selected="selected">{{ $team->tms_grpname}}</option>
-												@else
-												<option value="{{ $team->id }}" >{{ $team->tms_grpname}}</option>
-												@endif
-
-											@endforeach
-										
-								@endif
-			                </select>	
-			                <!-- <input type="hidden" name="country" id="country" value="{{ $cid }}">	 -->
-			            </div>
-				
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <a href='' class='btn btn-danger confirm-delete' id="confirmgrnsModalbtn">Confirm</a>
-		<button type="button" id="printgrns" class="btn btn-warning" data-dismiss="modal">Print</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="modal fade" id="menuModalDeliveryCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="title">
-        <div class="alert alert-info" role="alert">
-		  <h4 class="alert-heading">
-		  Delivery Details</h4>
-		</div>
-    	</h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id = "delivery_modal" style="font-size: 35px;">
-
-            <div class="form-group">
-                <label>Outturn Type</label>
-                <select class="form-control" id="outturn_type" name="outturn_type"><!--  onchange='fetchOutturnNumber()'> -->
-                	<option></option> 
-					@if (isset($material) && count($material) > 0)
-								@foreach ($material->all() as $value)
-									@if ($value->id == $material_id)
-										<option value="{{ $value->id }}" selected="selected">{{ $value->mt_name}}</option>
-									@else
-										<option value="{{ $value->id }}">{{ $value->mt_name}}</option>
-									@endif
-
-								@endforeach
-							
-					@endif
-                </select>	
-            </div>
-
-            <div class="form-group">
-                <label>Moisture(%)</label>
-                <input class="form-control"  id="moisture"  name="moisture" value="{{ old('moisture').$moisture  }}">	<!--  onchange='fetchOutturnNumber()'> -->
-            </div>
-
-            <div class="form-group">
-                <label>Basket</label>
-                <select class="form-control" id="basket" name="basket">
-               		<option></option>
-					@if (isset($basket))
-								@foreach ($basket->all() as $value)
-								@if ($basket_id ==  $value->id)
-									<option value="{{ $value->id }}" selected="selected">{{ $value->bs_code. " (". $value->bs_quality.")"}}</option>
-								@else
-									<option value="{{ $value->id }}">{{ $value->bs_code. " (". $value->bs_quality.")"}}</option>
-								@endif
-								@endforeach
-							
-					@endif
-                </select>
-            </div>
-				
-      </div>
-      <div class="modal-footer">
-        <button type="button" name="add_items_delivery" id="add_items_delivery" class="btn btn-primary btn-block" style="font-size: 35px;">Add</button>
-        <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal" style="font-size: 35px;">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="menuModalBatchCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="title">
-        <div class="alert alert-info" role="alert">
-		  <h4 class="alert-heading">Batch Details</h4>
-			<button type="button" name="submitbatch" id="submitbatch" class="btn btn-primary btn-prev" style="font-size: 35px;">Add</button>
-			<button type="button" class="btn btn-secondary btn-next" data-dismiss="modal" style="font-size: 35px;">Close</button>
-
-		</div>
-    	</h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id = "batch_modal" style="font-size: 35px;">
-	      	<div>
-	        	<div class="row">
-		            <div class="form-group col-md-6">
-		                <label>Outturn Type</label>
-		                <select class="form-control" id="outturn_type_batch" name="outturn_type_batch" onchange="populateBatches()" >
-		                </select>	
-		            </div>
-
-					<div class="form-group col-md-6">
-		                <label>Weigh Scale</label>
-		                <select class="form-control" id="weigh_scales" name="weigh_scales"  onchange='checkIfReset()'>
-		                	<option></option> 
-	            		</select>
-					</div>
-
-				</div>
-
-				<div class="row">
-			        <div class="form-group col-md-6">
-		                <label >Zone</label>
-		                <input class="form-control"  id="zone"  name="zone" value="{{ old('zone').$zone  }}">
-			        </div>	
-	  
-		            <div class="form-group col-md-6">
-		                <label>Packaging</label>
-		                <select class="form-control" id="packaging"  name="packaging" required>
-		                	<option></option> 
-								@if (isset($packaging))
-											@foreach ($packaging->all() as $value)
-											@if ($pkg ==  $value->id)
-												<option value="{{ $value->id }}" selected="selected">{{ $value->pkg_name}}</option>
-												<?php $pkg_weight = $value->pkg_weight; ?>
-											@else
-												<option value="{{ $value->id }}">{{ $value->pkg_name}}</option>
-											@endif
-											@endforeach
-										
-								@endif
-		                </select>	
-		        	</div>
-		        </div>
-		        <div class="row">
-			        <div class="form-group col-md-6">
-		                <label >Packages</label>
-		                <input class="form-control"  id="packages_batch"  name="packages_batch" oninput="calculateValue()" value="{{ old('packages_batch') }}">		            
-			        </div>		
-
-			        <div class="form-group col-md-6">
-		                <label>Weight (KGS)</label>
-		                <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" oninput="arrivalBags()" value="{{ old('batch_kilograms').$batch_kilograms  }}" >
-		                <input type="hidden"  class="form-control"  id="batch_kilograms_hidden"  name="batch_kilograms_hidden" oninput="arrivalBags()" value="{{ old('batch_kilograms')  }}" >
-			        </div>
-			    </div>
-				<div class="row">	
-			        <div class="form-group col-md-6">
-		                <label>Palette (KGS)</label>
-		                <input class="form-control"  id="pallet_kgs"  name="pallet_kgs" >	
-			        </div>
-				</div>
-				<div class="row">	
-			        <div class="form-group col-md-6" id="btn_weight">
-			        	<label></label>
-						<button type="submit" id="fetch_weight" name="fetchweight" class="btn btn-lg btn-success btn-block" onclick='fetchWeight()'>Fetch</button>		       
-					</div>
-				</div>
-				<h3  data-toggle="collapse" data-target="#tabpanel">Location</h3> 
-				<div id="tabpanel" class="tabpanel">
-
-				    <ul class="nav nav-tabs" role="tablist">
-
-				            <li role="presentation" class="active">
-				                <a href="#tab-row" aria-controls="#tab-row" role="tab" data-toggle="tab">Row</a>
-				            </li>
-				            <li role="presentation">
-				                <a href="#tab-column" aria-controls="#tab-column" role="tab" data-toggle="tab">Column</a>
-				            </li>
-				            <li role="presentation">
-				                <a href="#tab-batches" aria-controls="#tab-batches" role="tab" data-toggle="tab">Batches</a>
-				            </li>
-				    
-				    </ul>
-
-				    <div class="tab-content">
-			            <div role="tabpanel" class="tab-pane active" class="tab-pane" id="tab-row">
-					        <div class="row" id="row_list">		        	
-					        </div>
-					    </div>
-
-			            <div role="tabpanel" class="tab-pane" class="tab-pane" id="tab-column">
-					        <div class="row" id="column_list">	
-					        </div>
-					    </div>
-
-			            <div role="tabpanel" class="tab-pane" class="tab-pane" id="tab-batches">
-					        <div class="row">		        	
-					            <div class="form-group col-md-12">
-									<table class="table table-striped" id="batch_table">
-									<thead>
-									<tr>			
-										<th>
-											Kilos
-										</th>
-										<th>
-											Tare
-										</th>
-										<th>
-											Net
-										</th>
-										<th>
-											Packages
-										</th>
-										<th>
-											Warehouse
-										</th>
-										<th>
-											Row
-										</th>
-										<th>
-											Column
-										</th>
-										<th>
-											Zone
-										</th>
-										<th>
-											Remove
-										</th>
-									</tr>
-									</thead>
-									<tbody>
-
-									</tbody>
-									</table>
-					            </div>
-					        </div>
-					    </div>
-
-					</div>
-			</div>
-				
-      </div>
-      <div class="modal-footer" id="footer"> 
-      </div>
-    </div>
-  </div>
-</div>
 
 
 
@@ -1379,6 +1054,44 @@
 
 <script type="text/javascript">
 
+	
+
+	function getDispatch()
+	{
+		var dispatch_type = $('#dispatch_type').val();
+		var agent_type = $('#agent_type');
+
+		if (dispatch_type != '') {
+			var url="{{ route('movementdispatch.getDispatch',['dispatch_type'=>":dispatch_type"]) }}";			
+			url = url.replace(':dispatch_type', dispatch_type);
+
+
+			$.ajax({
+			url: url,
+			type: 'GET',
+			}).success(function(response) {
+				var $label = $("<label>").text(response.agent_name);
+				$label.appendTo(agent_type);
+				$("<br>").appendTo(agent_type);
+
+				var sel = $('<select id ="outt_number_select" name ="outt_number_select" width="100%" >').appendTo(agent_type);
+				sel.append($("<option>").attr('value','').text(''));
+
+				$.each(response.dispatchType,function(key, value) 
+				{
+					sel.append($("<option>").attr('value',value["dtid"]).text(value["agt_name"]));
+				});	
+
+			}).error(function(error) {
+				console.log(error)
+			});
+		}			
+
+		fetchOutturnNumber();
+
+	}
+
+
 	function getMaterials()
 	{
 		var item_id = $('#select_items').val();
@@ -1466,12 +1179,12 @@
 
 	function getGrower()
 	{
-		var coffee_grower = $('#coffee_grower');
-		var to_dispatch = $('#to_dispatch');
-		
-		var outt_number_select = $('#outt_number_select').val();
-		var url="{{ route('arrivalinformation.getGrower',['outt_number_select'=>":outt_number_select"] ) }}";			
+		var coffee_grower = $('#coffee_grower');		
+		var outt_number_select = $('#outt_number_search :selected').val();
+
+		var url="{{ route('movementdispatch.getGrower',['outt_number_select'=>":outt_number_select"] ) }}";			
 		url = url.replace(':outt_number_select', outt_number_select);
+
 
 		$.ajax({
 		url: url,
@@ -1712,30 +1425,7 @@
 			warehouse = <?php echo json_encode($warehouse); ?>;
 		}
 
-		weigh_scales.find('option').remove();   
-		row.find('option').remove();   
-		column.find('option').remove();   
-
-
-		var url="{{ route('arrivalinformation.getScales',['warehouse'=>":warehouse"]) }}";
-		url = url.replace(':warehouse', warehouse);
-
-		$.ajax({
-		url: url,
-		type: 'GET',
-		}).success(function(response) {
-			var scales = jQuery.parseJSON(response);
-			weigh_scales.append('<option></option>');
-			$.each(scales,function(key, value) 
-			{	
-				weigh_scales.append('<option value=' + value["id"] + '>&nbsp;&nbsp;&nbsp;' + value["ws_equipment_number"] + '</option>');
-
-			});
-		}).error(function(error) {
-			console.log(error)
-		});  
-
-		var url_grns="{{ route('arrivalinformation.generateGRN',['warehouse'=>":warehouse"]) }}";
+		var url_grns="{{ route('movementdispatch.generateGDN',['warehouse'=>":warehouse"]) }}";
 		url_grns = url_grns.replace(':warehouse', warehouse);
 		grn_number.val('');
 

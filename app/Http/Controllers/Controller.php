@@ -23,6 +23,7 @@ use Ngea\StockWarehouse;
 use Ngea\StockMill;
 use Ngea\ParchmentType;
 use Ngea\AgentCategory;
+use Ngea\Dispatch;
 
 class Controller extends BaseController
 {
@@ -132,17 +133,43 @@ class Controller extends BaseController
     
     }
 
+    public function generateGDN ($warehouse) {
+
+        try{
+            $cidmain = session('maincountry');
+            $grn_number = null;
+            if ($cidmain != null) {
+                $grn_no = Dispatch::where('ctr_id', $cidmain)->where('agt_id', $warehouse)->orderBy('id', 'desc')->first();
+                if ($grn_no != NULL) {
+                    $grn_no = $grn_no->gr_number;            
+                    if (is_numeric($grn_no)) {
+                        $grn_number = sprintf("%07d", ($grn_no + 0000001));
+                    }
+                } else {
+                    $grn_number = sprintf("%07d", (0000001));
+
+                }
+            }
+            return json_encode($grn_number);                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    
+    }
+    
     public function getMaterials ($item_id) {
 
         try{
             $materials = array();
             $item_details = ItemsMaterial::where('it_id', $item_id)->get();
-
             foreach($item_details as $items){
-
                 $material_details = Material::where('id', $items->mt_id)->first();
                 $materials[$material_details->id] = $material_details->mt_name;
-
             }
             return json_encode($materials);    
         }catch (\PDOException $e) {
