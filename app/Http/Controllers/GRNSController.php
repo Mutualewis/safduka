@@ -733,7 +733,7 @@ class GRNSController extends Controller {
     }
 
 
-    public function addBatch($outt_number, $outt_season, $coffee_grower, $outturn_type_batch, $weigh_scales, $packaging, $zone, $packages_batch, $batch_kilograms, $batch_kilograms_hidden, $selectedRow, $selectedColumn, $warehouse)
+    public function addBatch($outt_number, $outt_season, $coffee_grower, $outturn_type_batch, $weigh_scales, $packaging, $zone, $packages_batch, $batch_kilograms, $batch_kilograms_hidden, $selectedRow, $selectedColumn, $warehouse, $grn_number)
     {   
 
         try{
@@ -745,11 +745,18 @@ class GRNSController extends Controller {
             $agent_type = null;
             $agent_type = $this->getAgentType($warehouse);
 
-            if ($agent_type == 'Miller') {
-                $stock_details = StockMill::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('mt_id', '=', $outturn_type_batch)->first();
-            } else {
-                $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('mt_id', '=', $outturn_type_batch)->first();
+            $grn_details = GRN::where('gr_number', '=', $grn_number)->where('agt_id', '=', $warehouse)->first();
+
+            if ($grn_details != null) {
+                $gr_id = $grn_details->id;
             }
+
+            if ($agent_type == 'Miller') {
+                $stock_details = StockMill::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('mt_id', '=', $outturn_type_batch)->where('grn_id', $gr_id)->first();
+            } else {
+                $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('mt_id', '=', $outturn_type_batch)->where('grn_id', $gr_id)->first();
+            }
+            
             if ($stock_details != null) {
                 $package_weight = Packaging::where('id', $packaging)->first();
                 if ($package_weight != NULL) {            

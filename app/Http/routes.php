@@ -151,7 +151,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/arrivalinformation/addDispatch/{grn_number}/{outt_number}/{outt_season}/{coffee_grower}/{outturn_type}/{moisture}/{basket}/{packaging}/{warehouse}', ['as'=>'arrivalinformation.addDispatch','uses'=>'GRNSController@addDispatch']);
 
 
-		Route::get('/arrivalinformation/addBatch/{outt_number}/{outt_season}/{coffee_grower}/{outturn_type_batch}/{weigh_scales}/{packaging}/{zone}/{packages_batch}/{batch_kilograms}/{batch_kilograms_hidden}/{selectedRow}/{selectedColumn}/{warehouse}', ['as'=>'arrivalinformation.addBatch','uses'=>'GRNSController@addBatch']);
+		Route::get('/arrivalinformation/addBatch/{outt_number}/{outt_season}/{coffee_grower}/{outturn_type_batch}/{weigh_scales}/{packaging}/{zone}/{packages_batch}/{batch_kilograms}/{batch_kilograms_hidden}/{selectedRow}/{selectedColumn}/{warehouse}/{grn_number}', ['as'=>'arrivalinformation.addBatch','uses'=>'GRNSController@addBatch']);
 
 
 
