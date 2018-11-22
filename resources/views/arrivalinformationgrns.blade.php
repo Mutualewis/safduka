@@ -1009,8 +1009,6 @@
 			url = url.replace(':selectedColumn', selectedColumn);
 			url = url.replace(':warehouse', warehouse);
 
-			alert(url);
-
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
