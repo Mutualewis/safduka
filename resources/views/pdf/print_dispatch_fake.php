@@ -15,7 +15,7 @@
 
 	    <div style="text-align: center; margin-top: 0.5cm;">
 		    <h2>
-		   		<?php if(isset($agent_description)) echo strtoupper($agent_description); ?> - GOODS RECEIVED NOTE &nbsp;&nbsp;&nbsp;&nbsp; <?php if(isset($agent_initial)) echo strtoupper($agent_initial); echo 'GR-'.$grn_number; ?>
+		   		WAREHOUSE - GOODS DISPATCH NOTE &nbsp;&nbsp;&nbsp;&nbsp; <?php echo 'WGD-0000005'; ?>
 
 		    </h2>
 	    </div>
@@ -25,34 +25,34 @@
 			<table style="text-align: left; font-size: 13px">
 				<tr>
 					<td width="250px" align="left">
-						<strong>From:</strong> <?php if(isset($client)) echo $client; ?>
+						<strong>To:</strong> <?php echo 'BOLLORE'; ?>
 					</td>
 					<td width="200px" align="left">
-						<strong>Delivery Date:</strong> <?php if(isset($delivery_date))  echo $delivery_date; ?> <br>
+						<strong>Dispatch Date:</strong> <?php echo '22-11-2018'; ?> <br>
 					</td>
 				</tr>			
 
 				<tr>
 					<td width="150px" align="left">
-						<strong>Mvt. Permit:</strong> <?php if(isset($movement_permit)) echo $movement_permit; ?>
+						<strong>Mvt. Permit:</strong>740
 					</td>
 					<td width="150px" align="left">
-						<strong>Vehicle Reg. No.:</strong> <?php if(isset($vehicle)) echo $vehicle; ?> <br>
+						<strong>Vehicle Reg. No.:</strong> <?php echo 'KCA 472Y'; ?> <br>
 					</td>
 				</tr>	
 
 				<tr>
 					<td width="150px" align="left">
-						<strong>Wb. Ticket:</strong> <?php if(isset($weighbridge_ticket)) echo $weighbridge_ticket; ?>
+						<strong>Wb. Ticket:</strong> <?php echo ''; ?>
 					</td>
 					<td width="150px" align="left">
-						<strong>Start Time.:</strong> <?php if(isset($time_received)) echo $time_received; ?> <br>
+						<strong>Start Time.:</strong> <?php echo '03:15 AM'; ?> <br>
 					</td>
 				</tr>
 
 				<tr>
 					<td width="150px" align="left">
-						<strong>Stop Time.:</strong> <?php if(isset($time_received_stop)) echo $time_received_stop; ?> <br>
+						<strong>Stop Time.:</strong> <?php echo '05:51 PM'; ?> <br>
 					</td>
 				</tr>
 
@@ -65,29 +65,27 @@
 			<thead>
 			    <tr>
 					<th>
-						No.
-					</th>
-					<th>
 						Outturn
 					</th>
 					<th>
-						Material
+						Grade
 					</th>
 					<th>
-						Packages
+						Bags
 					</th>
 					<th>
-						Gross Weight
+						Pkts
+					</th>
+					<th>
+						Gross
 					</th>
 					<th>
 						Tare
 					</th>
 					<th>
-						Net Weight
+						Nett
 					</th>
-					<th>
-						Moisture
-					</th>
+
 				</tr>
 
 				</thead>
@@ -104,47 +102,147 @@
 						$total         = 0;
 						$total_gross   = 0;
 						$total_tare   = 0;
-						$total_net_weight  = 0;
 
 						$total_packages = 0;
 
-						if (isset($grnsview) && count($grnsview) > 0) {
 
-						    foreach ($grnsview as $value) {
-						        $total += $value->st_net_weight;
-						        $total_gross += $value->st_gross;
+
+
+				        echo "<tr>";
+
+					        echo "<td>07NG0033</td>";
+					        echo "<td>C</td>";
+					        echo "<td>21</td>";
+					        echo "<td>06</td>";
+					        echo "<td>1307</td>";
+					        echo "<td>19.80</td>";
+					        echo "<td>1287</td>";
+
+				        echo "</tr>";
+
+
+				        echo "<tr>";
+
+					        echo "<td>07NG0033</td>";
+					        echo "<td>AB</td>";
+					        echo "<td>60</td>";
+					        echo "<td>66</td>";
+					        echo "<td>3728</td>";
+					        echo "<td>54.90</td>";
+					        echo "<td>3673</td>";
+
+				        echo "</tr>";
+
+
+				        echo "<tr>";
+
+					        echo "<td>07NG0033</td>";
+					        echo "<td>AA</td>";
+					        echo "<td>22</td>";
+					        echo "<td>16</td>";
+					        echo "<td>1360</td>";
+					        echo "<td>20.70</td>";
+					        echo "<td>1339</td>";
+
+				        echo "</tr>";
+
+
+				        echo "<tr>";
+
+					        echo "<td>06NG0016</td>";
+					        echo "<td>AA</td>";
+					        echo "<td>66</td>";
+					        echo "<td>47</td>";
+					        echo "<td>4072</td>";
+					        echo "<td>60.30</td>";
+					        echo "<td>4011</td>";
+
+				        echo "</tr>";
+
+
+				        echo "<tr>";
+
+					        echo "<td>07NG0009</td>";
+					        echo "<td>C</td>";
+					        echo "<td>17</td>";
+					        echo "<td>25</td>";
+					        echo "<td>1062</td>";
+					        echo "<td>16.20</td>";
+					        echo "<td>1046</td>";
+
+				        echo "</tr>";
+
+
+				        echo "<tr>";
+
+					        echo "<td>07NG0009</td>";
+					        echo "<td>AA</td>";
+					        echo "<td>35</td>";
+					        echo "<td>44</td>";
+					        echo "<td>2180</td>";
+					        echo "<td>32.40</td>";
+					        echo "<td>2148</td>";
+
+				        echo "</tr>";
+
+
+				        echo "<tr>";
+
+					        echo "<td>07NG0012</td>";
+					        echo "<td>PB</td>";
+					        echo "<td>11</td>";
+					        echo "<td>23</td>";
+					        echo "<td>696</td>";
+					        echo "<td>10.80</td>";
+					        echo "<td>685</td>";
+
+				        echo "</tr>";
+
+
+				        echo "<tr>";
+
+					        echo "<td>07NG0012</td>";
+					        echo "<td>C</td>";
+					        echo "<td>19</td>";
+					        echo "<td>22</td>";
+					        echo "<td>1183</td>";
+					        echo "<td>18.00</td>";
+					        echo "<td>1165</td>";
+
+				        echo "</tr>";
+
+
+						if (isset($SalesContractSummary) && count($SalesContractSummary) > 0) {
+
+						    foreach ($SalesContractSummary as $value) {
+
+						        $total += $value->stuffed_weight;
+
+						        $total_gross += $value->stuffed_gross_weight;
+
 						        $count += 1;
+
 						        $id = $value->id;
-						        $total_bags += $value->st_bags;
-						        $total_pkts += $value->st_pockets;
-						        $total_tare += $value->st_tare;
-						        $total_packages += $value->st_packages;
-						        $total_net_weight += $value->st_net_weight;
 
-						        echo "<tr>";
+						        $total_bags += $value->stuffed_bags;
 
-							        echo "<td>" . $count . "</td>";
-							        echo "<td>" . $value->st_outturn . "</td>";
-							        echo "<td>" . $value->mt_name. "</td>";
-							        echo "<td>" . $value->st_packages . "</td>";
-							        echo "<td>" . $value->st_gross . "</td>";
-							        echo "<td>" . $value->st_tare . "</td>";
-							        echo "<td>" . $value->st_net_weight . "</td>";
-							        echo "<td>" . $value->st_moisture . "</td>";
+						        $total_pkts += $value->stuffed_pockets;
 
-						        echo "</tr>";
+						        $total_tare += $value->stuffed_tare;
+
+						        $total_packages += $value->stuffed_packages;
+
 
 						    }
 						}
 						echo "<tr style='background-color: #f2f2f2'>";
-							echo "<td>" . $count . " Lots</td>";	
+							echo "<td>8 Lots</td>";	
 							echo "<td></td>";	
-							echo "<td></td>";	
-							echo "<td>" . $total_packages . "</td>";
-							echo "<td>" . $total_gross . "</td>";
-							echo "<td>" . $total_tare . "</td>";
-							echo "<td>" . $total_net_weight . "</td>";
-							echo "<td></td>";	
+							echo "<td>251 </td>";
+							echo "<td>249 </td>";
+							echo "<td>15588 Kg</td>";
+							echo "<td>233.1 Kg</td>";
+							echo "<td>15354 Kg</td>";
 
 						echo "</tr>";
 					?>
@@ -156,9 +254,11 @@
 		    <br>
 
 		    <p style="text-align: left; font-size: 13px">
-				<strong>Number of packages received:</strong>
+				<strong>Number of packages dispatched:</strong>
 
 				<?php 
+				$total_packages = 251;
+				$total_gross = 15588;
 
 				echo number_to_word($total_packages) ." (".$total_packages. ")";
 
@@ -208,10 +308,10 @@
 			<table style="text-align: left; font-size: 13px">
 				<tr>
 					<td width="100px" align="left">
-						<strong>Driver:</strong> <?php if(isset($driver_name)) echo $driver_name; ?>
+						<strong>Driver:</strong> Paul Munyoki
 					</td>
 					<td width="100px" align="left">
-						<strong>ID No.:</strong> <?php if(isset($driver_id)) echo $driver_id; ?> <br>
+						<strong>ID No.:</strong> 23815790<br>
 					</td>
 					<td width="50px" align="left">
 						<strong>Signature:</strong> <?php echo " _________________________"; ?> <br>
@@ -229,7 +329,7 @@
 			<table style="text-align: left; font-size: 13px" >
 				<tr>
 					<td width="100px" align="left">
-						<strong>Receiving Clerk:</strong> Nancy Kariuki
+						<strong>Dispatch Clerk:</strong> Nancy Kariuki
 					</td>
 					<td width="50px" align="left">
 						<strong>Signature:</strong> <?php echo " _________________________" ?> <br>
@@ -243,7 +343,7 @@
 				</tr>
 				<tr>
 					<td width="100px" align="left">
-						<strong>Supervisor:</strong> <?php echo "Rotich" ?>
+						<strong>Supervisor:</strong> <?php echo "Stanley" ?>
 					</td>
 					<td width="50px" align="left">
 						<strong>Signature:</strong> <?php echo " _________________________"; ?> <br>

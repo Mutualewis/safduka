@@ -1,31 +1,23 @@
 <?php namespace Ngea;
 
 use Illuminate\Database\Eloquent\Model;
-use Activity;
+
 // use Illuminate\Auth\Reminders\RemindableInterface;
 
-class Grn extends Model {
+class DispatchType extends Model {
 
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'grn_gr';
+	protected $table = 'dispatch_type_dt';
 
-	protected static $logAttributes = '*';
-
-	protected static $logOnlyDirty = true;
-
-	public $timestamps = true;
 	/**
 	 * The attributes that are mass assignable.
 	 *
 	 * @var array
 	 */
-
-
-
-	protected $fillable = ['id', 'ctr_id', 'wb_id', 'gr_number', 'created_at', 'updated_at'];
+	protected $fillable = ['id', 'agt_id', 'dt_name', 'dt_description', 'dispatch_type_dtcol', 'created_at', 'updated_at'];
            
 }

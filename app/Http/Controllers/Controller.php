@@ -23,6 +23,7 @@ use Ngea\StockWarehouse;
 use Ngea\StockMill;
 use Ngea\ParchmentType;
 use Ngea\AgentCategory;
+use Ngea\Dispatch;
 
 class Controller extends BaseController
 {
@@ -132,17 +133,43 @@ class Controller extends BaseController
     
     }
 
+    public function generateGDN ($warehouse) {
+
+        try{
+            $cidmain = session('maincountry');
+            $grn_number = null;
+            if ($cidmain != null) {
+                $grn_no = Dispatch::where('ctr_id', $cidmain)->where('agt_id', $warehouse)->orderBy('id', 'desc')->first();
+                if ($grn_no != NULL) {
+                    $grn_no = $grn_no->dp_number;            
+                    if (is_numeric($grn_no)) {
+                        $grn_number = sprintf("%07d", ($grn_no + 0000001));
+                    }
+                } else {
+                    $grn_number = sprintf("%07d", (0000001));
+
+                }
+            }
+            return json_encode($grn_number);                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    
+    }
+
     public function getMaterials ($item_id) {
 
         try{
             $materials = array();
             $item_details = ItemsMaterial::where('it_id', $item_id)->get();
-
             foreach($item_details as $items){
-
                 $material_details = Material::where('id', $items->mt_id)->first();
                 $materials[$material_details->id] = $material_details->mt_name;
-
             }
             return json_encode($materials);    
         }catch (\PDOException $e) {
@@ -397,7 +424,7 @@ class Controller extends BaseController
             $execute = preg_replace("/[^0-9\.]/", '', $execute);
             $weight = NULL;
 
-            $execute = 100;
+            // $execute = 100;
 
             if ($execute == NULL) {
                 $weight = "Unstable wait...";
@@ -439,16 +466,16 @@ class Controller extends BaseController
                 $strPortName = $weigh_scales_details->ws_port_name;
             }
 
-            $ch = curl_init();
-            $ip_address = $this->get_client_ip();
-            curl_setopt($ch, CURLOPT_URL,"http://".$ip_address."//weighscale/api.php");
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS,
-                        "strBaudRate=".$strBaudRate."&strParity=".$strParity."&strStopBits=".$strStopBits."&strDataBits=".$strDataBits."&strPortName=".$strPortName."");
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $weight = curl_exec ($ch);
-            curl_close ($ch);   
-            $batch_kilograms = $weight;  
+            // $ch = curl_init();
+            // $ip_address = $this->get_client_ip();
+            // curl_setopt($ch, CURLOPT_URL,"http://".$ip_address."//weighscale/api.php");
+            // curl_setopt($ch, CURLOPT_POST, 1);
+            // curl_setopt($ch, CURLOPT_POSTFIELDS,
+            //             "strBaudRate=".$strBaudRate."&strParity=".$strParity."&strStopBits=".$strStopBits."&strDataBits=".$strDataBits."&strPortName=".$strPortName."");
+            // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            // $weight = curl_exec ($ch);
+            // curl_close ($ch);   
+            // $batch_kilograms = $weight;  
             $batch_kilograms = 0;  
             $weigh_scale_session = "scale - ".$weigh_scales."";
 
@@ -456,7 +483,7 @@ class Controller extends BaseController
                 session()->pull($weigh_scale_session); 
             }     
 
-            return json_encode($batch_kilograms); 
+            return json_encode(0); 
         
         }catch (\PDOException $e) {
             return response()->json([

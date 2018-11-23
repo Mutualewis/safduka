@@ -15,7 +15,7 @@
 
 	    <div style="text-align: center; margin-top: 0.5cm;">
 		    <h2>
-		   		<?php if(isset($agent_description)) echo strtoupper($agent_description); ?> - GOODS RECEIVED NOTE &nbsp;&nbsp;&nbsp;&nbsp; <?php if(isset($agent_initial)) echo strtoupper($agent_initial); echo 'GR-'.$grn_number; ?>
+		   		WAREHOUSE - GOODS DISPATCH NOTE &nbsp;&nbsp;&nbsp;&nbsp; <?php echo 'WGD-'.$dp_number; ?>
 
 		    </h2>
 	    </div>
@@ -25,10 +25,10 @@
 			<table style="text-align: left; font-size: 13px">
 				<tr>
 					<td width="250px" align="left">
-						<strong>From:</strong> <?php if(isset($client)) echo $client; ?>
+						<strong>To:</strong> <?php if(isset($client)) echo $client; ?>
 					</td>
 					<td width="200px" align="left">
-						<strong>Delivery Date:</strong> <?php if(isset($delivery_date))  echo $delivery_date; ?> <br>
+						<strong>Dispatch Date:</strong> <?php if(isset($delivery_date))  echo $delivery_date; ?> <br>
 					</td>
 				</tr>			
 
@@ -65,29 +65,27 @@
 			<thead>
 			    <tr>
 					<th>
-						No.
-					</th>
-					<th>
 						Outturn
 					</th>
 					<th>
-						Material
+						Grade
 					</th>
 					<th>
-						Packages
+						Bags
 					</th>
 					<th>
-						Gross Weight
+						Pkts
+					</th>
+					<th>
+						Nett
 					</th>
 					<th>
 						Tare
 					</th>
 					<th>
-						Net Weight
+						Gross
 					</th>
-					<th>
-						Moisture
-					</th>
+
 				</tr>
 
 				</thead>
@@ -104,33 +102,38 @@
 						$total         = 0;
 						$total_gross   = 0;
 						$total_tare   = 0;
-						$total_net_weight  = 0;
 
 						$total_packages = 0;
 
-						if (isset($grnsview) && count($grnsview) > 0) {
+						if (isset($dispatch_view) && count($dispatch_view) > 0) {
 
-						    foreach ($grnsview as $value) {
+						    foreach ($dispatch_view as $value) {
+
 						        $total += $value->st_net_weight;
+
 						        $total_gross += $value->st_gross;
+
 						        $count += 1;
+
 						        $id = $value->id;
+
 						        $total_bags += $value->st_bags;
+
 						        $total_pkts += $value->st_pockets;
+
 						        $total_tare += $value->st_tare;
+
 						        $total_packages += $value->st_packages;
-						        $total_net_weight += $value->st_net_weight;
 
 						        echo "<tr>";
 
-							        echo "<td>" . $count . "</td>";
 							        echo "<td>" . $value->st_outturn . "</td>";
-							        echo "<td>" . $value->mt_name. "</td>";
-							        echo "<td>" . $value->st_packages . "</td>";
-							        echo "<td>" . $value->st_gross . "</td>";
-							        echo "<td>" . $value->st_tare . "</td>";
+							        echo "<td>" . $value->mt_name . "</td>";
+							        echo "<td>" . $value->st_bags . "</td>";
+							        echo "<td>" . $value->st_pockets. "</td>";
 							        echo "<td>" . $value->st_net_weight . "</td>";
-							        echo "<td>" . $value->st_moisture . "</td>";
+							        echo "<td>" . $value->st_tare . "</td>";
+							        echo "<td>" . $value->st_gross . "</td>";
 
 						        echo "</tr>";
 
@@ -139,12 +142,11 @@
 						echo "<tr style='background-color: #f2f2f2'>";
 							echo "<td>" . $count . " Lots</td>";	
 							echo "<td></td>";	
-							echo "<td></td>";	
-							echo "<td>" . $total_packages . "</td>";
-							echo "<td>" . $total_gross . "</td>";
-							echo "<td>" . $total_tare . "</td>";
-							echo "<td>" . $total_net_weight . "</td>";
-							echo "<td></td>";	
+							echo "<td>" . $total_bags . "</td>";
+							echo "<td>" . $total_pkts . "</td>";
+							echo "<td>" . $total . " Kg</td>";
+							echo "<td>" . $total_tare . " Kg</td>";
+							echo "<td>" . $total_gross . " Kg</td>";
 
 						echo "</tr>";
 					?>
@@ -156,7 +158,7 @@
 		    <br>
 
 		    <p style="text-align: left; font-size: 13px">
-				<strong>Number of packages received:</strong>
+				<strong>Number of packages dispatched:</strong>
 
 				<?php 
 
@@ -229,7 +231,7 @@
 			<table style="text-align: left; font-size: 13px" >
 				<tr>
 					<td width="100px" align="left">
-						<strong>Receiving Clerk:</strong> Nancy Kariuki
+						<strong>Dispatch Clerk:</strong> <?php echo 'Nancy Kariuki'; ?>
 					</td>
 					<td width="50px" align="left">
 						<strong>Signature:</strong> <?php echo " _________________________" ?> <br>
@@ -243,7 +245,7 @@
 				</tr>
 				<tr>
 					<td width="100px" align="left">
-						<strong>Supervisor:</strong> <?php echo "Rotich" ?>
+						<strong>Supervisor:</strong> <?php echo "Stanley Rotich" ?>
 					</td>
 					<td width="50px" align="left">
 						<strong>Signature:</strong> <?php echo " _________________________"; ?> <br>
