@@ -15,7 +15,7 @@
 
 	    <div style="text-align: center; margin-top: 0.5cm;">
 		    <h2>
-		   		WAREHOUSE - GOODS DISPATCH NOTE &nbsp;&nbsp;&nbsp;&nbsp; <?php echo 'EGD-'.$dp_number; ?>
+		   		WAREHOUSE - GOODS DISPATCH NOTE &nbsp;&nbsp;&nbsp;&nbsp; <?php echo 'WGD-'.$dp_number; ?>
 
 		    </h2>
 	    </div>
@@ -105,35 +105,35 @@
 
 						$total_packages = 0;
 
-						if (isset($SalesContractSummary) && count($SalesContractSummary) > 0) {
+						if (isset($dispatch_view) && count($dispatch_view) > 0) {
 
-						    foreach ($SalesContractSummary as $value) {
+						    foreach ($dispatch_view as $value) {
 
-						        $total += $value->stuffed_weight;
+						        $total += $value->st_net_weight;
 
-						        $total_gross += $value->stuffed_gross_weight;
+						        $total_gross += $value->st_gross;
 
 						        $count += 1;
 
 						        $id = $value->id;
 
-						        $total_bags += $value->stuffed_bags;
+						        $total_bags += $value->st_bags;
 
-						        $total_pkts += $value->stuffed_pockets;
+						        $total_pkts += $value->st_pockets;
 
-						        $total_tare += $value->stuffed_tare;
+						        $total_tare += $value->st_tare;
 
-						        $total_packages += $value->stuffed_packages;
+						        $total_packages += $value->st_packages;
 
 						        echo "<tr>";
 
-							        echo "<td>" . $value->pr_instruction_number . "</td>";
-							        echo "<td>" . $value->sct_description . "</td>";
-							        echo "<td>" . $value->stuffed_bags . "</td>";
-							        echo "<td>" . $value->stuffed_pockets. "</td>";
-							        echo "<td>" . $value->stuffed_weight . "</td>";
-							        echo "<td>" . $value->stuffed_tare . "</td>";
-							        echo "<td>" . $value->stuffed_gross_weight . "</td>";
+							        echo "<td>" . $value->st_outturn . "</td>";
+							        echo "<td>" . $value->mt_name . "</td>";
+							        echo "<td>" . $value->st_bags . "</td>";
+							        echo "<td>" . $value->st_pockets. "</td>";
+							        echo "<td>" . $value->st_net_weight . "</td>";
+							        echo "<td>" . $value->st_tare . "</td>";
+							        echo "<td>" . $value->st_gross . "</td>";
 
 						        echo "</tr>";
 
@@ -231,7 +231,7 @@
 			<table style="text-align: left; font-size: 13px" >
 				<tr>
 					<td width="100px" align="left">
-						<strong>Dispatch Clerk:</strong> <?php if(isset($received_by))  echo $received_by; ?>
+						<strong>Dispatch Clerk:</strong> <?php echo 'Nancy Kariuki'; ?>
 					</td>
 					<td width="50px" align="left">
 						<strong>Signature:</strong> <?php echo " _________________________" ?> <br>
@@ -245,7 +245,7 @@
 				</tr>
 				<tr>
 					<td width="100px" align="left">
-						<strong>Supervisor:</strong> <?php echo "Nelson" ?>
+						<strong>Supervisor:</strong> <?php echo "Stanley Rotich" ?>
 					</td>
 					<td width="50px" align="left">
 						<strong>Signature:</strong> <?php echo " _________________________"; ?> <br>

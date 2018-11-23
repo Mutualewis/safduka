@@ -195,19 +195,14 @@
 
 	if(isset($grn_details)){
 		$warehouse_id = $grn_details->agtid;
-		$grn_number = $grn_details->gr_number;	
+		$grn_number = $grn_details->dp_number;	
 		$wbtk = $grn_details->wbi_id;		
-		$grnConfirmed = $grn_details->gr_confirmed_by;	
+		$grnConfirmed = $grn_details->dp_confirmed_by;	
 		$grower_id = $grn_details->cgr_id;
-		$item_id = $grn_details->it_id;
-		$miller_id = $grn_details->miller_id;
-		$miller_by_id = $grn_details->milled_by;
-		$gr_confirmed_by = $grn_details->gr_confirmed_by;
+		$gr_confirmed_by = $grn_details->dp_confirmed_by;
+		$dispatch_type_id = $grn_details->dt_id;
 
 	}
-
-
-
 
 	if (old('rate') != NULL) {
 		$rate_id = old('rate');
@@ -465,7 +460,7 @@
 
 				<div class="row">
 		            <div class="form-group col-md-12">
-						<button type="submit" name="submitlot" class="btn btn-lg btn-success btn-block">Add/Update Dispatch</button>						 
+						<button type="button" name="submitlot" id="submitlot" class="btn btn-lg btn-success btn-block" onchange ="addDispatch();">Add/Update Dispatch</button>			 
 		            </div>	
 		        </div>
 
@@ -504,15 +499,39 @@
 
 @push('scripts')
 <script>
-	
 
-	$( "#deliverydetails" ).click(function(event){
-		event.preventDefault();
-	})
+    $("#submitlot").click(function(){
 
-	$( "#batchdetails" ).click(function(event){
-		event.preventDefault();
-	})
+		var warehouse = $('#warehouse').val();
+		var grn_number = $('#grn_number').val();
+		var weighbridgeTK = $('#weighbridgeTK').val();
+		var outt_season = $('#outt_season').val();
+		var dispatch_type = $('#dispatch_type').val();
+		var agent_id = $('#agent_id').val();
+		var outt_number_search = $('#outt_number_search').val();
+
+		var url="{{ route('movementdispatch.addDispatch',['warehouse'=>":warehouse", 'grn_number'=>":grn_number", 'weighbridgeTK'=>":weighbridgeTK", 'outt_season'=>":outt_season", 'dispatch_type'=>":dispatch_type", 'agent_id'=>":agent_id", 'outt_number_search'=>":outt_number_search"]) }}";			
+		url = url.replace(':warehouse', warehouse);
+		url = url.replace(':grn_number', grn_number);
+		url = url.replace(':weighbridgeTK', weighbridgeTK);
+		url = url.replace(':outt_season', outt_season);
+		url = url.replace(':dispatch_type', dispatch_type);
+		url = url.replace(':agent_id', agent_id);
+		url = url.replace(':outt_number_search', outt_number_search);
+
+		alert(url);
+
+
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			refreshOutturnsTable();
+		}).error(function(error) {
+			console.log(error)
+		});
+
+    }); 
 
 
 	$(document).ready(function (){ 
@@ -533,7 +552,6 @@
 	    checkIfReset();
 	    refreshOutturnsTable();
 	    getMaterials();
-	    getOuttturns();
 
 	    var warehouse = $('#warehouse');
 	    var coffee_grower = $('#coffee_grower');
@@ -547,6 +565,10 @@
 	    var basket = $('#basket');
 	    var packaging = $('#packaging');
 	    var grn_number = $('#grn_number');
+	    var dispatch_type = $('#dispatch_type');
+
+
+
 
 		$('#warehouse option').eq(<?php echo json_encode($warehouse_id); ?>).prop('selected', true);
 		coffee_grower.val(<?php echo json_encode($grower_id); ?>).prop('selected', true);
@@ -556,6 +578,8 @@
 		basket.val(<?php echo json_encode($basket_id); ?>).prop('selected', true);
 		packaging.val(<?php echo json_encode($pkg); ?>).prop('selected', true);
 		warehouse.val(<?php echo json_encode($warehouse_id); ?>).prop('selected', true);
+		dispatch_type.val(<?php echo json_encode($dispatch_type_id); ?>).prop('selected', true);
+
 		moisture.val(<?php echo json_encode($moisture); ?>);
 		outt_number.val(<?php echo json_encode($outt_number); ?>);
 		outt_number_search.val(<?php echo json_encode($outt_number); ?>);
@@ -727,12 +751,6 @@
 	var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 
-	$( "#confirmgrnsbtn" ).click(function(event){
-		// event.preventDefault();
-		// $("#ratesModalCenter").modal();	
-		event.preventDefault();
-		postConfirmMovement()
-	})
 	$( "#confirmgrnsModalbtn" ).click(function(event){
 		event.preventDefault();
 		postConfirmMovement()	
@@ -1054,7 +1072,7 @@
 
 <script type="text/javascript">
 
-	
+
 
 	function getDispatch()
 	{
@@ -1074,7 +1092,7 @@
 				$label.appendTo(agent_type);
 				$("<br>").appendTo(agent_type);
 
-				var sel = $('<select id ="outt_number_select" name ="outt_number_select" width="100%" >').appendTo(agent_type);
+				var sel = $('<select id ="agent_id" name ="agent_id" width="100%" >').appendTo(agent_type);
 				sel.append($("<option>").attr('value','').text(''));
 
 				$.each(response.dispatchType,function(key, value) 
@@ -1218,9 +1236,10 @@
     		warehouse = <?php echo json_encode($warehouse_id); ?>;
     	}
 
-		var url="{{ route('arrivalinformation.getGRNContents',[ 'grn_number'=>":grn_number", 'warehouse'=>":warehouse"] ) }}";		
+		var url="{{ route('movementdispatch.getGDNContents',['grn_number'=>":grn_number", 'warehouse'=>":warehouse"]) }}";	
 		url = url.replace(':grn_number', grn_number);
 		url = url.replace(':warehouse', warehouse);
+
 
 		$.ajax({
 		url: url,

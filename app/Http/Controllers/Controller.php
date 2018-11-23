@@ -141,7 +141,7 @@ class Controller extends BaseController
             if ($cidmain != null) {
                 $grn_no = Dispatch::where('ctr_id', $cidmain)->where('agt_id', $warehouse)->orderBy('id', 'desc')->first();
                 if ($grn_no != NULL) {
-                    $grn_no = $grn_no->gr_number;            
+                    $grn_no = $grn_no->dp_number;            
                     if (is_numeric($grn_no)) {
                         $grn_number = sprintf("%07d", ($grn_no + 0000001));
                     }
@@ -161,7 +161,7 @@ class Controller extends BaseController
         }
     
     }
-    
+
     public function getMaterials ($item_id) {
 
         try{

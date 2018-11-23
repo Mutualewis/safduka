@@ -49,6 +49,7 @@ use Ngea\BatchMill;
 use Ngea\StockLocationBatch;
 use Ngea\OutturnNumberSettings;
 use Ngea\DispatchType;
+use Ngea\Dispatch;
 
 use Yajra\Datatables\Datatables;
 use niklasravnsborg\LaravelPdf\Facades\Pdf as PDF;
@@ -152,7 +153,7 @@ class DispatchController extends Controller {
         $grn_id = NULL;
         $rates    = processrates::all(['id', 'service']);
         $teams   = teams::all(['id', 'tms_grpname']);
-        $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->where('agt_id', $wrhse)->first(); 
+        $grn_details = Dispatch::where('dp_number', $grn_number)->where('ctr_id', $cid)->where('agt_id', $wrhse)->first(); 
 
         $stid = null;
         if ($grn_details != null) {
@@ -178,152 +179,24 @@ class DispatchController extends Controller {
 
             if ($grn_details != NULL) {
 
-                Grn::where('id', '=', $grn_id)
-                        ->update(['ctr_id' => $cid, 'gr_number' => $grn_number, 'wbi_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'gr_confirmed_by' => $user]);
+                Dispatch::where('id', '=', $grn_id)
+                        ->update(['dp_confirmed_by' => $user]);
 
-                Activity::log('Updated Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wbi_id '. $weighbridgeTK . 'grn_number' . $grn_number );
-
-            } else {
-
-                $grn_id = Grn::insertGetId (
-                        ['ctr_id' => $cid, 'gr_number' => $grn_number, 'wbi_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'gr_confirmed_by' => $user]);
-
-                Activity::log('Inserted Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wbi_id '. $weighbridgeTK . 'grn_number' . $grn_number );
-            }
+            } 
 
 
-        } else if (NULL !== Input::get('submitlot')) {
-
-            $grn_id = null;
-            $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->where('agt_id', $wrhse)->first(); 
-            if ($grn_details != NULL) {
-                $grn_id = $grn_details->id;
-                Grn::where('id', '=', $grn_id)
-                        ->update(['ctr_id' => $cid, 'agt_id' => $wrhse, 'gr_number' => $grn_number, 'wbi_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'agt_id' => $wrhse, 'cgr_id' => $coffee_grower, 'it_id' => $select_items, 'miller_id' => $select_miller, 'milled_by' => $milled_by, 'csn_id' => $outt_season]);
-                Activity::log('Updated Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wbi_id '. $weighbridgeTK . 'grn_number' . $grn_number );
-            } else {
-                $grn_id = Grn::insertGetId (
-                        ['ctr_id' => $cid, 'agt_id' => $wrhse, 'gr_number' => $grn_number, 'wbi_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'agt_id' => $wrhse, 'cgr_id' => $coffee_grower, 'it_id' => $select_items, 'miller_id' => $select_miller, 'milled_by' => $milled_by, 'csn_id' => $outt_season]);
-                Activity::log('Inserted Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wbi_id '. $weighbridgeTK . 'grn_number' . $grn_number );
-            }
-            if (NULL !== Input::get('outt_number_select')) {
-
-                $outturns = DB::table('process_results_prts AS prts')
-                    ->select('*', 'prts.id as prtsid')
-                    ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
-                    ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
-                    ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
-                    ->where('prts.id', Input::get('outt_number_select'))
-                    ->first(); 
-
-                $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('prts_id', '=', Input::get('outt_number_select'))->where('mt_id', '=', $outturns->prt_id)->where('grn_id', $grn_id)->first();
-
-                if ($stock_details == null) {
-
-                    $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid]);
-
-                } else {
-
-                    StockWarehouse::where('id', '=', $stock_details->id)
-                        ->update(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid]);
-                }
-
-                
-
-
-
-                // $btid = Batch::insertGetId (
-                // ['st_id' => $st_id, 'btc_weight' => $batch_kilograms, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $weigh_scales]);
-
-                // $stlocid = StockLocation::insertGetId (
-                //     ['bt_id' => $btid, 'loc_row_id' => $selectedRow, 'loc_column_id' => $selectedColumn, 'btc_zone' => $zone]);
-
-
-            }
-
-                    // id, pr_id, st_id, st_mill_id, cfd_id, prt_id, prts_weight, prts_packages, prts_bags, prts_pockets, cgrad_id, bs_id, wr_id, loc_row, loc_column, btc_zone, prts_return_to_stock, cp_id, sqltyd_acidity, sqltyd_body, sqltyd_flavour, sqltyd_description, created_at, updated_at
-
-            // $outturns = DB::table('process_results_prts AS prts')
-            //     ->select('*', 'prts.id as prtsid')
-            //     ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
-            //     ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
-            //     ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
-
-
-        } else if (NULL !== Input::get('submitbatch')) {            
-
-            $package_weight = Packaging::where('id', $packaging)->first();
-            
-            if ($package_weight != NULL) {
-            
-                $tare_batch = ($package_weight->pkg_weight) * $packages_batch;
-
-            }                
-
-            $purchased_details = purchase::where('cfd_id', $stock_id)->first();
-
-            $stock_item_id = stock::where('prc_id', $purchased_details->id)->where('gr_id', $grn_id)->first();
-
-            $stock_item_id = $stock_item_id->id;
-
-            $net_weight_batch = $batch_weight - $tare_batch;
-
-            $bags_batch = floor($net_weight_batch/60);
-
-            $pockets_batch = floor($net_weight_batch % 60);
-
-            $coffee_details = NULL;
-
-            $preious_batch = Batch::where('st_id', $stock_item_id)->get();
-
-            $btid = Batch::insertGetId (
-            ['st_id' => $stock_item_id, 'btc_weight' => $batch_weight, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $wsid]);
-
-
-            if ($preious_batch != null) {
-
-                foreach ($preious_batch as $key_pb => $value_pb) {
-
-                    $batch_weight += $value_pb->btc_weight;
-
-                    $tare_batch += $value_pb->btc_tare;
-
-                    $net_weight_batch += $value_pb->btc_net_weight;
-
-                    $packages_batch += $value_pb->btc_packages;
-
-                    $bags_batch += $value_pb->bags_batch;
-
-                    $pockets_batch += $value_pb->btc_pockets;
-
-                }
-
-            }
-
-            $bags_batch = floor($net_weight_batch/60);
-
-            $pockets_batch = floor($net_weight_batch % 60);            
-
-            Stock::where('id', '=', $stock_item_id)
-                        ->update([ 'st_net_weight' => $net_weight_batch ,'st_tare' => $tare_batch, 'st_bags' => $bags_batch, 'st_pockets' => $pockets_batch, 'st_gross' => $batch_weight]);
-
-            Activity::log('Inserted Batch information with btid '.$btid. ' batch_kilograms '. $batch_weight. ' bags '. $bags_batch. ' pockets '. $pockets_batch. ' stid '. $stock_id.' btc_tare '.$tare_batch.' btc_net_weight '.$net_weight_batch);
-
-            $stlocid = StockLocation::insertGetId (
-            ['bt_id' => $btid, 'loc_row_id' => $rw, 'loc_column_id' => $clm, 'btc_zone' => $zone]);
-
-            Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $rw. ' loccolid '. $clm. ' zone '. $zone);       
-
+        
         } else if (NULL !== Input::get('printgrns')) {            
 
-            $grnsview_summary = DB::table('grn_gr AS gr')
-            ->select('*', 'agt_name as wr_name', 'gr.created_at as gr_date', 'gr.updated_at as gr_end_date', 'agt_att as wr_att')
-            ->leftJoin('stock_warehouse_st AS st', 'st.grn_id', '=', 'gr.id')
-            ->leftJoin('agent_agt AS agt', 'agt.id', '=', 'gr.agt_id')
-            ->leftJoin('weighbridge_info_wbi AS wb', 'wb.id', '=', 'gr.wbi_id')
+            $grnsview_summary = DB::table('dispatch_dp AS dp')
+            ->select('*', 'agt.agt_name as wr_name',  'agtto.agt_name as wr_to_name', 'dp.created_at as gr_date', 'dp.updated_at as gr_end_date', 'agt.agt_att as wr_att')
+            ->leftJoin('stock_warehouse_st AS st', 'st.dp_id', '=', 'dp.id')
+            ->leftJoin('agent_agt AS agt', 'agt.id', '=', 'dp.agt_id')
+            ->leftJoin('agent_agt AS agtto', 'agtto.id', '=', 'dp.dp_destination')
+            ->leftJoin('weighbridge_info_wbi AS wb', 'wb.id', '=', 'dp.wbi_id')
             ->leftJoin('agent_category_agtc AS agtc', 'agtc.id', '=', 'agt.agtc_id')
-            ->leftJoin('coffee_growers_cgr AS cgr', 'cgr.id', '=', 'gr.cgr_id')
-            ->where('gr.id', $grn_id)
+            ->leftJoin('coffee_growers_cgr AS cgr', 'cgr.id', '=', 'dp.cgr_id')
+            ->where('dp.id', $grn_id)
             ->first(); 
 
             $person_details = Person::where('id', $per_id)->first();
@@ -331,7 +204,8 @@ class DispatchController extends Controller {
             $person_name = $person_details->per_fname.' '.$person_details->per_sname;
 
             if ($grnsview_summary != null) {
-                $client =  $grnsview_summary->cgr_grower;
+                $dp_number =  $grnsview_summary->dp_number;
+                $client =  $grnsview_summary->wr_to_name;
                 $agent_description =  $grnsview_summary->agtc_description;
                 $agent_initial =  $grnsview_summary->agtc_initial;
                 $delivery_date = $grnsview_summary->gr_date;
@@ -349,22 +223,13 @@ class DispatchController extends Controller {
                 $warehouse_manager = $grnsview_summary->wr_att;
             }
 
-            $grnsview = DB::table('stock_warehouse_st AS st')
+            $dispatch_view = DB::table('stock_warehouse_st AS st')
                 ->select('*')
                 ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
-                ->where('st.grn_id', $grn_id)
+                ->where('st.dp_id', $grn_id)
                 ->get(); 
 
-            if($grnsview == null){
-
-                $grnsview = DB::table('stock_mill_st AS st')
-                    ->select('*')
-                    ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
-                    ->where('st.grn_id', $grn_id)
-                    ->get(); 
-            }
-
-            $pdf = PDF::loadView('pdf.print_grns', compact('grnsview','client', 'delivery_date', 'movement_permit', 'vehicle', 'weighbridge_ticket', 'time_received', 'received_by', 'driver_name', 'time_received_stop', 'driver_id', 'grn_number', 'warehouse_manager', 'agent_description', 'agent_initial'));
+            $pdf = PDF::loadView('pdf.print_dispatch', compact('dispatch_view','client', 'delivery_date', 'movement_permit', 'vehicle', 'weighbridge_ticket', 'time_received', 'received_by', 'driver_name', 'time_received_stop', 'driver_id', 'dp_number', 'warehouse_manager', 'agent_description', 'agent_initial'));
 
             
 
@@ -405,25 +270,25 @@ class DispatchController extends Controller {
 
         $stock_details = StockWarehouse::where('id', '=', $stid)->first();
 
-        $grn_details = DB::table('grn_gr AS gr')
-            ->select('*', 'gr.agt_id as agtid')
-            ->leftJoin('stock_warehouse_st AS st', 'st.grn_id', '=', 'gr.id')
-            ->where('gr.id', $grn_id)
-            ->where('gr.agt_id', $wrhse)
+        $grn_details = DB::table('dispatch_dp AS dp')
+            ->select('*', 'dp.agt_id as agtid')
+            ->leftJoin('stock_warehouse_st AS st', 'st.dp_id', '=', 'dp.id')
+            ->where('dp.id', $grn_id)
+            ->where('dp.agt_id', $wrhse)
             ->first(); 
 
         if ($grn_details != null) {
 
             $grn_content = DB::table('stock_warehouse_st AS st')
-                ->select('*')
-                ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
-                ->where('st.grn_id', $grn_id)
-                ->where('st.agt_id', $wrhse)
-                ->get(); 
+                    ->select('*', 'st.id as stid')
+                    ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+                    ->where('st.dp_id', $grn_id)
+                    ->where('st.agt_id', $wrhse)
+                    ->get(); 
         }
+        $dispatch_type = DispatchType::all(['id', 'dt_name']);
 
-
-        return View::make('arrivalinformationgrns', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'grn_details', 'coffeeGrade', 'sale', 'coffee_details', 'saleid', 'basket', 'packaging', 'stock_details', 'warehouse', 'warehouse_count', 'wrhse', 'location', 'weigh_scales', 'weigh_scales_count', 'wsid', 'rw', 'clm', 'zone', 'packages_batch', 'batch_kilograms', 'grnsview', 'batchview', 'expected_arrival', 'stock_id', 'st_quality_check', 'rates', 'teams', 'wbtk', 'ot_season', 'active_season', 'growers', 'items', 'millers', 'material', 'basket', 'packaging', 'warehouse', 'role', 'admin', 'timeout', 'grn_content', 'dispatch_type')); 
+        return View::make('movementdispatch', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'grn_details', 'coffeeGrade', 'sale', 'coffee_details', 'saleid', 'basket', 'packaging', 'stock_details', 'warehouse', 'warehouse_count', 'wrhse', 'location', 'weigh_scales', 'weigh_scales_count', 'wsid', 'rw', 'clm', 'zone', 'packages_batch', 'batch_kilograms', 'grnsview', 'batchview', 'expected_arrival', 'stock_id', 'st_quality_check', 'rates', 'teams', 'wbtk', 'ot_season', 'active_season', 'growers', 'items', 'millers', 'material', 'basket', 'packaging', 'warehouse', 'role', 'admin', 'timeout', 'grn_content', 'dispatch_type')); 
 
     
     }
@@ -578,34 +443,24 @@ class DispatchController extends Controller {
     }
 
 
-    public function getGRNContents($grn_number, $warehouse){
+    public function getGDNContents($grn_number, $warehouse){
         
         try {
 
             $grn_id = null;
             $agent_type = null;
-            $grn_details = Grn::where('gr_number', $grn_number)->where('agt_id', $warehouse)->first(); 
+            $grn_details = Dispatch::where('dp_number', $grn_number)->where('agt_id', $warehouse)->first(); 
             if ($grn_details != null) {
                 $grn_id = $grn_details->id;
             } 
-            $agent_type = $this->getAgentType($warehouse);
 
             if ($grn_details != null) {
 
-                if ($agent_type == 'Miller') {
-                    $grn_content = DB::table('stock_mill_st AS st')
+                $grn_content = DB::table('stock_warehouse_st AS st')
                         ->select('*', 'st.id as stid')
                         ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
-                        ->where('st.grn_id', $grn_id)
+                        ->where('st.dp_id', $grn_id)
                         ->get(); 
-                } else {
-                    $grn_content = DB::table('stock_warehouse_st AS st')
-                        ->select('*', 'st.id as stid')
-                        ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
-                        ->where('st.grn_id', $grn_id)
-                        ->get(); 
-
-                }
             }
 
             return json_encode($grn_content);                    
@@ -670,8 +525,7 @@ class DispatchController extends Controller {
 
     }
 
-
-    public function addDispatch($grn_number, $outt_number, $outt_season, $coffee_grower, $outturn_type, $moisture, $basket, $packaging, $warehouse)
+    public function addDispatch($warehouse, $grn_number, $weighbridgeTK, $outt_season, $dispatch_type, $agent_id, $outt_number_search)
     {   
 
         try{
@@ -694,81 +548,29 @@ class DispatchController extends Controller {
             $user_data = Auth::user();
             $user = $user_data->id;
 
+            $grn_details = Dispatch::where('dp_number', $grn_number)->where('ctr_id', $cid)->where('agt_id', $warehouse)->first(); 
 
-            $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->where('agt_id', $warehouse)->first(); 
-            if ($grn_details != null) {
+            if ($grn_details != NULL) {
                 $grn_id = $grn_details->id;
-                $item_id = $grn_details->it_id;
-            } 
+                Dispatch::where('id', '=', $grn_id)
+                        ->update(['agt_id' => $warehouse, 'ctr_id' => $cid, 'dp_number' => $grn_number, 'wbi_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'dt_id' => $dispatch_type, 'dp_destination' => $agent_id]);
 
-            $agent_type = $this->getAgentType($warehouse);
-            
-            $material_details = Material::where('id', $outturn_type)->first();
-            if ($material_details != null) {
-                $outturn_type_name = $material_details->mt_name;
-            }
-            
-            $parchment_type_details = ParchmentType::where('pty_name', $outturn_type_name)->first();
-            if ($material_details != null) {
-                $parchment_type_id = $parchment_type_details->id;
-            }
-            
-            $moisture_threshold = null;
-            $outturn = null;
-            $st_mark = $outt_number.'/'.$outt_season;
+                Activity::log('Updated dispatch information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wbi_id '. $weighbridgeTK . 'grn_number' . $grn_number );
 
-            $threshold_details = Thresholds::where('th_name', 'Moisture')->where('it_id', $item_id)->first();
-            if ($threshold_details != null) {
-                $moisture_threshold = $threshold_details->th_percentage;
-            }
-            if ($moisture > $moisture_threshold) {
-                $st_id = "Moisture content does not meet the required threshold.";
             } else {
 
-                if ($agent_type == 'Miller') {
-                    $stock_details = StockMill::where('csn_id', '=', $outt_season)->where('mt_id', '=', $outturn_type)->where('pty_id', '=', $parchment_type_id)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
-                    if ($stock_details == null) {
-                        // $stock_details = StockMill::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
-                        // if ($stock_details != null) {
+                $grn_id = Dispatch::insertGetId (
+                        ['agt_id' => $warehouse, 'ctr_id' => $cid, 'dp_number' => $grn_number, 'wbi_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'dt_id' => $dispatch_type, 'dp_destination' => $agent_id]);
 
-                            $st_id = StockMill::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'warehouse_id' => $warehouse]);
-
-                        // } else {
-                        //     $st_id = "Please update Outturn information first.";
-                        // }
-
-                    } else {
-
-                        $st_id = $stock_details->id;
-                        StockMill::where('id', '=', $stock_details->id)
-                                    ->update([ 'st_mark' => $st_mark, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id, 'st_moisture' => $moisture, 'bs_id' => $basket, 'pkg_id' => $packaging]);
-
-                    }  
-                } else {
-                    // $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('mt_id', '=', $outturn_type)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
-                    if ($stock_details == null) {
-                        // $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
-                        // if ($stock_details != null) {
-                            $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'warehouse_id' => $warehouse]);
-
-                        // } else {
-                        //     $st_id = "Please update Outturn information first.";
-                        // }
-
-                    } else {
-
-                        $st_id = $stock_details->id;
-                        StockWarehouse::where('id', '=', $stock_details->id)
-                                    ->update(['mt_id' => $outturn_type, 'st_moisture' => $moisture, 'bs_id' => $basket, 'pkg_id' => $packaging]);
-
-                    }                
-                }
-            
+                Activity::log('Inserted dispatch information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wbi_id '. $weighbridgeTK . 'grn_number' . $grn_number );
             }
 
-            $this->updateOutturnSettings($item_id);
 
-            return $st_id;
+            StockWarehouse::where('id', '=', $outt_number_search)
+                                    ->update(['dp_id' => $grn_id, 'st_ended_by' => $user]);
+
+
+            return $outt_number_search;
 
         }catch (\PDOException $e) {
             return response()->json([

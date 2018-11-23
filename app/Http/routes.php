@@ -158,8 +158,9 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/movementdispatch/generateGDN/{warehouse}', ['as'=>'movementdispatch.generateGDN','uses'=>'Controller@generateGDN']);
 		Route::get('/movementdispatch/getDispatch/{dispatch_type}', ['as'=>'movementdispatch.getDispatch','uses'=>'DispatchController@getDispatch']);
 		Route::get('/movementdispatch/getGrower/{outt_number_search}', ['as'=>'movementdispatch.getGrower','uses'=>'DispatchController@getGrower']);
-
-
+		Route::get('/movementdispatch/addDispatch/{warehouse}/{grn_number}/{weighbridgeTK}/{outt_season}/{dispatch_type}/{agent_id}/{outt_number_search}', ['as'=>'movementdispatch.addDispatch','uses'=>'DispatchController@addDispatch']);
+		
+		Route::get('/movementdispatch/getGDNContents/{grn_number}/{warehouse}', ['as'=>'movementdispatch.getGDNContents','uses'=>'DispatchController@getGDNContents']);	
 
 
 		Route::get('/weighnote', 'WeightNoteController@weighNoteForm'); 
