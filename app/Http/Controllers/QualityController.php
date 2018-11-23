@@ -421,12 +421,12 @@ class QualityController extends Controller {
 			->leftJoin('raw_score_rw AS rw', 'qltyd.rw_id', '=', 'rw.id')
 			->leftJoin('coffee_growers_cgr AS cgr', 'st.cgr_id', '=', 'cgr.id')
 			->leftJoin('coffee_seasons_csn AS csn', 'st.csn_id', '=', 'csn.id')
-	        // ->where('csn.id', $season)
-			// ->where('st.st_outturn', $outt_number)
-			->where('st.id', $st_id)
-			// ->where('st.pty_id', $coffee_grade)
-			->groupBy('st.id')
-			->first();
+	            // ->where('csn.id', $season)
+				// ->where('st.st_outturn', $outt_number)
+				->where('st.id', $st_id)
+	            // ->where('st.pty_id', $coffee_grade)
+	            ->groupBy('st.id')
+	            ->first();
 
     	} else if ($direction == "Search") {
 
@@ -682,8 +682,8 @@ class QualityController extends Controller {
 			//update screen details	
 			foreach ($screendetails as $key => $value) {
 				
-				$acatid = $value['id'];
-				$screen_size = $value['screensize'];
+				$acatid = key($value);
+				$screen_size = $value[$acatid];
 				
 				$qadetails = QualityAnalysis::where('qltyd_id', $qid)->where('acat_id', $acatid)->first(); 
 			
@@ -691,7 +691,7 @@ class QualityController extends Controller {
 					 
 					$qanlid = $qadetails->id;
 	
-					QualityAnalysis::where('id', '=', $qanlid)
+					QualityAnalysis::where('id', '=', $qanlid)->where('acat_id', $acatid)
 					->update(['qanl_value'=> $screen_size]);
 				   
 				   Activity::log('Updated screen quality for quality id '.$qid. ' with analysis id '.$acatid.' and screen size '. $screen_size);
@@ -735,6 +735,7 @@ class QualityController extends Controller {
 				$acidity = $data->acidity;
 				$body = $data->body;
 				$cup = $data->cup;
+				$cupclass = $data->cupclass;
 				$comments = $data->comments_cp;
 				$st_id = $request->st_id;
 				$dnt = $data->dnt_cp;
@@ -755,23 +756,31 @@ class QualityController extends Controller {
 				if(empty($cup)){
 					$cup_current=null;
 				}
+				foreach ($cupclass as $key => $value) {
+
+		    		$cupclass_current = $value;
+		    		
+		    	}
+				if(empty($cupclass)){
+					$cupclass_current=null;
+				}
 		        if ($qdetails != NULL) {
 				 	
 				 	$qid = $qdetails->id;
 
 					quality_details::where('id', '=', $qid)
-						->update(['cup_quality'=> $cup_current, 'qltyd_comments'=> $comments]);
+						->update(['cup_quality'=> $cup_current, 'cup_class'=> $cupclass_current, 'qltyd_comments'=> $comments]);
 					
-					Activity::log('Updated quality for st_id'.$st_id. ' with rw_quality '. $cup_current.' comments '.$comments);
+					Activity::log('Updated quality for st_id'.$st_id. ' with rw_quality '. $cup_current.' comments '.$comments. 'cup_class' . $cupclass_current);
 
 					
 				} else {
 
 					quality_details::insert(
-					    ['st_mill_id' => $st_id, 'cup_quality'=> $cup_current, 'qltyd_comments'=> $comments]
+					    ['st_mill_id' => $st_id, 'cup_quality'=> $cup_current, 'qltyd_comments'=> $comments, 'cup_class'=> $cupclass_current]
 					);
 
-					Activity::log('Added quality for st_id'.$st_id. ' with  rw_quality '. $cup_current. ' comments '.$comments);
+					Activity::log('Added quality for st_id'.$st_id. ' with  rw_quality '. $cup_current. ' comments '.$comments. 'cup_class' . $cupclass_current);
 
 				}
 				

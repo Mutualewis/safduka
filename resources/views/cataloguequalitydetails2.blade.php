@@ -636,7 +636,7 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 
         }
 
-        echo '<td><label><input type="checkbox" id="cpacid'.$value2->id.'" name="acidity" data-screenid=id="'.$value->id.'" value="'.$value2->id.'">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'.$value2->cc_name.'</input>&nbsp&nbsp </label></td>';
+        echo '<td><label><input type="checkbox" id="screen_size'.$value->id.$value2->id.'" name="screensizes" data-screenid="'.$value->id.'" value="'.$value2->id.'">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'.$value2->cc_name.'</input>&nbsp&nbsp </label></td>';
 
     }
 
@@ -682,8 +682,7 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 
                             }
 
-                            echo '<td><label><input type="checkbox" id="cpacid'.$value->id.'" name="acidity" value="'.$value2->id.'">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'.$value2->cc_name.'</input>&nbsp&nbsp </label></td>';
-
+                            echo '<td><label><input type="checkbox" id="screen_size'.$value->id.$value2->id.'" name="screensizes" data-screenid="'.$value->id.'" value="'.$value2->id.'">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'.$value2->cc_name.'</input>&nbsp&nbsp </label></td>';
                         }
 
 
@@ -799,6 +798,10 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 	   
 		<li role="presentation">
 			<a href="#tab-cupquality" aria-controls="#tab-cupquality" role="tab" data-toggle="tab">Quality</a>
+		</li>
+
+			<li role="presentation">
+			<a href="#tab-cupclass" aria-controls="#tab-cupclass" role="tab" data-toggle="tab">Overall Class</a>
 		</li>
 
 </ul>
@@ -1003,6 +1006,60 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 			</div>	 
 
 		</div>
+
+		<div role="tabpanel" class="tab-pane" class="tab-pane" id="tab-cupclass">
+
+<div class="row" >
+
+	<div class="form-group col-md-6" style="padding-left:20px;">
+
+		<table align="left">	
+
+			<?php
+
+				if (isset($coffeeclass) && count($coffeeclass) > 0){
+
+					$count = 0;
+
+					foreach ($coffeeclass->all() as $value){
+
+						$count += 1;
+
+						if ($count > 3) {
+
+							$count = 1;
+
+							echo "</tr>";
+
+							echo "<tr>";
+
+						} else if ($count == 0) {
+
+							echo "<tr>";
+
+						}
+
+						echo '<label><input type="radio" id="ccls'.$value->id.'" name="cupclass" value="'.$value->id.'">&nbsp&nbsp'.$value->cc_name.'</input>&nbsp&nbsp </label></td>';
+
+						// echo '<td><label><input type="checkbox" id="raw'.$value->id.'" name="raw" value="'.$value->id.'">&nbsp&nbsp'.$value->rw_quality.'</input>&nbsp&nbsp </label>';
+
+					}
+
+				}
+
+			?>	  
+
+		</table>
+
+	</div>
+
+
+</div>	 
+
+</div>
+</div>
+
+</div>
 	
 </div>
 
@@ -1386,7 +1443,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
         $.get(url, function(data, status){
 
             var obj = jQuery.parseJSON(data);
-			console.log(obj)
+			
 		     $('#outt_number_display_screen').html(obj.st_outturn);
 
 			//document.getElementById('coffee_grade').value = obj.pty_id;
@@ -1405,13 +1462,13 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 				var str1_ss = "screen_size";
 				var key = Object.keys(data)[0];
   				var value = data[key];
-				var str2_ss = key;
+				var str2_ss = key+value;
 
 				var res_ss = str1_ss.concat(str2_ss);
 				console.log(res_ss)
 				if (document.getElementById(res_ss) != null) {
 
-					document.getElementById(res_ss).value = value;
+					document.getElementById(res_ss).checked = true;
 				}
 			});
 			
@@ -1508,6 +1565,17 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					var str1_rw = "cpq";
 
 					var str2_rw = obj.cup_quality;
+
+					var res_rw = str1_rw.concat(str2_rw);
+
+					if (document.getElementById(res_rw) != null) {
+
+						document.getElementById(res_rw).checked = true;
+					}
+
+					var str1_rw = "ccls";
+
+					var str2_rw = obj.cup_class;
 
 					var res_rw = str1_rw.concat(str2_rw);
 
@@ -2181,40 +2249,40 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			var st_id = document.getElementById("st_id_screen").value;
 			
 			var direction = 'Next';
-            var screen_sizes = {};
 
-            screen_sizes = $('input[name=screen_size]:checked').map(function(){
+		    //var screen_size = [];
+			var screen_sizes = [];
+			var screenarr = []
+			error = false
+			screen_size = $('input[name=screensizes]:checked').map(function(){
+				var screen_acat_id = $(this).data("screenid")
+				
+				if(jQuery.inArray(screen_acat_id, screenarr) !== -1){
+					error=true
+				}else{
+					screen_sizes.push({[screen_acat_id] : this.value})
+					screenarr.push(screen_acat_id)
+				}
+				return this.value;
 
-                return this.value;
-
-            }).get();
-		    var screen_size = [];
-			console.log(screen_sizes)
-			// for (i=1 ; i<11 ; i++){
-			// 	if (document.getElementById("screen_size"+i) != null) {
-			// 	var id = i;
-			// 	var screen = document.getElementById("screen_size"+i).value;
-			// 	var screenobj = {id:id, screensize: screen}
-			// 	} else {
-
-			// 	var id = i;
-			// 	var screen = null;
-			// 	var screenobj = {id:id, screensize: screen}
-			// 	}
-			// 	screen_size.push(screenobj)	
-			// }
-
-
+			}).get();
+			if(error){
+				bootbox.alert('You can only select one value per screen! Please correct this error');
+				return
+			}
+			
+			
+            
 			var url = '{{ route('cataloguequalitydetails.saveScreen') }}';
 
-			
+			console.log(url)
 
 			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 
 			var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');		
-			let data = {_token: CSRF_TOKEN, screens:screen_size, st_id : st_id}
+			let data = {_token: CSRF_TOKEN, screens:screen_sizes, st_id : st_id}
 			console.log(JSON.stringify(data))
 			$.ajax({
 				method: "POST",
@@ -2245,37 +2313,42 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		$('#button_previous_screen').on('click', function(){
 
-				var st_id = document.getElementById("st_id_screen").value;
+			var st_id = document.getElementById("st_id_screen").value;
 			
 			var direction = 'Previous';
-
-		    var screen_size = [];
 			
-			for (i=1 ; i<11 ; i++){
-				if (document.getElementById("screen_size"+i) != null) {
-				var id = i;
-				var screen = document.getElementById("screen_size"+i).value;
-				var screenobj = {id:id, screensize: screen}
-				} else {
-
-				var id = i;
-				var screen = null;
-				var screenobj = {id:id, screensize: screen}
+			var screen_sizes = [];
+			var screenarr = []
+			error = false
+			screen_size = $('input[name=screensizes]:checked').map(function(){
+				var screen_acat_id = $(this).data("screenid")
+				
+				if(jQuery.inArray(screen_acat_id, screenarr) !== -1){
+					error=true
+				}else{
+					screen_sizes.push({[screen_acat_id] : this.value})
+					screenarr.push(screen_acat_id)
 				}
-				screen_size.push(screenobj)	
+				return this.value;
+
+			}).get();
+			if(error){
+				bootbox.alert('You can only select one value per screen! Please correct this error');
+				return
 			}
-
-
+			
+			
+            
 			var url = '{{ route('cataloguequalitydetails.saveScreen') }}';
 
-			
+			console.log(url)
 
 			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 
 			var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');		
-			let data = {_token: CSRF_TOKEN, screens:screen_size, st_id : st_id}
+			let data = {_token: CSRF_TOKEN, screens:screen_sizes, st_id : st_id}
 			console.log(JSON.stringify(data))
 			$.ajax({
 				method: "POST",
@@ -2301,7 +2374,6 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
 					closeBootBox();
 			});
-
 		});
 
 		$('#button_save_screen').on('click', function(){
@@ -2310,32 +2382,39 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			
 			var direction = 'Next';
 
-		    var screen_size = [];
-			
-			for (i=1 ; i<11 ; i++){
-				if (document.getElementById("screen_size"+i) != null) {
-				var id = i;
-				var screen = document.getElementById("screen_size"+i).value;
-				var screenobj = {id:id, screensize: screen}
-				} else {
-
-				var id = i;
-				var screen = null;
-				var screenobj = {id:id, screensize: screen}
+		    //var screen_size = [];
+			var screen_sizes = [];
+			var screenarr = []
+			error = false
+			screen_size = $('input[name=screensizes]:checked').map(function(){
+				var screen_acat_id = $(this).data("screenid")
+				
+				if(jQuery.inArray(screen_acat_id, screenarr) !== -1){
+					error=true
+				}else{
+					screen_sizes.push({[screen_acat_id] : this.value})
+					screenarr.push(screen_acat_id)
 				}
-				screen_size.push(screenobj)	
+				return this.value;
+
+			}).get();
+			if(error){
+				bootbox.alert('You can only select one value per screen! Please correct this error');
+				return
 			}
+			
+			
             
 			var url = '{{ route('cataloguequalitydetails.saveScreen') }}';
 
-			
+			console.log(url)
 
 			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 
 			var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');		
-			let data = {_token: CSRF_TOKEN, screens:screen_size, st_id : st_id}
+			let data = {_token: CSRF_TOKEN, screens:screen_sizes, st_id : st_id}
 			console.log(JSON.stringify(data))
 			$.ajax({
 				method: "POST",
@@ -2375,115 +2454,16 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
  			var st_id = document.getElementById("st_id_cup").value;
 
-			var cup = null;
-
-			var flavour =[]
-			var acidity =[]
-			var body =[]
-			var taint =[]
-
-			var direction = 'Next';
-
-			acidity = $('input[name=acidity]:checked').map(function(){
-
-				return this.value;
-
-			}).get();
-			body = $('input[name=body]:checked').map(function(){
-
-			return this.value;
-
-			}).get();
-
-			flavour = $('input[name=flavour]:checked').map(function(){
-
-			return this.value;
-
-			}).get();
-
-			cup = $('input[name=cup]:checked').map(function(){
-
-			return this.value;
-
-			}).get();
-
-
-			var dont = document.getElementById("dnt_cp");
-
-			if (dont.checked) {
-
-				var dnt_cp = document.getElementById("dnt_cp").value;
-
-			} else {
-
-				var dnt_cp = null;
-
-			}
-
-
-
-
-			if (document.getElementById("comments_cp").value != "") {
-
-				var comments_cp = document.getElementById("comments_cp").value;
-
-			} else {
-
-				var comments_cp = null;
-
-			}
-
-			var url = '{{ route('cataloguequalitydetails.saveCup') }}';
-
-			var dialog = bootbox.dialog({
-				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-					
-
-			var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');	
-
-			datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp}
-
-			let data = {_token: CSRF_TOKEN, datacup:datacup, st_id : st_id}
-			console.log(JSON.stringify(data))
-			$.ajax({
-				method: "POST",
-				url: url,
-				data: data,
-				dataType: 'json',
-				}).done(function(response) {
-					if(response.updated) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-						closeBootBox();
-						displayCup(event, null, st_id, direction, null, null, null);
-					} else if(response.inserted) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
-						closeBootBox();
-						displayCup(event, null, st_id, direction, null, null, null);
-					}else if(response.error) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
-						closeBootBox();
-					}
-				}).error(function(error) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
-					closeBootBox();
-			});
-
-
-		});
-
-		$('#button_previous_cup').on('click', function(){
-
- 		var st_id = document.getElementById("st_id_cup").value;
-
 		var cup = null;
+		var cupclass = null;
 
 		var flavour =[]
 		var acidity =[]
 		var body =[]
 		var taint =[]
 
-		var direction = 'Previous';
+
+		var direction = 'Next';
 
 		acidity = $('input[name=acidity]:checked').map(function(){
 
@@ -2503,6 +2483,12 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		}).get();
 
 		cup = $('input[name=cup]:checked').map(function(){
+
+		return this.value;
+
+		}).get();
+
+		cupclass = $('input[name=cupclass]:checked').map(function(){
 
 		return this.value;
 
@@ -2543,7 +2529,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');	
 
-		datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp}
+		datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp, cupclass: cupclass}
 
 		let data = {_token: CSRF_TOKEN, datacup:datacup, st_id : st_id}
 		console.log(JSON.stringify(data))
@@ -2570,6 +2556,116 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 				closeBootBox();
 		});
 
+
+		});
+
+		$('#button_previous_cup').on('click', function(){
+
+ 		var st_id = document.getElementById("st_id_cup").value;
+
+		var cup = null;
+		var cupclass = null;
+
+		var flavour =[]
+		var acidity =[]
+		var body =[]
+		var taint =[]
+
+
+		var direction = 'Previous';
+
+		acidity = $('input[name=acidity]:checked').map(function(){
+
+			return this.value;
+
+		}).get();
+		body = $('input[name=body]:checked').map(function(){
+
+		return this.value;
+
+		}).get();
+
+		flavour = $('input[name=flavour]:checked').map(function(){
+
+		return this.value;
+
+		}).get();
+
+		cup = $('input[name=cup]:checked').map(function(){
+
+		return this.value;
+
+		}).get();
+
+		cupclass = $('input[name=cupclass]:checked').map(function(){
+
+		return this.value;
+
+		}).get();
+
+
+		var dont = document.getElementById("dnt_cp");
+
+		if (dont.checked) {
+
+			var dnt_cp = document.getElementById("dnt_cp").value;
+
+		} else {
+
+			var dnt_cp = null;
+
+		}
+
+
+
+
+		if (document.getElementById("comments_cp").value != "") {
+
+			var comments_cp = document.getElementById("comments_cp").value;
+
+		} else {
+
+			var comments_cp = null;
+
+		}
+
+		var url = '{{ route('cataloguequalitydetails.saveCup') }}';
+
+		var dialog = bootbox.dialog({
+			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+		}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+				
+
+		var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');	
+
+		datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp, cupclass: cupclass}
+
+		let data = {_token: CSRF_TOKEN, datacup:datacup, st_id : st_id}
+		console.log(JSON.stringify(data))
+		$.ajax({
+			method: "POST",
+			url: url,
+			data: data,
+			dataType: 'json',
+			}).done(function(response) {
+				if(response.updated) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+					closeBootBox();
+					displayCup(event, null, st_id, direction, null, null, null);
+				} else if(response.inserted) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
+					closeBootBox();
+					displayCup(event, null, st_id, direction, null, null, null);
+				}else if(response.error) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
+					closeBootBox();
+				}
+			}).error(function(error) {
+				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+				closeBootBox();
+		});
+
+
 		});
 
 		$('#button_save_cup').on('click', function(){
@@ -2577,11 +2673,13 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
  			var st_id = document.getElementById("st_id_cup").value;
 
 		    var cup = null;
+			var cupclass = null;
 
 			var flavour =[]
 			var acidity =[]
 			var body =[]
 			var taint =[]
+			
 
 		    var direction = 'Next';
 
@@ -2603,6 +2701,12 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			}).get();
 
 			cup = $('input[name=cup]:checked').map(function(){
+
+			return this.value;
+
+			}).get();
+
+			cupclass = $('input[name=cupclass]:checked').map(function(){
 
 			return this.value;
 
@@ -2643,7 +2747,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
     
 			var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');	
 
-			datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp}
+			datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp, cupclass: cupclass}
 
 			let data = {_token: CSRF_TOKEN, datacup:datacup, st_id : st_id}
 			console.log(JSON.stringify(data))
@@ -2743,7 +2847,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		});
 
 		$('#button_next_parchment').on('click', function(e){
-			e.prevent
+			e.preventDefault();
 			var st_id = document.getElementById("st_id_partchment").value;
 
 			var direction = 'Next';
@@ -2814,7 +2918,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		});
 
 		$('#button_previous_parchment').on('click', function(e){
-			e.prevent
+			e.preventDefault();
 			var st_id = document.getElementById("st_id_partchment").value;
 
 			var direction = 'Previous';
@@ -2839,7 +2943,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		        return this.value;
 
 		    }).get();
-			console.log(parchmentdesc)
+			
 			if(jQuery.isEmptyObject(parchmentdesc)){
 				bootbox.alert('Nothing selected!');
 				return false
