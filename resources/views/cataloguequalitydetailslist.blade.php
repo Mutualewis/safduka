@@ -45,12 +45,7 @@
 	if (!isset($csn_season)) {
 		$csn_season  = 3;
 	}
-	if (!isset($saleid )) {
-		$saleid   = NULL;
-	}
-	if (!isset($sale_cb_id )) {
-		$sale_cb_id   = NULL;
-	}
+	
 	
 	if (!isset($gid)) {
 		$gid   = NULL;
@@ -165,9 +160,41 @@
 	} else {
 		$processingall = array();		
 	}
+	
+	if(isset($coffeequality)){
+		$rwqualityOLD = $coffeequality;
+		$rwqualityall = array();
+		
+		foreach ($rwqualityOLD->all() as $field => $value) {
+			if ($value->qp_parameter != null) {
+				$newElement = array();
+				$newElement['id'] = $value->id;
+				$newElement['rw_score'] = $value->qp_parameter;
+				array_push($rwqualityall, $newElement);
+			}
+		}
 
+	} else {
+		$rwqualityall = array();		
+	}
+	//dd($partchment); exit;
+	if(isset($partchment)){
+		$ptqualityOLD = $partchment;
+		$ptqualityall = array();
+		
+		foreach ($ptqualityOLD->all() as $field => $value) {
+			if ($value->qp_parameter != null) {
+				$newElement = array();
+				$newElement['id'] = $value->id;
+				$newElement['qp_parameter'] = $value->qp_parameter;
+				array_push($ptqualityall, $newElement);
+			}
+		}
 
-
+	} else {
+		$ptqualityall = array();		
+	}
+	
 	if(isset($rawscore)){
 		$rawscoreOLD = $rawscore;
 		$rawscoreall = array();
@@ -231,9 +258,10 @@
 	}
 
 	$lotsIDs = array();
-	if (isset($sale_lots) && count($sale_lots) > 0) {
+	
+	if (isset($parchments) && count($parchments) > 0) {
 
-		foreach ($sale_lots->all() as $value) {
+		foreach ($parchments->all() as $value) {
 			$lotsIDs[] = $value->id;
 		}
 	}
@@ -289,48 +317,7 @@
 			                </select>
 			            </div>
 
-		           		<div class="form-group col-md-3">
-			                <label>Sale</label>
-			                <select class="form-control" id="sale" name="sale">
-			                	<option>Sale No.</option> 
-								@if (isset($sale) && count($sale) > 0)
-											@foreach ($sale->all() as $sales)
-												@if ($saleid ==  $sales->id)
-													<option value="{{ $sales->id }}" selected="selected">{{ $sales->sl_no}}</option>
-												@else
-													<option value="{{ $sales->id }}">{{ $sales->sl_no}}</option>
-												@endif
-
-											@endforeach
-								@else
-									<option>No Sale Found</option>		
-								@endif
-			                </select>		
-			            </div>
-
-			            <div class="form-group col-md-3">
-			                <label>Seller(Should Be Selected)</label>
-			                <select class="form-control" id="seller" name="seller" onchange="this.form.submit()">
-			                	<option></option> 
-								@if (isset($seller) && count($seller) > 0)
-											@foreach ($seller->all() as $sellers)
-												@if ($slr ==  $sellers->id)
-													<option value="{{ $sellers->id }}" selected="selected">{{ $sellers->slr_name}}</option>
-												@else
-													<option value="{{ $sellers->id }}">{{ $sellers->slr_name}}</option>
-												@endif
-
-											@endforeach
-										
-								@endif
-			                </select>
-			            </div>
-
-			        </div>
-
-		        	<div class="row" >
-		            
-			            <div class="form-group col-md-3">
+		           		 <div class="form-group col-md-3">
 			                <label>Quality Analysis Type</label>
 			                <select class="form-control" name="qualityTy" onchange="this.form.submit()">
 			                	<option></option> 
@@ -347,10 +334,10 @@
 								@endif
 			                </select>
 			            </div>
-
-
-
+			       
 			        </div>
+
+		        	
 
 			    <h3>Lots</h3>
 			    <div class="row">			
@@ -369,9 +356,9 @@
 					<table id="green-deffects-table" class="table table-condensed table-striped" width="100%">
 						<thead bgcolor="#086b36">
 							<tr>				  
-								<th>
+								<!-- <th>
 									<font color="white"> Lot</font>
-								</th>
+								</th> -->
 								<th>
 									<font color="white"> Outturn</font>
 								</th>
@@ -381,11 +368,11 @@
 								<th>
 									<font color="white"> Grade</font>
 								</th>
-								<th>
+								<!-- <th>
 									<font color="white"> Region</font>
-								</th>
+								</th> -->
 								<th>
-									<font color="white"> Cert</font>
+									<font color="white"> Parchment</font>
 								</th>
 								<th>
 									<font color="white"> Size</font>
@@ -396,12 +383,12 @@
 								<th>
 									<font color="white"> Deffects</font>
 								</th>															
-								<th>
+								<!-- <th>
 									<font color="white"> Process</font>
 								</th>
 								<th>
 									<font color="white"> P Loss(%)</font>
-								</th>
+								</th> -->
 								<th style="width: 150px">
 									<font color="white"> Comments
 								</th>
@@ -429,8 +416,6 @@
 <script>
 var countryID = document.getElementById("country").value;
 var saleSeason = document.getElementById("sale_season").value;
-var saleNumber = document.getElementById("sale").value;
-var seller = document.getElementById("seller").value;
 
 if (countryID == "") {
 	countryID = 0;
@@ -438,19 +423,12 @@ if (countryID == "") {
 if (saleSeason == "") {
 	saleSeason = 0;
 }
-if (saleNumber == "") {
-	saleNumber = 0;
-}
-if (seller == "") {
-	seller = 0;
-}
 
 $(document).ready(function (){  
-	var url = '{{ route('cataloguequalitydetailslist.getsalelots',['countryID'=>":id",'saleSeason'=>":slssn",'saleNumber'=>":slno",'seller'=>":slr"]) }}';
+	var url = '{{ route('cataloguequalitydetailslist.getsalelots',['countryID'=>":id",'saleSeason'=>":slssn"]) }}';
 	url = url.replace(':id', countryID);
 	url = url.replace(':slssn', saleSeason);
-	url = url.replace(':slno', saleNumber);
-	url = url.replace(':slr', seller);
+	console.warn(url)
 
 	var table = $('#green-deffects-table').DataTable({
 		dom: 'Bfrtip',  
@@ -484,27 +462,27 @@ $(document).ready(function (){
 
      	],
         columns: [
-            { data: 'lot', name: 'lot' },
+           // { data: 'lot', name: 'lot' },
             { data: 'outturn', name: 'outturn'},
             { data: 'mark', name: 'mark'},
             { data: 'grade', name: 'grade'},
-            { data: 'region', name: 'region' },
-            { data: 'cert', name: 'cert'},
+            // { data: 'region', name: 'region' },
+            { data: 'pct_id', name: 'parchment'},
 
             { data: 'qualityParameterID', name: 'greensize'},
             { data: 'qualityParameterID', name: 'greencolor'},
             { data: 'rw_score', name: 'rw_score'},
-            { data: 'prcss_name', name: 'prcss_name'},
+            // { data: 'prcss_name', name: 'prcss_name'},
 
-            { data: 'qltyd_prcss_value', name: 'qltyd_prcss_value'},
+            // { data: 'qltyd_prcss_value', name: 'qltyd_prcss_value'},
             { data: 'final_comments', name: 'final_comments'},
 
             { data: 'id', name: 'rawscore'},
 
             { data: 'dnt', name: 'dnt' },
-            { data: 'greencomments', name: 'greencomments' },
+            { data: 'final_comments', name: 'greencomments' },
             { data: 'rw_quality', name: 'rw_quality' },
-            { data: 'cp_quality', name: 'cp_quality' },
+            { data: 'qualityParameterPtyID', name: 'qualityParameterPtyID'},
 
         ], 
 
@@ -519,10 +497,57 @@ $(document).ready(function (){
 
 
         columnDefs: [
-	     	{targets: 6,
+			{targets: 3,
 					'render': function (data, type, full, meta, row){
 
-						var analysed = table.cell(meta.row,6).data();
+						var analysed = table.cell(meta.row,12).data();
+
+						var ptscore = <?php echo json_encode($ptqualityall); ?>;
+
+
+						var selectedAnalysisArray = [];
+
+						if (analysed != null) {
+							var selectedAnalysis = analysed.toString();
+							var selectedAnalysisString = selectedAnalysis.split(',');
+							$.each(selectedAnalysisString, function(index, value) { 
+								selectedAnalysisArray.push(value.toString().trim());
+							});
+
+						} else {
+							var selectedAnalysis = " ";
+
+						}
+
+						var select = null;
+
+						var selectStart = "<select class='form-control' id='"+'ptdsc'+ table.cell(meta.row,8).data()+"' name='"+'ptdesc['+ table.cell(meta.row,8).data() +"][]' multiple='multiple'>";
+					
+
+						var selectBody = null;
+						var extraAnalysisID = null; 
+						selectBody += "<option value=''>&nbspNot Set</option>"
+						for (var i = 0; i<ptscore.length; i++) {
+							extraAnalysisID = ptscore[i].id.toString().trim();
+							if (selectedAnalysis.indexOf(extraAnalysisID) >= 0) {
+								selectBody += "<option value='"+ptscore[i].id+"' selected='selected'>"+"&nbsp"+ptscore[i].qp_parameter+"</option>";
+							} else {
+								selectBody += "<option value='"+ptscore[i].id+"'>"+"&nbsp"+ptscore[i].qp_parameter+"</option>";
+							}
+						}
+
+
+						var selectEnd = "</select>";
+
+						var select = selectStart.concat(selectBody.concat(selectEnd));
+
+						return select;
+				}},
+				
+	     	{targets: 4,
+					'render': function (data, type, full, meta, row){
+
+						var analysed = table.cell(meta.row,4).data();
 
 						var greenSizes = <?php echo json_encode($greensizeall); ?>;
 
@@ -543,7 +568,7 @@ $(document).ready(function (){
 
 						var select = null;
 
-						var selectStart = "<select class='form-control' id='"+'gs'+ table.cell(meta.row,12).data()+"' name='"+'green_size['+ table.cell(meta.row,12).data() +"]' >";
+						var selectStart = "<select class='form-control' id='"+'gs'+ table.cell(meta.row,8).data()+"' name='"+'green_size['+ table.cell(meta.row,8).data() +"]' >";
 					
 
 						var selectBody = null;
@@ -568,11 +593,11 @@ $(document).ready(function (){
 						return select;
 				}},
 
-	     	{targets: 7,
+	     	{targets: 5,
 					'render': function (data, type, full, meta, row){
 
-						var analysed = table.cell(meta.row,6).data();
-
+						var analysed = table.cell(meta.row,4).data();
+						
 						var greenColors = <?php echo json_encode($greencolorall); ?>;
 
 						var selectedAnalysisArray = [];
@@ -591,7 +616,7 @@ $(document).ready(function (){
 
 						var select = null;
 
-						var selectStart = "<select class='form-control' id='"+'gc'+ table.cell(meta.row,12).data()+"' name='"+'green_color['+ table.cell(meta.row,12).data() +"]' >";
+						var selectStart = "<select class='form-control' id='"+'gc'+ table.cell(meta.row,8).data()+"' name='"+'green_color['+ table.cell(meta.row,8).data() +"]' >";
 					
 
 						var selectBody = null;
@@ -618,10 +643,10 @@ $(document).ready(function (){
 						return select;
 				}},
 
-	     	{targets: 8,
+	     	{targets: 6,
 					'render': function (data, type, full, meta, row){
 
-						var analysed = table.cell(meta.row,6).data();
+						var analysed = table.cell(meta.row,4).data();
 
 						var greenDeffects = <?php echo json_encode($greendefectsall); ?>;
 
@@ -641,7 +666,7 @@ $(document).ready(function (){
 
 						var select = null;
 
-						var selectStart = "<select class='form-control' id='"+'gd'+ table.cell(meta.row,12).data()+"' name='"+'green_defects['+ table.cell(meta.row,12).data() +"][]' multiple='multiple'>";
+						var selectStart = "<select class='form-control' id='"+'gd'+ table.cell(meta.row,8).data()+"' name='"+'green_defects['+ table.cell(meta.row,8).data() +"][]' multiple='multiple'>";
 					
 
 						var selectBody = null;
@@ -665,69 +690,23 @@ $(document).ready(function (){
 				}},
 
 
-	     	{targets: 9,
-					'render': function (data, type, full, meta, row){
+	    
 
-						var analysed = table.cell(meta.row,6).data();
-
-						var processing = <?php echo json_encode($processingall); ?>;
-
-						if (analysed != null) {
-							var selectedAnalysis = analysed.toString();
-
-						} else {
-							var selectedAnalysis = " ";
-
-						}
-
-						var select = null;
-
-						var selectStart = "<select class='form-control' id='"+'pr'+ table.cell(meta.row,12).data()+"' name='"+'processing_type['+ table.cell(meta.row,12).data() +"]'>";
-					
-
-						var selectBody = null;
-						var extraAnalysisID = null; 
-
-						var processSelected = table.cell(meta.row,9).data();
-						selectBody += "<option value=''>Not Set</option>"
-						for (var i = 0; i<processing.length; i++) {
-							extraAnalysisID = processing[i].id;
-							if (processSelected == processing[i].prcss_initial) {
-								selectBody += "<option value='"+processing[i].id+"' selected='selected'>"+"&nbsp"+processing[i].prcss_initial+"</option>";
-							} else {
-								selectBody += "<option value='"+processing[i].id+"'>"+"&nbsp"+processing[i].prcss_initial+"</option>";
-							}
-						}
-
-						var selectEnd = "</select>";
-
-						var select = selectStart.concat(selectBody.concat(selectEnd));
-
-						return select;
-				}},
-
-			{targets: 10, 
+			{targets: 7, 
 				'searchable':true,
 				'orderable': true,
 				'render': function (data, type, full, meta, row){
-					return '<input size = "10" style="text-align:center;" type="text" name="'+"processing_value["+ table.cell(meta.row,12).data()+']" value="' + $('<div/>').text(data).html() + '">';
+					return '<textarea cols = "15" type="text" name="'+"comments["+ table.cell(meta.row,8).data()+']" value="' + $('<div/>').text(data).html() + '">' + $('<div/>').text(data).html() + '</textarea>';
 			}},
 
-			{targets: 11, 
-				'searchable':true,
-				'orderable': true,
-				'render': function (data, type, full, meta, row){
-					return '<textarea cols = "15" type="text" name="'+"comments["+ table.cell(meta.row,12).data()+']" value="' + $('<div/>').text(data).html() + '">' + $('<div/>').text(data).html() + '</textarea>';
-			}},
 
-	
 
-	     	{targets: 12,
+	     	{targets: 8,
 			'render': function (data, type, full, meta, row){
 
-				var analysed = table.cell(meta.row,6).data();
+				var analysed = table.cell(meta.row,4).data();
 
-				var rawscore = <?php echo json_encode($rawscoreall); ?>;
+				var rawscore = <?php echo json_encode($rwqualityall); ?>;
 
 				if (analysed != null) {
 					var selectedAnalysis = analysed.toString();
@@ -739,18 +718,18 @@ $(document).ready(function (){
 
 				var select = null;
 
-				var selectStart = "<select class='form-control' id='"+'rws'+ table.cell(meta.row,12).data()+"' name='"+'raw_score['+ table.cell(meta.row,12).data() +"]'>";
+				var selectStart = "<select class='form-control' id='"+'rws'+ table.cell(meta.row,8).data()+"' name='"+'raw_score['+ table.cell(meta.row,8).data() +"]'>";
 			
 
 				var selectBody = null;
 				var extraAnalysisID = null; 
 
-				var processSelected = table.cell(meta.row,8).data();
+				var processSelected = table.cell(meta.row,11).data();
 				selectBody += "<option value=''>Not Set</option>"
-
+				
 				for (var i = 0; i<rawscore.length; i++) {
 					extraAnalysisID = rawscore[i].id;
-					if (processSelected == rawscore[i].rw_score) {
+					if (processSelected == rawscore[i].id) {
 						selectBody += "<option value='"+rawscore[i].id+"' selected='selected'>"+"&nbsp"+rawscore[i].rw_score+"</option>";
 					} else {
 						selectBody += "<option value='"+rawscore[i].id+"'>"+"&nbsp"+rawscore[i].rw_score+"</option>";
@@ -773,7 +752,7 @@ $(document).ready(function (){
 
 		fnDrawCallback: function( oSettings ) {
 			var jArray= <?php echo json_encode($lotsIDs); ?>;
-
+			
 		    $(document).ready(function() {
 
 		    	for(var i=0;i<jArray.length;i++){
@@ -809,9 +788,10 @@ $(document).ready(function (){
 				            enableFiltering: true
 				        });
 		   		}
-
-		    	for(var i=0;i<jArray.length;i++){
-			    	var str1 = "#pr";
+				
+				
+				for(var i=0;i<jArray.length;i++){
+			    	var str1 = "#ptdsc";
 					var str2 = jArray[i];
 					var res = str1.concat(str2);
 				        $(res).multiselect({
@@ -821,6 +801,17 @@ $(document).ready(function (){
 				            enableFiltering: true
 				        });
 		   		}
+		    	// for(var i=0;i<jArray.length;i++){
+			    // 	var str1 = "#pr";
+				// 	var str2 = jArray[i];
+				// 	var res = str1.concat(str2);
+				//         $(res).multiselect({
+				//         	buttonWidth: '150px',
+				//             enableClickableOptGroups: true,
+				//             enableCollapsibleOptGroups: true,
+				//             enableFiltering: true
+				//         });
+		   		// }
 
 		    	for(var i=0;i<jArray.length;i++){
 			    	var str1 = "#rws";
@@ -839,10 +830,10 @@ $(document).ready(function (){
 		},
 
         rowCallback: function( nRow, aData, sData, data, iDisplayIndex, iDisplayIndexFull ) {    
-        	var smatchdnt = $('td:eq("13")', nRow).html();
-        	var smatchgreencomments = $('td:eq("14")', nRow).html();
-        	var smatchraw = $('td:eq("15")', nRow).html();
-        	var smatchcup = $('td:eq("16")', nRow).html();
+        	var smatchdnt = $('td:eq("9")', nRow).html();
+        	var smatchgreencomments = $('td:eq("10")', nRow).html();
+        	var smatchraw = $('td:eq("11")', nRow).html();
+        	var smatchcup = $('td:eq("12")', nRow).html();
 
 	        if (smatchdnt > 0) {
 	            $(nRow).css('color', 'red');  
@@ -855,10 +846,10 @@ $(document).ready(function (){
 	        }         
 
 
-	        $('td:eq("13")', nRow).hide();
-	        $('td:eq("14")', nRow).hide();
-	        $('td:eq("15")', nRow).hide();
-	        $('td:eq("16")', nRow).hide();
+	        $('td:eq("9")', nRow).hide();
+	        $('td:eq("10")', nRow).hide();
+	        $('td:eq("11")', nRow).hide();
+	        $('td:eq("12")', nRow).hide();
 
         },			
 
@@ -952,7 +943,7 @@ $(document).ready(function (){
 	if (seller == "") {
 		seller = 0;
 	}
-
+	var jarray = []
 	$(document).ready(function (){   
 
 		var url = '{{ route('cataloguequalitydetailslist.getsalelots',['countryID'=>":id",'saleSeason'=>":slssn",'saleNumber'=>":slno",'seller'=>":slr"]) }}';

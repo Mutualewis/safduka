@@ -1001,7 +1001,7 @@
 
 						                				}
 
-						                				echo '<td><label><input type="radio" id="pq'.$value->id.'" name="parchmentquality" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
+						                				echo '<td><label><input type="checkbox" id="pq'.$value->id.'" name="parchmentquality" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
 
 						                			}
 
@@ -1273,10 +1273,10 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			
 			var screen_data = null;
 			screen_data = obj.qualityParameterSCRID
-			
-			newTemp = screen_data.replace(/'/g, '\"');
+			console.log(screen_data)
+			if(screen_data!=null){
+				newTemp = screen_data.replace(/'/g, '\"');
 			screen_data = JSON.parse(newTemp)
-			
 			$.each(screen_data, function( index, data ) {
 				var str1_ss = "screen_size";
 				var key = Object.keys(data)[0];
@@ -1290,6 +1290,8 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					document.getElementById(res_ss).value = value;
 				}
 			});
+			}	
+		
 			
         });
 
@@ -2060,7 +2062,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		    var screen_size = [];
 			
-			for (i=1 ; i<11 ; i++){
+			for (i=1 ; i<5 ; i++){
 				if (document.getElementById("screen_size"+i) != null) {
 				var id = i;
 				var screen = document.getElementById("screen_size"+i).value;
@@ -2075,7 +2077,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			}
 
 
-			var url = '{{ route('cataloguequalitydetails.saveScreen') }}';
+			var url = '{{ route('cataloguequalitydetails.saveScreenA') }}';
 
 			
 
@@ -2121,7 +2123,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		    var screen_size = [];
 			
-			for (i=1 ; i<11 ; i++){
+			for (i=1 ; i<5 ; i++){
 				if (document.getElementById("screen_size"+i) != null) {
 				var id = i;
 				var screen = document.getElementById("screen_size"+i).value;
@@ -2136,7 +2138,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			}
 
 
-			var url = '{{ route('cataloguequalitydetails.saveScreen') }}';
+			var url = '{{ route('cataloguequalitydetails.saveScreenA') }}';
 
 			
 
@@ -2182,7 +2184,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		    var screen_size = [];
 			
-			for (i=1 ; i<11 ; i++){
+			for (i=1 ; i<5 ; i++){
 				if (document.getElementById("screen_size"+i) != null) {
 				var id = i;
 				var screen = document.getElementById("screen_size"+i).value;
@@ -2197,7 +2199,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			}
 
 
-			var url = '{{ route('cataloguequalitydetails.saveScreen') }}';
+			var url = '{{ route('cataloguequalitydetails.saveScreenA') }}';
 
 			
 
@@ -2583,7 +2585,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			url = url.replace(':dnt', dnt);
 
 			url = url.replace(':parchmentdesc', parchmentdesc);
-
+			console.log(url)
 			
 			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'

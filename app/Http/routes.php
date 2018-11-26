@@ -226,7 +226,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::post('/cataloguequalitydetailslist', 'QualityController@addQualityDetailsList'); 
 
 		Route::get('/cataloguequalitydetailslist', 'QualityController@qualityListForm'); 
-		Route::get('/cataloguequalitydetailslist/getsalelots/{countryID}/{saleSeason}/{saleNumber}/{seller}', ['as'=>'cataloguequalitydetailslist.getsalelots','uses'=>'QualityController@getSaleLots']); 
+		Route::get('/cataloguequalitydetailslist/getsalelots/{countryID}/{saleSeason}', ['as'=>'cataloguequalitydetailslist.getsalelots','uses'=>'QualityController@getSaleLots']); 
 
 		Route::post('/cataloguequalitydetailslist', 'QualityController@addQualityDetailsList'); 
 
@@ -236,6 +236,8 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 	Route::get('/cataloguequalitydetails/saveGreen/{st_id}/{dnt}/{greensize}/{greencolor}/{greendefects}/{raw}/{comments}', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'QualityController@saveGreen']);
 
 	Route::post('/cataloguequalitydetails/saveScreen', ['as'=>'cataloguequalitydetails.saveScreen','uses'=>'QualityController@saveScreen']);
+
+	Route::post('/cataloguequalitydetails/saveScreenA', ['as'=>'cataloguequalitydetails.saveScreenA','uses'=>'QualityController@saveScreenA']);
 
 	Route::post('/cataloguequalitydetails/saveCup', ['as'=>'cataloguequalitydetails.saveCup','uses'=>'QualityController@saveCup']);
 
