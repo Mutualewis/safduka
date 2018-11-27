@@ -1639,7 +1639,7 @@ $(document).ready(function (){
 					'render': function (data, type, full, meta, row){
 
 						var analysed = table.cell(meta.row,11).data();
-
+						
 						var acidities = <?php echo json_encode($aciditiesall); ?>;
 
 						var selectedAnalysisArray = [];
@@ -1659,8 +1659,8 @@ $(document).ready(function (){
 						var select = null;
 
 						var selectStart = "<select class='form-control' id='"+'acd'+ table.cell(meta.row,10).data()+"' name='"+'acidity['+ table.cell(meta.row,10).data() +"][]' multiple='multiple'>";
-					
-
+						
+						
 						var selectBody = null;
 						var extraAnalysisID = null; 
 						selectBody += "<option value=''>&nbspNot Set</option>"
