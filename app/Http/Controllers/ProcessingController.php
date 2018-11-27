@@ -354,7 +354,7 @@ class ProcessingController extends Controller
 
 
         $tobeprocessed = Input::get('tobeprocessed');
-
+        
         if (null !== Input::get('confirminstruction')) {
             $prc                   = Input::get('process_type');
             $ref_no                = strtoupper(Input::get('ref_no'));
@@ -365,7 +365,7 @@ class ProcessingController extends Controller
             $weight_in             = null;
 
             $prdetails = Process::where('pr_instruction_number', $ref_no)->first();
-
+          
             if ($prdetails != null) {
 
                 $prid = $prdetails->id;
@@ -404,8 +404,8 @@ class ProcessingController extends Controller
 
             $tobeprocessed = Input::get('tobeprocessed');
             $tobewithdrawn = Input::get('tobewithdrawn');
-
-            $this->checkIFBulkWithNoContract($prc, $contractID, $BULKING_PROCESS);
+           
+            //$this->checkIFBulkWithNoContract($prc, $contractID, $BULKING_PROCESS);
             
             
             
@@ -424,9 +424,9 @@ class ProcessingController extends Controller
                 }
             }           
 
-
+            
             $prdetails = Process::where('pr_instruction_number', $ref_no)->first();
-
+           
             if ($prdetails != null) {
 
                 if ($prdetails->pr_confirmed_by != null) {

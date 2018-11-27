@@ -91,7 +91,7 @@ class DispatchController extends Controller {
         $dispatch_queue = DB::table('stock_warehouse_st AS st')
             ->select('*', 'st.id as stid')
             ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
-            ->whereNotNull('st.st_to_dispatch')
+            // ->whereNotNull('st.st_to_dispatch')
             ->get(); 
 
         return View::make('movementdispatch', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'expected_arrival', 'rates', 'teams', 'active_season', 'growers', 'items', 'millers', 'material', 'basket', 'packaging', 'warehouse', 'role', 'admin', 'timeout', 'dispatch_type', 'dispatch_queue'));    
@@ -137,7 +137,6 @@ class DispatchController extends Controller {
         $to_dispatch = Input::get('to_dispatch');
         $cid = session('maincountry');
 
-
         $dispatch_date=date_create($dispatch_date);
         $dispatch_date = date_format($dispatch_date,"Y-m-d"); 
 
@@ -160,11 +159,8 @@ class DispatchController extends Controller {
             $grn_id = $grn_details->id;
         } 
 
-
         if (NULL !==  Input::get('confirmgrns')) { 
-
             $weigh_scale_details = WeightScales::get();
-
             if ($weigh_scale_details != NULL) {
 
                 foreach ($weigh_scale_details as $key_wsd => $value_wsd) {
@@ -226,6 +222,8 @@ class DispatchController extends Controller {
             $dispatch_view = DB::table('stock_warehouse_st AS st')
                 ->select('*')
                 ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+                ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'st.grn_id')
+                ->leftJoin('coffee_growers_cgr as cgr', 'cgr.id', '=', 'st.cgr_id')
                 ->where('st.dp_id', $grn_id)
                 ->get(); 
 
@@ -288,7 +286,13 @@ class DispatchController extends Controller {
         }
         $dispatch_type = DispatchType::all(['id', 'dt_name']);
 
-        return View::make('movementdispatch', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'grn_details', 'coffeeGrade', 'sale', 'coffee_details', 'saleid', 'basket', 'packaging', 'stock_details', 'warehouse', 'warehouse_count', 'wrhse', 'location', 'weigh_scales', 'weigh_scales_count', 'wsid', 'rw', 'clm', 'zone', 'packages_batch', 'batch_kilograms', 'grnsview', 'batchview', 'expected_arrival', 'stock_id', 'st_quality_check', 'rates', 'teams', 'wbtk', 'ot_season', 'active_season', 'growers', 'items', 'millers', 'material', 'basket', 'packaging', 'warehouse', 'role', 'admin', 'timeout', 'grn_content', 'dispatch_type')); 
+        $dispatch_queue = DB::table('stock_warehouse_st AS st')
+            ->select('*', 'st.id as stid')
+            ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+            // ->whereNotNull('st.st_to_dispatch')
+            ->get();         
+
+            return View::make('movementdispatch', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'grn_details', 'coffeeGrade', 'sale', 'coffee_details', 'saleid', 'basket', 'packaging', 'stock_details', 'warehouse', 'warehouse_count', 'wrhse', 'location', 'weigh_scales', 'weigh_scales_count', 'wsid', 'rw', 'clm', 'zone', 'packages_batch', 'batch_kilograms', 'grnsview', 'batchview', 'expected_arrival', 'stock_id', 'st_quality_check', 'rates', 'teams', 'wbtk', 'ot_season', 'active_season', 'growers', 'items', 'millers', 'material', 'basket', 'packaging', 'warehouse', 'role', 'admin', 'timeout', 'grn_content', 'dispatch_type', 'dispatch_queue')); 
 
     
     }
