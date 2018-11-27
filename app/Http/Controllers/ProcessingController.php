@@ -1145,11 +1145,12 @@ class ProcessingController extends Controller
                 $resultsType = ProcessResultsType::where('prcss_id', $prc)->get();
                 if ($rfid != null) {
                     $StockView      = StockViewALL::where('prcssid', $rfid)->where('processtype', $prc)->get();
-                    $ProcessResults = Processes::where('id', $rfid)->where('ctrid', $cid)->whereNotNull('result_type')->get();
+                    $ProcessResults = Processes::where('id', $rfid)->where('ctrid', $cid)->where('st_mill_id', $st_id_selected)->whereNotNull('result_type')->get();
                 }
             }        
 
         }
+     
         if ($StockView != null) {
             $warehouse_ids = array();
             foreach ($StockView as $key => $value) {
@@ -1305,13 +1306,13 @@ class ProcessingController extends Controller
                     $resultsType = ProcessResultsType::where('prcss_id', $prc)->get();
                     if ($rfid != null) {
                         $StockView      = StockViewALL::where('prcssid', $rfid)->get();
-                        $ProcessResults = Processes::where('id', $rfid)->where('ctrid', $cid)->whereNotNull('result_type')->get();
+                        $ProcessResults = Processes::where('id', $rfid)->where('st_mill_id', $st_id_selected)->where('ctrid', $cid)->whereNotNull('result_type')->get();
                     }
                 }
                 $Warehouse = warehouses_region::where('ctr_id', Input::get('country'))->where('wrt_id', '1')->get();
 
             }
-
+               
 
             
             $prdetails = Process::where('id', $rfid)->first();
@@ -1388,7 +1389,7 @@ class ProcessingController extends Controller
                     $resultsType = ProcessResultsType::where('prcss_id', $prc)->get();
                     if ($rfid != null) {
                         $StockView      = StockViewALL::where('prcssid', $rfid)->get();
-                        $ProcessResults = Processes::where('id', $rfid)->where('ctrid', $cid)->whereNotNull('result_type')->get();
+                        $ProcessResults = Processes::where('id', $rfid)->where('ctrid', $cid)->whereNotNull('result_type')->where('st_mill_id', $st_id_selected)->get();
                     }
                 }
                
