@@ -993,6 +993,8 @@ class QualityController extends Controller {
 
 		$partchment = quality_parameters::where('qg_id', '13')->orderBy('qp_parameter', 'ASC')->get();
 
+		$coffee_class_cc = CoffeeClass::all(['id', 'cc_name']);
+
     	$slr = Input::get('seller'); 
 
         if (NULL !== Input::get('submitlot')){
@@ -1044,6 +1046,7 @@ class QualityController extends Controller {
 			$lotsid = Input::get('lotsid');
 			$screen_type = Input::get('screen_type');
 			$screen_value = Input::get('screen_value');
+			$screen_class = Input::get('screen_class');
 			$cup_comments = Input::get('cup_comments');
 			$cup_score_cmt = Input::get('cup_score_cmt'); 
 			$cup_score = Input::get('cup_score');
@@ -1053,8 +1056,10 @@ class QualityController extends Controller {
 			$acidity = Input::get('acidity');
 			$body = Input::get('body');
 			$flavour = Input::get('flavour');
+			$cup_quality = Input::get('cup_quality');
+			$overall_class = Input::get('overall_class');
 
-
+			
 
 			if ($green_size != NULL || $green_color != NULL || $green_defects != NULL) {	
 
@@ -1152,39 +1157,40 @@ class QualityController extends Controller {
 				}
 				
 				if ($acidity != NULL) {
+					
 					foreach ($acidity as $key => $value) {
-						if ($value != NULL) {
+						foreach($value as $key2 => $value2){
+						if ($value2 != NULL) {
 							cupcomments::insert(
-							['st_mill_id' => $key, 'qp_id' =>  $value]); 
-							Activity::log('Added Quality For Coffee ID '.$key. ' with quality ID '.$value);
-						}					
+							['st_mill_id' => $key2, 'qp_id' =>  $value2]); 
+							Activity::log('Added Quality For Coffee ID '.$key. ' with quality ID '.$value2);
+						}
+					}					
 					}				
 				}
 				if ($body != NULL) {
 					foreach ($body as $key => $value) {
-						if ($value != NULL) {
-							cupcomments::insert(
-							['st_mill_id' => $key, 'qp_id' =>  $value]); 
-							Activity::log('Added Quality For Coffee ID '.$key. ' with quality ID '.$value);
-						}					
+						foreach($value as $key2 => $value2){
+							if ($value2 != NULL) {
+								cupcomments::insert(
+								['st_mill_id' => $key2, 'qp_id' =>  $value2]); 
+								Activity::log('Added Quality For Coffee ID '.$key. ' with quality ID '.$value2);
+							}					
 					}				
+				}
 				}
 				if ($flavour != NULL) {
 					foreach ($flavour as $key => $value) {
-							if ($value != NULL && is_array($value)) {
-								foreach ($value as $key2 => $value2) {
-									cupcomments::insert(
-									['st_mill_id' => $key, 'qp_id' =>  $value2]); 
-									Activity::log('Added Quality For Coffee ID '.$key. ' with quality ID '.$value2);
-								}						
-							} else{
+						foreach($value as $key2 => $value2){
+							if ($value2 != NULL) {
 								cupcomments::insert(
-								['st_mill_id' => $key, 'qp_id' =>  $value]); 
-								Activity::log('Added Quality For Coffee ID '.$key. ' with quality ID '.$value);								
+								['st_mill_id' => $key2, 'qp_id' =>  $value2]); 
+								Activity::log('Added Quality For Coffee ID '.$key. ' with quality ID '.$value2);
 							}
 					}
 				}
 			}
+		}
 
 			
 		
@@ -1222,6 +1228,39 @@ class QualityController extends Controller {
 				}				
 			}
 			
+			if ($cup_quality != NULL) {
+				foreach ($cup_quality as $key => $value) {
+					if ($value != NULL) {
+						$qdetails = quality_details::where('st_mill_id', $key)->first(); 
+						if($qdetails != NULL){
+							$qid = $qdetails->id;
+							quality_details::where('id', '=', $qid)
+								->update(['cup_quality' => $value]);
+
+						} else {
+							quality_details::insert(
+								['st_mill_id' => $key,'cup_quality' => $value]);
+						}						
+					}					
+				}				
+			}
+			
+			if ($overall_class != NULL) {
+				foreach ($overall_class as $key => $value) {
+					if ($value != NULL) {
+						$qdetails = quality_details::where('st_mill_id', $key)->first(); 
+						if($qdetails != NULL){
+							$qid = $qdetails->id;
+							quality_details::where('id', '=', $qid)
+								->update(['overall_class' => $value]);
+
+						} else {
+							quality_details::insert(
+								['st_mill_id' => $key,'overall_class' => $value]);
+						}						
+					}					
+				}				
+			}
 
 			if ($partchment != NULL) {
 				foreach ($partchment as $key => $value) {
@@ -1274,21 +1313,109 @@ class QualityController extends Controller {
 			}
 
 			if ($screen_value != NULL) {
-				foreach ($screen_value as $key => $value) {
-					if ($value != NULL) {
-						$qdetails = quality_details::where('st_mill_id', $key)->first(); 
-						if($qdetails != NULL){
-							$qid = $qdetails->id;
-							quality_details::where('id', '=', $qid)
-								->update(['qltyd_scr_value' => $value]);
+				
+				foreach($screen_value as $acatid => $st_ids){
+					foreach($st_ids as $st_id => $value){
+						if($value!=null&&!empty($value)){
+						
+							$qdetails = quality_details::where('st_mill_id', $st_id)->first(); 
+			
+							if ($qdetails != NULL) {
+								
+								$qid = $qdetails->id;
 
 						} else {
-							quality_details::insert(
-								['st_mill_id' => $key,'qltyd_scr_value' => $value]);
-						}						
-					}					
-				}				
+
+							$qid = quality_details::insertGetId(
+								['st_mill_id' => $st_id]
+							);
+
+							Activity::log('Added arrival quality for st_id '.$st_id);
+
+						}
+						//insert details
+						$screen_size = $value;
+						
+						$qadetails = QualityAnalysis::where('qltyd_id', $qid)->where('acat_id', $acatid)->first(); 
+					
+						if ($qadetails != NULL) {
+							 
+							$qanlid = $qadetails->id;
+			
+							QualityAnalysis::where('id', '=', $qanlid)->where('acacataloguequaltt_id', $acatid)
+							->update(['qanl_value'=> $screen_size]);
+						   
+						   Activity::log('Updated screen quality for quality id '.$qid. ' with analysis id '.$acatid.' and screen size '. $screen_size);
+			
+					   } else {
+			
+						QualityAnalysis::insert(
+							['acat_id' => $acatid, 'qltyd_id' => $qid,  'qanl_value' =>  $screen_size ]
+						);
+			
+						   Activity::log('Added arrival quality for screens for quality id '.$qid .' with acat_id '. $acatid . ' screen value '. $screen_size);
+			
+					   }
+						}
+					}
+				}
+				
+			
+						
 			}	
+
+			if ($screen_class != NULL) {
+				
+				foreach($screen_class as $acatid => $st_ids){
+					$value=null;
+					foreach($st_ids as $st_id => $value){
+						
+						if($value!=null){
+							$qdetails = quality_details::where('st_mill_id', $st_id)->first(); 
+			
+							if ($qdetails != NULL) {
+								
+								$qid = $qdetails->id;
+
+						} else {
+
+							$qid = quality_details::insertGetId(
+								['st_mill_id' => $st_id]
+							);
+
+							Activity::log('Added arrival quality for st_id '.$st_id);
+
+						}
+						//insert details
+						$screen_class = $value;
+						
+						$qadetails = QualityAnalysis::where('qltyd_id', $qid)->where('acat_id', $acatid)->first(); 
+					
+						if ($qadetails != NULL) {
+							 
+							$qanlid = $qadetails->id;
+			
+							QualityAnalysis::where('id', '=', $qanlid)->where('acat_id', $acatid)
+							->update(['qanl_value'=> $screen_class]);
+						   
+						   Activity::log('Updated screen quality for quality id '.$qid. ' with analysis id '.$acatid.' and screen class '. $screen_class);
+			
+					   } else {
+			
+						QualityAnalysis::insert(
+							['acat_id' => $acatid, 'qltyd_id' => $qid,  'qanl_value' =>  $screen_class ]
+						);
+			
+						   Activity::log('Added arrival quality for screens for quality id '.$qid .' with acat_id '. $acatid . ' screen_class '. $screen_class);
+			
+					   }
+						}
+					}
+				}
+				
+			
+						
+			}
 
 			if ($cup_comments != NULL) {
 				foreach ($cup_comments as $key => $value) {
@@ -1389,12 +1516,18 @@ class QualityController extends Controller {
 			$parchments = StockViewALL::select('*')->where('csn_season', $saleSeasonName)->get();
 
 	    	$partchment = quality_parameters::where('qg_id', '13')->orderBy('qp_parameter', 'ASC')->get();
+			
+			$acidities = quality_parameters::where('qg_id', '7')->orderBy('qp_parameter', 'ASC')->get();
+    	
+    		$flavours = quality_parameters::where('qg_id', '10')->orderBy('qp_parameter', 'ASC')->get();
+
+			$bodies = quality_parameters::where('qg_id', '8')->orderBy('qp_parameter', 'ASC')->get();
 
 
-		
+			$coffee_class_cc = CoffeeClass::all(['id', 'cc_name']);
 
 						return View::make('cataloguequalitydetailslist', compact('id', 
-							'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'cdetails', 'greencomments', 'screens', 'cupscore', 'rawscore', 'qdetails', 'slr', 'QualityType', 'qtype', 'cupscorecomments','parchments', 'coffeequality', 'partchment'));	
+							'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'cdetails', 'greencomments', 'screens', 'cupscore', 'rawscore', 'qdetails', 'slr', 'QualityType', 'qtype', 'cupscorecomments','parchments', 'coffeequality', 'partchment', 'coffee_class_cc', 'acidities', 'flavours', 'bodies'));	
 
 
 								
@@ -1435,12 +1568,17 @@ class QualityController extends Controller {
 		
 			$qtype = Input::get('qualityTy');
 			$partchment = quality_parameters::where('qg_id', '13')->orderBy('qp_parameter', 'ASC')->get();
+			$coffee_class_cc = CoffeeClass::all(['id', 'cc_name']);
 
+			$acidities = quality_parameters::where('qg_id', '7')->orderBy('qp_parameter', 'ASC')->get();
+    	
+    		$flavours = quality_parameters::where('qg_id', '10')->orderBy('qp_parameter', 'ASC')->get();
 
+			$bodies = quality_parameters::where('qg_id', '8')->orderBy('qp_parameter', 'ASC')->get();
 
 						$request->session()->flash('alert-success', 'Sale Lot Found!!');
 						return View::make('cataloguequalitydetailslist', compact('id', 
-							'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'cdetails', 'greencomments', 'screens', 'cupscore', 'rawscore', 'qdetails', 'slr', 'QualityType', 'qtype', 'StockView', 'cupscorecomments', 'parchments', 'coffeequality','partchment'));	
+							'Season', 'country', 'cid', 'csn_season', 'sale','CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'cdetails', 'greencomments', 'screens', 'cupscore', 'rawscore', 'qdetails', 'slr', 'QualityType', 'qtype', 'StockView', 'cupscorecomments', 'parchments', 'coffeequality','partchment', 'coffee_class_cc', 'acidities', 'flavours', 'bodies'));	
 								
 				
     	}
