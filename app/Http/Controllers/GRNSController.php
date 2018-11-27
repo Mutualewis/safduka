@@ -200,8 +200,9 @@ class GRNSController extends Controller {
             if (NULL !== Input::get('outt_number_select')) {
 
                 $outturns = DB::table('process_results_prts AS prts')
-                    ->select('*', 'prts.id as prtsid')
+                    ->select('*', 'prts.id as prtsid', 'gr.cgr_id as cgrid')
                     ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
+                    ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'st.grn_id')
                     ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
                     ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
                     ->where('prts.id', Input::get('outt_number_select'))
@@ -216,10 +217,11 @@ class GRNSController extends Controller {
                 } else {
 
                     StockWarehouse::where('id', '=', $stock_details->id)
-                        ->update(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid]);
+                        ->update(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid, 'cgr_id' => $outturns->cgrid]);
                 }
 
-                
+                Grn::where('id', '=', $grn_id)
+                        ->update(['cgr_id' => $outturns->cgrid]);
 
 
 

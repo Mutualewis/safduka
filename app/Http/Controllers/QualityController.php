@@ -1547,9 +1547,12 @@ class QualityController extends Controller {
 			if ($cdetails !== NULL) {
 				$coffeeid = $cdetails->id;
 			}
-			$saleSeasonName = season::where('id', $season)->first();
+
+			$saleSeasonName = Season::where('id', $season)->first();
+			if($saleSeasonName!=null){
         	$saleSeasonName = $saleSeasonName->csn_season;
 			$parchments = StockViewALL::select('*')->where('csn_season', $saleSeasonName)->get();
+			}
 			$qdetails = quality_details::where('st_mill_id', $coffeeid)->first();
 			$greencomments = greencomments::all(['id', 'st_mill_id', 'qp_id']);
 
