@@ -1162,7 +1162,7 @@ class QualityController extends Controller {
 						foreach($value as $key2 => $value2){
 						if ($value2 != NULL) {
 							cupcomments::insert(
-							['st_mill_id' => $key2, 'qp_id' =>  $value2]); 
+							['st_mill_id' => $key, 'qp_id' =>  $value2]); 
 							Activity::log('Added Quality For Coffee ID '.$key. ' with quality ID '.$value2);
 						}
 					}					
@@ -1173,7 +1173,7 @@ class QualityController extends Controller {
 						foreach($value as $key2 => $value2){
 							if ($value2 != NULL) {
 								cupcomments::insert(
-								['st_mill_id' => $key2, 'qp_id' =>  $value2]); 
+								['st_mill_id' => $key, 'qp_id' =>  $value2]); 
 								Activity::log('Added Quality For Coffee ID '.$key. ' with quality ID '.$value2);
 							}					
 					}				
@@ -1184,7 +1184,7 @@ class QualityController extends Controller {
 						foreach($value as $key2 => $value2){
 							if ($value2 != NULL) {
 								cupcomments::insert(
-								['st_mill_id' => $key2, 'qp_id' =>  $value2]); 
+								['st_mill_id' => $key, 'qp_id' =>  $value2]); 
 								Activity::log('Added Quality For Coffee ID '.$key. ' with quality ID '.$value2);
 							}
 					}
@@ -1263,11 +1263,12 @@ class QualityController extends Controller {
 			}
 
 			if ($partchment != NULL) {
+				
 				foreach ($partchment as $key => $value) {
 						if ($value != NULL && is_array($value)) {
 							foreach ($value as $key2 => $value2) {
 
-								$pdetails = partchment_comments::where('st_mill_id', $key)->first(); 
+						$pdetails = partchment_comments::where('st_mill_id', $key)->where('qp_id',  $value2)->first(); 
 						if($pdetails != NULL){
 							$qid = $pdetails->id;
 							partchment_comments::where('id', '=', $qid)
@@ -1279,7 +1280,7 @@ class QualityController extends Controller {
 							}
 							}						
 						} else{
-							$pdetails = partchment_comments::where('st_mill_id', $key)->first(); 
+							$pdetails = partchment_comments::where('st_mill_id', $key)->where('qp_id',  $value2)->first(); 
 							if($pdetails != NULL){
 								$qid = $pdetails->id;
 								partchment_comments::where('id', '=', $qid)
