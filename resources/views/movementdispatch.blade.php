@@ -469,7 +469,7 @@
 		            	if($gr_confirmed_by != NULL) {
 		            ?>
 			            <div class="form-group col-md-12">
-							<button type="submit" name="printgrns" class="btn btn-lg btn-warning btn-block" formnovalidate>Print GRN</button>	           		
+							<button type="submit" name="printgrns" class="btn btn-lg btn-warning btn-block" formnovalidate>Print GDN</button>	           		
 			            </div>	
 
 			        <?php
@@ -518,9 +518,6 @@
 		url = url.replace(':dispatch_type', dispatch_type);
 		url = url.replace(':agent_id', agent_id);
 		url = url.replace(':outt_number_search', outt_number_search);
-
-		alert(url);
-
 
 		$.ajax({
 		url: url,

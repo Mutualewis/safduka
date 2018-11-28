@@ -208,7 +208,6 @@
 
 
 
-
 	if (old('rate') != NULL) {
 		$rate_id = old('rate');
 	}
@@ -915,7 +914,7 @@
 			url = url.replace(':basket', basket);
 			url = url.replace(':packaging', packaging);
 			url = url.replace(':warehouse', warehouse);
-
+	
 
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
@@ -1052,16 +1051,16 @@
 	var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 
-	$( "#confirmgrnsbtn" ).click(function(event){
-		// event.preventDefault();
-		// $("#ratesModalCenter").modal();	
-		event.preventDefault();
-		postConfirmMovement()
-	})
-	$( "#confirmgrnsModalbtn" ).click(function(event){
-		event.preventDefault();
-		postConfirmMovement()	
-	})
+	// $( "#confirmgrnsbtn" ).click(function(event){
+	// 	// event.preventDefault();
+	// 	// $("#ratesModalCenter").modal();	
+	// 	event.preventDefault();
+	// 	// postConfirmMovement()
+	// })
+	// $( "#confirmgrnsModalbtn" ).click(function(event){
+	// 	event.preventDefault();
+	// 	// postConfirmMovement()	
+	// })
 
 	function postConfirmMovement(){
 		var t=null;
@@ -1438,7 +1437,6 @@
 			url = url.replace(':outt_season', outt_season);
 			url = url.replace(':grn_number', grn_number);
 			url = url.replace(':warehouse', warehouse);
-
 			outturn_type_batch.find('option').remove(); 
 
 
@@ -1659,6 +1657,7 @@
 		var batchdetails = $('#batchdetails');
 		var coffee_grower = $('#coffee_grower');
 		var to_dispatch = $('#to_dispatch');
+		var to_dispatch_label = $('#to_dispatch_label');
 		
 
 		if (weighbridgeTK == 1) {

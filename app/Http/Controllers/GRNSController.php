@@ -200,8 +200,9 @@ class GRNSController extends Controller {
             if (NULL !== Input::get('outt_number_select')) {
 
                 $outturns = DB::table('process_results_prts AS prts')
-                    ->select('*', 'prts.id as prtsid')
+                    ->select('*', 'prts.id as prtsid', 'gr.cgr_id as cgrid')
                     ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
+                    ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'st.grn_id')
                     ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
                     ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
                     ->where('prts.id', Input::get('outt_number_select'))
@@ -216,10 +217,11 @@ class GRNSController extends Controller {
                 } else {
 
                     StockWarehouse::where('id', '=', $stock_details->id)
-                        ->update(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid]);
+                        ->update(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid, 'cgr_id' => $outturns->cgrid]);
                 }
 
-                
+                Grn::where('id', '=', $grn_id)
+                        ->update(['cgr_id' => $outturns->cgrid]);
 
 
 
@@ -413,7 +415,6 @@ class GRNSController extends Controller {
                 ->get(); 
         }
 
-
         return View::make('arrivalinformationgrns', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'grn_details', 'coffeeGrade', 'sale', 'coffee_details', 'saleid', 'basket', 'packaging', 'stock_details', 'warehouse', 'warehouse_count', 'wrhse', 'location', 'weigh_scales', 'weigh_scales_count', 'wsid', 'rw', 'clm', 'zone', 'packages_batch', 'batch_kilograms', 'grnsview', 'batchview', 'expected_arrival', 'stock_id', 'st_quality_check', 'rates', 'teams', 'wbtk', 'ot_season', 'active_season', 'growers', 'items', 'millers', 'material', 'basket', 'packaging', 'warehouse', 'role', 'admin', 'timeout', 'grn_content')); 
 
     
@@ -431,6 +432,8 @@ class GRNSController extends Controller {
                 ->leftJoin('stock_warehouse_st AS stw', 'stw.prts_id', '=', 'prts.id')
                 ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'stw.grn_id')
                 ->whereNull('gr.gr_confirmed_by')
+                ->orderBy('st.st_outturn')
+                ->orderBy('st.mt_id')
                 ->get(); 
 
             return json_encode($outturns);                    
@@ -552,7 +555,6 @@ class GRNSController extends Controller {
             $agent_type = $this->getAgentType($warehouse);
 
             if ($grn_details != null) {
-
                 if ($agent_type == 'Miller') {
                     $grn_content = DB::table('stock_mill_st AS st')
                         ->select('*', 'st.id as stid')
@@ -692,7 +694,7 @@ class GRNSController extends Controller {
                         // $stock_details = StockMill::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
                         // if ($stock_details != null) {
 
-                            $st_id = StockMill::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'warehouse_id' => $warehouse]);
+                            $st_id = StockMill::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'warehouse_id' => $warehouse, 'cgr_id' => $coffee_grower]);
 
                         // } else {
                         //     $st_id = "Please update Outturn information first.";
@@ -702,7 +704,7 @@ class GRNSController extends Controller {
 
                         $st_id = $stock_details->id;
                         StockMill::where('id', '=', $stock_details->id)
-                                    ->update([ 'st_mark' => $st_mark, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id, 'st_moisture' => $moisture, 'bs_id' => $basket, 'pkg_id' => $packaging]);
+                                    ->update([ 'st_mark' => $st_mark, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id, 'st_moisture' => $moisture, 'bs_id' => $basket, 'pkg_id' => $packaging, 'cgr_id' => $coffee_grower]);
 
                     }  
                 } else {
@@ -710,7 +712,7 @@ class GRNSController extends Controller {
                     if ($stock_details == null) {
                         // $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
                         // if ($stock_details != null) {
-                            $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'warehouse_id' => $warehouse]);
+                            $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'warehouse_id' => $warehouse, 'cgr_id' => $coffee_grower]);
 
                         // } else {
                         //     $st_id = "Please update Outturn information first.";
@@ -720,7 +722,7 @@ class GRNSController extends Controller {
 
                         $st_id = $stock_details->id;
                         StockWarehouse::where('id', '=', $stock_details->id)
-                                    ->update(['mt_id' => $outturn_type, 'st_moisture' => $moisture, 'bs_id' => $basket, 'pkg_id' => $packaging]);
+                                    ->update(['mt_id' => $outturn_type, 'st_moisture' => $moisture, 'bs_id' => $basket, 'pkg_id' => $packaging, 'cgr_id' => $coffee_grower]);
 
                     }                
                 }

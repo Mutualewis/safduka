@@ -25,7 +25,7 @@
 			<table style="text-align: left; font-size: 13px">
 				<tr>
 					<td width="250px" align="left">
-						<strong>To:</strong> <?php if(isset($client)) echo $client; ?>
+						<strong>To:</strong> <?php echo 'BOLLORE'; ?>
 					</td>
 					<td width="200px" align="left">
 						<strong>Dispatch Date:</strong> <?php if(isset($delivery_date))  echo $delivery_date; ?> <br>
@@ -66,6 +66,9 @@
 			    <tr>
 					<th>
 						Outturn
+					</th>
+					<th>
+						Grower
 					</th>
 					<th>
 						Grade
@@ -128,6 +131,7 @@
 						        echo "<tr>";
 
 							        echo "<td>" . $value->st_outturn . "</td>";
+							        echo "<td>" . $value->cgr_grower . "</td>";
 							        echo "<td>" . $value->mt_name . "</td>";
 							        echo "<td>" . $value->st_bags . "</td>";
 							        echo "<td>" . $value->st_pockets. "</td>";
@@ -141,6 +145,7 @@
 						}
 						echo "<tr style='background-color: #f2f2f2'>";
 							echo "<td>" . $count . " Lots</td>";	
+							echo "<td></td>";	
 							echo "<td></td>";	
 							echo "<td>" . $total_bags . "</td>";
 							echo "<td>" . $total_pkts . "</td>";

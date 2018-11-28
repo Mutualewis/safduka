@@ -140,18 +140,20 @@ class WeighbridgeController extends Controller {
 
 				if($delivery_items != NULL){
 					$delivery_items_id = $delivery_items->id;
+					if ($customers_id != null) {
+						foreach ($customers_id as $key => $value) {
 
-					foreach ($customers_id as $key => $value) {
-
-						DeliveryItems::where('id', '=', $delivery_items_id)
-						->update(['cgr_id' =>  $value, 'it_id' =>  $items_id[0], 'wbi_id' =>  $weighbridge_info_id]);
+							DeliveryItems::where('id', '=', $delivery_items_id)
+							->update(['cgr_id' =>  $value, 'it_id' =>  $items_id[0], 'wbi_id' =>  $weighbridge_info_id]);
+						}
 					}
 
 				} else {
-					foreach ($customers_id as $key => $value) {
-						$delivery_items_id = DeliveryItems::insertGetId(['cgr_id' =>  $value, 'it_id' =>  $items_id[0], 'wbi_id' =>  $weighbridge_info_id]);
+					if ($customers_id != null) {
+						foreach ($customers_id as $key => $value) {
+							$delivery_items_id = DeliveryItems::insertGetId(['cgr_id' =>  $value, 'it_id' =>  $items_id[0], 'wbi_id' =>  $weighbridge_info_id]);
+						}
 					}
-
 				}
 
 
