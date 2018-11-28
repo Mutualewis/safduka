@@ -458,7 +458,7 @@
 									<font color="white"> P Loss(%)</font>
 								</th> -->
 								<th style="width: 150px">
-									<font color="white"> Comments
+									<font color="white">Quality Comments
 								</th>
 								<th>
 									<font color="white"> Quality
