@@ -354,7 +354,7 @@ class ProcessingController extends Controller
 
 
         $tobeprocessed = Input::get('tobeprocessed');
-        
+
         if (null !== Input::get('confirminstruction')) {
             $prc                   = Input::get('process_type');
             $ref_no                = strtoupper(Input::get('ref_no'));
@@ -365,7 +365,7 @@ class ProcessingController extends Controller
             $weight_in             = null;
 
             $prdetails = Process::where('pr_instruction_number', $ref_no)->first();
-          
+
             if ($prdetails != null) {
 
                 $prid = $prdetails->id;
@@ -404,8 +404,8 @@ class ProcessingController extends Controller
 
             $tobeprocessed = Input::get('tobeprocessed');
             $tobewithdrawn = Input::get('tobewithdrawn');
-           
-            //$this->checkIFBulkWithNoContract($prc, $contractID, $BULKING_PROCESS);
+
+            $this->checkIFBulkWithNoContract($prc, $contractID, $BULKING_PROCESS);
             
             
             
@@ -424,9 +424,9 @@ class ProcessingController extends Controller
                 }
             }           
 
-            
+
             $prdetails = Process::where('pr_instruction_number', $ref_no)->first();
-           
+
             if ($prdetails != null) {
 
                 if ($prdetails->pr_confirmed_by != null) {
@@ -464,7 +464,8 @@ class ProcessingController extends Controller
 
                  
                     $packages    = ceil($cweight / 60);
-                    $pall_ratio = $cweight/$weight_in;
+                    // $pall_ratio = $cweight/$weight_in;
+                    $pall_ratio = 1;
 
                    
 
@@ -1145,12 +1146,11 @@ class ProcessingController extends Controller
                 $resultsType = ProcessResultsType::where('prcss_id', $prc)->get();
                 if ($rfid != null) {
                     $StockView      = StockViewALL::where('prcssid', $rfid)->where('processtype', $prc)->get();
-                    $ProcessResults = Processes::where('id', $rfid)->where('ctrid', $cid)->where('st_mill_id', $st_id_selected)->whereNotNull('result_type')->get();
+                    $ProcessResults = Processes::where('id', $rfid)->where('ctrid', $cid)->whereNotNull('result_type')->get();
                 }
             }        
 
         }
-     
         if ($StockView != null) {
             $warehouse_ids = array();
             foreach ($StockView as $key => $value) {
@@ -1306,13 +1306,13 @@ class ProcessingController extends Controller
                     $resultsType = ProcessResultsType::where('prcss_id', $prc)->get();
                     if ($rfid != null) {
                         $StockView      = StockViewALL::where('prcssid', $rfid)->get();
-                        $ProcessResults = Processes::where('id', $rfid)->where('st_mill_id', $st_id_selected)->where('ctrid', $cid)->whereNotNull('result_type')->get();
+                        $ProcessResults = Processes::where('id', $rfid)->where('ctrid', $cid)->whereNotNull('result_type')->get();
                     }
                 }
                 $Warehouse = warehouses_region::where('ctr_id', Input::get('country'))->where('wrt_id', '1')->get();
 
             }
-               
+
 
             
             $prdetails = Process::where('id', $rfid)->first();
@@ -1389,7 +1389,7 @@ class ProcessingController extends Controller
                     $resultsType = ProcessResultsType::where('prcss_id', $prc)->get();
                     if ($rfid != null) {
                         $StockView      = StockViewALL::where('prcssid', $rfid)->get();
-                        $ProcessResults = Processes::where('id', $rfid)->where('ctrid', $cid)->whereNotNull('result_type')->where('st_mill_id', $st_id_selected)->get();
+                        $ProcessResults = Processes::where('id', $rfid)->where('ctrid', $cid)->whereNotNull('result_type')->get();
                     }
                 }
                

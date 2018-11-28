@@ -1049,6 +1049,8 @@ class QualityController extends Controller {
 			$screen_class = Input::get('screen_class');
 			$cup_comments = Input::get('cup_comments');
 			$milling_loss = Input::get('milling_loss');
+			$moisture = Input::get('moisture');
+			$overall_comments = Input::get('overall_comments');
 			$cup_score_cmt = Input::get('cup_score_cmt'); 
 			$cup_score = Input::get('cup_score');
 			$dont = Input::get('dont');
@@ -1214,16 +1216,52 @@ class QualityController extends Controller {
 			
 			if ($milling_loss != NULL) {
 				foreach ($milling_loss as $key => $value) {
+					
 					if ($value != NULL) {
 						$qdetails = quality_details::where('st_mill_id', $key)->first(); 
+						
 						if($qdetails != NULL){
 							$qid = $qdetails->id;
+							
 							quality_details::where('id', '=', $qid)
 								->update(['ml' => $value]);
 
 						} else {
 							quality_details::insert(
 								['st_mill_id' => $key,'ml' => $value]);
+						}						
+					}					
+				}				
+			}
+
+			if ($moisture != NULL) {
+				foreach ($moisture as $key => $value) {
+					if ($value != NULL) {
+						$qdetails = quality_details::where('st_mill_id', $key)->first(); 
+						if($qdetails != NULL){
+							$qid = $qdetails->id;
+							quality_details::where('id', '=', $qid)
+								->update(['mc' => $value]);
+
+						} else {
+							quality_details::insert(
+								['st_mill_id' => $key,'mc' => $value]);
+						}						
+					}					
+				}				
+			}
+			if ($overall_comments != NULL) {
+				foreach ($overall_comments as $key => $value) {
+					if ($value != NULL) {
+						$qdetails = quality_details::where('st_mill_id', $key)->first(); 
+						if($qdetails != NULL){
+							$qid = $qdetails->id;
+							quality_details::where('id', '=', $qid)
+								->update(['overall_comments' => $value]);
+
+						} else {
+							quality_details::insert(
+								['st_mill_id' => $key,'overall_comments' => $value]);
 						}						
 					}					
 				}				
@@ -1363,7 +1401,7 @@ class QualityController extends Controller {
 							 
 							$qanlid = $qadetails->id;
 			
-							QualityAnalysis::where('id', '=', $qanlid)->where('acacataloguequaltt_id', $acatid)
+							QualityAnalysis::where('id', '=', $qanlid)->where('acat_id', $acatid)
 							->update(['qanl_value'=> $screen_size]);
 						   
 						   Activity::log('Updated screen quality for quality id '.$qid. ' with analysis id '.$acatid.' and screen size '. $screen_size);
