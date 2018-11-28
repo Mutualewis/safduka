@@ -1076,6 +1076,30 @@ class QualityController extends Controller {
 					}
 
 				}
+				foreach ($green_color as $key => $value) {
+					$greencomments = greencomments::where('st_mill_id', $key)->get();
+					
+					foreach ($greencomments as $key2 => $value2) {
+						$greencomments2 = greencomments::where('st_mill_id', $value2->st_id)->where('qp_id', $value2->qp_id)->first();
+						if ($greencomments2 != NULL) {
+							$greencommentsdel = greencomments::findOrFail($greencomments2->id);	
+							$greencommentsdel->delete(); 
+						}
+					}
+
+				}
+				foreach ($green_defects as $key => $value) {
+					$greencomments = greencomments::where('st_mill_id', $key)->get();
+					
+					foreach ($greencomments as $key2 => $value2) {
+						$greencomments2 = greencomments::where('st_mill_id', $value2->st_id)->where('qp_id', $value2->qp_id)->first();
+						if ($greencomments2 != NULL) {
+							$greencommentsdel = greencomments::findOrFail($greencomments2->id);	
+							$greencommentsdel->delete(); 
+						}
+					}
+
+				}
 				
 				if ($green_size != NULL) {
 					foreach ($green_size as $key => $value) {
@@ -1145,6 +1169,30 @@ class QualityController extends Controller {
 			if ($acidity != NULL || $body != NULL || $flavour != NULL) {	
 
 				foreach ($acidity as $key => $value) {
+					$cupcomments = cupcomments::where('st_mill_id', $key)->get();
+					
+					foreach ($cupcomments as $key2 => $value2) {
+						$cupcomments2 = cupcomments::where('st_mill_id', $value2->st_id)->where('qp_id', $value2->qp_id)->first();
+						if ($cupcomments2 != NULL) {
+							$cupcommentsdel = cupcomments::findOrFail($cupcomments2->id);	
+							$cupcommentsdel->delete(); 
+						}
+					}
+
+				}
+				foreach ($body as $key => $value) {
+					$cupcomments = cupcomments::where('st_mill_id', $key)->get();
+					
+					foreach ($cupcomments as $key2 => $value2) {
+						$cupcomments2 = cupcomments::where('st_mill_id', $value2->st_id)->where('qp_id', $value2->qp_id)->first();
+						if ($cupcomments2 != NULL) {
+							$cupcommentsdel = cupcomments::findOrFail($cupcomments2->id);	
+							$cupcommentsdel->delete(); 
+						}
+					}
+
+				}
+				foreach ($flavour as $key => $value) {
 					$cupcomments = cupcomments::where('st_mill_id', $key)->get();
 					
 					foreach ($cupcomments as $key2 => $value2) {
