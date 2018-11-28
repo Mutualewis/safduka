@@ -198,7 +198,7 @@
 		$grn_number = $grn_details->gr_number;	
 		$wbtk = $grn_details->wbi_id;		
 		$grnConfirmed = $grn_details->gr_confirmed_by;	
-		$grower_id = $grn_details->cgr_id;
+		$grower_id = $grn_details->cgrid;
 		$item_id = $grn_details->it_id;
 		$miller_id = $grn_details->miller_id;
 		$miller_by_id = $grn_details->milled_by;

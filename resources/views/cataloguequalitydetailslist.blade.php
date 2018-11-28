@@ -1605,7 +1605,7 @@ $(document).ready(function (){
 	            { data: 'qualityParameterCupID', name: 'body'},//5
 	            { data: 'qualityParameterCupID', name: 'flavour'},//6
 				{ data: 'cp_quality', name: 'cp_quality'},//7
-	            { data: 'cup_class', name: 'cup_class'},//8
+	            { data: 'overall_class', name: 'overall_class'},//8
 	            { data: 'dnt', name: 'dnt' },//9
 	            { data: 'id', name: 'id' },//10
 
@@ -1816,7 +1816,7 @@ $(document).ready(function (){
 	        	{targets: 8,
 					'render': function (data, type, full, meta, row){
 
-						var analysed = table.cell(meta.row,10).data();
+						var analysed = table.cell(meta.row,8).data();
 
 						var cupscoreType = <?php echo json_encode($coffee_classall); ?>;
 

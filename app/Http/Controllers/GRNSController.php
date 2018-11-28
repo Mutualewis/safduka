@@ -212,7 +212,7 @@ class GRNSController extends Controller {
 
                 if ($stock_details == null) {
 
-                    $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid]);
+                    $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid, 'cgr_id' => $outturns->cgrid]);
 
                 } else {
 
@@ -399,7 +399,7 @@ class GRNSController extends Controller {
         $stock_details = StockWarehouse::where('id', '=', $stid)->first();
 
         $grn_details = DB::table('grn_gr AS gr')
-            ->select('*', 'gr.agt_id as agtid')
+            ->select('*', 'gr.agt_id as agtid', 'gr.cgr_id as cgrid')
             ->leftJoin('stock_warehouse_st AS st', 'st.grn_id', '=', 'gr.id')
             ->where('gr.id', $grn_id)
             ->where('gr.agt_id', $wrhse)
