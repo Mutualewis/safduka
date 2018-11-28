@@ -1264,9 +1264,11 @@ class QualityController extends Controller {
 			}
 			
 			if ($overall_class != NULL) {
+				
 				foreach ($overall_class as $key => $value) {
 					if ($value != NULL) {
-						$qdetails = quality_details::where('st_mill_id', $key)->first(); 
+						$qdetails = quality_details::where('st_mill_id', $key)->first();
+						
 						if($qdetails != NULL){
 							$qid = $qdetails->id;
 							quality_details::where('id', '=', $qid)
