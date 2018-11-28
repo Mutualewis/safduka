@@ -1048,6 +1048,7 @@ class QualityController extends Controller {
 			$screen_value = Input::get('screen_value');
 			$screen_class = Input::get('screen_class');
 			$cup_comments = Input::get('cup_comments');
+			$milling_loss = Input::get('milling_loss');
 			$cup_score_cmt = Input::get('cup_score_cmt'); 
 			$cup_score = Input::get('cup_score');
 			$dont = Input::get('dont');
@@ -1209,7 +1210,24 @@ class QualityController extends Controller {
 						}						
 					}					
 				}				
-			}		
+			}
+			
+			if ($milling_loss != NULL) {
+				foreach ($milling_loss as $key => $value) {
+					if ($value != NULL) {
+						$qdetails = quality_details::where('st_mill_id', $key)->first(); 
+						if($qdetails != NULL){
+							$qid = $qdetails->id;
+							quality_details::where('id', '=', $qid)
+								->update(['ml' => $value]);
+
+						} else {
+							quality_details::insert(
+								['st_mill_id' => $key,'ml' => $value]);
+						}						
+					}					
+				}				
+			}
 
 			if ($raw_score != NULL) {
 				foreach ($raw_score as $key => $value) {

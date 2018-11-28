@@ -409,7 +409,7 @@
 
 			    <h3>Lots</h3>
 			    <div class="row">			
-					<h3>Catalogue( <input type="checkbox" checked style='background:red;'> : Bad/Foul, <input type="checkbox" checked style='background:#018c36;'> : No Green, <input type="checkbox" checked style='background:#01ba1a;'> : No Raw, <input type="checkbox" checked style='background:#010f8c;'> : No Cup, <input type="checkbox" checked style='background:#000;'> : Okay)</h3>
+					<h3>Quality( <input type="checkbox" checked style='background:red;'> : Bad/Foul, <input type="checkbox" checked style='background:#018c36;'> : No Green, <input type="checkbox" checked style='background:#01ba1a;'> : No Raw, <input type="checkbox" checked style='background:#010f8c;'> : No Cup, <input type="checkbox" checked style='background:#000;'> : Okay)</h3>
 		        <?php
 		        $lots = array();
 				$greencomments_deff_cfdid = array();
@@ -436,9 +436,9 @@
 								<th>
 									<font color="white"> Grade</font>
 								</th>
-								<!-- <th>
-									<font color="white"> Region</font>
-								</th> -->
+								<th>
+									<font color="white"> Milling Loss</font>
+								</th>
 								<th>
 									<font color="white"> Parchment</font>
 								</th>
@@ -461,7 +461,7 @@
 									<font color="white"> Comments
 								</th>
 								<th>
-									<font color="white"> Raw
+									<font color="white"> Quality
 								</th>
 								<th style="display: none">
 									<font color="white">id</font>
@@ -531,26 +531,27 @@ $(document).ready(function (){
      	],
         columns: [
            // { data: 'lot', name: 'lot' },
-            { data: 'outturn', name: 'outturn'},
-            { data: 'mark', name: 'mark'},
-            { data: 'grade', name: 'grade'},
+            { data: 'outturn', name: 'outturn'},//0
+            { data: 'mark', name: 'mark'},//1
+            { data: 'grade', name: 'grade'},//2
             // { data: 'region', name: 'region' },
-            { data: 'pct_id', name: 'parchment'},
+			{ data: 'milling_loss', name: 'millingloss'},//3
+            { data: 'pct_id', name: 'parchment'},//4
 
-            { data: 'qualityParameterID', name: 'greensize'},
-            { data: 'qualityParameterID', name: 'greencolor'},
-            { data: 'rw_score', name: 'rw_score'},
+            { data: 'qualityParameterID', name: 'greensize'},//5
+            { data: 'qualityParameterID', name: 'greencolor'},//6
+            { data: 'rw_score', name: 'rw_score'},//7
             // { data: 'prcss_name', name: 'prcss_name'},
 
             // { data: 'qltyd_prcss_value', name: 'qltyd_prcss_value'},
-            { data: 'final_comments', name: 'final_comments'},
+            { data: 'final_comments', name: 'final_comments'},//8
 
-            { data: 'id', name: 'rawscore'},
+            { data: 'id', name: 'rawscore'},//9
 
-            { data: 'dnt', name: 'dnt' },
-            { data: 'final_comments', name: 'greencomments' },
-            { data: 'rw_quality', name: 'rw_quality' },
-            { data: 'qualityParameterPtyID', name: 'qualityParameterPtyID'},
+            { data: 'dnt', name: 'dnt' },//10
+            { data: 'final_comments', name: 'greencomments' },//11
+            { data: 'rw_quality', name: 'rw_quality' },//12
+            { data: 'qualityParameterPtyID', name: 'qualityParameterPtyID'},//13
 
         ], 
 
@@ -565,10 +566,16 @@ $(document).ready(function (){
 
 
         columnDefs: [
-			{targets: 3,
+			{targets: 3, 
+				'searchable':true,
+				'orderable': true,
+				'render': function (data, type, full, meta, row){
+					return '<textarea cols = "15" type="text" name="'+"milling_loss["+ table.cell(meta.row,9).data()+']" value="' + $('<div/>').text(data).html() + '">' + $('<div/>').text(data).html() + '</textarea>';
+			}},
+			{targets: 4,
 					'render': function (data, type, full, meta, row){
 
-						var analysed = table.cell(meta.row,12).data();
+						var analysed = table.cell(meta.row,13).data();
 
 						var ptscore = <?php echo json_encode($ptqualityall); ?>;
 
@@ -589,7 +596,7 @@ $(document).ready(function (){
 
 						var select = null;
 
-						var selectStart = "<select class='form-control' id='"+'ptdsc'+ table.cell(meta.row,8).data()+"' name='"+'ptdesc['+ table.cell(meta.row,8).data() +"][]' multiple='multiple'>";
+						var selectStart = "<select class='form-control' id='"+'ptdsc'+ table.cell(meta.row,9).data()+"' name='"+'ptdesc['+ table.cell(meta.row,9).data() +"][]' multiple='multiple'>";
 					
 
 						var selectBody = null;
@@ -612,10 +619,10 @@ $(document).ready(function (){
 						return select;
 				}},
 				
-	     	{targets: 4,
+	     	{targets: 5,
 					'render': function (data, type, full, meta, row){
 
-						var analysed = table.cell(meta.row,4).data();
+						var analysed = table.cell(meta.row,5).data();
 
 						var greenSizes = <?php echo json_encode($greensizeall); ?>;
 
@@ -636,7 +643,7 @@ $(document).ready(function (){
 
 						var select = null;
 
-						var selectStart = "<select class='form-control' id='"+'gs'+ table.cell(meta.row,8).data()+"' name='"+'green_size['+ table.cell(meta.row,8).data() +"]' >";
+						var selectStart = "<select class='form-control' id='"+'gs'+ table.cell(meta.row,9).data()+"' name='"+'green_size['+ table.cell(meta.row,9).data() +"]' >";
 					
 
 						var selectBody = null;
@@ -661,10 +668,10 @@ $(document).ready(function (){
 						return select;
 				}},
 
-	     	{targets: 5,
+	     	{targets: 6,
 					'render': function (data, type, full, meta, row){
 
-						var analysed = table.cell(meta.row,4).data();
+						var analysed = table.cell(meta.row,6).data();
 						
 						var greenColors = <?php echo json_encode($greencolorall); ?>;
 
@@ -684,7 +691,7 @@ $(document).ready(function (){
 
 						var select = null;
 
-						var selectStart = "<select class='form-control' id='"+'gc'+ table.cell(meta.row,8).data()+"' name='"+'green_color['+ table.cell(meta.row,8).data() +"]' >";
+						var selectStart = "<select class='form-control' id='"+'gc'+ table.cell(meta.row,9).data()+"' name='"+'green_color['+ table.cell(meta.row,9).data() +"]' >";
 					
 
 						var selectBody = null;
@@ -711,10 +718,10 @@ $(document).ready(function (){
 						return select;
 				}},
 
-	     	{targets: 6,
+	     	{targets: 7,
 					'render': function (data, type, full, meta, row){
 
-						var analysed = table.cell(meta.row,4).data();
+						var analysed = table.cell(meta.row,5).data();
 
 						var greenDeffects = <?php echo json_encode($greendefectsall); ?>;
 
@@ -734,7 +741,7 @@ $(document).ready(function (){
 
 						var select = null;
 
-						var selectStart = "<select class='form-control' id='"+'gd'+ table.cell(meta.row,8).data()+"' name='"+'green_defects['+ table.cell(meta.row,8).data() +"][]' multiple='multiple'>";
+						var selectStart = "<select class='form-control' id='"+'gd'+ table.cell(meta.row,9).data()+"' name='"+'green_defects['+ table.cell(meta.row,9).data() +"][]' multiple='multiple'>";
 					
 
 						var selectBody = null;
@@ -760,19 +767,19 @@ $(document).ready(function (){
 
 	    
 
-			{targets: 7, 
+			{targets: 8, 
 				'searchable':true,
 				'orderable': true,
 				'render': function (data, type, full, meta, row){
-					return '<textarea cols = "15" type="text" name="'+"comments["+ table.cell(meta.row,8).data()+']" value="' + $('<div/>').text(data).html() + '">' + $('<div/>').text(data).html() + '</textarea>';
+					return '<textarea cols = "15" type="text" name="'+"comments["+ table.cell(meta.row,9).data()+']" value="' + $('<div/>').text(data).html() + '">' + $('<div/>').text(data).html() + '</textarea>';
 			}},
 
 
 
-	     	{targets: 8,
+	     	{targets: 9,
 			'render': function (data, type, full, meta, row){
 
-				var analysed = table.cell(meta.row,4).data();
+				var analysed = table.cell(meta.row,5).data();
 
 				var rawscore = <?php echo json_encode($rwqualityall); ?>;
 
@@ -786,7 +793,7 @@ $(document).ready(function (){
 
 				var select = null;
 
-				var selectStart = "<select class='form-control' id='"+'rws'+ table.cell(meta.row,8).data()+"' name='"+'raw_score['+ table.cell(meta.row,8).data() +"]'>";
+				var selectStart = "<select class='form-control' id='"+'rws'+ table.cell(meta.row,9).data()+"' name='"+'raw_score['+ table.cell(meta.row,9).data() +"]'>";
 			
 
 				var selectBody = null;
@@ -898,10 +905,10 @@ $(document).ready(function (){
 		},
 
         rowCallback: function( nRow, aData, sData, data, iDisplayIndex, iDisplayIndexFull ) {    
-        	var smatchdnt = $('td:eq("9")', nRow).html();
-        	var smatchgreencomments = $('td:eq("10")', nRow).html();
-        	var smatchraw = $('td:eq("11")', nRow).html();
-        	var smatchcup = $('td:eq("12")', nRow).html();
+        	var smatchdnt = $('td:eq("10")', nRow).html();
+        	var smatchgreencomments = $('td:eq("11")', nRow).html();
+        	var smatchraw = $('td:eq("12")', nRow).html();
+        	var smatchcup = $('td:eq("13")', nRow).html();
 
 	        if (smatchdnt > 0) {
 	            $(nRow).css('color', 'red');  
@@ -914,10 +921,11 @@ $(document).ready(function (){
 	        }         
 
 
-	        $('td:eq("9")', nRow).hide();
+	       
 	        $('td:eq("10")', nRow).hide();
 	        $('td:eq("11")', nRow).hide();
 	        $('td:eq("12")', nRow).hide();
+			$('td:eq("13")', nRow).hide();
 
         },			
 
@@ -1507,7 +1515,7 @@ $(document).ready(function (){
 							<font color="white">Cert </font>
 						</th>										 -->
 						<th>
-							<font color="white">Comments </font>
+							<font color="white">Cup Remarks </font>
 						</th>
 						<th>
 							<font color="white">Acidity </font>
