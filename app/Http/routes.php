@@ -285,6 +285,11 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 
 		Route::get('/processrates/printProcessWithRate/{ref}/{service}/{team}', ['as'=>'processrates.printprocesswithrate','uses'=>'RatesController@printProcessWithRate']);
+
+		Route::get('/bulkinginstructions', 'BulkingController@bulkingForm'); 
+		Route::get('/bulkinginstructions/getstockview/{countryID}/{ref_no}', ['as'=>'bulkinginstructions.getstockview','uses'=>'BulkingController@getstockview']); 
+		Route::post('/bulkinginstructions', 'BulkingController@bulking');
+		
 });
 
 
