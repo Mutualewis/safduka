@@ -212,12 +212,12 @@ class GRNSController extends Controller {
 
                 if ($stock_details == null) {
 
-                    $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid, 'cgr_id' => $outturns->cgrid]);
+                    $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid, 'cgr_id' => $outturns->cgrid, 'st_owner_id' => 5]);
 
                 } else {
 
                     StockWarehouse::where('id', '=', $stock_details->id)
-                        ->update(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid, 'cgr_id' => $outturns->cgrid]);
+                        ->update(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid, 'cgr_id' => $outturns->cgrid, 'st_owner_id' => 5]);
                 }
 
                 Grn::where('id', '=', $grn_id)
@@ -315,7 +315,7 @@ class GRNSController extends Controller {
             ->leftJoin('agent_agt AS agt', 'agt.id', '=', 'gr.agt_id')
             ->leftJoin('weighbridge_info_wbi AS wb', 'wb.id', '=', 'gr.wbi_id')
             ->leftJoin('agent_category_agtc AS agtc', 'agtc.id', '=', 'agt.agtc_id')
-            ->leftJoin('coffee_growers_cgr AS cgr', 'cgr.id', '=', 'gr.cgr_id')
+            ->leftJoin('coffee_growers_cgr AS cgr', 'cgr.id', '=', 'st.cgr_id')
             ->where('gr.id', $grn_id)
             ->first(); 
 
@@ -324,7 +324,7 @@ class GRNSController extends Controller {
             $person_name = $person_details->per_fname.' '.$person_details->per_sname;
 
             if ($grnsview_summary != null) {
-                $client =  $grnsview_summary->cgr_grower;
+                $client = $grnsview_summary->cgr_organization.'('.$grnsview_summary->cgr_mark.')';
                 $agent_description =  $grnsview_summary->agtc_description;
                 $agent_initial =  $grnsview_summary->agtc_initial;
                 $delivery_date = $grnsview_summary->gr_date;
@@ -662,6 +662,10 @@ class GRNSController extends Controller {
             if ($grn_details != null) {
                 $grn_id = $grn_details->id;
                 $item_id = $grn_details->it_id;
+                $grower_details = coffeegrower::where('id', $grn_details->cgr_id)->first();
+                if ($grower_details != null) {
+                    $st_mark = $grower_details->cgr_mark;
+                }
             } 
 
             $agent_type = $this->getAgentType($warehouse);
@@ -678,7 +682,6 @@ class GRNSController extends Controller {
             
             $moisture_threshold = null;
             $outturn = null;
-            $st_mark = $outt_number.'/'.$outt_season;
 
             $threshold_details = Thresholds::where('th_name', 'Moisture')->where('it_id', $item_id)->first();
             if ($threshold_details != null) {

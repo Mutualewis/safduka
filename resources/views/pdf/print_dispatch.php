@@ -131,7 +131,7 @@
 						        echo "<tr>";
 
 							        echo "<td>" . $value->st_outturn . "</td>";
-							        echo "<td>" . $value->cgr_grower . "</td>";
+							        echo "<td>" . $value->st_mark . "</td>";
 							        echo "<td>" . $value->mt_name . "</td>";
 							        echo "<td>" . $value->st_bags . "</td>";
 							        echo "<td>" . $value->st_pockets. "</td>";

@@ -1169,7 +1169,7 @@ class QualityController extends Controller {
 			}	
 
 			if ($acidity != NULL || $body != NULL || $flavour != NULL) {	
-
+				if($acidity != NULL){
 				foreach ($acidity as $key => $value) {
 					$cupcomments = cupcomments::where('st_mill_id', $key)->get();
 					
@@ -1182,6 +1182,8 @@ class QualityController extends Controller {
 					}
 
 				}
+			}	
+				if($body != NULL){
 				foreach ($body as $key => $value) {
 					$cupcomments = cupcomments::where('st_mill_id', $key)->get();
 					
@@ -1194,6 +1196,8 @@ class QualityController extends Controller {
 					}
 
 				}
+			}
+				if($flavour != NULL){
 				foreach ($flavour as $key => $value) {
 					$cupcomments = cupcomments::where('st_mill_id', $key)->get();
 					
@@ -1206,7 +1210,8 @@ class QualityController extends Controller {
 					}
 
 				}
-				
+				}
+				if($acidity != NULL){
 				if ($acidity != NULL) {
 					
 					foreach ($acidity as $key => $value) {
@@ -1219,6 +1224,7 @@ class QualityController extends Controller {
 					}					
 					}				
 				}
+			}
 				if ($body != NULL) {
 					foreach ($body as $key => $value) {
 						foreach($value as $key2 => $value2){

@@ -82,9 +82,11 @@ class Controller extends BaseController
 
         $ref_no = InstructedLocationRef::whereNotNull('ilf_number')->orderBy('ilf_number', 'asc')->pluck('ilf_number');     
 
+
+
         if ($ref_no->first() == null) {
 
-            $ref_no = null;
+            $ref_no = "00001";
 
         } else {
 
