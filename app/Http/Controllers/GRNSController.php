@@ -319,11 +319,12 @@ class GRNSController extends Controller {
             ->where('gr.id', $grn_id)
             ->first(); 
 
-            $person_details = Person::where('id', $per_id)->first();
-
-            $person_name = $person_details->per_fname.' '.$person_details->per_sname;
 
             if ($grnsview_summary != null) {
+                $user_details = User::where('id', $grnsview_summary->gr_confirmed_by)->first();
+                $person_details = Person::where('id', $user_details->per_id)->first();
+                $person_name = $person_details->per_fname.' '.$person_details->per_sname;
+
                 $client = $grnsview_summary->cgr_organization.'('.$grnsview_summary->cgr_mark.')';
                 $agent_description =  $grnsview_summary->agtc_description;
                 $agent_initial =  $grnsview_summary->agtc_initial;
@@ -453,7 +454,7 @@ class GRNSController extends Controller {
         try {
 
             $outturns = DB::table('process_results_prts AS prts')
-                ->select('*', 'prts.id as prtsid', 'grm.cgr_id as cgrid')
+                ->select('*', 'prts.id as prtsid', DB::Raw('IFNULL( `grm`.`cgr_id` , st.cgr_id ) as cgrid'))
                 ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
                 ->leftJoin('grn_gr AS grm', 'grm.id', '=', 'st.grn_id')
                 ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')

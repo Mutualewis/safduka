@@ -617,7 +617,7 @@ $(document).ready(function (){
 						selectBody += "<option value=''>&nbspNot Set</option>"
 						for (var i = 0; i<ptscore.length; i++) {
 							extraAnalysisID = ptscore[i].id.toString().trim();
-							if (selectedAnalysis.indexOf(extraAnalysisID) >= 0) {
+							if (selectedAnalysisArray.indexOf(extraAnalysisID) >= 0) {
 								selectBody += "<option value='"+ptscore[i].id+"' selected='selected'>"+"&nbsp"+ptscore[i].qp_parameter+"</option>";
 							} else {
 								selectBody += "<option value='"+ptscore[i].id+"'>"+"&nbsp"+ptscore[i].qp_parameter+"</option>";
@@ -737,7 +737,7 @@ $(document).ready(function (){
 						var analysed = table.cell(meta.row,8).data();
 
 						var greenDeffects = <?php echo json_encode($greendefectsall); ?>;
-
+						
 						var selectedAnalysisArray = [];
 
 						if (analysed != null) {
@@ -751,7 +751,8 @@ $(document).ready(function (){
 							var selectedAnalysis = " ";
 
 						}
-
+						var id = table.cell(meta.row,11).data()
+						
 						var select = null;
 
 						var selectStart = "<select class='form-control' id='"+'gd'+ table.cell(meta.row,11).data()+"' name='"+'green_defects['+ table.cell(meta.row,11).data() +"][]' multiple='multiple'>";
@@ -762,7 +763,8 @@ $(document).ready(function (){
 						selectBody += "<option value=''>&nbspNot Set</option>"
 						for (var i = 0; i<greenDeffects.length; i++) {
 							extraAnalysisID = greenDeffects[i].id.toString().trim();
-							if (selectedAnalysis.indexOf(extraAnalysisID) >= 0) {
+							
+							if (selectedAnalysisArray.indexOf(extraAnalysisID) >= 0) {
 								selectBody += "<option value='"+greenDeffects[i].id+"' selected='selected'>"+"&nbsp"+greenDeffects[i].qp_parameter+"</option>";
 							} else {
 								selectBody += "<option value='"+greenDeffects[i].id+"'>"+"&nbsp"+greenDeffects[i].qp_parameter+"</option>";

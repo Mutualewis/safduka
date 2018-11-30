@@ -100,7 +100,7 @@ class Controller extends BaseController
 
             }
 
-            $ref_no = sprintf("%04d", ($ref_no + 1));
+            $ref_no = sprintf("%05d", ($ref_no + 1));
         }
 
         return $ref_no;

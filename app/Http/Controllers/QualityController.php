@@ -1063,14 +1063,14 @@ class QualityController extends Controller {
 			$overall_class = Input::get('overall_class');
 
 			
-
+			
 			if ($green_size != NULL || $green_color != NULL || $green_defects != NULL) {	
 
 				foreach ($green_size as $key => $value) {
 					$greencomments = greencomments::where('st_mill_id', $key)->get();
 					
 					foreach ($greencomments as $key2 => $value2) {
-						$greencomments2 = greencomments::where('st_mill_id', $value2->st_id)->where('qp_id', $value2->qp_id)->first();
+						$greencomments2 = greencomments::where('st_mill_id', $value2->st_mill_id)->first();
 						if ($greencomments2 != NULL) {
 							$greencommentsdel = greencomments::findOrFail($greencomments2->id);	
 							$greencommentsdel->delete(); 
@@ -1082,7 +1082,7 @@ class QualityController extends Controller {
 					$greencomments = greencomments::where('st_mill_id', $key)->get();
 					
 					foreach ($greencomments as $key2 => $value2) {
-						$greencomments2 = greencomments::where('st_mill_id', $value2->st_id)->where('qp_id', $value2->qp_id)->first();
+						$greencomments2 = greencomments::where('st_mill_id', $value2->st_mill_id)->first();
 						if ($greencomments2 != NULL) {
 							$greencommentsdel = greencomments::findOrFail($greencomments2->id);	
 							$greencommentsdel->delete(); 
@@ -1090,11 +1090,13 @@ class QualityController extends Controller {
 					}
 
 				}
+				
 				foreach ($green_defects as $key => $value) {
 					$greencomments = greencomments::where('st_mill_id', $key)->get();
 					
 					foreach ($greencomments as $key2 => $value2) {
-						$greencomments2 = greencomments::where('st_mill_id', $value2->st_id)->where('qp_id', $value2->qp_id)->first();
+						
+						$greencomments2 = greencomments::where('st_mill_id', $value2->st_mill_id)->first();
 						if ($greencomments2 != NULL) {
 							$greencommentsdel = greencomments::findOrFail($greencomments2->id);	
 							$greencommentsdel->delete(); 
@@ -1174,7 +1176,7 @@ class QualityController extends Controller {
 					$cupcomments = cupcomments::where('st_mill_id', $key)->get();
 					
 					foreach ($cupcomments as $key2 => $value2) {
-						$cupcomments2 = cupcomments::where('st_mill_id', $value2->st_id)->where('qp_id', $value2->qp_id)->first();
+						$cupcomments2 = cupcomments::where('st_mill_id', $value2->st_mill_id)->first();
 						if ($cupcomments2 != NULL) {
 							$cupcommentsdel = cupcomments::findOrFail($cupcomments2->id);	
 							$cupcommentsdel->delete(); 
@@ -1188,7 +1190,7 @@ class QualityController extends Controller {
 					$cupcomments = cupcomments::where('st_mill_id', $key)->get();
 					
 					foreach ($cupcomments as $key2 => $value2) {
-						$cupcomments2 = cupcomments::where('st_mill_id', $value2->st_id)->where('qp_id', $value2->qp_id)->first();
+						$cupcomments2 = cupcomments::where('st_mill_id', $value2->st_mill_id)->first();
 						if ($cupcomments2 != NULL) {
 							$cupcommentsdel = cupcomments::findOrFail($cupcomments2->id);	
 							$cupcommentsdel->delete(); 
@@ -1202,7 +1204,7 @@ class QualityController extends Controller {
 					$cupcomments = cupcomments::where('st_mill_id', $key)->get();
 					
 					foreach ($cupcomments as $key2 => $value2) {
-						$cupcomments2 = cupcomments::where('st_mill_id', $value2->st_id)->where('qp_id', $value2->qp_id)->first();
+						$cupcomments2 = cupcomments::where('st_mill_id', $value2->st_mill_id)->first();
 						if ($cupcomments2 != NULL) {
 							$cupcommentsdel = cupcomments::findOrFail($cupcomments2->id);	
 							$cupcommentsdel->delete(); 
@@ -1377,6 +1379,15 @@ class QualityController extends Controller {
 			if ($partchment != NULL) {
 				
 				foreach ($partchment as $key => $value) {
+					$ptcomments = partchment_comments::where('st_mill_id', $key)->get();
+					
+					foreach ($ptcomments as $key2 => $value2) {
+						$ptcomments2 = partchment_comments::where('st_mill_id', $value2->st_mill_id)->first();
+						if ($ptcomments2 != NULL) {
+							$ptcommentsdel = partchment_comments::findOrFail($ptcomments2->id);	
+							$ptcommentsdel->delete(); 
+						}
+					}
 						if ($value != NULL && is_array($value)) {
 							foreach ($value as $key2 => $value2) {
 

@@ -229,7 +229,7 @@
 			<table style="text-align: left; font-size: 13px" >
 				<tr>
 					<td width="100px" align="left">
-						<strong>Receiving Clerk:</strong> Nancy Kariuki
+						<strong>Receiving Clerk:</strong><?php echo $received_by; ?>
 					</td>
 					<td width="50px" align="left">
 						<strong>Signature:</strong> <?php echo " _________________________" ?> <br>

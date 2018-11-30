@@ -17,10 +17,8 @@
 
     $person_id = null;
     $department_id = null;
-    $user_role_id = null;
 
     if ($user != null) {
-
         $person_id = $user->per_id;
 
         $user_role_id = $user->roles->first()->id;

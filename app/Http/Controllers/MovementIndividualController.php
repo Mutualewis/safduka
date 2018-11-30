@@ -266,7 +266,10 @@ class MovementIndividualController extends Controller {
 
 	    	if (NULL != Input::get('warehouse')) {
 	    		$wrname = Warehouse::where('id', Input::get('warehouse'))->first();
-	    		$wrname = $wrname->wr_name;
+                if ($wrname != null) {
+                    $wrname = $wrname->wr_name;
+                }
+	    		
 
 	    		$stlocdetails = StockLocationView::where('insloc_ref', $ref_no)->get();
 	    	}
@@ -334,8 +337,8 @@ class MovementIndividualController extends Controller {
 
             $ref_no    = Input::get('ref_no');
 
-            $wrnameFrom = Warehouse::where('id', Input::get('warehouse'))->first();
-    		$wrnameFrom = $wrnameFrom->wr_name;
+            $wrnameFrom = agent::where('id', Input::get('warehouse'))->first();
+    		$wrnameFrom = $wrnameFrom->agt_name;
 
             $wrnameTo = Warehouse::where('id', Input::get('new_warehouse'))->first();
             if ($wrnameTo != null) {
@@ -358,9 +361,7 @@ class MovementIndividualController extends Controller {
 
             $date = date("d/m/y h:i:sa");      
 
-
-			$StockView = StockLocationView::where('wr_name', $wrnameFrom)->whereNotNull('btc_instructed_by')->where('insloc_ref',$ref_no)->get();
-            
+			$StockView = StockLocationView::where('wrid',Input::get('warehouse') )->whereNotNull('btc_instructed_by')->where('insloc_ref',$ref_no)->get();
             $pdf = PDF::loadView('pdf.movement_instructions', compact('TO',  'ATTENTION', 'FROM', 'reference', 'ref_no', 'contractNumber', 'user',  'date', 'StockView', 'seasonName', 'person_fname', 'person_sname'));
             return $pdf->stream($ref_no . ' movement_instructions.pdf');
 
