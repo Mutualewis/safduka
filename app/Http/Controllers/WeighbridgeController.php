@@ -47,8 +47,10 @@ class WeighbridgeController extends Controller {
 		    $ref_no = $ref;
 		}	
 		if ($ref_no != NULL && is_numeric($ref_no)) {
+			
 			$weighbridge_ticket = sprintf("%07d", ($ref_no + 0000001));
 		}
+
 
 		return View::make('weighbridge', compact('id', 
 				'Season', 'country', 'cid', 'weighbridge_ticket', 'region', 'weighbridges', 'parking', 'booking', 'items', 'transporters'));	
