@@ -42,6 +42,13 @@
 	if (!isset($cid)) {
 		$cid = NULL;
 	}
+	if (old('grower') != NULL) {
+		$st_cgr = old('grower');
+    }
+    
+	if (!isset($st_cgr)) {
+		$st_cgr = NULL;
+	}
 
 	if (!isset($saleid )) {
 		$saleid   = NULL;
@@ -274,7 +281,7 @@
 		        		<div class="form-group col-md-3">
 		        			<label>Bulk Outturn Number</label>
 		                    <div class="input-group custom-search-form">
-		                        <input type="text" class="form-control" name="ref_no" id ="ref_no" placeholder="Outturn No..."  value="{{ old('ref_no') }}" ></input>
+		                        <input type="text" class="form-control" name="outturn" id ="outturn" placeholder="Outturn No..."  value="{{ old('outturn') }}" ></input>
 		                       
 		                    </div>
 		                </div>	
@@ -293,6 +300,22 @@
 		                       
 		                    </div>
 		                </div>
+						<div class="form-group col-md-3">
+			            	<label>Grower</label>
+			                <select class="form-control" name="grower">
+			               		<option value="">---select grower---</option>
+								@if (count($growers) > 0)
+											@foreach ($growers->all() as $grower)
+											@if ($st_cgr ==  $grower->id)
+												<option value="{{ $grower->id }}" selected="selected">{{ $grower->cgr_grower}}</option>
+											@else
+												<option value="{{ $grower->id }}">{{ $grower->cgr_grower}}</option>
+											@endif
+											@endforeach
+										
+								@endif
+			                </select>
+			            </div>
 				</div>
 
 
@@ -424,7 +447,7 @@
 
 <script>
 	var countryID = document.getElementById("country").value;
-	var ref_no = document.getElementById("ref_no").value;
+	var ref_no = document.getElementById("outturn").value;
 
 	if (countryID == "") {
 		countryID = 0;

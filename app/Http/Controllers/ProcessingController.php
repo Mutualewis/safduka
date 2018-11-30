@@ -1044,9 +1044,9 @@ class ProcessingController extends Controller
     {
         if ($countryID != null) {
             if($ref_no != null){
-                $stockview = StockViewALL::select('*')->whereNull('st_ended_by');
+                $stockview = StockViewALL::select('*')->whereNull('st_ended_by')->whereNull('bulked_by');
             } else {
-                $stockview = StockViewALL::select('*')->where('ctr_id', $countryID)->whereNull('st_ended_by');
+                $stockview = StockViewALL::select('*')->where('ctr_id', $countryID)->whereNull('st_ended_by')->whereNull('bulked_by');
             }
 
         } else {
