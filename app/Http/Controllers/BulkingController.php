@@ -17,6 +17,7 @@ use Ngea\OutturnTotalBatch;
 use Ngea\cupscore;
 use Ngea\Batch;
 use Ngea\coffeegrower;
+use Ngea\ProvisionalBulk;
 
 use Ngea\Http\Controllers\Controller;
 
@@ -55,8 +56,8 @@ use Yajra\Datatables\Datatables;
 use Ngea\StockProcessedView;
 
 use Ngea\ProcessAllocation;
-
-
+use Ngea\ProvisionalAllocation;
+use Ngea\Provisonal_Purpose;
 // use PDF;
 use niklasravnsborg\LaravelPdf\Facades\Pdf as PDF;
 use View;
@@ -78,6 +79,7 @@ class BulkingController extends Controller {
         $buyer         = buyer::all(['id', 'cb_name']);
         $processing    = processing::all(['id', 'prcss_name']);
         $StockStatus   = StockStatus::all(['id', 'sts_name']);
+        $provisionalPurpose = Provisonal_Purpose::all(['id', 'prp_name']);
 
         $sale_status = sale_status::all(['id', 'sst_name']);
         $Warehouse   = null;
@@ -111,12 +113,12 @@ class BulkingController extends Controller {
             $COUNTRY_INITIAL = substr($COUNTRY_INITIAL->ctr_initial, 0, 1) ;
         }
         
-        $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_code']);
+        $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_code', 'cgr_mark']);
         
 
 
         return View::make('bulking', compact('id',
-            'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'certs', 'StockStatus', 'growers'));
+            'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'certs', 'StockStatus', 'growers', 'provisionalPurpose'));
 
     }
 
@@ -166,7 +168,8 @@ class BulkingController extends Controller {
         $cid           = Input::get('country');
         $slr           = Input::get('seller');
         $sale_cb_id    = Input::get('coffee_buyer');
-        $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_code']);
+        $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_code', 'cgr_mark']);
+        $provisionalPurpose = Provisonal_Purpose::all(['id', 'prp_name']);
 
         $BULKING_PROCESS = 4;
         $INTERNAL_BULK = 1;
@@ -271,7 +274,7 @@ class BulkingController extends Controller {
 
         
         $tobeprocessed = Input::get('tobeprocessed');
-        
+       
         $user_data = Auth::user();
         $user      = $user_data->id;
 
@@ -299,7 +302,7 @@ class BulkingController extends Controller {
             $tobeprocessed = Input::get('tobeprocessed');
             $tobewithdrawn = Input::get('tobewithdrawn');
            
-            
+            //dd($tobeprocessed); exit;
             
             
             $cweight = Input::get('cweight');
@@ -343,6 +346,7 @@ class BulkingController extends Controller {
                 
                    
                 }
+                
                 $stock_net = $weight_in;
                 $stock_bags    = floor($stock_net / 60);
                 $stock_pockets = $stock_net % 60;     
@@ -358,7 +362,59 @@ class BulkingController extends Controller {
                     }
                 
             }
-           
+            $prdetails = ProvisionalBulk::where('pbk_instruction_number', $ref_no)->first();
+
+            if ($prdetails != null) {
+                $prid = $prdetails->id;
+
+                ProvisionalBulk::where('id', '=', $prid)
+                    ->update(['prcss_id' => $prc, 'ctr_id' => $cid, 'pbk_instruction_number' => $ref_no, 'pbk_weight_in' => $weight_in, 'pbk_reference_name' => $ref_no, ]);
+                
+                Activity::log('Updated Provisional Bulk information with prid ' . $prid . ' prc ' . $prc . ' ref_no ' . $ref_no . ' weight_in ' . $weight_in );
+            } else {
+                $prid = ProvisionalBulk::insertGetId(['prcss_id' => $prc, 'pbk_instruction_number' => $ref_no, 'pbk_weight_in' => $weight_in,  'ctr_id' => 1, 'pbk_reference_name' => $ref_no, 'pbk_date' => $date, 'prp_id' => 1]);
+               
+                Activity::log('Inserted Provisional Bulk information with prid ' . $prid . ' prc ' . $prc . ' ref_no ' . $ref_no . ' weight_in ' . $weight_in );
+            }
+
+            if ($tobeprocessed != null) {
+                foreach ($tobeprocessed as $key => $value) {
+                    $cweight_array = Input::get('cweight');
+                    $cweight = null;
+                    if($cweight_array != null){
+                        foreach ($cweight_array as $keyweight => $valueweight) {
+                            if ($keyweight == $value) {
+                                $cweight = $valueweight;
+                              
+                            }                        
+                        }                       
+                    }
+                    $packages    = ceil($cweight / 60);
+
+
+                   
+                    $processAllocationDetails = ProvisionalAllocation::where('st_mill_id', $value)->where('pbk_id', $prid)->first();
+
+                    if ($cweight != null) {
+                        if ($processAllocationDetails != null) {
+
+                            $processAllocationID = $processAllocationDetails->id;
+                            ProvisionalAllocation::where('id', '=', $processAllocationID)
+                                ->update([ 'pbk_id' => $prid, 'st_mill_id' => $value, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages ]);
+
+                            
+                            Activity::log('Updated Provisional Bulk allocation information with id ' . $processAllocationID . 'prall_allocated_weight' . $cweight .'prall_packages' .'prall_processed_weight' .$packages);
+
+                        } else {
+
+                            $processAllocationID = ProvisionalAllocation::insertGetId(['pbk_id' => $prid, 'st_mill_id' => $value, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages]);
+                            
+                            Activity::log('Added Provisional Bulk allocation information with id ' . $processAllocationID . 'prall_allocated_weight' . $cweight .'prall_packages' .'prall_processed_weight' .$packages );                                
+                        }
+                        
+                    }
+                }
+            }
           
 
             if ($tobewithdrawn != null) {
@@ -379,8 +435,9 @@ class BulkingController extends Controller {
                 }
           
             }
-            DB::commit();
+           
             $request->session()->flash('alert-success', 'Outturn added successfully!!');
+            DB::commit();  
             }catch (\PDOException $e) {
                 
                 DB::rollback();
@@ -392,7 +449,7 @@ class BulkingController extends Controller {
             $StockView = StockViewALL::get();
             
             return View::make('bulking', compact('id',
-                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers'));
+                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose'));
 
         }  else if (null !== Input::get('filter')) {
 
@@ -404,7 +461,7 @@ class BulkingController extends Controller {
                 if ($prdetails->pr_confirmed_by != null) {
                     $request->session()->flash('alert-warning', 'Process already confirmed!!');
                     return View::make('processinginstructions', compact('id',
-                        'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers'));                  
+                        'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose'));                  
                 }
             }
 
@@ -425,7 +482,7 @@ class BulkingController extends Controller {
 
             
             return View::make('bulking', compact('id',
-                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected', 'StockView', 'sst', 'saleid', 'grade', 'bskt', 'crtid', 'prcf', 'prid','prc_season', 'reference', 'contract', 'contractID','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers'));
+                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected', 'StockView', 'sst', 'saleid', 'grade', 'bskt', 'crtid', 'prcf', 'prid','prc_season', 'reference', 'contract', 'contractID','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose'));
         } else {
             $cid = Input::get('country');
             $csn_season = Input::get('sale_season');
@@ -433,7 +490,7 @@ class BulkingController extends Controller {
             $stockview = StockViewALL::select('*')->whereNull('bulked_by');
 
             return View::make('bulking', compact('id',
-                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected', 'StockView', 'prid','prc_season', 'reference', 'contract', 'contractID','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers'));
+                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected', 'StockView', 'prid','prc_season', 'reference', 'contract', 'contractID','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose'));
         }
 
     }
@@ -455,6 +512,10 @@ class BulkingController extends Controller {
 
         return Datatables::of($stockview)
             ->make(true);
+    }
+
+    public function bulkApi(){
+
     }
    
 

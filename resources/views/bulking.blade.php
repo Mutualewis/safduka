@@ -307,9 +307,9 @@
 								@if (count($growers) > 0)
 											@foreach ($growers->all() as $grower)
 											@if ($st_cgr ==  $grower->id)
-												<option value="{{ $grower->id }}" selected="selected">{{ $grower->cgr_grower}}</option>
+												<option value="{{ $grower->id }}" selected="selected">{{ $grower->cgr_grower}}    &&nbsp&nbsp&nbsp&nbsp ( {{ $grower->cgr_mark}} )</option>
 											@else
-												<option value="{{ $grower->id }}">{{ $grower->cgr_grower}}</option>
+												<option value="{{ $grower->id }}">{{ $grower->cgr_grower}} &nbsp&nbsp&nbsp&nbsp  ( {{ $grower->cgr_mark}} )</option>
 											@endif
 											@endforeach
 										
