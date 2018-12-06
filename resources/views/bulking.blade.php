@@ -569,6 +569,7 @@
 
 			$('.chk').off('click').on('click', function(){
 				var selectedID = $(this).val();
+				var checked = $(this).is(":checked");
 				var outturn = $(this).data('outturn');
 				var weight = $(this).data('weight');
 				selectedID = parseInt(selectedID);	
@@ -581,9 +582,24 @@
 				if (localStorage.getItem("lotsinbulk") != null) {
 					data = JSON.parse(localStorage.getItem('lotsinbulk'));
 				}
-				data.push({"id": selectedID,"outturn": outturn,"weight": weight});
 				
-				console.info(data)
+				if(checked){
+					
+					var result = $.grep(data, function(e){ 
+						return e.id == selectedID; 
+					});
+					console.log(result)
+					if(jQuery.isEmptyObject(result)){
+					data.push({"id": selectedID,"outturn": outturn,"weight": weight});
+					}
+				}else{
+					data = data.filter(function( obj ) {
+					return obj.id !== selectedID;
+					});
+				}
+				
+				
+			
 			
 				localStorage.setItem('lotsinbulk', JSON.stringify(data));
 

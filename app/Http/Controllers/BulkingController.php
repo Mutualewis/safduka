@@ -533,6 +533,7 @@ class BulkingController extends Controller {
             $mark                = $formdata->mark;
             $season                = $formdata->outt_season;
             $grower                =$formdata->grower;
+            $cid                =$formdata->country;
             $material                =$formdata->material;
             $date                = date('Y-m-d', strtotime($formdata->date));
             
