@@ -213,7 +213,7 @@
 				<strong>Number of Bags <?php echo number_format((float)$total/60, 2, '.', ''); ?></strong><br><br>
 				Signed on behalf of Export Warehouse. <br><br>
 				<?php echo $person_fname." ".$person_sname. "_________________________"; ?><br><br>
-									  <?php echo "Nelson Mose_________________________"; ?><br><br>
+									  <?php echo "Stanley Rotich_________________________"; ?><br><br>
 									  <?php echo "Supervised By_________________________"; ?><br><br>
 									  <?php echo "CYKA_________________________"; ?>
 				<br>
@@ -222,14 +222,14 @@
 			<br>
 
 		<!-- <htmlpagefooter name="page-footer" align="left"> -->
-		    <div style="text-align: left; border-top: 1px solid #000000; font-size: 11pt;"><strong>Ibero Kenya Ltd</strong></div>
+		    <div style="text-align: left; border-top: 1px solid #000000; font-size: 11pt;"><strong>NKG Coffee Mills Kenya Ltd</strong></div>
 		    <div style="text-align: left; font-size: 10pt;">A Company of Neumann Kaffee Gruppe</div>
 		    <div style="text-align: left; font-size: 10pt;">Sukari Industrial Estate - Northern Bypass Road - Ruiru/Nairobi</div>
 		    <div style="text-align: left; font-size: 10pt;">P.O.BOX 47882-00100 - Nairobi - Kenya</div>
 		    <div style="text-align: left; font-size: 10pt;">Tet +254 20 2343009/2066886</div>
 		    <div style="text-align: left; font-size: 10pt;">Tel +254 733 893900/729407495</div>
 		    <div style="text-align: left; font-size: 10pt;">Fax +254 20 2056428</div>
-		    <div style="text-align: left; font-size: 10pt;">info.iberoke@ngea.com</div>
+		    <div style="text-align: left; font-size: 10pt;">info.ke@ngea.com</div>
 
 			<!-- <div style="text-align: center; font-weight: bold; font-size: 13pt;">Page {PAGENO}</div>
 		</htmlpagefooter> -->

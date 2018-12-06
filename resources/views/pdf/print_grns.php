@@ -74,6 +74,9 @@
 						Material
 					</th>
 					<th>
+						Mark
+					</th>
+					<th>
 						Packages
 					</th>
 					<th>
@@ -126,6 +129,7 @@
 							        echo "<td>" . $count . "</td>";
 							        echo "<td>" . $value->st_outturn . "</td>";
 							        echo "<td>" . $value->mt_name. "</td>";
+							        echo "<td>" . $value->st_mark. "</td>";
 							        echo "<td>" . $value->st_packages . "</td>";
 							        echo "<td>" . $value->st_gross . "</td>";
 							        echo "<td>" . $value->st_tare . "</td>";
@@ -138,6 +142,7 @@
 						}
 						echo "<tr style='background-color: #f2f2f2'>";
 							echo "<td>" . $count . " Lots</td>";	
+							echo "<td></td>";	
 							echo "<td></td>";	
 							echo "<td></td>";	
 							echo "<td>" . $total_packages . "</td>";

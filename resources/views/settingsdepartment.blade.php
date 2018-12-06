@@ -176,6 +176,7 @@ var latestid=null
 var rowno=1
 var path= "{{URL::to('settingsdepartment')}}";
 var roles= '<?php echo $roles; ?>'
+var rowno=0
 $(document).ready(function (){  
 	var table = $('#department-table').DataTable({
 	});//end datatable
@@ -292,7 +293,8 @@ $(document).ready(function (){
 	 var url = '{{ route('settingsdepartment.getmenulist',['departmentID'=>":id"]) }}';
 	 url = url.replace(':id', departmentID);
 	
-	 rowno=0
+	 rowno=[]
+	 
 
 	 $('.modal-body').html('<table id="menulist-table" class="table table-condensed table-striped" width="100%">'+
 						'<thead bgcolor="#086b36">'+
@@ -372,7 +374,8 @@ $(document).ready(function (){
 						var selectEnd = "</select>";
 
 						var select = selectStart.concat(selectBody.concat(selectEnd));
-						rowno++
+						rowno.push(data)
+						
 						return select;	
 
 			}
@@ -446,10 +449,10 @@ $(document).ready(function (){
 			});
 			
 			var jArray=rowno;
-			console.log(jArray)
-			for(var i=1;i<=jArray;i++){
-			    	var str1 = "#selectroles";
-					var str2 = i;
+			
+			$.each( jArray, function( key, value ) {
+				var str1 = "#selectroles";
+					var str2 = value;
 					var res = str1.concat(str2);
 				        $(res).multiselect({
 				        	buttonWidth: '150px',
@@ -458,7 +461,20 @@ $(document).ready(function (){
 				            enableFiltering: true,
 							includeSelectAllOption: true
 				        });
-		   		}
+				});
+
+			// for(var i=1;i<=jArray;i++){
+			//     	var str1 = "#selectroles";
+			// 		var str2 = i;
+			// 		var res = str1.concat(str2);
+			// 	        $(res).multiselect({
+			// 	        	buttonWidth: '150px',
+			// 	            enableClickableOptGroups: true,
+			// 	            enableCollapsibleOptGroups: true,
+			// 	            enableFiltering: true,
+			// 				includeSelectAllOption: true
+			// 	        });
+		   	// 	}
 
 		    });
 	    },

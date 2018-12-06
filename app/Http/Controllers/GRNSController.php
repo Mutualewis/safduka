@@ -200,7 +200,7 @@ class GRNSController extends Controller {
             if (NULL !== Input::get('outt_number_select')) {
 
                 $outturns = DB::table('process_results_prts AS prts')
-                    ->select('*', 'prts.id as prtsid', 'gr.cgr_id as cgrid')
+                    ->select('*', 'prts.id as prtsid', DB::Raw('IFNULL( `gr`.`cgr_id` , st.cgr_id ) as cgrid'))
                     ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
                     ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'st.grn_id')
                     ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
