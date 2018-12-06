@@ -290,8 +290,16 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/bulkinginstructions/getstockview/{countryID}/{ref_no}', ['as'=>'bulkinginstructions.getstockview','uses'=>'BulkingController@getstockview']); 
 		Route::post('/bulkinginstructions', 'BulkingController@bulking');
 
+		Route::get('/cleanbulkinginstructions', 'CleanBulkingController@bulkingForm'); 
+		Route::get('/cleanbulkinginstructions/getstockview/{countryID}/{ref_no}', ['as'=>'cleanbulkinginstructions.getstockview','uses'=>'CleanBulkingController@getstockview']); 
+		Route::post('/cleanbulkinginstructions', 'CleanBulkingController@bulking');
+
 		Route::get('/stocksallclean', 'StocksCleanGridController@stockAllAndCleanGrid');
 		
+		Route::post('/bulking/savePBulk', ['as'=>'bulking.savePBulk','uses'=>'BulkingController@bulkingApi']);
+
+		Route::post('/bulking/saveCleanBulk', ['as'=>'bulking.saveCleanBulk','uses'=>'CleanBulkingController@bulkingApi']);
+
 });
 
 

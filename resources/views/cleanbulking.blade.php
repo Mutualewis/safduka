@@ -1,5 +1,5 @@
 @extends ('layouts.dashboard')
-@section('page_heading','Partchment Bulking (Press fetch or search if it takes too long to load)')
+@section('page_heading','Clean Bulking (Press fetch or search if it takes too long to load)')
 @section('section')
 <div class="col-sm-14 col-md-offset-0">
 			<div class="row">
@@ -233,7 +233,7 @@
 	}
 ?>
     <div class="col-md-12">
-	        <form id="bulkingform" role="form" method="POST" action="/bulkinginstructions">
+	        <form id="cleanbulkingform" role="form" method="POST" action="/cleanbulkinginstructions">
 
 	        	<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
@@ -664,7 +664,7 @@
 
 <script>
 		// validate signup form on keyup and submit
-		$("#bulkingform").validate({
+		$("#cleanbulkingform").validate({
 			rules: {
 				material: "required",
 				outturn: "required",
@@ -697,11 +697,11 @@
 				material: "Please select a grade",
 				outturn: "Please enter bulk outturn",
 				grower: "Please select a grower",
+				Bulking_season: "Please select a valid bulking season",
 				mark: {
 					required: "Please enter grower mark",
 					minlength: "Mark must consist of at least 2 characters"
 				},
-				Bulking_season: "Please select a valid bulking season",
 				// password: {
 				// 	required: "Please provide a password",
 				// 	minlength: "Your password must be at least 5 characters long"
@@ -722,10 +722,11 @@
 				var alertnone = false;
 				
 				
+				console.log(lotsinbulk)
 				if (localStorage.getItem("lotsinbulk") != null) {
 					lotsinbulk = JSON.parse(localStorage.getItem('lotsinbulk'));
 				}
-			 	
+			 	console.log(lotsinbulk)
 				if(jQuery.isEmptyObject(lotsinbulk)){
 					
 					alertnone=true
@@ -751,7 +752,7 @@
 				message: "Are you sure? <br> "+str, 
 				callback: function(result){ 
 					if(result){
-						saveData(lotsinbulk)
+						saveData()
 					}
 				 }
 				})
@@ -777,63 +778,6 @@
 		// 		this.value = firstname + "." + lastname;
 		// 	}
 		// });
-		function saveData(lotsinbulk){
-			//post
-			var url = '{{ route('bulking.savePBulk') }}';
-				console.log(url)
-				var country = $('[name="country"]').val();
-				var outt_season = $('[name="Bulking_season"]').val();
-				var outturn = $('[name="outturn"]').val();
-				var mark = $('[name="mark"]').val();
-				var grower = $('[name="grower"]').val();
-				var date = $('[name="date"]').val();
-
-				var material = $('[name="material"]').val();
-				
-				var formdata = { country: country, outt_season: outt_season,outturn: outturn, mark: mark, grower: grower, material: material, date: date }
-
-				var dialog = bootbox.dialog({
-					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
-  					backdrop: true,
-					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-				});
-
-				var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');		
-				let data = {_token: CSRF_TOKEN, data: formdata, lotsinbulk: lotsinbulk}
-				console.log(JSON.stringify(data))
-				$.ajax({
-					method: "POST",
-					url: url,
-					data: data,
-					dataType: 'json',
-					}).done(function(response) {
-						console.log(response)
-						if(response.updated) {
-							dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-							
-						} else if(response.inserted) {
-							dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
-							
-							
-							location.reload();
-						}else if(response.error) {
-							var msg = '';
-							$.each(response.errormsgs, function( index, value ) {
-							msg = msg +'<br>'+ value;
-						})
-							dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">'+msg +'</i></div>');
-							
-						}
-					}).error(function(error) {
-						console.error(error)
-						// var msg = '';
-						// $.each(response.errormsgs, function( index, value ) {
-						// 	msg = msg + value;
-						// })
-						// dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">'+msg +'</i></div>');
-						// closeBootBox();
-				});
-		}
 </script>
 @endpush
 					</div>
@@ -925,17 +869,13 @@
 	  color: #0DFF92;
 	}
 
-	#bulkingform label.error {
+	#cleanbulkingform label.error {
 		margin-left: 10px;
 		width: auto;
 		display: inline;
 		color: #a94442;
 	}
-	#bulkingform input.error {
-		color: #a94442;
-		border: 2px solid red;
-	}
-	#bulkingform select.error {
+	#cleanbulkingform input.error {
 		color: #a94442;
 		border: 2px solid red;
 	}
@@ -954,7 +894,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 console.log(autosubmit)
 	$(document).ready(function (){ 
 		if(autosubmit){
-		//	$( "#bulkingform" ).submit();
+			$( "#stocksForm" ).submit();
 		}
 	})
 </script>

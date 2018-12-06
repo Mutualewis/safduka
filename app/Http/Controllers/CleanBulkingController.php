@@ -68,7 +68,7 @@ use Ngea\teams;
 use Ngea\StockMill;
 use Ngea\Material;
 
-class BulkingController extends Controller {
+class CleanBulkingController extends Controller {
 
     public function bulkingForm(Request $request)
     {
@@ -119,7 +119,7 @@ class BulkingController extends Controller {
         
 
 
-        return View::make('bulking', compact('id',
+        return View::make('cleanbulking', compact('id',
             'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'certs', 'StockStatus', 'growers', 'provisionalPurpose', 'material'));
 
     }
@@ -134,7 +134,6 @@ class BulkingController extends Controller {
         $Warehouse = null;
         $Mill      = null;
 
-        $material = Material::all(['id', 'mt_name']);
         $ref_no = null;
         $prc    = Input::get('process_type');
         $cid    = Input::get('country');
@@ -143,6 +142,7 @@ class BulkingController extends Controller {
         $csn_season  = Input::get('sale_season');
         $prc_season = Input::get('processing_season');
         $reference = Input::get('reference');
+        $material = Material::all(['id', 'mt_name']);
 
         $CoffeeGrade = CoffeeGrade::where('ctr_id', Input::get('country'))->get();
 
@@ -284,7 +284,7 @@ class BulkingController extends Controller {
         if (null !== Input::get('submitinstruction')) {
             DB::beginTransaction();
             $errormessages = [];
-            dd($tobeprocessed); exit;
+            
             try{
            
 
@@ -451,7 +451,7 @@ class BulkingController extends Controller {
 
             $StockView = StockViewALL::get();
             
-            return View::make('bulking', compact('id',
+            return View::make('cleanbulking', compact('id',
                 'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose', 'material'));
 
         }  else if (null !== Input::get('filter')) {
@@ -463,7 +463,7 @@ class BulkingController extends Controller {
 
                 if ($prdetails->pr_confirmed_by != null) {
                     $request->session()->flash('alert-warning', 'Process already confirmed!!');
-                    return View::make('bulking', compact('id',
+                    return View::make('cleanbulking', compact('id',
                         'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose', 'material'));                  
                 }
             }
@@ -484,7 +484,7 @@ class BulkingController extends Controller {
             $stockview = StockViewALL::select('*')->whereNull('bulked_by');
 
             
-            return View::make('bulking', compact('id',
+            return View::make('cleanbulking', compact('id',
                 'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected', 'StockView', 'sst', 'saleid', 'grade', 'bskt', 'crtid', 'prcf', 'prid','prc_season', 'reference', 'contract', 'contractID','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose', 'material'));
         } else {
             $cid = Input::get('country');
@@ -492,7 +492,7 @@ class BulkingController extends Controller {
 
             $stockview = StockViewALL::select('*')->whereNull('bulked_by');
 
-            return View::make('bulking', compact('id',
+            return View::make('cleanbulking', compact('id',
                 'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected', 'StockView', 'prid','prc_season', 'reference', 'contract', 'contractID','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose', 'material'));
         }
 
@@ -517,160 +517,8 @@ class BulkingController extends Controller {
             ->make(true);
     }
 
-    public function bulkingApi(Request $request){
-        DB::connection()->enableQueryLog();
-        $errormessages = [];
-        
-		try{
-            DB::beginTransaction();
-            $formdata = (object)$request->data;
-            
-            $user_data = Auth::user();
-            $user = $user_data->id;
+    public function bulkingApi(){
 
-            $prc                   = 1;
-            $ref_no                = $formdata->outturn;
-            $mark                = $formdata->mark;
-            $season                = $formdata->outt_season;
-            $grower                =$formdata->grower;
-            $material                =$formdata->material;
-            $date                = date('Y-m-d', strtotime($formdata->date));
-            
-            $reference_no = $ref_no;
-            
-            $weight_in             = null;
-
-            $tobeprocessed = $request->lotsinbulk;
-            
-           
-            $cweight = Input::get('cweight');
-                         
-            if ($tobeprocessed != null) {
-                foreach ($tobeprocessed as $key => $value) {
-                    $value = (object)$value;
-                    $stockitemdetails = StockMill::where('id', '=', $value->id)->first(); 
-                    
-                    $cweight = null;
-                    if($value->weight != null){
-                       
-                        $cweight = $value->weight;
-                        $weight_in += $cweight;
-                                        
-                                           
-                    }
- 
-                    $packages    = ceil($cweight / 60);
-                    // $pall_ratio = $cweight/$weight_in;
-                    $pall_ratio = 1;
-
-                }
-                
-                $stock_net = $weight_in;
-                $stock_bags    = floor($stock_net / 60);
-                $stock_pockets = $stock_net % 60;     
-                $batch_packages = ceil($stock_net / 60);   
-                
-                $st_bulk_id = StockMill::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages,'mt_id'=>$material, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $stockitemdetails->pty_id, 'st_is_bulk' => 1]);
-    
-                
-                    foreach ($tobeprocessed as $key => $value) {
-                        $value = (object)$value;
-                        StockMill::where('id', '=', $value->id)
-                             ->update(['st_bulk_id' => $st_bulk_id, 'st_bulked_by' => $user]);
-                    }
-                
-            }
-            $prdetails = ProvisionalBulk::where('pbk_instruction_number', $ref_no)->first();
-
-            if ($prdetails != null) {
-                $prid = $prdetails->id;
-
-                ProvisionalBulk::where('id', '=', $prid)
-                    ->update(['prcss_id' => $prc, 'ctr_id' => $cid, 'pbk_instruction_number' => $ref_no, 'pbk_weight_in' => $weight_in, 'pbk_reference_name' => $ref_no, ]);
-                
-                Activity::log('Updated Provisional Bulk information with prid ' . $prid . ' prc ' . $prc . ' ref_no ' . $ref_no . ' weight_in ' . $weight_in );
-            } else {
-                $prid = ProvisionalBulk::insertGetId(['prcss_id' => $prc, 'pbk_instruction_number' => $ref_no, 'pbk_weight_in' => $weight_in,  'ctr_id' => 1, 'pbk_reference_name' => $ref_no, 'pbk_date' => $date, 'prp_id' => 1]);
-               
-                Activity::log('Inserted Provisional Bulk information with prid ' . $prid . ' prc ' . $prc . ' ref_no ' . $ref_no . ' weight_in ' . $weight_in );
-            }
-
-            if ($tobeprocessed != null) {
-                foreach ($tobeprocessed as $key => $value) {
-                    $value = (object)$value;
-                    $cweight = null;
-                    if($value->weight != null){
-                       
-                        $cweight = $value->weight;
-                        $weight_in += $cweight;
-                                        
-                                           
-                    }
-
-                    
-                    $packages    = ceil($cweight / 60);
-                    // $pall_ratio = $cweight/$weight_in;
-                    $pall_ratio = 1;
-
-
-                   
-                    $processAllocationDetails = ProvisionalAllocation::where('st_mill_id', $value->id)->where('pbk_id', $prid)->first();
-
-                    if ($cweight != null) {
-                        if ($processAllocationDetails != null) {
-
-                            $processAllocationID = $processAllocationDetails->id;
-                            ProvisionalAllocation::where('id', '=', $processAllocationID)
-                                ->update([ 'pbk_id' => $prid, 'st_mill_id' => $value->id, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages ]);
-
-                            
-                            Activity::log('Updated Provisional Bulk allocation information with id ' . $processAllocationID . 'prall_allocated_weight' . $cweight .'prall_packages' .'prall_processed_weight' .$packages);
-
-                        } else {
-
-                            $processAllocationID = ProvisionalAllocation::insertGetId(['pbk_id' => $prid, 'st_mill_id' => $value->id, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages]);
-                            
-                            Activity::log('Added Provisional Bulk allocation information with id ' . $processAllocationID . 'prall_allocated_weight' . $cweight .'prall_packages' .'prall_processed_weight' .$packages );                                
-                        }
-                        
-                    }
-                }
-            }
-
-            $queries = DB::getQueryLog();
-            if(!empty($errormessages)){
-                return response()->json([
-                    'exists' => false,
-                    'inserted' => false,
-                    'updated' => false,
-                    'error' => true,
-                    'errormsgs' => $errormessages
-                ]);	
-            }else{ 
-            DB::commit();
-			return response()->json([
-					'exists' => false,
-					'inserted' => true,
-					'updated' => false,
-					'error' => false,
-					'errormsg' => '',
-					'errormsgs' => $errormessages
-				]);
-			}
-			
-		}catch (\Exception $e) {
-			
-            DB::rollback();
-            dump($e); exit;
-			$errormessages[] = $e->getMessage();
-			return response()->json([
-				'exists' => false,
-				'inserted' => false,
-				'updated' => false,
-				'error' => true,
-				'errormsgs' => $errormessages
-			]);	
-		}
     }
    
 
