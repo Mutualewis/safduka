@@ -281,7 +281,7 @@ class BulkingController extends Controller {
         if (null !== Input::get('submitinstruction')) {
             DB::beginTransaction();
             $errormessages = [];
-            
+            dd($tobeprocessed); exit;
             try{
            
 

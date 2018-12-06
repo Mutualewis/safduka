@@ -457,6 +457,9 @@
 								Outturn
 							</th>
 							<th>
+								Mark
+							</th>
+							<th>
 								Material
 							</th>
 							<th>
@@ -1513,7 +1516,6 @@
 		}).success(function(response) {
 			var outturns = jQuery.parseJSON(response);
 			$('#grn_outturns tr').empty();
-
 			$('#grn_outturns tr').not(':first').not(':last').remove();
 			var html = '';
 			var count = 0;
@@ -1521,6 +1523,8 @@
 			var gross = 0;
 			var tare = 0;
 			var net = 0;
+
+			html = '<tr><td>No.</td><td>Outturn</td><td>Mark</td><td>Material</td><td>Packages</td><td>Gross Weight</td><td>Tare</td><td>Net Weight</td><td>Moisture</td><td>Remove</td></tr>';
 
 			$.each(outturns,function(key, value) 
 			{	
@@ -1532,14 +1536,14 @@
 				net = parseInt(net) + parseInt(value["st_net_weight"]);
 
           		html += '<tr><td>' + count + 
-                    '</td><td>' + value["st_outturn"] + '</td><td>' + value["mt_name"] + '</td><td>' + value["st_packages"] + '</td><td>' + value["st_gross"] + '</td><td>' + value["st_tare"] + '</td><td>' + value["st_net_weight"] + '</td><td>' + value["st_moisture"] + '</td><td><button type="button" onclick="outturn_delete(' + value["stid"] + ')"  class="btn btn-success btn-danger">Delete</button></td></tr>';
+                    '</td><td>' + value["st_outturn"] + '</td><td>' + value["st_mark"] + '</td><td>' + value["mt_name"] + '</td><td>' + value["st_packages"] + '</td><td>' + value["st_gross"] + '</td><td>' + value["st_tare"] + '</td><td>' + value["st_net_weight"] + '</td><td>' + value["st_moisture"] + '</td><td><button type="button" onclick="outturn_delete_disabled(' + value["stid"] + ')"  class="btn btn-success btn-danger">Delete</button></td></tr>';
 
 			});		
 
 			if (count > 0) {
 
 	      		html += '<tr><td>' + count + 
-	                ' Outturn(s)</td><td></td><td></td><td>' + packages + '</td><td>' + gross + '</td><td>' + tare + '</td><td>' + net + '</td><td></td><td></td></tr>';
+	                ' Outturn(s)</td><td></td><td></td><td></td><td>' + packages + '</td><td>' + gross + '</td><td>' + tare + '</td><td>' + net + '</td><td></td><td></td></tr>';
 
 			}
 			$('#grn_outturns tr').first().after(html);	
