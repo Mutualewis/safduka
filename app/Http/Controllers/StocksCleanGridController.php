@@ -193,6 +193,28 @@ class StocksCleanGridController  extends Controller {
                         ->setSortable(true)
                     ,
 
+                    (new FieldConfig)
+                        ->setName('btc_packages')
+                        ->setLabel('Packages')
+                        ->addFilter(
+                            (new FilterConfig)
+                                ->setName('btc_packages')
+                                ->setOperator(FilterConfig::OPERATOR_LIKE)
+                        )                         
+                        ->setSortable(true)
+                    ,
+
+                    (new FieldConfig)
+                        ->setName('dmp_packages')
+                        ->setLabel('DMP_Packages')
+                        ->addFilter(
+                            (new FilterConfig)
+                                ->setName('dmp_packages')
+                                ->setOperator(FilterConfig::OPERATOR_LIKE)
+                        )                         
+                        ->setSortable(true)
+                    ,
+
 
                     (new FieldConfig)
                         ->setName('btc_bags')

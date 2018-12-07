@@ -1536,7 +1536,7 @@
 				net = parseInt(net) + parseInt(value["st_net_weight"]);
 
           		html += '<tr><td>' + count + 
-                    '</td><td>' + value["st_outturn"] + '</td><td>' + value["st_mark"] + '</td><td>' + value["mt_name"] + '</td><td>' + value["st_packages"] + '</td><td>' + value["st_gross"] + '</td><td>' + value["st_tare"] + '</td><td>' + value["st_net_weight"] + '</td><td>' + value["st_moisture"] + '</td><td><button type="button" onclick="outturn_delete_disabled(' + value["stid"] + ')"  class="btn btn-success btn-danger">Delete</button></td></tr>';
+                    '</td><td>' + value["st_outturn"] + '</td><td>' + value["st_mark"] + '</td><td>' + value["mt_name"] + '</td><td>' + value["st_packages"] + '</td><td>' + value["st_gross"] + '</td><td>' + value["st_tare"] + '</td><td>' + value["st_net_weight"] + '</td><td>' + value["st_moisture"] + '</td><td><button type="button" onclick="outturn_delete_disable(' + value["stid"] + ')"  class="btn btn-success btn-danger">Delete</button></td></tr>';
 
 			});		
 
