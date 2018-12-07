@@ -20,6 +20,7 @@ use Ngea\coffeegrower;
 use Ngea\ProvisionalBulk;
 
 use Ngea\Http\Controllers\Controller;
+use Ngea\agent;
 
 use Ngea\Location;
 use Ngea\mills_region;
@@ -66,8 +67,11 @@ use Ngea\processrates;
 use Ngea\processcharges;
 use Ngea\teams;
 use Ngea\StockMill;
+use Ngea\StockWarehouse;
 use Ngea\Material;
 use Ngea\StockLocationView;
+use Ngea\StockViewWarehouse;
+use Ngea\Warehouse;
 
 class CleanBulkingController extends Controller {
 
@@ -83,6 +87,7 @@ class CleanBulkingController extends Controller {
         $StockStatus   = StockStatus::all(['id', 'sts_name']);
         $provisionalPurpose = Provisonal_Purpose::all(['id', 'prp_name']);
         $material = Material::all(['id', 'mt_name']);
+        $warehouse = agent::where('agtc_id', 4)->orWhere('agtc_id', 1)->get();
 
         $sale_status = sale_status::all(['id', 'sst_name']);
         $Warehouse   = null;
@@ -118,10 +123,10 @@ class CleanBulkingController extends Controller {
         
         $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_code', 'cgr_mark']);
         
-
+  
 
         return View::make('cleanbulking', compact('id',
-            'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'certs', 'StockStatus', 'growers', 'provisionalPurpose', 'material'));
+            'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'certs', 'StockStatus', 'growers', 'provisionalPurpose', 'material', 'rw', 'clm', 'zone', 'warehouse'));
 
     }
 
@@ -503,9 +508,9 @@ class CleanBulkingController extends Controller {
     {
         if ($countryID != null) {
             if($ref_no != null){
-                $stockview = StockLocationView::select('*')->whereNull('bulked_by');
+                $stockview = StockViewWarehouse::select('*')->whereNull('bulked_by');
             } else {
-                $stockview = StockLocationView::select('*')->where('ctr_id', $countryID)->whereNull('bulked_by');
+                $stockview = StockViewWarehouse::select('*')->where('ctr_id', $countryID)->whereNull('bulked_by');
             }
 
         } else {
@@ -572,14 +577,27 @@ class CleanBulkingController extends Controller {
                 $stock_pockets = $stock_net % 60;     
                 $batch_packages = ceil($stock_net / 60);   
                 
-                $st_bulk_id = StockMill::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages,'mt_id'=>$material, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $stockitemdetails->pty_id, 'st_is_bulk' => 1]);
+                $st_bulk_id = StockWarehouse::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages,'mt_id'=>$material, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $stockitemdetails->pty_id, 'st_is_bulk' => 1]);
     
                 
                     foreach ($tobeprocessed as $key => $value) {
                         $value = (object)$value;
-                        StockMill::where('id', '=', $value->id)
+                        StockWarehouse::where('id', '=', $value->id)
                              ->update(['st_bulk_id' => $st_bulk_id, 'st_bulked_by' => $user]);
                     }
+                
+            $preious_batch = Batch::where('st_id', $stock_item_id)->get();
+
+            $btid = Batch::insertGetId (
+            ['st_id' => $st_bulk_id, 'btc_weight' => $weight_in, 'btc_tare' => null, 'btc_net_weight' => $weight_in, 'btc_packages' => $packages_batch, 'btc_bags' => $stock_bags, 'btc_pockets' => $stock_pockets, 'ws_id' => null]);
+
+            Activity::log('Inserted Batch information with btid '.$btid. ' batch_kilograms '. $batch_weight. ' bags '. $bags_batch. ' pockets '. $pockets_batch. ' stid '. $stock_id.' btc_tare '.$tare_batch.' btc_net_weight '.$net_weight_batch);
+
+            $stlocid = StockLocation::insertGetId (
+            ['bt_id' => $btid, 'loc_row_id' => $rw, 'loc_column_id' => $clm, 'btc_zone' => $zone]);
+
+            Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $rw. ' loccolid '. $clm. ' zone '. $zone);       
+
                 
             }
             $prdetails = ProvisionalBulk::where('pbk_instruction_number', $ref_no)->first();
@@ -623,14 +641,14 @@ class CleanBulkingController extends Controller {
 
                             $processAllocationID = $processAllocationDetails->id;
                             ProvisionalAllocation::where('id', '=', $processAllocationID)
-                                ->update([ 'pbk_id' => $prid, 'st_mill_id' => $value->id, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages ]);
+                                ->update([ 'pbk_id' => $prid, 'st_wr_id' => $value->id, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages ]);
 
                             
                             Activity::log('Updated Provisional Bulk allocation information with id ' . $processAllocationID . 'prall_allocated_weight' . $cweight .'prall_packages' .'prall_processed_weight' .$packages);
 
                         } else {
 
-                            $processAllocationID = ProvisionalAllocation::insertGetId(['pbk_id' => $prid, 'st_mill_id' => $value->id, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages]);
+                            $processAllocationID = ProvisionalAllocation::insertGetId(['pbk_id' => $prid, 'st_wr_id' => $value->id, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages]);
                             
                             Activity::log('Added Provisional Bulk allocation information with id ' . $processAllocationID . 'prall_allocated_weight' . $cweight .'prall_packages' .'prall_processed_weight' .$packages );                                
                         }
@@ -638,7 +656,7 @@ class CleanBulkingController extends Controller {
                     }
                 }
             }
-
+            
             $queries = DB::getQueryLog();
             if(!empty($errormessages)){
                 return response()->json([

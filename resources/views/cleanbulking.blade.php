@@ -57,11 +57,12 @@
 		$st_mt = NULL;
 	}
 
-	if (!isset($saleid )) {
-		$saleid   = NULL;
-	}
-	if (!isset($sale_cb_id )) {
-		$sale_cb_id   = NULL;
+	if (old('warehouse') != NULL) {
+		$wrid = old('warehouse');
+    }
+    
+	if (!isset($wrid)) {
+		$wrid = NULL;
 	}
 
 	if (!isset($release_no )) {
@@ -83,6 +84,13 @@
 	if (!isset($wrhse)) {
 		$wrhse = NULL;
 	}
+	if (!isset($rw)) {
+		$rw = NULL;
+	}
+	if (!isset($clm)) {
+		$clm = NULL;
+	}
+
 	if (!isset($bskt)) {
 		$bskt = NULL;
 	}
@@ -231,6 +239,7 @@
 		}
 
 	}
+	
 ?>
     <div class="col-md-12">
 	        <form id="cleanbulkingform" role="form" method="POST" action="/cleanbulkinginstructions">
@@ -333,6 +342,23 @@
 												<option value="{{ $materials->id }}" selected="selected">{{ $materials->mt_name}} </option>
 											@else
 												<option value="{{ $materials->id }}">{{ $materials->mt_name}}  </option>
+											@endif
+											@endforeach
+										
+								@endif
+			                </select>
+			            </div>
+						<div class="form-group col-md-3">
+			            	<label>Warehouse</label>
+			                <select class="form-control" name="warehouse" id="warehouse">
+			               		<option value="">---select warehouse---</option>
+								@if (count($warehouse) > 0)
+											@foreach ($warehouse->all() as $wr)
+										
+											@if ($wrid ==  $wr->id)
+												<option value="{{ $wr->id }}" selected="selected">{{ $wr->agt_name}} </option>
+											@else
+												<option value="{{ $wr->id }}">{{ $wr->agt_name}}   </option>
 											@endif
 											@endforeach
 										
@@ -547,10 +573,7 @@
 				// 	var combined = viewedfield.concat(hiddenfield);
 				// 	return combined;
 				// }
-			
-
-
-			
+	
 		}},
 		{targets: 7, 
 				'searchable':true,
@@ -663,6 +686,9 @@
 </script>
 
 <script>
+	
+		
+		
 		// validate signup form on keyup and submit
 		$("#cleanbulkingform").validate({
 			rules: {
@@ -670,6 +696,7 @@
 				outturn: "required",
 				grower: "required",
 				Bulking_season: "required",
+				warehouse: "required",
 				mark: {
 					required: true,
 					minlength: 2
@@ -702,6 +729,7 @@
 					minlength: "Mark must consist of at least 2 characters"
 				},
 				Bulking_season: "Please select a valid bulking season",
+				warehouse: "Please select a warehouse",
 				// password: {
 				// 	required: "Please provide a password",
 				// 	minlength: "Your password must be at least 5 characters long"
@@ -745,6 +773,76 @@
 				  str = str + 'outturn :  '+ outturn + '    weight :  '+ weight +'  </br>'
 				
 				});
+				var url="{{ route('arrivalinformation.getLocations',['warehouse'=>":warehouse"]) }}";
+
+				var warehouse = $('#warehouse').val()
+				
+				url = url.replace(':warehouse', warehouse);
+				console.log(warehouse)
+				console.log(url)
+				$.get(url, function(data, status){
+					console.log(data)
+					var locations = jQuery.parseJSON(data);
+					var rows = []
+					var columns = []
+					var rowstr = null;
+					var colstr = null;
+					$.each(locations,function(key, value) 
+					{
+						if (value["loc_row"] != null) { 
+							var row = value["loc_row"]
+							var id = value['id']
+							rows.push({text: row, value: id})
+							rowstr = rowstr + '<option value ="'+id+'">'+row+'</option>';
+						}
+						
+						if (value["loc_column"] != null && (value["loc_column"] != 0)) {
+							var clm = value["loc_column"]
+							var id = value['id']
+							columns.push({text: clm, value: id})
+							colstr = colstr + '<option value ="'+id+'">'+clm+'</option>';
+						}
+					});
+						var inputstr = '<div class="form-group">'+
+  '<label for="rows">Select list:</label>'+
+  '<select class="form-control" id="rows">'+
+    '<option value="">--select row--</option>'+
+    rowstr+
+  '</select>'+
+'</div>';
+var inputstr2 = '<div class="form-group">'+
+  '<label for="cols">Select list:</label>'+
+  '<select class="form-control" id="cols">'+
+    '<option value="">--select column--</option>'+
+    colstr+
+  '</select>'+
+'</div>';
+						var dialog = bootbox.dialog({
+title: 'Select Warehouse Locations',
+message: "<div>"+inputstr+inputstr2+"</div>",
+buttons: {
+    cancel: {
+        label: "I'm a custom cancel button!",
+        className: 'btn-danger',
+        callback: function(){
+            console.log('Custom cancel clicked');
+        }
+    },
+    ok: {
+        label: "I'm a custom OK button!",
+        className: 'btn-info',
+        callback: function(){
+            console.log('Custom OK clicked');
+        }
+    }
+}
+});
+
+			
+      
+			});
+			
+				return false;
 				var confirm = false
 				bootbox.confirm({ 
 				size: "large",
@@ -834,6 +932,7 @@
 						// closeBootBox();
 				});
 		}
+		
 </script>
 @endpush
 					</div>

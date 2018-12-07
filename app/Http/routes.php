@@ -300,6 +300,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::post('/bulking/saveCleanBulk', ['as'=>'bulking.saveCleanBulk','uses'=>'CleanBulkingController@bulkingApi']);
 
+		Route::get('/parchmentreportquality', 'GridController@parchmentQualityGrid'); 
 });
 
 
