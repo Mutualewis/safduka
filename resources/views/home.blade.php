@@ -640,171 +640,171 @@
 <!-- stocks -->
         @push('scripts')
         <script>
-            $(document).ready(function (){   
+        //     $(document).ready(function (){   
 
-            var url = '{{ route('dashboardView.getstocksummary') }}';
+        //     var url = '{{ route('dashboardView.getstocksummary') }}';
 
-            var table = $('#stocks-table').DataTable({
-                dom: 'Bfrtip',          
-                type: 'POST',
-                url: 'home_alternate',
-                processing: true,
-                deferRender: true,
-                ajax: url,
-                autoWidth: true,
-                pageLength: 5,
+        //     var table = $('#stocks-table').DataTable({
+        //         dom: 'Bfrtip',          
+        //         type: 'POST',
+        //         url: 'home_alternate',
+        //         processing: true,
+        //         deferRender: true,
+        //         ajax: url,
+        //         autoWidth: true,
+        //         pageLength: 5,
 
-                buttons: [
-                    'pageLength',
-                    {
-                        extend: 'copyHtml5',
-                        exportOptions: {
-                            columns: [ 0, ':visible' ]
-                        }
-                    },
-                    {
-                        extend: 'excelHtml5',
-                        exportOptions: {
-                            columns: ':visible'
-                        }
-                    },
-                    'colvis'
-                ],
+        //         buttons: [
+        //             'pageLength',
+        //             {
+        //                 extend: 'copyHtml5',
+        //                 exportOptions: {
+        //                     columns: [ 0, ':visible' ]
+        //                 }
+        //             },
+        //             {
+        //                 extend: 'excelHtml5',
+        //                 exportOptions: {
+        //                     columns: ':visible'
+        //                 }
+        //             },
+        //             'colvis'
+        //         ],
                        
-                columns: [
-                    { data: 'wr_name', name: 'wr_name'},
-                    { data: 'buyer', name: 'buyer'},
-                    { data: 'weight', name: 'weight'},
-                    { data: 'bags', name: 'bags'},
-                    { data: 'value', name: 'value'},
-                    { data: 'ssm_average_storage', name: 'ssm_average_storage'},
+        //         columns: [
+        //             { data: 'wr_name', name: 'wr_name'},
+        //             { data: 'buyer', name: 'buyer'},
+        //             { data: 'weight', name: 'weight'},
+        //             { data: 'bags', name: 'bags'},
+        //             { data: 'value', name: 'value'},
+        //             { data: 'ssm_average_storage', name: 'ssm_average_storage'},
 
-                ],   
+        //         ],   
 
-                columnDefs: [
+        //         columnDefs: [
 
-                    {targets: 2, 
-                        'searchable':true,
-                        'orderable': true,
-
-
-                        'render': function (data, type, full, meta, row){
-
-                            var weight = table.cell(meta.row,2).data();
-
-                            weight = Math.floor(weight);
-
-                            return weight.toLocaleString();
-                    }},
-
-                    {targets: 3, 
-                        'searchable':true,
-                        'orderable': true,
+        //             {targets: 2, 
+        //                 'searchable':true,
+        //                 'orderable': true,
 
 
-                        'render': function (data, type, full, meta, row){
+        //                 'render': function (data, type, full, meta, row){
 
-                            var weight = table.cell(meta.row,3).data();
+        //                     var weight = table.cell(meta.row,2).data();
 
-                            var bags = Math.floor(weight);
+        //                     weight = Math.floor(weight);
+
+        //                     return weight.toLocaleString();
+        //             }},
+
+        //             {targets: 3, 
+        //                 'searchable':true,
+        //                 'orderable': true,
+
+
+        //                 'render': function (data, type, full, meta, row){
+
+        //                     var weight = table.cell(meta.row,3).data();
+
+        //                     var bags = Math.floor(weight);
                             
-                            return bags.toLocaleString();
-                    }},
+        //                     return bags.toLocaleString();
+        //             }},
 
-                    {targets: 4, 
-                        'searchable':true,
-                        'orderable': true,
+        //             {targets: 4, 
+        //                 'searchable':true,
+        //                 'orderable': true,
 
 
-                        'render': function (data, type, full, meta, row){
+        //                 'render': function (data, type, full, meta, row){
 
-                            var weight = table.cell(meta.row,4).data();
+        //                     var weight = table.cell(meta.row,4).data();
 
-                            var bags = Math.floor(weight);
+        //                     var bags = Math.floor(weight);
                             
-                            return bags.toLocaleString();
-                    }}
+        //                     return bags.toLocaleString();
+        //             }}
 
 
-                ],
+        //         ],
 
-                footerCallback: function(row, data, start, end, display) {
+        //         footerCallback: function(row, data, start, end, display) {
                  
-                  var api = this.api();
-                  api.columns('.sum', {
-                    page: 'current'
-                  }).every(function() {
-                    var sum = this
-                      .data()
-                      .reduce(function(a, b) {
-                        var x = parseFloat(a) || 0;
-                        var y = parseFloat(b) || 0;
-                        return x + y;
-                      }, 0);
+        //           var api = this.api();
+        //           api.columns('.sum', {
+        //             page: 'current'
+        //           }).every(function() {
+        //             var sum = this
+        //               .data()
+        //               .reduce(function(a, b) {
+        //                 var x = parseFloat(a) || 0;
+        //                 var y = parseFloat(b) || 0;
+        //                 return x + y;
+        //               }, 0);
                    
-                    $(this.footer()).html(sum.toLocaleString());
-                  });
-                },
+        //             $(this.footer()).html(sum.toLocaleString());
+        //           });
+        //         },
 
 
-                language: {
-                    lengthMenu: "Display _MENU_ records per page",
-                    zeroRecords: "Nothing found - sorry",
-                    info: "Showing page _PAGE_ of _PAGES_",
-                    infoEmpty: "No records available",
-                    infoFiltered: "(filtered from _MAX_ total records)"
-                },
+        //         language: {
+        //             lengthMenu: "Display _MENU_ records per page",
+        //             zeroRecords: "Nothing found - sorry",
+        //             info: "Showing page _PAGE_ of _PAGES_",
+        //             infoEmpty: "No records available",
+        //             infoFiltered: "(filtered from _MAX_ total records)"
+        //         },
 
 
 
-                initComplete: function () {
-                    this.api().columns().every( function () {
-                        var column = this;
-                        var select = $('<select style="width: 100%; text-align: left;"><option value=""></option></select>')
-                            .appendTo( $(column.footer()).empty() )
-                            .on( 'change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
+        //         initComplete: function () {
+        //             this.api().columns().every( function () {
+        //                 var column = this;
+        //                 var select = $('<select style="width: 100%; text-align: left;"><option value=""></option></select>')
+        //                     .appendTo( $(column.footer()).empty() )
+        //                     .on( 'change', function () {
+        //                         var val = $.fn.dataTable.util.escapeRegex(
+        //                             $(this).val()
+        //                         );
          
-                                column
-                                    .search( val ? '^'+val+'$' : '', true, false )
-                                    .draw();
-                            } );
+        //                         column
+        //                             .search( val ? '^'+val+'$' : '', true, false )
+        //                             .draw();
+        //                     } );
          
-                        column.data().unique().sort().each( function ( d, j ) {
-                            select.append( '<option value="'+d+'">'+d+'</option>' )
-                        } );
-                    } );
+        //                 column.data().unique().sort().each( function ( d, j ) {
+        //                     select.append( '<option value="'+d+'">'+d+'</option>' )
+        //                 } );
+        //             } );
 
-                    this.api().columns('.sum').every(function () {
-                        var column = this;
+        //             this.api().columns('.sum').every(function () {
+        //                 var column = this;
 
-                        var sum = column
-                           .data()
-                           .reduce(function (a, b) { 
-                               a = parseInt(a, 10);
-                               if(isNaN(a)){ a = 0; }
+        //                 var sum = column
+        //                    .data()
+        //                    .reduce(function (a, b) { 
+        //                        a = parseInt(a, 10);
+        //                        if(isNaN(a)){ a = 0; }
                                
-                               b = parseInt(b, 10);
-                               if(isNaN(b)){ b = 0; }
+        //                        b = parseInt(b, 10);
+        //                        if(isNaN(b)){ b = 0; }
                                
-                               return a + b;
-                           });
+        //                        return a + b;
+        //                    });
 
-                        sum = Math.floor(sum);
+        //                 sum = Math.floor(sum);
                         
-                        $(column.footer()).html(sum.toLocaleString());
-                    });
+        //                 $(column.footer()).html(sum.toLocaleString());
+        //             });
 
 
-                },
+        //         },
 
-                order: [],
+        //         order: [],
 
-           });
+        //    });
 
-        });
+        // });
 
 
         </script>
@@ -813,183 +813,183 @@
 <!-- received -->
         @push('scripts')
         <script>
-            $(document).ready(function (){   
-            var totalreceived=0;
-            var url = '{{ route('dashboardView.getstockreceivedsummary') }}';
+            // $(document).ready(function (){   
+            // var totalreceived=0;
+            // var url = '{{ route('dashboardView.getstockreceivedsummary') }}';
 
-            var date = new Date();
-            var month = date.getMonth();
+            // var date = new Date();
+            // var month = date.getMonth();
 
-            var table = $('#received-table').DataTable({
-                dom: 'Bfrtip',          
-                type: 'POST',
-                processing: true,
-                deferRender: true,
-                ajax: url,
-                autoWidth: true,
-                pageLength: 5,
+            // var table = $('#received-table').DataTable({
+            //     dom: 'Bfrtip',          
+            //     type: 'POST',
+            //     processing: true,
+            //     deferRender: true,
+            //     ajax: url,
+            //     autoWidth: true,
+            //     pageLength: 5,
 
-                buttons: [
-                    'pageLength',
-                    {
-                        extend: 'copyHtml5',
-                        exportOptions: {
-                            columns: [ 0, ':visible' ]
-                        }
-                    },
-                    {
-                        extend: 'excelHtml5',
-                        exportOptions: {
-                            columns: ':visible'
-                        }
-                    },
-                    'colvis'
-                ],
+            //     buttons: [
+            //         'pageLength',
+            //         {
+            //             extend: 'copyHtml5',
+            //             exportOptions: {
+            //                 columns: [ 0, ':visible' ]
+            //             }
+            //         },
+            //         {
+            //             extend: 'excelHtml5',
+            //             exportOptions: {
+            //                 columns: ':visible'
+            //             }
+            //         },
+            //         'colvis'
+            //     ],
 
 
                 
                 // "oSearch": {"sSearch": "Initial search"},
 
-                columns: [
-                    { data: 'gsm_warehouse_from', name: 'gsm_warehouse_from'},
-                    { data: 'buyer', name: 'buyer'},
-                    { data: 'gsm_month', name: 'gsm_month'},
-                    { data: 'gsm_season', name: 'gsm_season'},
-                    { data: 'bags', name: 'bags'},
-                    { data: 'bag_difference', name: 'bag_difference'},
-                    { data: 'percentage_weight_difference', name: 'percentage_weight_difference'},
+                // columns: [
+                //     { data: 'gsm_warehouse_from', name: 'gsm_warehouse_from'},
+                //     { data: 'buyer', name: 'buyer'},
+                //     { data: 'gsm_month', name: 'gsm_month'},
+                //     { data: 'gsm_season', name: 'gsm_season'},
+                //     { data: 'bags', name: 'bags'},
+                //     { data: 'bag_difference', name: 'bag_difference'},
+                //     { data: 'percentage_weight_difference', name: 'percentage_weight_difference'},
 
-                ],   
+                // ],   
 
-                columnDefs: [
+                // columnDefs: [
 
-                    {targets: 4, 
-                        'searchable':true,
-                        'orderable': true,
+                //     {targets: 4, 
+                //         'searchable':true,
+                //         'orderable': true,
 
 
-                        'render': function (data, type, full, meta, row){
+                //         'render': function (data, type, full, meta, row){
                           
 
-                            var weight = table.cell(meta.row,4).data();
+                //             var weight = table.cell(meta.row,4).data();
 
-                            weight = Math.floor(weight);
+                //             weight = Math.floor(weight);
                             
-                            return weight.toLocaleString();
-                    }},
+                //             return weight.toLocaleString();
+                //     }},
 
-                    {targets: 5, 
-                        'searchable':true,
-                        'orderable': true,
+                //     {targets: 5, 
+                //         'searchable':true,
+                //         'orderable': true,
 
 
-                        'render': function (data, type, full, meta, row){
+                //         'render': function (data, type, full, meta, row){
 
-                            var weight = table.cell(meta.row,5).data();
+                //             var weight = table.cell(meta.row,5).data();
 
-                            weight = Math.floor(weight);
+                //             weight = Math.floor(weight);
                            
-                            return weight.toLocaleString();
-                    }}
+                //             return weight.toLocaleString();
+                //     }}
 
 
-                ],
+                // ],
 
 
-                footerCallback: function(row, data, start, end, display) {
-                  var totalreceived=0;
-                  for(i=0; i<data.length; i++){
-                    totalreceived = parseFloat(totalreceived)+parseFloat(data[i].bags)
-                  }
-                  $('#totalreceived').html(totalreceived.toLocaleString());
+                // footerCallback: function(row, data, start, end, display) {
+                //   var totalreceived=0;
+                //   for(i=0; i<data.length; i++){
+                //     totalreceived = parseFloat(totalreceived)+parseFloat(data[i].bags)
+                //   }
+                //   $('#totalreceived').html(totalreceived.toLocaleString());
 
-                  var api = this.api();
+                //   var api = this.api();
                  
-                  api.columns('.sum', {
-                    page: 'current'
-                  }).every(function() {
-                    var sum = this
-                      .data()
-                      .reduce(function(a, b) {
-                        var x = parseFloat(a) || 0;
-                        var y = parseFloat(b) || 0;
-                        return x + y;
-                      }, 0);
+                //   api.columns('.sum', {
+                //     page: 'current'
+                //   }).every(function() {
+                //     var sum = this
+                //       .data()
+                //       .reduce(function(a, b) {
+                //         var x = parseFloat(a) || 0;
+                //         var y = parseFloat(b) || 0;
+                //         return x + y;
+                //       }, 0);
                    
-                    $(this.footer()).html(sum.toLocaleString());
+                //     $(this.footer()).html(sum.toLocaleString());
                    
-                  });
+                //   });
 
-                    api.columns('.sum', {
-                    page: 'current'
-                  }).every(function() {
-                    var sum = this
-                      .data()
-                      .reduce(function(a, b) {
-                        var x = parseFloat(a) || 0;
-                        var y = parseFloat(b) || 0;
-                        return x + y;
-                      }, 0);
+                //     api.columns('.sum', {
+                //     page: 'current'
+                //   }).every(function() {
+                //     var sum = this
+                //       .data()
+                //       .reduce(function(a, b) {
+                //         var x = parseFloat(a) || 0;
+                //         var y = parseFloat(b) || 0;
+                //         return x + y;
+                //       }, 0);
                    
-                    $(this.footer()).html(sum.toLocaleString());
+                //     $(this.footer()).html(sum.toLocaleString());
       
-                  });
-                },
+                //   });
+                // },
 
 
 
-                language: {
-                    lengthMenu: "Display _MENU_ records per page",
-                    zeroRecords: "Nothing found - sorry",
-                    info: "Showing page _PAGE_ of _PAGES_",
-                    infoEmpty: "No records available",
-                    infoFiltered: "(filtered from _MAX_ total records)"
-                },
+                // language: {
+                //     lengthMenu: "Display _MENU_ records per page",
+                //     zeroRecords: "Nothing found - sorry",
+                //     info: "Showing page _PAGE_ of _PAGES_",
+                //     infoEmpty: "No records available",
+                //     infoFiltered: "(filtered from _MAX_ total records)"
+                // },
 
 
-                initComplete: function () {
+                // initComplete: function () {
                
-                    this.api().columns().every( function () {
-                        var column = this;
-                        var select = $('<select style="width: 100%; text-align: left;"><option value=""></option></select>')
-                            .appendTo( $(column.footer()).empty() )
-                            .on( 'change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
+                //     this.api().columns().every( function () {
+                //         var column = this;
+                //         var select = $('<select style="width: 100%; text-align: left;"><option value=""></option></select>')
+                //             .appendTo( $(column.footer()).empty() )
+                //             .on( 'change', function () {
+                //                 var val = $.fn.dataTable.util.escapeRegex(
+                //                     $(this).val()
+                //                 );
          
-                                column
-                                    .search( val ? '^'+val+'$' : '', true, false )
-                                    .draw();
-                            } );
+                //                 column
+                //                     .search( val ? '^'+val+'$' : '', true, false )
+                //                     .draw();
+                //             } );
          
-                        column.data().unique().sort().each( function ( d, j ) {
-                            select.append( '<option value="'+d+'">'+d+'</option>' )
-                        } );
-                    } );
+                //         column.data().unique().sort().each( function ( d, j ) {
+                //             select.append( '<option value="'+d+'">'+d+'</option>' )
+                //         } );
+                //     } );
 
-                    this.api().columns('.sum').every(function () {
-                        var column = this;
+                //     this.api().columns('.sum').every(function () {
+                //         var column = this;
 
-                        var sum = column
-                           .data()
-                           .reduce(function (a, b) { 
-                               a = parseInt(a, 10);
-                               if(isNaN(a)){ a = 0; }
+                //         var sum = column
+                //            .data()
+                //            .reduce(function (a, b) { 
+                //                a = parseInt(a, 10);
+                //                if(isNaN(a)){ a = 0; }
                                
-                               b = parseInt(b, 10);
-                               if(isNaN(b)){ b = 0; }
+                //                b = parseInt(b, 10);
+                //                if(isNaN(b)){ b = 0; }
                                
-                               return a + b;
-                           });
+                //                return a + b;
+                //            });
 
-                        sum = Math.floor(sum);
+                //         sum = Math.floor(sum);
 
-                        $(column.footer()).html(sum.toLocaleString());
-                    });
+                //         $(column.footer()).html(sum.toLocaleString());
+                //     });
 
 
-                },
+                // },
 
                 // initComplete: function (settings, json) {
                 //     this.api().columns('.sum').every(function () {
@@ -1013,14 +1013,14 @@
 
 
 
-                order: [],
+        //         order: [],
 
-           });
-
-
+        //    });
 
 
-        });
+
+
+        // });
 
 
 
@@ -1031,152 +1031,152 @@
 <!-- purchased -->
         @push('scripts')
         <script>
-            $(document).ready(function (){   
+        //     $(document).ready(function (){   
 
-            var url = '{{ route('dashboardView.getpurchasedsummary') }}';
+        //     var url = '{{ route('dashboardView.getpurchasedsummary') }}';
 
-            console.log(url)
+        //     console.log(url)
 
-            var table = $('#purchased-table').DataTable({
-                dom: 'Bfrtip',          
-                type: 'POST',
-                processing: true,
-                deferRender: true,
-                ajax: url,
-                autoWidth: true,
-                pageLength: 5,
+        //     var table = $('#purchased-table').DataTable({
+        //         dom: 'Bfrtip',          
+        //         type: 'POST',
+        //         processing: true,
+        //         deferRender: true,
+        //         ajax: url,
+        //         autoWidth: true,
+        //         pageLength: 5,
 
-                buttons: [
-                    'pageLength',
-                    {
-                        extend: 'copyHtml5',
-                        exportOptions: {
-                            columns: [ 0, ':visible' ]
-                        }
-                    },
-                    {
-                        extend: 'excelHtml5',
-                        exportOptions: {
-                            columns: ':visible'
-                        }
-                    },
-                    'colvis'
-                ],                      
+        //         buttons: [
+        //             'pageLength',
+        //             {
+        //                 extend: 'copyHtml5',
+        //                 exportOptions: {
+        //                     columns: [ 0, ':visible' ]
+        //                 }
+        //             },
+        //             {
+        //                 extend: 'excelHtml5',
+        //                 exportOptions: {
+        //                     columns: ':visible'
+        //                 }
+        //             },
+        //             'colvis'
+        //         ],                      
 
-                columns: [
-                    { data: 'prsm_seller', name: 'prsm_seller'},
-                    { data: 'prsm_wr_name', name: 'prsm_wr_name'},
-                    { data: 'buyer', name: 'buyer'},
-                    { data: 'prsm_month', name: 'prsm_month'},
-                    { data: 'prsm_csn_season', name: 'prsm_csn_season'},
-                    { data: 'bags', name: 'bags'},
+        //         columns: [
+        //             { data: 'prsm_seller', name: 'prsm_seller'},
+        //             { data: 'prsm_wr_name', name: 'prsm_wr_name'},
+        //             { data: 'buyer', name: 'buyer'},
+        //             { data: 'prsm_month', name: 'prsm_month'},
+        //             { data: 'prsm_csn_season', name: 'prsm_csn_season'},
+        //             { data: 'bags', name: 'bags'},
 
-                ],   
+        //         ],   
 
-                columnDefs: [
+        //         columnDefs: [
 
-                    {targets: 5, 
-                        'searchable':true,
-                        'orderable': true,
-
-
-                        'render': function (data, type, full, meta, row){
-
-                            var weight = table.cell(meta.row,5).data();
-
-                            weight = Math.floor(weight);
-
-                            return weight.toLocaleString();
-                    }}
+        //             {targets: 5, 
+        //                 'searchable':true,
+        //                 'orderable': true,
 
 
-                ],
+        //                 'render': function (data, type, full, meta, row){
+
+        //                     var weight = table.cell(meta.row,5).data();
+
+        //                     weight = Math.floor(weight);
+
+        //                     return weight.toLocaleString();
+        //             }}
 
 
-                footerCallback: function(row, data, start, end, display) {
-                  var totalpurchased=0;
-                  for(i=0; i<data.length; i++){
-                    totalpurchased = parseFloat(totalpurchased)+parseFloat(data[i].bags)
-                  }
-                  $('#totalpurchased').html(totalpurchased.toLocaleString());
+        //         ],
 
-                  var api = this.api();
+
+        //         footerCallback: function(row, data, start, end, display) {
+        //           var totalpurchased=0;
+        //           for(i=0; i<data.length; i++){
+        //             totalpurchased = parseFloat(totalpurchased)+parseFloat(data[i].bags)
+        //           }
+        //           $('#totalpurchased').html(totalpurchased.toLocaleString());
+
+        //           var api = this.api();
                  
-                  api.columns('.sum', {
-                    page: 'current'
-                  }).every(function() {
-                    var sum = this
-                      .data()
-                      .reduce(function(a, b) {
-                        var x = parseFloat(a) || 0;
-                        var y = parseFloat(b) || 0;
-                        return x + y;
-                      }, 0);
+        //           api.columns('.sum', {
+        //             page: 'current'
+        //           }).every(function() {
+        //             var sum = this
+        //               .data()
+        //               .reduce(function(a, b) {
+        //                 var x = parseFloat(a) || 0;
+        //                 var y = parseFloat(b) || 0;
+        //                 return x + y;
+        //               }, 0);
                     
-                    $(this.footer()).html(sum.toLocaleString());
-                  });
-                },
+        //             $(this.footer()).html(sum.toLocaleString());
+        //           });
+        //         },
 
 
-                language: {
-                    lengthMenu: "Display _MENU_ records per page",
-                    zeroRecords: "Nothing found - sorry",
-                    info: "Showing page _PAGE_ of _PAGES_",
-                    infoEmpty: "No records available",
-                    infoFiltered: "(filtered from _MAX_ total records)"
-                },
+        //         language: {
+        //             lengthMenu: "Display _MENU_ records per page",
+        //             zeroRecords: "Nothing found - sorry",
+        //             info: "Showing page _PAGE_ of _PAGES_",
+        //             infoEmpty: "No records available",
+        //             infoFiltered: "(filtered from _MAX_ total records)"
+        //         },
 
 
 
-                initComplete: function () {
-                    this.api().columns().every( function () {
-                        var column = this;
-                        var select = $('<select style="width: 100%; text-align: left;"><option value=""></option></select>')
-                            .appendTo( $(column.footer()).empty() )
-                            .on( 'change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
+        //         initComplete: function () {
+        //             this.api().columns().every( function () {
+        //                 var column = this;
+        //                 var select = $('<select style="width: 100%; text-align: left;"><option value=""></option></select>')
+        //                     .appendTo( $(column.footer()).empty() )
+        //                     .on( 'change', function () {
+        //                         var val = $.fn.dataTable.util.escapeRegex(
+        //                             $(this).val()
+        //                         );
          
-                                column
-                                    .search( val ? '^'+val+'$' : '', true, false )
-                                    .draw();
-                            } );
+        //                         column
+        //                             .search( val ? '^'+val+'$' : '', true, false )
+        //                             .draw();
+        //                     } );
          
-                        column.data().unique().sort().each( function ( d, j ) {
-                            select.append( '<option value="'+d+'">'+d+'</option>' )
-                        } );
-                    } );
+        //                 column.data().unique().sort().each( function ( d, j ) {
+        //                     select.append( '<option value="'+d+'">'+d+'</option>' )
+        //                 } );
+        //             } );
 
 
-                    this.api().columns('.sum').every(function () {
-                        var column = this;
+        //             this.api().columns('.sum').every(function () {
+        //                 var column = this;
 
-                        var sum = column
-                           .data()
-                           .reduce(function (a, b) { 
-                               a = parseInt(a, 10);
-                               if(isNaN(a)){ a = 0; }
+        //                 var sum = column
+        //                    .data()
+        //                    .reduce(function (a, b) { 
+        //                        a = parseInt(a, 10);
+        //                        if(isNaN(a)){ a = 0; }
                                
-                               b = parseInt(b, 10);
-                               if(isNaN(b)){ b = 0; }
+        //                        b = parseInt(b, 10);
+        //                        if(isNaN(b)){ b = 0; }
                                
-                               return a + b;
-                           });
+        //                        return a + b;
+        //                    });
 
-                        sum = Math.floor(sum);
+        //                 sum = Math.floor(sum);
 
-                        $(column.footer()).html(sum.toLocaleString());
-                    });
+        //                 $(column.footer()).html(sum.toLocaleString());
+        //             });
 
 
-                },
+        //         },
 
-                order: [],
+        //         order: [],
 
-           });
+        //    });
 
-        });
+        // });
 
 
         </script>
@@ -1187,172 +1187,172 @@
 <!-- processed -->
         @push('scripts')
         <script>
-            $(document).ready(function (){   
+        //     $(document).ready(function (){   
 
-            var url = '{{ route('dashboardView.getprocessingsummary') }}';
-            console.log(url)
-            var table = $('#processed-table').DataTable({
-                dom: 'Bfrtip',          
-                type: 'POST',
-                processing: true,
-                deferRender: true,
-                ajax: url,
-                autoWidth: true,
-                pageLength: 5,
+        //     var url = '{{ route('dashboardView.getprocessingsummary') }}';
+        //     console.log(url)
+        //     var table = $('#processed-table').DataTable({
+        //         dom: 'Bfrtip',          
+        //         type: 'POST',
+        //         processing: true,
+        //         deferRender: true,
+        //         ajax: url,
+        //         autoWidth: true,
+        //         pageLength: 5,
 
-                buttons: [
-                    'pageLength',
-                    {
-                        extend: 'copyHtml5',
-                        exportOptions: {
-                            columns: [ 0, ':visible' ]
-                        }
-                    },
-                    {
-                        extend: 'excelHtml5',
-                        exportOptions: {
-                            columns: ':visible'
-                        }
-                    },
-                    'colvis'
-                ],
+        //         buttons: [
+        //             'pageLength',
+        //             {
+        //                 extend: 'copyHtml5',
+        //                 exportOptions: {
+        //                     columns: [ 0, ':visible' ]
+        //                 }
+        //             },
+        //             {
+        //                 extend: 'excelHtml5',
+        //                 exportOptions: {
+        //                     columns: ':visible'
+        //                 }
+        //             },
+        //             'colvis'
+        //         ],
                       
 
-                columns: [
-                    { data: 'buyer', name: 'buyer'},
-                    { data: 'prssm_year', name: 'prssm_year'},
-                    { data: 'prssm_month', name: 'prssm_month'},
-                    { data: 'total_allocated', name: 'total_allocated'},
-                    { data: 'results', name: 'results'},
-                    { data: 'difference', name: 'difference'},
+        //         columns: [
+        //             { data: 'buyer', name: 'buyer'},
+        //             { data: 'prssm_year', name: 'prssm_year'},
+        //             { data: 'prssm_month', name: 'prssm_month'},
+        //             { data: 'total_allocated', name: 'total_allocated'},
+        //             { data: 'results', name: 'results'},
+        //             { data: 'difference', name: 'difference'},
 
-                ],   
+        //         ],   
 
-                columnDefs: [
+        //         columnDefs: [
 
-                    {targets: 3, 
-                        'searchable':true,
-                        'orderable': true,
-
-
-                        'render': function (data, type, full, meta, row){
-
-                            var weight = table.cell(meta.row,3).data();
-
-                            weight = Math.floor(weight);
-
-                            return weight.toLocaleString();
-                    }},
-
-                    {targets: 4, 
-                        'searchable':true,
-                        'orderable': true,
+        //             {targets: 3, 
+        //                 'searchable':true,
+        //                 'orderable': true,
 
 
-                        'render': function (data, type, full, meta, row){
+        //                 'render': function (data, type, full, meta, row){
 
-                            var weight = table.cell(meta.row,4).data();
+        //                     var weight = table.cell(meta.row,3).data();
 
-                            weight = Math.floor(weight);
+        //                     weight = Math.floor(weight);
+
+        //                     return weight.toLocaleString();
+        //             }},
+
+        //             {targets: 4, 
+        //                 'searchable':true,
+        //                 'orderable': true,
+
+
+        //                 'render': function (data, type, full, meta, row){
+
+        //                     var weight = table.cell(meta.row,4).data();
+
+        //                     weight = Math.floor(weight);
                             
-                            return weight.toLocaleString();
-                    }},
+        //                     return weight.toLocaleString();
+        //             }},
 
-                    {targets: 5, 
-                        'searchable':true,
-                        'orderable': true,
+        //             {targets: 5, 
+        //                 'searchable':true,
+        //                 'orderable': true,
 
 
-                        'render': function (data, type, full, meta, row){
+        //                 'render': function (data, type, full, meta, row){
 
-                            var weight = table.cell(meta.row,5).data();
+        //                     var weight = table.cell(meta.row,5).data();
 
-                            weight = Math.floor(weight);
+        //                     weight = Math.floor(weight);
                             
-                            return weight.toLocaleString();
-                    }}
+        //                     return weight.toLocaleString();
+        //             }}
 
 
-                ],
+        //         ],
 
 
-                footerCallback: function(row, data, start, end, display) {
-                  var api = this.api();
+        //         footerCallback: function(row, data, start, end, display) {
+        //           var api = this.api();
                  
-                  api.columns('.sum', {
-                    page: 'current'
-                  }).every(function() {
-                    var sum = this
-                      .data()
-                      .reduce(function(a, b) {
-                        var x = parseFloat(a) || 0;
-                        var y = parseFloat(b) || 0;
-                        return x + y;
-                      }, 0);
-                    console.log(sum); //alert(sum);
-                    $(this.footer()).html(sum.toLocaleString());
-                  });
-                },
+        //           api.columns('.sum', {
+        //             page: 'current'
+        //           }).every(function() {
+        //             var sum = this
+        //               .data()
+        //               .reduce(function(a, b) {
+        //                 var x = parseFloat(a) || 0;
+        //                 var y = parseFloat(b) || 0;
+        //                 return x + y;
+        //               }, 0);
+        //             console.log(sum); //alert(sum);
+        //             $(this.footer()).html(sum.toLocaleString());
+        //           });
+        //         },
 
 
-                language: {
-                    lengthMenu: "Display _MENU_ records per page",
-                    zeroRecords: "Nothing found - sorry",
-                    info: "Showing page _PAGE_ of _PAGES_",
-                    infoEmpty: "No records available",
-                    infoFiltered: "(filtered from _MAX_ total records)"
-                },
+        //         language: {
+        //             lengthMenu: "Display _MENU_ records per page",
+        //             zeroRecords: "Nothing found - sorry",
+        //             info: "Showing page _PAGE_ of _PAGES_",
+        //             infoEmpty: "No records available",
+        //             infoFiltered: "(filtered from _MAX_ total records)"
+        //         },
 
 
 
-                initComplete: function () {
-                    this.api().columns().every( function () {
-                        var column = this;
-                        var select = $('<select style="width: 100%; text-align: left;"><option value=""></option></select>')
-                            .appendTo( $(column.footer()).empty() )
-                            .on( 'change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
+        //         initComplete: function () {
+        //             this.api().columns().every( function () {
+        //                 var column = this;
+        //                 var select = $('<select style="width: 100%; text-align: left;"><option value=""></option></select>')
+        //                     .appendTo( $(column.footer()).empty() )
+        //                     .on( 'change', function () {
+        //                         var val = $.fn.dataTable.util.escapeRegex(
+        //                             $(this).val()
+        //                         );
          
-                                column
-                                    .search( val ? '^'+val+'$' : '', true, false )
-                                    .draw();
-                            } );
+        //                         column
+        //                             .search( val ? '^'+val+'$' : '', true, false )
+        //                             .draw();
+        //                     } );
          
-                        column.data().unique().sort().each( function ( d, j ) {
-                            select.append( '<option value="'+d+'">'+d+'</option>' )
-                        } );
-                    } );
+        //                 column.data().unique().sort().each( function ( d, j ) {
+        //                     select.append( '<option value="'+d+'">'+d+'</option>' )
+        //                 } );
+        //             } );
 
-                    this.api().columns('.sum').every(function () {
-                        var column = this;
+        //             this.api().columns('.sum').every(function () {
+        //                 var column = this;
 
-                        var sum = column
-                           .data()
-                           .reduce(function (a, b) { 
-                               a = parseInt(a, 10);
-                               if(isNaN(a)){ a = 0; }
+        //                 var sum = column
+        //                    .data()
+        //                    .reduce(function (a, b) { 
+        //                        a = parseInt(a, 10);
+        //                        if(isNaN(a)){ a = 0; }
                                
-                               b = parseInt(b, 10);
-                               if(isNaN(b)){ b = 0; }
+        //                        b = parseInt(b, 10);
+        //                        if(isNaN(b)){ b = 0; }
                                
-                               return a + b;
-                           });
+        //                        return a + b;
+        //                    });
 
-                        sum = Math.floor(sum);
+        //                 sum = Math.floor(sum);
 
-                        $(column.footer()).html(sum.toLocaleString());
-                    });
+        //                 $(column.footer()).html(sum.toLocaleString());
+        //             });
 
 
-                },
+        //         },
 
-                order: [],
+        //         order: [],
 
-           });
+        //    });
 
-        });
+        // });
 
 
         </script>
@@ -1362,152 +1362,152 @@
 <!-- stuffed        -->
         @push('scripts')
         <script>
-            $(document).ready(function (){
-              console.log("document ready")   
+        //     $(document).ready(function (){
+        //       console.log("document ready")   
 
-            var url = '{{ route('dashboardView.getstuffingsummary') }}';
+        //     var url = '{{ route('dashboardView.getstuffingsummary') }}';
 
-            var table = $('#stuffed-table').DataTable({
-                dom: 'Bfrtip',          
-                type: 'POST',
-                processing: true,
-                deferRender: true,
-                ajax: url,
-                autoWidth: true,
-                pageLength: 5,
+        //     var table = $('#stuffed-table').DataTable({
+        //         dom: 'Bfrtip',          
+        //         type: 'POST',
+        //         processing: true,
+        //         deferRender: true,
+        //         ajax: url,
+        //         autoWidth: true,
+        //         pageLength: 5,
 
-                buttons: [
-                    'pageLength',
-                    {
-                        extend: 'copyHtml5',
-                        exportOptions: {
-                            columns: [ 0, ':visible' ]
-                        }
-                    },
-                    {
-                        extend: 'excelHtml5',
-                        exportOptions: {
-                            columns: ':visible'
-                        }
-                    },
-                    'colvis'
-                ],
+        //         buttons: [
+        //             'pageLength',
+        //             {
+        //                 extend: 'copyHtml5',
+        //                 exportOptions: {
+        //                     columns: [ 0, ':visible' ]
+        //                 }
+        //             },
+        //             {
+        //                 extend: 'excelHtml5',
+        //                 exportOptions: {
+        //                     columns: ':visible'
+        //                 }
+        //             },
+        //             'colvis'
+        //         ],
 
-                columns: [
-                    { data: 'buyer', name: 'buyer'},
-                    { data: 'stsm_month', name: 'stsm_month'},
-                    { data: 'stsm_year', name: 'stsm_year'},
-                    { data: 'bags', name: 'bags'},
+        //         columns: [
+        //             { data: 'buyer', name: 'buyer'},
+        //             { data: 'stsm_month', name: 'stsm_month'},
+        //             { data: 'stsm_year', name: 'stsm_year'},
+        //             { data: 'bags', name: 'bags'},
 
-                ],   
+        //         ],   
 
-                columnDefs: [
+        //         columnDefs: [
 
-                    {targets: 3, 
-                        'searchable':true,
-                        'orderable': true,
-
-
-                        'render': function (data, type, full, meta, row){
-
-                            var weight = table.cell(meta.row,3).data();
-
-                            weight = Math.floor(weight);
-
-                            return weight.toLocaleString();
-                    }}
+        //             {targets: 3, 
+        //                 'searchable':true,
+        //                 'orderable': true,
 
 
-                ],
+        //                 'render': function (data, type, full, meta, row){
+
+        //                     var weight = table.cell(meta.row,3).data();
+
+        //                     weight = Math.floor(weight);
+
+        //                     return weight.toLocaleString();
+        //             }}
 
 
-                footerCallback: function(row, data, start, end, display) {
-                  console.log(data)
-                  var totalpurchased=0;
-                  for(i=0; i<data.length; i++){
-                    var bags = data[i].bags
-                    if(bags!=null)
-                    totalpurchased = parseFloat(totalpurchased)+parseFloat(data[i].bags)
-                  }
-                  $('#totalstuffed').html(totalpurchased.toLocaleString());
+        //         ],
 
 
-                  var api = this.api();
+        //         footerCallback: function(row, data, start, end, display) {
+        //           console.log(data)
+        //           var totalpurchased=0;
+        //           for(i=0; i<data.length; i++){
+        //             var bags = data[i].bags
+        //             if(bags!=null)
+        //             totalpurchased = parseFloat(totalpurchased)+parseFloat(data[i].bags)
+        //           }
+        //           $('#totalstuffed').html(totalpurchased.toLocaleString());
+
+
+        //           var api = this.api();
                  
-                  api.columns('.sum', {
-                    page: 'current'
-                  }).every(function() {
-                    var sum = this
-                      .data()
-                      .reduce(function(a, b) {
-                        var x = parseFloat(a) || 0;
-                        var y = parseFloat(b) || 0;
-                        return x + y;
-                      }, 0);
-                    console.log(sum); //alert(sum);
-                    $(this.footer()).html(sum.toLocaleString());
-                  });
-                },
+        //           api.columns('.sum', {
+        //             page: 'current'
+        //           }).every(function() {
+        //             var sum = this
+        //               .data()
+        //               .reduce(function(a, b) {
+        //                 var x = parseFloat(a) || 0;
+        //                 var y = parseFloat(b) || 0;
+        //                 return x + y;
+        //               }, 0);
+        //             console.log(sum); //alert(sum);
+        //             $(this.footer()).html(sum.toLocaleString());
+        //           });
+        //         },
 
 
-                language: {
-                    lengthMenu: "Display _MENU_ records per page",
-                    zeroRecords: "Nothing found - sorry",
-                    info: "Showing page _PAGE_ of _PAGES_",
-                    infoEmpty: "No records available",
-                    infoFiltered: "(filtered from _MAX_ total records)"
-                },
+        //         language: {
+        //             lengthMenu: "Display _MENU_ records per page",
+        //             zeroRecords: "Nothing found - sorry",
+        //             info: "Showing page _PAGE_ of _PAGES_",
+        //             infoEmpty: "No records available",
+        //             infoFiltered: "(filtered from _MAX_ total records)"
+        //         },
 
 
 
-                initComplete: function () {
-                    this.api().columns().every( function () {
-                        var column = this;
-                        var select = $('<select style="width: 100%; text-align: left;"><option value=""></option></select>')
-                            .appendTo( $(column.footer()).empty() )
-                            .on( 'change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
+        //         initComplete: function () {
+        //             this.api().columns().every( function () {
+        //                 var column = this;
+        //                 var select = $('<select style="width: 100%; text-align: left;"><option value=""></option></select>')
+        //                     .appendTo( $(column.footer()).empty() )
+        //                     .on( 'change', function () {
+        //                         var val = $.fn.dataTable.util.escapeRegex(
+        //                             $(this).val()
+        //                         );
          
-                                column
-                                    .search( val ? '^'+val+'$' : '', true, false )
-                                    .draw();
-                            } );
+        //                         column
+        //                             .search( val ? '^'+val+'$' : '', true, false )
+        //                             .draw();
+        //                     } );
          
-                        column.data().unique().sort().each( function ( d, j ) {
-                            select.append( '<option value="'+d+'">'+d+'</option>' )
-                        } );
-                    } );
+        //                 column.data().unique().sort().each( function ( d, j ) {
+        //                     select.append( '<option value="'+d+'">'+d+'</option>' )
+        //                 } );
+        //             } );
 
-                    this.api().columns('.sum').every(function () {
-                        var column = this;
+        //             this.api().columns('.sum').every(function () {
+        //                 var column = this;
 
-                        var sum = column
-                           .data()
-                           .reduce(function (a, b) { 
-                               a = parseInt(a, 10);
-                               if(isNaN(a)){ a = 0; }
+        //                 var sum = column
+        //                    .data()
+        //                    .reduce(function (a, b) { 
+        //                        a = parseInt(a, 10);
+        //                        if(isNaN(a)){ a = 0; }
                                
-                               b = parseInt(b, 10);
-                               if(isNaN(b)){ b = 0; }
+        //                        b = parseInt(b, 10);
+        //                        if(isNaN(b)){ b = 0; }
                                
-                               return a + b;
-                           });
+        //                        return a + b;
+        //                    });
 
-                        sum = Math.floor(sum);
+        //                 sum = Math.floor(sum);
 
-                        $(column.footer()).html(sum.toLocaleString());
-                    });
+        //                 $(column.footer()).html(sum.toLocaleString());
+        //             });
 
 
-                },
+        //         },
 
-                order: [],
+        //         order: [],
 
-           });
+        //    });
 
-        });
+        // });
 
 
         </script>
@@ -1525,26 +1525,26 @@
 <script type="text/javascript">
 // var div = document.getElementById("dom-target");
 // var myData = div.textContent;
-warehouse = <?php echo $warehouse ;?>;
-weight = <?php echo $weight ;?>;
-console.log(warehouse)
-console.log(weight)
-var data = {
-    labels: warehouse,
-    datasets: [
-        {
-            label: "Bric",
-            fillColor: "rgba(228,235,239,0.7)",
-            strokeColor: "#dcdcdc",
-            pointColor: "#dcdcdc",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(220,220,220,1)",
-            data: weight
-        }
+// warehouse = <?php echo $warehouse ;?>;
+// weight = <?php echo $weight ;?>;
+// console.log(warehouse)
+// console.log(weight)
+// var data = {
+//     labels: warehouse,
+//     datasets: [
+//         {
+//             label: "Bric",
+//             fillColor: "rgba(228,235,239,0.7)",
+//             strokeColor: "#dcdcdc",
+//             pointColor: "#dcdcdc",
+//             pointStrokeColor: "#fff",
+//             pointHighlightFill: "#fff",
+//             pointHighlightStroke: "rgba(220,220,220,1)",
+//             data: weight
+//         }
     
-    ]
-};
+//     ]
+// };
 
 //document.body.style.zoom="120%"
 
