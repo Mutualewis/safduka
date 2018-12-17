@@ -133,6 +133,11 @@
 		$active_season = NULL;
 	}
 
+
+	if (!isset($zone)) {
+		$zone = NULL;
+	}
+
 	if (!isset($prc_season)) {
 		$prc_season = $active_season;
 	}	
@@ -246,127 +251,158 @@
 
 	        	<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-            	<!-- <h3  data-toggle="collapse" data-target="#green">Instructions   <label class="glyphicon glyphicon-menu-down"></label></h3>   -->
-            	<div id='green' class='collapse in' >
-		        	<div class="row" >
-			            <div class="form-group col-md-3">
-			                <label>Country</label>
-			                <select class="form-control" id="country" name="country" onchange="this.form.submit()">
-			                	<option></option> 
-								@if (isset($country) && count($country) > 0)
-											@foreach ($country->all() as $countries)
-												@if ($cid ==  $countries->id)
-													<option value="{{ $countries->id }}" selected="selected">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
-												@else
-													<option value="{{ $countries->id }}">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
-												@endif
-
-											@endforeach
-										
-								@endif
-			                </select>		
-			            </div>
-
-			            <div class="form-group col-md-3">
-			            	<label>Bulking Season</label>
-			                <select class="form-control" name="Bulking_season">
-							<option value="">Season</option>
-								@if (count($Season) > 0)
-											@foreach ($Season->all() as $season)
-											@if ($prc_season ==  $season->id)
-												<option value="{{ $season->id }}" selected="selected">{{ $season->csn_season}}</option>
+	        	<div class="row" >
+		            <div class="form-group col-md-3">
+		                <label>Country</label>
+		                <select class="form-control" id="country" name="country" onchange="this.form.submit()">
+		                	<option></option> 
+							@if (isset($country) && count($country) > 0)
+										@foreach ($country->all() as $countries)
+											@if ($cid ==  $countries->id)
+												<option value="{{ $countries->id }}" selected="selected">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
 											@else
-												<option value="{{ $season->id }}">{{ $season->csn_season}}</option>
+												<option value="{{ $countries->id }}">{{ $countries->ctr_name . " (".$countries->ctr_initial.")"}}</option>
 											@endif
-											@endforeach
-										
-								@endif
-			                </select>
-			            </div>
 
-			           
-			            
+										@endforeach
+									
+							@endif
+		                </select>		
+		            </div>
+
+		            <div class="form-group col-md-3">
+		            	<label>Bulking Season</label>
+		                <select class="form-control" name="Bulking_season">
+						<option value="">Season</option>
+							@if (count($Season) > 0)
+										@foreach ($Season->all() as $season)
+										@if ($prc_season ==  $season->id)
+											<option value="{{ $season->id }}" selected="selected">{{ $season->csn_season}}</option>
+										@else
+											<option value="{{ $season->id }}">{{ $season->csn_season}}</option>
+										@endif
+										@endforeach
+									
+							@endif
+		                </select>
+		            </div>
+
 		           
-		        		
+		            
+	           
+	        		
 
-			            <div class="form-group col-md-3">
-			            	<label>Bulking Date</label>
-			           		<input class="form-control" id="date" name="date" placeholder="MM/DD/YYY" type="text" value="{{ old('date').$date }}" disabled/>
-			            </div>   
-			            
-		        		<div class="form-group col-md-3">
-		        			<label>Bulk Outturn Number</label>
-		                    <div class="input-group custom-search-form">
-		                        <input type="text" class="form-control" name="outturn" id ="outturn" placeholder="Outturn No..."  value="{{ old('outturn') }}" ></input>
-		                       
-		                    </div>
-		                </div>	
+		            <div class="form-group col-md-3">
+		            	<label>Bulking Date</label>
+		           		<input class="form-control" id="date" name="date" placeholder="MM/DD/YYY" type="text" value="{{ old('date').$date }}" disabled/>
+		            </div>   
+		            
+	        		<div class="form-group col-md-3">
+	        			<label>Bulk Outturn Number</label>
+	                    <div class="input-group custom-search-form">
+	                        <input type="text" class="form-control" name="outturn" id ="outturn" placeholder="Outturn No..."  value="{{ old('outturn') }}" ></input>
+	                       
+	                    </div>
+	                </div>	
 
-			        </div>
+		        </div>
 
-			         
-	        	
-
-	            </div>
 				<div class="row">
-				<div class="form-group col-md-3">
-		        			<label>Bulk Mark</label>
-		                    <div class="form-group">
-		                        <input type="text" class="form-control" name="mark" id ="mark" placeholder="Mark..."  value="{{ old('mark') }}" ></input>
-		                       
-		                    </div>
-		                </div>
-						<div class="form-group col-md-3">
-			            	<label>Grower</label>
-			                <select class="form-control" name="grower">
-			               		<option value="">---select grower---</option>
-								@if (count($growers) > 0)
-											@foreach ($growers->all() as $grower)
-											@if ($st_cgr ==  $grower->id)
-												<option value="{{ $grower->id }}" selected="selected">{{ $grower->cgr_grower}}    &&nbsp&nbsp&nbsp&nbsp ( {{ $grower->cgr_mark}} )</option>
-											@else
-												<option value="{{ $grower->id }}">{{ $grower->cgr_grower}} &nbsp&nbsp&nbsp&nbsp  ( {{ $grower->cgr_mark}} )</option>
-											@endif
-											@endforeach
-										
-								@endif
-			                </select>
-			            </div>
-						<div class="form-group col-md-3">
-			            	<label>Grade</label>
-			                <select class="form-control" name="material">
-			               		<option value="">---select grade---</option>
-								@if (count($material) > 0)
-											@foreach ($material->all() as $materials)
-											@if ($st_mt ==  $materials->id)
-												<option value="{{ $materials->id }}" selected="selected">{{ $materials->mt_name}} </option>
-											@else
-												<option value="{{ $materials->id }}">{{ $materials->mt_name}}  </option>
-											@endif
-											@endforeach
-										
-								@endif
-			                </select>
-			            </div>
-						<div class="form-group col-md-3">
-			            	<label>Warehouse</label>
-			                <select class="form-control" name="warehouse" id="warehouse">
-			               		<option value="">---select warehouse---</option>
-								@if (count($warehouse) > 0)
-											@foreach ($warehouse->all() as $wr)
-										
-											@if ($wrid ==  $wr->id)
-												<option value="{{ $wr->id }}" selected="selected">{{ $wr->agt_name}} </option>
-											@else
-												<option value="{{ $wr->id }}">{{ $wr->agt_name}}   </option>
-											@endif
-											@endforeach
-										
-								@endif
-			                </select>
-			            </div>
+					<div class="form-group col-md-3">
+	        			<label>Bulk Mark</label>
+	                    <div class="form-group">
+	                        <input type="text" class="form-control" name="mark" id ="mark" placeholder="Mark..."  value="{{ old('mark') }}" ></input>
+	                       
+	                    </div>
+	                </div>
+					<div class="form-group col-md-3">
+		            	<label>Grower</label>
+		                <select class="form-control" name="grower">
+		               		<option value="">---select grower---</option>
+							@if (count($growers) > 0)
+										@foreach ($growers->all() as $grower)
+										@if ($st_cgr ==  $grower->id)
+											<option value="{{ $grower->id }}" selected="selected">{{ $grower->cgr_grower}}    &&nbsp&nbsp&nbsp&nbsp ( {{ $grower->cgr_mark}} )</option>
+										@else
+											<option value="{{ $grower->id }}">{{ $grower->cgr_grower}} &nbsp&nbsp&nbsp&nbsp  ( {{ $grower->cgr_mark}} )</option>
+										@endif
+										@endforeach
+									
+							@endif
+		                </select>
+		            </div>
+					<div class="form-group col-md-3">
+		            	<label>Grade</label>
+		                <select class="form-control" name="material">
+		               		<option value="">---select grade---</option>
+							@if (count($material) > 0)
+										@foreach ($material->all() as $materials)
+										@if ($st_mt ==  $materials->id)
+											<option value="{{ $materials->id }}" selected="selected">{{ $materials->mt_name}} </option>
+										@else
+											<option value="{{ $materials->id }}">{{ $materials->mt_name}}  </option>
+										@endif
+										@endforeach
+									
+							@endif
+		                </select>
+		            </div>
+					<div class="form-group col-md-3">
+		            	<label>Warehouse</label>
+		                <select class="form-control" id="warehouse" name="warehouse" onchange='fetchWarehouseDetails()'>
+		               		<option value="">---select warehouse---</option>
+							@if (count($warehouse) > 0)
+										@foreach ($warehouse->all() as $wr)
+									
+										@if ($wrid ==  $wr->id)
+											<option value="{{ $wr->id }}" selected="selected">{{ $wr->agt_name}} </option>
+										@else
+											<option value="{{ $wr->id }}">{{ $wr->agt_name}}   </option>
+										@endif
+										@endforeach
+									
+							@endif
+		                </select>
+		            </div>
 				</div>
 
+		        <div class="row">
+
+		            <div class="form-group col-md-3">
+		                <label>New Row</label>
+		                <select class="form-control" id="new_row" name="new_row">
+		                	<option></option> 
+								@if (isset($location))
+											@foreach ($location->all() as $value)
+												@if ($value->loc_row != NULL)
+													<option value="{{ $value->id }}">{{ $value->loc_row}}</option>
+												@endif
+											@endforeach
+										
+								@endif
+		                </select>
+		            </div>
+		            <div class="form-group col-md-3">
+		                <label>New Column</label>
+		                <select class="form-control" id="new_column" name="new_column">
+		                	<option></option> 
+								@if (isset($location))
+											@foreach ($location->all() as $value)
+												@if ($value->loc_column != NULL)
+													<option value="{{ $value->id }}">{{ $value->loc_column}}</option>
+												@endif
+											@endforeach
+										
+								@endif
+		                </select>
+		            </div>	
+
+			        <div class="form-group col-md-3">
+		                <label >Zone</label>
+		                <input class="form-control"  id="new_zone"  name="new_zone" value="{{ old('zone').$zone  }}">
+			        </div>	
+
+		        </div>
 
 	            <div class="row">
 		            <div class="form-group col-md-3">
@@ -690,182 +726,182 @@
 		
 		
 		// validate signup form on keyup and submit
-		$("#cleanbulkingform").validate({
-			rules: {
-				material: "required",
-				outturn: "required",
-				grower: "required",
-				Bulking_season: "required",
-				warehouse: "required",
-				mark: {
-					required: true,
-					minlength: 2
-				},
-				// password: {
-				// 	required: true,
-				// 	minlength: 5
-				// },
-				// confirm_password: {
-				// 	required: true,
-				// 	minlength: 5,
-				// 	equalTo: "#password"
-				// },
-				// email: {
-				// 	required: true,
-				// 	email: true
-				// },
-				topic: {
-					required: ".newsletter:checked",
-					minlength: 1
-				},
-				// agree: "required"
-			},
-			messages: {
-				material: "Please select a grade",
-				outturn: "Please enter bulk outturn",
-				grower: "Please select a grower",
-				mark: {
-					required: "Please enter grower mark",
-					minlength: "Mark must consist of at least 2 characters"
-				},
-				Bulking_season: "Please select a valid bulking season",
-				warehouse: "Please select a warehouse",
-				// password: {
-				// 	required: "Please provide a password",
-				// 	minlength: "Your password must be at least 5 characters long"
-				// },
-				// confirm_password: {
-				// 	required: "Please provide a password",
-				// 	minlength: "Your password must be at least 5 characters long",
-				// 	equalTo: "Please enter the same password as above"
-				// },
-				// email: "Please enter a valid email address",
-				// agree: "Please accept our policy",
-				// topic: "Please select at least 2 topics"
-			},
-			submitHandler: function(event) {
-				//event.preventDefault();
-				var lotsinbulk = [];
-				var error =false;
-				var alertnone = false;
+		// $("#cleanbulkingform").validate({
+		// 	rules: {
+		// 		material: "required",
+		// 		outturn: "required",
+		// 		grower: "required",
+		// 		Bulking_season: "required",
+		// 		warehouse: "required",
+		// 		mark: {
+		// 			required: true,
+		// 			minlength: 2
+		// 		},
+		// 		// password: {
+		// 		// 	required: true,
+		// 		// 	minlength: 5
+		// 		// },
+		// 		// confirm_password: {
+		// 		// 	required: true,
+		// 		// 	minlength: 5,
+		// 		// 	equalTo: "#password"
+		// 		// },
+		// 		// email: {
+		// 		// 	required: true,
+		// 		// 	email: true
+		// 		// },
+		// 		topic: {
+		// 			required: ".newsletter:checked",
+		// 			minlength: 1
+		// 		},
+		// 		// agree: "required"
+		// 	},
+		// 	messages: {
+		// 		material: "Please select a grade",
+		// 		outturn: "Please enter bulk outturn",
+		// 		grower: "Please select a grower",
+		// 		mark: {
+		// 			required: "Please enter grower mark",
+		// 			minlength: "Mark must consist of at least 2 characters"
+		// 		},
+		// 		Bulking_season: "Please select a valid bulking season",
+		// 		warehouse: "Please select a warehouse",
+		// 		// password: {
+		// 		// 	required: "Please provide a password",
+		// 		// 	minlength: "Your password must be at least 5 characters long"
+		// 		// },
+		// 		// confirm_password: {
+		// 		// 	required: "Please provide a password",
+		// 		// 	minlength: "Your password must be at least 5 characters long",
+		// 		// 	equalTo: "Please enter the same password as above"
+		// 		// },
+		// 		// email: "Please enter a valid email address",
+		// 		// agree: "Please accept our policy",
+		// 		// topic: "Please select at least 2 topics"
+		// 	},
+		// 	submitHandler: function(event) {
+		// 		//event.preventDefault();
+		// 		var lotsinbulk = [];
+		// 		var error =false;
+		// 		var alertnone = false;
 				
 				
-				if (localStorage.getItem("lotsinbulk") != null) {
-					lotsinbulk = JSON.parse(localStorage.getItem('lotsinbulk'));
-				}
+		// 		if (localStorage.getItem("lotsinbulk") != null) {
+		// 			lotsinbulk = JSON.parse(localStorage.getItem('lotsinbulk'));
+		// 		}
 			 	
-				if(jQuery.isEmptyObject(lotsinbulk)){
+		// 		if(jQuery.isEmptyObject(lotsinbulk)){
 					
-					alertnone=true
-					bootbox.alert("Nothing selected!");
-				}
+		// 			alertnone=true
+		// 			bootbox.alert("Nothing selected!");
+		// 		}
 				
-				if(alertnone){
-					return false
-				}
-				var str ='outturns </br>'
-			    $.each(lotsinbulk, function( index, value ) {
+		// 		if(alertnone){
+		// 			return false
+		// 		}
+		// 		var str ='outturns </br>'
+		// 	    $.each(lotsinbulk, function( index, value ) {
 				
-				  var weight = value.weight
-				  var outturn = value.outturn;
-				  var id = value.id;
+		// 		  var weight = value.weight
+		// 		  var outturn = value.outturn;
+		// 		  var id = value.id;
 				 
-				  str = str + 'outturn :  '+ outturn + '    weight :  '+ weight +'  </br>'
+		// 		  str = str + 'outturn :  '+ outturn + '    weight :  '+ weight +'  </br>'
 				
-				});
-				var url="{{ route('arrivalinformation.getLocations',['warehouse'=>":warehouse"]) }}";
+		// 		});
+		// 		var url="{{ route('arrivalinformation.getLocations',['warehouse'=>":warehouse"]) }}";
 
-				var warehouse = $('#warehouse').val()
+		// 		var warehouse = $('#warehouse').val()
 				
-				url = url.replace(':warehouse', warehouse);
-				console.log(warehouse)
-				console.log(url)
-				$.get(url, function(data, status){
-					console.log(data)
-					var locations = jQuery.parseJSON(data);
-					var rows = []
-					var columns = []
-					var rowstr = null;
-					var colstr = null;
-					$.each(locations,function(key, value) 
-					{
-						if (value["loc_row"] != null) { 
-							var row = value["loc_row"]
-							var id = value['id']
-							rows.push({text: row, value: id})
-							rowstr = rowstr + '<option value ="'+id+'">'+row+'</option>';
-						}
+		// 		url = url.replace(':warehouse', warehouse);
+		// 		console.log(warehouse)
+		// 		console.log(url)
+		// 		$.get(url, function(data, status){
+		// 			console.log(data)
+		// 			var locations = jQuery.parseJSON(data);
+		// 			var rows = []
+		// 			var columns = []
+		// 			var rowstr = null;
+		// 			var colstr = null;
+		// 			$.each(locations,function(key, value) 
+		// 			{
+		// 				if (value["loc_row"] != null) { 
+		// 					var row = value["loc_row"]
+		// 					var id = value['id']
+		// 					rows.push({text: row, value: id})
+		// 					rowstr = rowstr + '<option value ="'+id+'">'+row+'</option>';
+		// 				}
 						
-						if (value["loc_column"] != null && (value["loc_column"] != 0)) {
-							var clm = value["loc_column"]
-							var id = value['id']
-							columns.push({text: clm, value: id})
-							colstr = colstr + '<option value ="'+id+'">'+clm+'</option>';
-						}
-					});
-						var inputstr = '<div class="form-group">'+
-  '<label for="rows">Select list:</label>'+
-  '<select class="form-control" id="rows">'+
-    '<option value="">--select row--</option>'+
-    rowstr+
-  '</select>'+
-'</div>';
-var inputstr2 = '<div class="form-group">'+
-  '<label for="cols">Select list:</label>'+
-  '<select class="form-control" id="cols">'+
-    '<option value="">--select column--</option>'+
-    colstr+
-  '</select>'+
-'</div>';
-						var dialog = bootbox.dialog({
-title: 'Select Warehouse Locations',
-message: "<div>"+inputstr+inputstr2+"</div>",
-buttons: {
-    cancel: {
-        label: "I'm a custom cancel button!",
-        className: 'btn-danger',
-        callback: function(){
-            console.log('Custom cancel clicked');
-        }
-    },
-    ok: {
-        label: "I'm a custom OK button!",
-        className: 'btn-info',
-        callback: function(){
-            console.log('Custom OK clicked');
-        }
-    }
-}
-});
+		// 				if (value["loc_column"] != null && (value["loc_column"] != 0)) {
+		// 					var clm = value["loc_column"]
+		// 					var id = value['id']
+		// 					columns.push({text: clm, value: id})
+		// 					colstr = colstr + '<option value ="'+id+'">'+clm+'</option>';
+		// 				}
+		// 			});
+		// 				var inputstr = '<div class="form-group">'+
+		// 					  '<label for="rows">Select list:</label>'+
+		// 					  '<select class="form-control" id="rows">'+
+		// 					    '<option value="">--select row--</option>'+
+		// 					    rowstr+
+		// 					  '</select>'+
+		// 					'</div>';
+		// 					var inputstr2 = '<div class="form-group">'+
+		// 					  '<label for="cols">Select list:</label>'+
+		// 					  '<select class="form-control" id="cols">'+
+		// 					    '<option value="">--select column--</option>'+
+		// 					    colstr+
+		// 					  '</select>'+
+		// 					'</div>';
+		// 				var dialog = bootbox.dialog({
+		// 				title: 'Select Warehouse Locations',
+		// 				message: "<div>"+inputstr+inputstr2+"</div>",
+		// 				buttons: {
+		// 				    cancel: {
+		// 				        label: "Cancel",
+		// 				        className: 'btn-danger',
+		// 				        callback: function(){
+		// 				            console.log('Custom cancel clicked');
+		// 				        }
+		// 				    },
+		// 				    ok: {
+		// 				        label: "OK",
+		// 				        className: 'btn-info',
+		// 				        callback: function(){
+		// 				            console.log('Custom OK clicked');
+		// 				        }
+		// 				    }
+		// 				}
+		// 				});
 
 			
       
-			});
+		// 	});
 			
-				return false;
-				var confirm = false
-				bootbox.confirm({ 
-				size: "large",
-				message: "Are you sure? <br> "+str, 
-				callback: function(result){ 
-					if(result){
-						saveData(lotsinbulk)
-					}
-				 }
-				})
+		// 		return false;
+		// 		var confirm = false
+		// 		bootbox.confirm({ 
+		// 		size: "large",
+		// 		message: "Are you sure? <br> "+str, 
+		// 		callback: function(result){ 
+		// 			if(result){
+		// 				saveData(lotsinbulk)
+		// 			}
+		// 		 }
+		// 		})
   
-				console.log(confirm)
-				if(!confirm){
-					return false;
-				}else{
+		// 		console.log(confirm)
+		// 		if(!confirm){
+		// 			return false;
+		// 		}else{
 
-				}
-				return false
+		// 		}
+		// 		return false
 				
 
-				return
-			}
-		});
+		// 		return
+		// 	}
+		// });
 
 		// propose username by combining first- and lastname
 		// $("#username").focus(function() {
@@ -933,6 +969,49 @@ buttons: {
 				});
 		}
 		
+
+
+
+	function fetchWarehouseDetails()
+	{
+		var warehouse = $('#warehouse').val();
+		var row = $('#new_row');
+		var column = $('#new_column');
+
+		if (warehouse == null) {
+			warehouse = <?php echo json_encode($warehouse); ?>;
+		}
+
+		row.find('option').remove();   
+		column.find('option').remove();   
+
+
+		var url="{{ route('arrivalinformation.getLocations',['warehouse'=>":warehouse"]) }}";
+		url = url.replace(':warehouse', warehouse);
+
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			var locations = jQuery.parseJSON(response);
+
+			row.append('<option></option>');
+			column.append('<option></option>');
+			$.each(locations,function(key, value) 
+			{	
+				row.append('<option value=' + value["id"] + '>&nbsp;&nbsp;&nbsp;' + value["loc_row"] + '</option>');
+				column.append('<option value=' + value["id"] + '>&nbsp;&nbsp;&nbsp;' + value["loc_column"] + '</option>');
+
+			});
+		}).error(function(error) {
+			console.log(error)
+		});  
+
+
+
+
+	}
+
 </script>
 @endpush
 					</div>

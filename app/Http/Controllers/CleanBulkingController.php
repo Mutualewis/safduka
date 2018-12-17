@@ -71,6 +71,7 @@ use Ngea\StockWarehouse;
 use Ngea\Material;
 use Ngea\StockLocationView;
 use Ngea\StockViewWarehouse;
+use Ngea\StockLocation;
 use Ngea\Warehouse;
 
 class CleanBulkingController extends Controller {
@@ -149,7 +150,7 @@ class CleanBulkingController extends Controller {
         $prc_season = Input::get('processing_season');
         $reference = Input::get('reference');
         $material = Material::all(['id', 'mt_name']);
-
+        $warehouse = agent::where('agtc_id', 4)->orWhere('agtc_id', 1)->get();
         $CoffeeGrade = CoffeeGrade::where('ctr_id', Input::get('country'))->get();
 
         $greensize    = quality_parameters::where('qg_id', '1')->get();
@@ -291,174 +292,167 @@ class CleanBulkingController extends Controller {
             DB::beginTransaction();
             $errormessages = [];
             
-            try{
+            // try{
            
 
-            $this->validate($request, [
-                'country' => 'required','grower' => 'required','outturn' => 'required',
-            ]); 
-                   
-            $prc                   = Input::get('process_type');
-            $ref_no                = Input::get('outturn');
-            $mark                = Input::get('mark');
-            $grower                = Input::get('grower');
-            $reference_no = $ref_no;
-            $other_instructions    = Input::get('other_instructions');
-            $instructions_selected = Input::get('instructions_selected');
-            $instructions_checked  = Input::get('instructions_checked');
-            $weight_in             = null;
+                $this->validate($request, [
+                    'country' => 'required','grower' => 'required','outturn' => 'required',
+                ]); 
+                       
+                $prc                   = Input::get('process_type');
+                $ref_no                = Input::get('outturn');
+                $mark                = Input::get('mark');
+                $grower                = Input::get('grower');
+                $reference_no = $ref_no;
+                $other_instructions    = Input::get('other_instructions');
+                $instructions_selected = Input::get('instructions_selected');
+                $instructions_checked  = Input::get('instructions_checked');
+                $material_id  = Input::get('material');
+                $weight_in = null;
+                $st_bulk_id = null;
 
-            $tobeprocessed = Input::get('tobeprocessed');
-            $tobewithdrawn = Input::get('tobewithdrawn');
-           
-            //dd($tobeprocessed); exit;
-            
-            
-            $cweight = Input::get('cweight');
+                $tobeprocessed = Input::get('tobeprocessed');
+                $tobewithdrawn = Input::get('tobewithdrawn');
+                $new_row = Input::get('new_row');
+                $new_column = Input::get('new_column');
+                $new_zone = Input::get('new_zone');
+                $warehouse_id = Input::get('warehouse');
+                $cweight = Input::get('cweight');
 
-            // if ($tobeprocessed != null) {
-            //     foreach ($tobeprocessed as $key => $value) {
-                    
-            //         foreach ($cweight as $keyweight => $valueweight) {
-            //             if ($keyweight == $value) {
-            //                 $weight_in += $valueweight;
-            //             }
-                        
-            //         }
 
-            //     }
-            // }          
-            
-                  
-                         
-            if ($tobeprocessed != null) {
-                foreach ($tobeprocessed as $key => $value) {
 
-                    $stockitemdetails = StockMill::where('id', '=', $value)->first(); 
-                    
-                    $cweight_array = Input::get('cweight');
-                    $cweight = null;
-                    if($cweight_array != null){
-                        foreach ($cweight_array as $keyweight => $valueweight) {
-                            if ($keyweight == $value) {
-                                $cweight = $valueweight;
-                                $weight_in += $cweight;
-                            }                        
-                        }                       
-                    }
-
-                    
-                    $packages    = ceil($cweight / 60);
-                    // $pall_ratio = $cweight/$weight_in;
-                    $pall_ratio = 1;
-
-                
-                   
-                }
-                
-                $stock_net = $weight_in;
-                $stock_bags    = floor($stock_net / 60);
-                $stock_pockets = $stock_net % 60;     
-                $batch_packages = ceil($stock_net / 60);   
-                
-                $st_bulk_id = StockMill::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $stockitemdetails->csn_id, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $stockitemdetails->pty_id, 'st_is_bulk' => 1]);
-    
-                
+                if ($tobeprocessed != null) {
                     foreach ($tobeprocessed as $key => $value) {
-    
-                        StockMill::where('id', '=', $value)
-                             ->update(['st_bulk_id' => $st_bulk_id, 'st_bulked_by' => $user]);
-                    }
-                
-            }
-            $prdetails = ProvisionalBulk::where('pbk_instruction_number', $ref_no)->first();
-
-            if ($prdetails != null) {
-                $prid = $prdetails->id;
-
-                ProvisionalBulk::where('id', '=', $prid)
-                    ->update(['prcss_id' => $prc, 'ctr_id' => $cid, 'pbk_instruction_number' => $ref_no, 'pbk_weight_in' => $weight_in, 'pbk_reference_name' => $ref_no, ]);
-                
-                Activity::log('Updated Provisional Bulk information with prid ' . $prid . ' prc ' . $prc . ' ref_no ' . $ref_no . ' weight_in ' . $weight_in );
-            } else {
-                $prid = ProvisionalBulk::insertGetId(['prcss_id' => $prc, 'pbk_instruction_number' => $ref_no, 'pbk_weight_in' => $weight_in,  'ctr_id' => 1, 'pbk_reference_name' => $ref_no, 'pbk_date' => $date, 'prp_id' => 1]);
-               
-                Activity::log('Inserted Provisional Bulk information with prid ' . $prid . ' prc ' . $prc . ' ref_no ' . $ref_no . ' weight_in ' . $weight_in );
-            }
-
-            if ($tobeprocessed != null) {
-                foreach ($tobeprocessed as $key => $value) {
-                    $cweight_array = Input::get('cweight');
-                    $cweight = null;
-                    if($cweight_array != null){
-                        foreach ($cweight_array as $keyweight => $valueweight) {
-                            if ($keyweight == $value) {
-                                $cweight = $valueweight;
-                              
-                            }                        
-                        }                       
-                    }
-                    $packages    = ceil($cweight / 60);
-
-
-                   
-                    $processAllocationDetails = ProvisionalAllocation::where('st_mill_id', $value)->where('pbk_id', $prid)->first();
-
-                    if ($cweight != null) {
-                        if ($processAllocationDetails != null) {
-
-                            $processAllocationID = $processAllocationDetails->id;
-                            ProvisionalAllocation::where('id', '=', $processAllocationID)
-                                ->update([ 'pbk_id' => $prid, 'st_mill_id' => $value, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages ]);
-
-                            
-                            Activity::log('Updated Provisional Bulk allocation information with id ' . $processAllocationID . 'prall_allocated_weight' . $cweight .'prall_packages' .'prall_processed_weight' .$packages);
-
-                        } else {
-
-                            $processAllocationID = ProvisionalAllocation::insertGetId(['pbk_id' => $prid, 'st_mill_id' => $value, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages]);
-                            
-                            Activity::log('Added Provisional Bulk allocation information with id ' . $processAllocationID . 'prall_allocated_weight' . $cweight .'prall_packages' .'prall_processed_weight' .$packages );                                
+                        $stockitemdetails = StockWarehouse::where('id', '=', $value)->first(); 
+                        $cweight_array = Input::get('cweight');
+                        $cweight = null;
+                        if($cweight_array != null){
+                            foreach ($cweight_array as $keyweight => $valueweight) {
+                                if ($keyweight == $value) {
+                                    $cweight = $valueweight;
+                                    $weight_in += $cweight;
+                                }                        
+                            }                       
                         }
-                        
+                        $packages    = ceil($cweight / 60);
+                        $pall_ratio = 1;
+                    }
+                    $stock_net = $weight_in;
+                    $stock_bags    = floor($stock_net / 60);
+                    $stock_pockets = $stock_net % 60;     
+                    $batch_packages = ceil($stock_net / 60);   
+
+                    $stock_details = StockWarehouse::where('st_outturn', $ref_no)->where('mt_id', $material_id)->first();
+                    // print_r($tobeprocessed);
+                    // exit();
+                    if ($stock_details == null) {
+                        $st_bulk_id = StockWarehouse::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $stockitemdetails->csn_id, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages, 'st_outturn' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'mt_id' => $material_id, 'st_is_bulk' => 1, 'st_owner_id' => 5, 'warehouse_id' => $warehouse_id]);
+
+                    } else {
+                        $st_bulk_id = $stock_details->id;
+                        StockWarehouse::where('id', '=', $st_bulk_id)
+                             ->update([ 'cgr_id' => $grower, 'csn_id' => $stockitemdetails->csn_id, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages, 'st_outturn' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'mt_id' => $material_id, 'st_is_bulk' => 1, 'st_owner_id' => 5, 'warehouse_id' => $warehouse_id]);                 
+                    }
+
+
+                    $btid = Batch::insertGetId (
+                        ['st_id' => $st_bulk_id, 'btc_weight' => $weight_in, 'btc_tare' => 0, 'btc_net_weight' => $weight_in, 'btc_packages' => $batch_packages, 'btc_bags' => $stock_bags, 'btc_pockets' => $stock_pockets, 'ws_id' => null]);
+
+                    $stlocid = StockLocation::insertGetId (
+                        ['bt_id' => $btid, 'loc_row_id' => $new_row, 'loc_column_id' => $new_column, 'btc_zone' => $new_zone]);
+
+                    foreach ($tobeprocessed as $key => $value) {
+                        StockWarehouse::where('id', '=', $value)
+                             ->update(['st_bulk_id' => $st_bulk_id, 'st_bulked_by' => $user, 'st_ended_by' => $user]);
+                    }
+                    
+                }
+
+
+
+                $prdetails = ProvisionalBulk::where('pbk_instruction_number', $ref_no)->first();
+                if ($prdetails != null) {
+                    $prid = $prdetails->id;
+                    ProvisionalBulk::where('id', '=', $prid)
+                        ->update(['prcss_id' => $prc, 'ctr_id' => $cid, 'pbk_instruction_number' => $ref_no, 'pbk_weight_in' => $weight_in, 'pbk_reference_name' => $ref_no, ]);
+                    Activity::log('Updated Provisional Bulk information with prid ' . $prid . ' prc ' . $prc . ' ref_no ' . $ref_no . ' weight_in ' . $weight_in );
+                } else {
+                    $prid = ProvisionalBulk::insertGetId(['prcss_id' => $prc, 'pbk_instruction_number' => $ref_no, 'pbk_weight_in' => $weight_in,  'ctr_id' => 1, 'pbk_reference_name' => $ref_no, 'pbk_date' => $date, 'prp_id' => 1]);
+                    Activity::log('Inserted Provisional Bulk information with prid ' . $prid . ' prc ' . $prc . ' ref_no ' . $ref_no . ' weight_in ' . $weight_in );
+                }
+                if ($tobeprocessed != null) {
+                    foreach ($tobeprocessed as $key => $value) {
+                        $cweight_array = Input::get('cweight');
+                        $cweight = null;
+                        if($cweight_array != null){
+                            foreach ($cweight_array as $keyweight => $valueweight) {
+                                if ($keyweight == $value) {
+                                    $cweight = $valueweight;
+                                  
+                                }                        
+                            }                       
+                        }
+                        $packages    = ceil($cweight / 60);
+
+
+                       
+                        $processAllocationDetails = ProvisionalAllocation::where('st_mill_id', $value)->where('pbk_id', $prid)->first();
+
+                        if ($cweight != null) {
+                            if ($processAllocationDetails != null) {
+
+                                $processAllocationID = $processAllocationDetails->id;
+                                ProvisionalAllocation::where('id', '=', $processAllocationID)
+                                    ->update([ 'pbk_id' => $prid, 'st_id' => $value, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages ]);
+
+                                
+                                Activity::log('Updated Provisional Bulk allocation information with id ' . $processAllocationID . 'prall_allocated_weight' . $cweight .'prall_packages' .'prall_processed_weight' .$packages);
+
+                            } else {
+
+                                $processAllocationID = ProvisionalAllocation::insertGetId(['pbk_id' => $prid, 'st_id' => $value, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages]);
+                                
+                                Activity::log('Added Provisional Bulk allocation information with id ' . $processAllocationID . 'prall_allocated_weight' . $cweight .'prall_packages' .'prall_processed_weight' .$packages );                                
+                            }
+                            
+                        }
                     }
                 }
-            }
-          
+              
 
-            if ($tobewithdrawn != null) {
-                foreach ($tobewithdrawn as $key => $value) {
-                    $stockViewALLCount = StockViewALL::where('id', $value)->whereNotNull('process_number')->get();
-                    $countProcess = 0;
-                    foreach ($stockViewALLCount as $keycount => $valuecount) {
-                        $countProcess += 1;
+                if ($tobewithdrawn != null) {
+                    foreach ($tobewithdrawn as $key => $value) {
+                        $stockViewALLCount = StockViewALL::where('id', $value)->whereNotNull('process_number')->get();
+                        $countProcess = 0;
+                        foreach ($stockViewALLCount as $keycount => $valuecount) {
+                            $countProcess += 1;
+                        }
+
+                        if ($countProcess < 2) {
+                            StockMill::where('id', '=', $value)
+                                  ->update(['st_ended_by' => null, 'pr_id' => null]);
+                        }
+
+                        $processAllocation = ProcessAllocation::where('st_id',$value)->where('pr_id', $prid);    
+                        $processAllocation->delete(); 
                     }
-
-                    if ($countProcess < 2) {
-                        StockMill::where('id', '=', $value)
-                              ->update(['st_ended_by' => null, 'pr_id' => null]);
-                    }
-
-                    $processAllocation = ProcessAllocation::where('st_id',$value)->where('pr_id', $prid);    
-                    $processAllocation->delete(); 
+              
                 }
-          
-            }
-           
-            $request->session()->flash('alert-success', 'Outturn added successfully!!');
-            DB::commit();  
-            }catch (\PDOException $e) {
+               
+                $request->session()->flash('alert-success', 'Outturn added successfully!!');
+                DB::commit();  
+            // }catch (\PDOException $e) {
                 
-                DB::rollback();
-                $request->session()->flash('alert-warning', 'An error occurred while attempting to add outturn!!');
-                $errormessages[] = $e->getMessage();
+            //     DB::rollback();
+            //     $request->session()->flash('alert-warning', 'An error occurred while attempting to add outturn!!');
+            //     $errormessages[] = $e->getMessage();
                 
-             }//end catch
+            //  }//end catch
 
             $StockView = StockViewALL::get();
             
             return View::make('cleanbulking', compact('id',
-                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose', 'material'));
+                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose', 'material', 'warehouse'));
 
         }  else if (null !== Input::get('filter')) {
 
@@ -499,7 +493,7 @@ class CleanBulkingController extends Controller {
             $stockview = StockViewALL::select('*')->whereNull('bulked_by');
 
             return View::make('cleanbulking', compact('id',
-                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected', 'StockView', 'prid','prc_season', 'reference', 'contract', 'contractID','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose', 'material'));
+                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected', 'StockView', 'prid','prc_season', 'reference', 'contract', 'contractID','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose', 'material', 'warehouse'));
         }
 
     }
