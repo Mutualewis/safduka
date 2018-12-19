@@ -67,6 +67,7 @@ use Ngea\processcharges;
 use Ngea\teams;
 use Ngea\StockMill;
 use Ngea\Material;
+use Ngea\BatchMill;
 
 class BulkingController extends Controller {
 

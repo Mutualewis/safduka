@@ -89,6 +89,9 @@
 						Net Weight
 					</th>
 					<th>
+						Pallete Weight
+					</th>
+					<th>
 						Moisture
 					</th>
 				</tr>
@@ -108,6 +111,7 @@
 						$total_gross   = 0;
 						$total_tare   = 0;
 						$total_net_weight  = 0;
+						$total_pallete_weight = 0;
 
 						$total_packages = 0;
 
@@ -122,7 +126,8 @@
 						        $total_pkts += $value->st_pockets;
 						        $total_tare += $value->st_tare;
 						        $total_packages += $value->st_packages;
-						        $total_net_weight += $value->st_net_weight;
+								$total_net_weight += $value->st_net_weight;
+								$total_pallete_weight += $value->pallete_weight;
 
 						        echo "<tr>";
 
@@ -133,7 +138,8 @@
 							        echo "<td>" . $value->st_packages . "</td>";
 							        echo "<td>" . $value->st_gross . "</td>";
 							        echo "<td>" . $value->st_tare . "</td>";
-							        echo "<td>" . $value->st_net_weight . "</td>";
+									echo "<td>" . $value->st_net_weight . "</td>";
+									echo "<td>" . $value->pallete_weight . "</td>";
 							        echo "<td>" . $value->st_moisture . "</td>";
 
 						        echo "</tr>";
@@ -149,6 +155,7 @@
 							echo "<td>" . $total_gross . "</td>";
 							echo "<td>" . $total_tare . "</td>";
 							echo "<td>" . $total_net_weight . "</td>";
+							echo "<td>" . $total_pallete_weight . "</td>";
 							echo "<td></td>";	
 
 						echo "</tr>";

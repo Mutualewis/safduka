@@ -134,20 +134,32 @@
 	}
 
 
+	if (!isset($outturn)) {
+		$outturn = NULL;
+	}
+
+
 	if (!isset($zone)) {
 		$zone = NULL;
 	}
 
 	if (!isset($prc_season)) {
 		$prc_season = $active_season;
+	}		
+
+	if ($prc_season == null) {
+		$prc_season = 2;
 	}	
+
 	if (isset($prc_season)) {
 		$prc_season = $active_season;
 		if($prc_season == 'Season'){
 			$prc_season = $active_season;
 		}
 	}
-
+	if ($prc_season == null) {
+		$prc_season = 2;
+	}	
 	if (!isset($contractID)) {
 		$contractID = NULL;
 	}
@@ -202,49 +214,24 @@
 
 	$total_price = 0;
 	$total_diff = 0;
-	
+	$mark = null;
 
-					
 	if (isset($StockView) && count($StockView) > 0) {
-
 		foreach ($StockView->all() as $value) {
-			
-			$lots[] = $value->id;
-			$newElement = array();
-			$newElement['id'] = (int)$value->id;
-			$newElement['stockid'] = (int)$value->stock_id;
-			$newElement['weight'] = (int)$value->weight;
-			$newElement['bags'] = (int)$value->bags;
-			$newElement['pockets'] = (int)$value->pockets;
-			$newElement['price'] = (int)$value->price;
-			$newElement['value'] = (int) intval(str_replace(",", "", $value->value)); 
-			$newElement['diff'] = (int)$value->weight * $value->differential;
-			array_push($stockArray, $newElement);
-
-			if ($value->prcssid == $prid && $value->ended != null && $value->prcssid != null) {
-				$totalWeight += (int) $value->weight; 
-				$total_bags += (int) $value->bags; 
-				$total_pkts += (int) $value->pockets; 
-				$total_value += (int) intval(str_replace(",", "", $value->value)); 
-				$total_price += (int) $value->price; 
-				$total_diff += (int) $value->weight * $value->differential; 
-			}
+			$totalWeight += (int) $value->st_net_weight; 
+			$total_bags += (int) $value->st_bags; 
+			$total_pkts += (int) $value->st_pockets; 
 		}
-		if ($total_value != null) {
-			$total_value_sum = $total_value;
-		}		
-		if ($total_diff != null) {
-			$total_diff_sum = $total_diff;
-		}
-		if ($total_value != null && $totalWeight != null) {
-			$total_price = $total_value/($totalWeight/50); 
-		}
-		if ($total_diff != null && $totalWeight != null) {
-			$total_diff = $total_diff/$totalWeight; 
-		}
-
 	}
-	
+
+	if (isset($stockViewDetails) && count($stockViewDetails) > 0) {
+		$mark = $stockViewDetails->mark;
+		$st_cgr = $stockViewDetails->cgr_id;
+		$st_mt = $stockViewDetails->mtid;
+		$wrid =	$stockViewDetails->wrid;	
+	}
+
+
 ?>
     <div class="col-md-12">
 	        <form id="cleanbulkingform" role="form" method="POST" action="/cleanbulkinginstructions">
@@ -287,11 +274,6 @@
 		                </select>
 		            </div>
 
-		           
-		            
-	           
-	        		
-
 		            <div class="form-group col-md-3">
 		            	<label>Bulking Date</label>
 		           		<input class="form-control" id="date" name="date" placeholder="MM/DD/YYY" type="text" value="{{ old('date').$date }}" disabled/>
@@ -300,8 +282,11 @@
 	        		<div class="form-group col-md-3">
 	        			<label>Bulk Outturn Number</label>
 	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" name="outturn" id ="outturn" placeholder="Outturn No..."  value="{{ old('outturn') }}" ></input>
-	                       
+	                        <input type="text" class="form-control" name="outturn" id ="outturn" placeholder="Outturn No..."  value="{{ old('outturn').$outturn }}" ></input>
+	                        <span class="input-group-btn">
+	                        <button type="submit" id="searchButtonOuttturn" name="searchButton" class="btn btn-default">
+	                        	<i class="fa fa-search"></i>
+	                        </button>	                       
 	                    </div>
 	                </div>	
 
@@ -311,7 +296,7 @@
 					<div class="form-group col-md-3">
 	        			<label>Bulk Mark</label>
 	                    <div class="form-group">
-	                        <input type="text" class="form-control" name="mark" id ="mark" placeholder="Mark..."  value="{{ old('mark') }}" ></input>
+	                        <input type="text" class="form-control" name="mark" id ="mark" placeholder="Mark..."  value="{{ old('mark').$mark }}" ></input>
 	                       
 	                    </div>
 	                </div>
@@ -486,6 +471,9 @@
 									<th>
 										Pockets
 									</th>
+									<th>
+										Instructed
+									</th>
 						        </tr>
 						    </thead>
 						    <tfoot style="display: table-header-group; text-align:left; width: inherit; max-width:100%;">
@@ -523,6 +511,9 @@
 									<th>
 										Pockets
 									</th>
+									<th>
+										Instructed
+									</th>
 									
 						        </tr>
 						    </tfoot>
@@ -548,6 +539,7 @@
 
 	url = url.replace(':id', countryID);
 	url = url.replace(':rf', ref_no);
+
 
     var table = $('#stocks-table').DataTable({
 		dom: 'Bfrtip',      	
@@ -575,7 +567,8 @@
             { data: 'st_net_weight', name: 'weight'},
 			{ data: 'st_net_weight', name: 'st_net_weight'},
             { data: 'st_bags', name: 'bags'},
-            { data: 'st_pockets', name: 'pockets'}
+            { data: 'st_pockets', name: 'pockets'},
+            { data: 'bulked_by', name: 'bulked_by'}
             
 
         ],    
@@ -594,23 +587,26 @@
 			'orderable':false,
 			'className': 'dt-body-center',
 			'render': function (data, type, full, meta, row){
-			// var ended = table.cell(meta.row,19).data();
+			var ended = table.cell(meta.row,10).data();
 			//var stockid = $('<div/>').text(data).html();
 			var stockid = table.cell(meta.row,0).data();
 			// var status = table.cell(meta.row,22).data();
 			var outturn = table.cell(meta.row,3).data();
 			var weight = table.cell(meta.row,6).data();
 		
-				// if (ended == null) {
+			if (ended == null) {
 				return '<input type="checkbox" class="chk" name="tobeprocessed[]" value="' + stockid + '"  data-outturn="' + outturn + '" data-weight="' + weight + '"  value="' + stockid + '" >';
-				// } else {
-				// 	var viewedfield = '<input type="hidden" name="tobeprocessed[]" value="' + stockid + '" >';
-				// 	var hiddenfield = '<input type="checkbox" checked="checked" value="' + stockid + '" disabled>';
-				// 	var combined = viewedfield.concat(hiddenfield);
-				// 	return combined;
-				// }
+			} else {
+				var viewedfield = '<input type="hidden" name="tobeprocessed[]" value="' + stockid + '" >';
+				var hiddenfield = '<input type="checkbox" checked="checked" value="' + stockid + '" disabled>';
+				var combined = viewedfield.concat(hiddenfield);
+				return combined;
+			}
 	
 		}},
+    	{targets: 10,
+			'visible':false
+		},
 		{targets: 7, 
 				'searchable':true,
 				'orderable': true,
@@ -619,6 +615,9 @@
 			}},
 	
 		],
+
+
+
 		fnDrawCallback: function( oSettings ) {
 			var jArray= <?php echo json_encode($lots); ?>;
 		    var stockArray= <?php echo json_encode($stockArray); ?>;
@@ -709,7 +708,39 @@
 
 	    },
 	
+        initComplete: function () {
+            this.api().columns().every( function () {
+                var column = this;
+                var select = $('<select style="width: 100%; text-align: left;"><option value=""></option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+ 
+                        column
+                            .search( val ? '^'+val+'$' : '', true, false )
+                            .draw();
+                    } );
+ 
+                column.data().unique().sort().each( function ( d, j ) {
+                    select.append( '<option value="'+d+'">'+d+'</option>' )
+                } );
+            } );
 
+
+
+			this.api().columns([10]).every( function () {
+				var column = this;
+				var select = $("#codeFltr"); 
+				column.data().unique().sort().each( function ( d, j ) {
+				  select.append( '<option value="'+d+'">'+d+'</option>' )
+				} );
+			} );
+
+
+			$("#codeFltr").multiselect();
+        },
 
         });
 

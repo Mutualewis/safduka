@@ -344,20 +344,22 @@ class GRNSController extends Controller {
             }
 
             $grnsview = DB::table('stock_warehouse_st AS st')
-                ->select('*')
+                ->select('*', DB::Raw('SUM(btc_pallet_kgs) AS pallete_weight'))
                 ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+                ->leftJoin('batch_btc AS btc', 'st.id', '=', 'btc.st_id')
                 ->where('st.grn_id', $grn_id)
+                ->groupBy('st.id')
                 ->get(); 
 
             if($grnsview == null){
 
                 $grnsview = DB::table('stock_mill_st AS st')
-                    ->select('*')
+                    ->select('*', DB::Raw('null AS pallete_weight'))
                     ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
                     ->where('st.grn_id', $grn_id)
                     ->get(); 
             }
-
+           
             $pdf = PDF::loadView('pdf.print_grns', compact('grnsview','client', 'delivery_date', 'movement_permit', 'vehicle', 'weighbridge_ticket', 'time_received', 'received_by', 'driver_name', 'time_received_stop', 'driver_id', 'grn_number', 'warehouse_manager', 'agent_description', 'agent_initial'));
 
             
@@ -554,7 +556,7 @@ class GRNSController extends Controller {
                 $grn_id = $grn_details->id;
             } 
             $agent_type = $this->getAgentType($warehouse);
-
+            
             if ($grn_details != null) {
                 if ($agent_type == 'Miller') {
                     $grn_content = DB::table('stock_mill_st AS st')
@@ -571,7 +573,7 @@ class GRNSController extends Controller {
 
                 }
             }
-
+            
             return json_encode($grn_content);                    
         
         }catch (\PDOException $e) {

@@ -118,7 +118,14 @@
 
 						        $count += 1;
 
-						        $id = $value->id;
+								$id = $value->id;
+								
+								$mark = null;
+								if($value->st_mark==null){
+									$mark = $value->cgr_mark;
+								}else{
+									$mark = $value->st_mark;
+								}
 
 						        $total_bags += $value->st_bags;
 
@@ -131,7 +138,7 @@
 						        echo "<tr>";
 
 							        echo "<td>" . $value->st_outturn . "</td>";
-							        echo "<td>" . $value->st_mark . "</td>";
+							        echo "<td>" . $mark . "</td>";
 							        echo "<td>" . $value->mt_name . "</td>";
 							        echo "<td>" . $value->st_bags . "</td>";
 							        echo "<td>" . $value->st_pockets. "</td>";

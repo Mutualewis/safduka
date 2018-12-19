@@ -281,8 +281,8 @@ class CleanBulkingController extends Controller {
         $date    = date_format($date, "Y-m-d");
         $contract = null;
         $prc  = Input::get('process_type');
+        $outturn  = Input::get('outturn');
 
-        
         $tobeprocessed = Input::get('tobeprocessed');
        
         $user_data = Auth::user();
@@ -454,7 +454,7 @@ class CleanBulkingController extends Controller {
             return View::make('cleanbulking', compact('id',
                 'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected','prc_season', 'reference', 'contract', 'contractID', 'StockView','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose', 'material', 'warehouse'));
 
-        }  else if (null !== Input::get('filter')) {
+        } else if (null !== Input::get('filter')) {
 
             $ref_no    = Input::get('ref_no');
             $prdetails = Process::where('pr_instruction_number', $ref_no)->first();
@@ -489,11 +489,11 @@ class CleanBulkingController extends Controller {
         } else {
             $cid = Input::get('country');
             $csn_season = Input::get('sale_season');
-
-            $stockview = StockViewALL::select('*')->whereNull('bulked_by');
-
+            // $stockview = StockViewALL::select('*')->whereNull('bulked_by');
+            $StockView = StockViewWarehouse::select('*')->where('process_number', $outturn)->get();
+            $stockViewDetails = StockViewWarehouse::select('*')->where('process_number', $outturn)->first();
             return View::make('cleanbulking', compact('id',
-                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected', 'StockView', 'prid','prc_season', 'reference', 'contract', 'contractID','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose', 'material', 'warehouse'));
+                'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'sale_lots_released', 'date', 'ref_no', 'prc', 'processing_instruction', 'input_type', 'title', 'certs', 'StockStatus', 'other_instructions', 'instructions_checked', 'instructions_selected', 'StockView', 'prid','prc_season', 'reference', 'contract', 'contractID','prdetails', 'prc_season', 'extraProcessing', 'selectedContract', 'reference_no', 'selected_date', 'active_season', 'growers', 'provisionalPurpose', 'material', 'warehouse', 'outturn', 'stockViewDetails'));
         }
 
     }
@@ -502,16 +502,15 @@ class CleanBulkingController extends Controller {
     {
         if ($countryID != null) {
             if($ref_no != null){
-                $stockview = StockViewWarehouse::select('*')->whereNull('bulked_by');
+                $stockview = StockViewWarehouse::select('*')->where('process_number', $ref_no)->orWhereNull('process_number')->whereNull('bulked_by')->orderByRaw(DB::raw("FIELD(process_number, '$ref_no') DESC"));
+
             } else {
-                $stockview = StockViewWarehouse::select('*')->where('ctr_id', $countryID)->whereNull('bulked_by');
+                $stockview = StockViewWarehouse::select('*')->whereNull('bulked_by');
             }
 
         } else {
             $stockview = null;
         }   
-
-
 
         return Datatables::of($stockview)
             ->make(true);

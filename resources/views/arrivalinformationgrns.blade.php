@@ -904,7 +904,6 @@
 	    	var warehouse = $('#warehouse').val();
 
 
-
 			var url="{{ route('arrivalinformation.addDispatch',['grn_number'=>":grn_number", 'outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type'=>":outturn_type",'moisture'=>":moisture", 'basket'=>":basket", 'packaging'=>":packaging", 'warehouse'=>":warehouse"]) }}";
 
 			url = url.replace(':grn_number', grn_number);
@@ -918,7 +917,7 @@
 			url = url.replace(':packaging', packaging);
 			url = url.replace(':warehouse', warehouse);
 	
-
+			console.log(url)
 			var dialog = bootbox.alert({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
@@ -1222,7 +1221,7 @@
 	}
 
 	function fetch_url(outt_number_search) {
-		var outt_number_search = $('#outt_number_search').val();
+		var outt_number_search = $('#outt_number').val();
 		var grn_number = $('#grn_number').val();
 		var url="{{ route('arrivalinformationgrns.getOutturnDetails',['outt_number_search'=>":outt_number_search", 'grn_number'=>":grn_number"]) }}";
 		url = url.replace(':outt_number_search', outt_number_search);
@@ -1267,7 +1266,7 @@
 		clearChildren(document.getElementById("delivery_modal"));
 		var outt_number_search = $('#outt_number_search').val();
 		var url = fetch_url(outt_number_search); 
-
+		console.log(url)
         $.get(url, function(data, status){
 
             var obj = jQuery.parseJSON(data);
@@ -1510,6 +1509,9 @@
 		url = url.replace(':grn_number', grn_number);
 		url = url.replace(':warehouse', warehouse);
 
+		
+		// alert(url);
+		console.log(url)
 		$.ajax({
 		url: url,
 		type: 'GET',
@@ -1536,7 +1538,7 @@
 				net = parseInt(net) + parseInt(value["st_net_weight"]);
 
           		html += '<tr><td>' + count + 
-                    '</td><td>' + value["st_outturn"] + '</td><td>' + value["st_mark"] + '</td><td>' + value["mt_name"] + '</td><td>' + value["st_packages"] + '</td><td>' + value["st_gross"] + '</td><td>' + value["st_tare"] + '</td><td>' + value["st_net_weight"] + '</td><td>' + value["st_moisture"] + '</td><td><button type="button" onclick="outturn_delete_disable(' + value["stid"] + ')"  class="btn btn-success btn-danger">Delete</button></td></tr>';
+                    '</td><td>' + value["st_outturn"] + '</td><td>' + value["st_mark"] + '</td><td>' + value["mt_name"] + '</td><td>' + value["st_packages"] + '</td><td>' + value["st_gross"] + '</td><td>' + value["st_tare"] + '</td><td>' + value["st_net_weight"] + '</td><td>' + value["st_moisture"] + '</td><td><button type="button" onclick="outturn_delete(' + value["stid"] + ')"  class="btn btn-success btn-danger">Delete</button></td></tr>';
 
 			});		
 
@@ -1796,11 +1798,12 @@
 
 		var url="{{ route('arrivalinformation.getWeight',['weigh_scales'=>":weigh_scales"]) }}";
 		url = url.replace(':weigh_scales', weigh_scales);
-
+		console.log(url)
 		$.ajax({
 		url: url,
 		type: 'GET',
 		}).success(function(response) {
+			console.info(response)
 			var weight = jQuery.parseJSON(response);
 			if (weight != 'error') {
 				batch_kilograms.val(weight);
