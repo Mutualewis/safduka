@@ -627,6 +627,7 @@
 
 			$('.chk').off('click').on('click', function(){
 				var selectedID = $(this).val();
+				var checked = $(this).is(":checked");
 				var outturn = $(this).data('outturn');
 				var weight = $(this).data('weight');
 				selectedID = parseInt(selectedID);	
@@ -639,7 +640,20 @@
 				if (localStorage.getItem("lotsinbulk") != null) {
 					data = JSON.parse(localStorage.getItem('lotsinbulk'));
 				}
-				data.push({"id": selectedID,"outturn": outturn,"weight": weight});
+				if(checked){
+					
+					var result = $.grep(data, function(e){ 
+						return e.id == selectedID; 
+					});
+					console.log(result)
+					if(jQuery.isEmptyObject(result)){
+					data.push({"id": selectedID,"outturn": outturn,"weight": weight});
+					}
+				}else{
+					data = data.filter(function( obj ) {
+					return obj.id !== selectedID;
+					});
+				}
 				
 				console.info(data)
 			
@@ -757,182 +771,189 @@
 		
 		
 		// validate signup form on keyup and submit
-		// $("#cleanbulkingform").validate({
-		// 	rules: {
-		// 		material: "required",
-		// 		outturn: "required",
-		// 		grower: "required",
-		// 		Bulking_season: "required",
-		// 		warehouse: "required",
-		// 		mark: {
-		// 			required: true,
-		// 			minlength: 2
-		// 		},
-		// 		// password: {
-		// 		// 	required: true,
-		// 		// 	minlength: 5
-		// 		// },
-		// 		// confirm_password: {
-		// 		// 	required: true,
-		// 		// 	minlength: 5,
-		// 		// 	equalTo: "#password"
-		// 		// },
-		// 		// email: {
-		// 		// 	required: true,
-		// 		// 	email: true
-		// 		// },
-		// 		topic: {
-		// 			required: ".newsletter:checked",
-		// 			minlength: 1
-		// 		},
-		// 		// agree: "required"
-		// 	},
-		// 	messages: {
-		// 		material: "Please select a grade",
-		// 		outturn: "Please enter bulk outturn",
-		// 		grower: "Please select a grower",
-		// 		mark: {
-		// 			required: "Please enter grower mark",
-		// 			minlength: "Mark must consist of at least 2 characters"
-		// 		},
-		// 		Bulking_season: "Please select a valid bulking season",
-		// 		warehouse: "Please select a warehouse",
-		// 		// password: {
-		// 		// 	required: "Please provide a password",
-		// 		// 	minlength: "Your password must be at least 5 characters long"
-		// 		// },
-		// 		// confirm_password: {
-		// 		// 	required: "Please provide a password",
-		// 		// 	minlength: "Your password must be at least 5 characters long",
-		// 		// 	equalTo: "Please enter the same password as above"
-		// 		// },
-		// 		// email: "Please enter a valid email address",
-		// 		// agree: "Please accept our policy",
-		// 		// topic: "Please select at least 2 topics"
-		// 	},
-		// 	submitHandler: function(event) {
-		// 		//event.preventDefault();
-		// 		var lotsinbulk = [];
-		// 		var error =false;
-		// 		var alertnone = false;
+		 $("#cleanbulkingform").validate({
+			rules: {
+				material: "required",
+				outturn: "required",
+				grower: "required",
+				Bulking_season: "required",
+				warehouse: "required",
+				mark: {
+					required: true,
+					minlength: 2
+				},
+				// password: {
+				// 	required: true,
+				// 	minlength: 5
+				// },
+				// confirm_password: {
+				// 	required: true,
+				// 	minlength: 5,
+				// 	equalTo: "#password"
+				// },
+				// email: {
+				// 	required: true,
+				// 	email: true
+				// },
+				topic: {
+					required: ".newsletter:checked",
+					minlength: 1
+				},
+				// agree: "required"
+			},
+			messages: {
+				material: "Please select a grade",
+				outturn: "Please enter bulk outturn",
+				grower: "Please select a grower",
+				mark: {
+					required: "Please enter grower mark",
+					minlength: "Mark must consist of at least 2 characters"
+				},
+				Bulking_season: "Please select a valid bulking season",
+				warehouse: "Please select a warehouse",
+				// password: {
+				// 	required: "Please provide a password",
+				// 	minlength: "Your password must be at least 5 characters long"
+				// },
+				// confirm_password: {
+				// 	required: "Please provide a password",
+				// 	minlength: "Your password must be at least 5 characters long",
+				// 	equalTo: "Please enter the same password as above"
+				// },
+				// email: "Please enter a valid email address",
+				// agree: "Please accept our policy",
+				// topic: "Please select at least 2 topics"
+			},
+			submitHandler: function(event) {
+				//event.preventDefault();
+				var lotsinbulk = [];
+				var error =false;
+				var alertnone = false;
 				
 				
-		// 		if (localStorage.getItem("lotsinbulk") != null) {
-		// 			lotsinbulk = JSON.parse(localStorage.getItem('lotsinbulk'));
-		// 		}
+				if (localStorage.getItem("lotsinbulk") != null) {
+					lotsinbulk = JSON.parse(localStorage.getItem('lotsinbulk'));
+				}
 			 	
-		// 		if(jQuery.isEmptyObject(lotsinbulk)){
+				if(jQuery.isEmptyObject(lotsinbulk)){
 					
-		// 			alertnone=true
-		// 			bootbox.alert("Nothing selected!");
-		// 		}
+					alertnone=true
+					bootbox.alert("Nothing selected!");
+				}
 				
-		// 		if(alertnone){
-		// 			return false
-		// 		}
-		// 		var str ='outturns </br>'
-		// 	    $.each(lotsinbulk, function( index, value ) {
+				if(alertnone){
+					return false
+				}
+				var str ='outturns </br>'
+			    $.each(lotsinbulk, function( index, value ) {
 				
-		// 		  var weight = value.weight
-		// 		  var outturn = value.outturn;
-		// 		  var id = value.id;
+				  var weight = value.weight
+				  var outturn = value.outturn;
+				  var id = value.id;
 				 
-		// 		  str = str + 'outturn :  '+ outturn + '    weight :  '+ weight +'  </br>'
+				  str = str + 'outturn :  '+ outturn + '    weight :  '+ weight +'  </br>'
 				
-		// 		});
-		// 		var url="{{ route('arrivalinformation.getLocations',['warehouse'=>":warehouse"]) }}";
+				});
+			// 	var url="{{ route('arrivalinformation.getLocations',['warehouse'=>":warehouse"]) }}";
 
-		// 		var warehouse = $('#warehouse').val()
+			// 	var warehouse = $('#warehouse').val()
 				
-		// 		url = url.replace(':warehouse', warehouse);
-		// 		console.log(warehouse)
-		// 		console.log(url)
-		// 		$.get(url, function(data, status){
-		// 			console.log(data)
-		// 			var locations = jQuery.parseJSON(data);
-		// 			var rows = []
-		// 			var columns = []
-		// 			var rowstr = null;
-		// 			var colstr = null;
-		// 			$.each(locations,function(key, value) 
-		// 			{
-		// 				if (value["loc_row"] != null) { 
-		// 					var row = value["loc_row"]
-		// 					var id = value['id']
-		// 					rows.push({text: row, value: id})
-		// 					rowstr = rowstr + '<option value ="'+id+'">'+row+'</option>';
-		// 				}
+			// 	url = url.replace(':warehouse', warehouse);
+			// 	console.log(warehouse)
+			// 	console.log(url)
+			// 	$.get(url, function(data, status){
+			// 		console.log(data)
+			// 		var locations = jQuery.parseJSON(data);
+			// 		var rows = []
+			// 		var columns = []
+			// 		var rowstr = null;
+			// 		var colstr = null;
+			// 		$.each(locations,function(key, value) 
+			// 		{
+			// 			if (value["loc_row"] != null) { 
+			// 				var row = value["loc_row"]
+			// 				var id = value['id']
+			// 				rows.push({text: row, value: id})
+			// 				rowstr = rowstr + '<option value ="'+id+'">'+row+'</option>';
+			// 			}
 						
-		// 				if (value["loc_column"] != null && (value["loc_column"] != 0)) {
-		// 					var clm = value["loc_column"]
-		// 					var id = value['id']
-		// 					columns.push({text: clm, value: id})
-		// 					colstr = colstr + '<option value ="'+id+'">'+clm+'</option>';
-		// 				}
-		// 			});
-		// 				var inputstr = '<div class="form-group">'+
-		// 					  '<label for="rows">Select list:</label>'+
-		// 					  '<select class="form-control" id="rows">'+
-		// 					    '<option value="">--select row--</option>'+
-		// 					    rowstr+
-		// 					  '</select>'+
-		// 					'</div>';
-		// 					var inputstr2 = '<div class="form-group">'+
-		// 					  '<label for="cols">Select list:</label>'+
-		// 					  '<select class="form-control" id="cols">'+
-		// 					    '<option value="">--select column--</option>'+
-		// 					    colstr+
-		// 					  '</select>'+
-		// 					'</div>';
-		// 				var dialog = bootbox.dialog({
-		// 				title: 'Select Warehouse Locations',
-		// 				message: "<div>"+inputstr+inputstr2+"</div>",
-		// 				buttons: {
-		// 				    cancel: {
-		// 				        label: "Cancel",
-		// 				        className: 'btn-danger',
-		// 				        callback: function(){
-		// 				            console.log('Custom cancel clicked');
-		// 				        }
-		// 				    },
-		// 				    ok: {
-		// 				        label: "OK",
-		// 				        className: 'btn-info',
-		// 				        callback: function(){
-		// 				            console.log('Custom OK clicked');
-		// 				        }
-		// 				    }
-		// 				}
-		// 				});
+			// 			if (value["loc_column"] != null && (value["loc_column"] != 0)) {
+			// 				var clm = value["loc_column"]
+			// 				var id = value['id']
+			// 				columns.push({text: clm, value: id})
+			// 				colstr = colstr + '<option value ="'+id+'">'+clm+'</option>';
+			// 			}
+			// 		});
+			// 			var inputstr = '<div class="form-group">'+
+			// 				  '<label for="rows">Select list:</label>'+
+			// 				  '<select class="form-control" id="rows">'+
+			// 				    '<option value="">--select row--</option>'+
+			// 				    rowstr+
+			// 				  '</select>'+
+			// 				'</div>';
+			// 				var inputstr2 = '<div class="form-group">'+
+			// 				  '<label for="cols">Select list:</label>'+
+			// 				  '<select class="form-control" id="cols">'+
+			// 				    '<option value="">--select column--</option>'+
+			// 				    colstr+
+			// 				  '</select>'+
+			// 				'</div>';
+			// 			var dialog = bootbox.dialog({
+			// 			title: 'Select Warehouse Locations',
+			// 			message: "<div>"+inputstr+inputstr2+"</div>",
+			// 			buttons: {
+			// 			    cancel: {
+			// 			        label: "Cancel",
+			// 			        className: 'btn-danger',
+			// 			        callback: function(){
+			// 			            console.log('Custom cancel clicked');
+			// 			        }
+			// 			    },
+			// 			    ok: {
+			// 			        label: "OK",
+			// 			        className: 'btn-info',
+			// 			        callback: function(){
+			// 						bootbox.confirm({ 
+			// 						size: "large",
+			// 						message: "Are you sure? <br> "+str, 
+			// 						callback: function(result){ 
+			// 							if(result){
+			// 								saveData(lotsinbulk)
+			// 							}
+			// 						}
+			// 						})
+			// 			        }
+			// 			    }
+			// 			}
+			// 			});
 
 			
       
-		// 	});
+			// });
 			
-		// 		return false;
-		// 		var confirm = false
-		// 		bootbox.confirm({ 
-		// 		size: "large",
-		// 		message: "Are you sure? <br> "+str, 
-		// 		callback: function(result){ 
-		// 			if(result){
-		// 				saveData(lotsinbulk)
-		// 			}
-		// 		 }
-		// 		})
+				var confirm = false
+				bootbox.confirm({ 
+				size: "large",
+				message: "Are you sure? <br> "+str, 
+				callback: function(result){ 
+					if(result){
+						saveData(lotsinbulk)
+					}
+				 }
+				})
   
-		// 		console.log(confirm)
-		// 		if(!confirm){
-		// 			return false;
-		// 		}else{
+				console.log(confirm)
+				if(!confirm){
+					return false;
+				}else{
 
-		// 		}
-		// 		return false
+				}
+				return false
 				
 
-		// 		return
-		// 	}
-		// });
+				return
+			}
+		});
 
 		// propose username by combining first- and lastname
 		// $("#username").focus(function() {
@@ -952,10 +973,14 @@
 				var mark = $('[name="mark"]').val();
 				var grower = $('[name="grower"]').val();
 				var date = $('[name="date"]').val();
+				var row = $('[name="new_row"]').val();
+				var column = $('[name="new_column"]').val();
+				var zone = $('[name="new_zone"]').val();
+				var warehouse = $('[name="warehouse"]').val();
 
 				var material = $('[name="material"]').val();
 				
-				var formdata = { country: country, outt_season: outt_season,outturn: outturn, mark: mark, grower: grower, material: material, date: date }
+				var formdata = { country: country, outt_season: outt_season,outturn: outturn, mark: mark, grower: grower, material: material, date: date , new_row: row, new_column: column, new_zone : zone, warehouse : warehouse }
 
 				var dialog = bootbox.dialog({
 					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },

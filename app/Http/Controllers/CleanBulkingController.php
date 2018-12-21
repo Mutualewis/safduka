@@ -533,108 +533,102 @@ class CleanBulkingController extends Controller {
             $season                = $formdata->outt_season;
             $grower                =$formdata->grower;
             $cid                =$formdata->country;
-            $material                =$formdata->material;
+            $material_id                =$formdata->material;
             $date                = date('Y-m-d', strtotime($formdata->date));
             
+            $new_row = $formdata->new_row;
+            $new_column = $formdata->new_column;
+            $new_zone = $formdata->new_zone;
+            $warehouse_id = $formdata->warehouse;
+
             $reference_no = $ref_no;
             
             $weight_in             = null;
 
             $tobeprocessed = $request->lotsinbulk;
             
-           
-            $cweight = Input::get('cweight');
-                         
+            
+            $weight_in = null;
+            $st_bulk_id = null;
+
+            $tobeprocessed = $request->lotsinbulk;;
+            //$tobewithdrawn = Input::get('tobewithdrawn');
+      
             if ($tobeprocessed != null) {
                 foreach ($tobeprocessed as $key => $value) {
                     $value = (object)$value;
-                    $stockitemdetails = StockMill::where('id', '=', $value->id)->first(); 
+                    $stockitemdetails = StockWarehouse::where('id', '=', $value->id)->first(); 
+                   
+                    $cweight = $value->weight;
                     
-                    $cweight = null;
-                    if($value->weight != null){
-                       
-                        $cweight = $value->weight;
-                        $weight_in += $cweight;
-                                        
-                                           
-                    }
- 
+                                $weight_in += $cweight;
+                                          
+                    
                     $packages    = ceil($cweight / 60);
-                    // $pall_ratio = $cweight/$weight_in;
                     $pall_ratio = 1;
-
                 }
-                
                 $stock_net = $weight_in;
                 $stock_bags    = floor($stock_net / 60);
                 $stock_pockets = $stock_net % 60;     
                 $batch_packages = ceil($stock_net / 60);   
-                
-                $st_bulk_id = StockWarehouse::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages,'mt_id'=>$material, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $stockitemdetails->pty_id, 'st_is_bulk' => 1]);
-    
-                
-                    foreach ($tobeprocessed as $key => $value) {
-                        $value = (object)$value;
-                        StockWarehouse::where('id', '=', $value->id)
-                             ->update(['st_bulk_id' => $st_bulk_id, 'st_bulked_by' => $user]);
-                    }
-                
-            $preious_batch = Batch::where('st_id', $stock_item_id)->get();
 
-            $btid = Batch::insertGetId (
-            ['st_id' => $st_bulk_id, 'btc_weight' => $weight_in, 'btc_tare' => null, 'btc_net_weight' => $weight_in, 'btc_packages' => $packages_batch, 'btc_bags' => $stock_bags, 'btc_pockets' => $stock_pockets, 'ws_id' => null]);
+                $stock_details = StockWarehouse::where('st_outturn', $ref_no)->where('mt_id', $material_id)->first();
+               
+                // exit();
+                if ($stock_details == null) {
+                    $st_bulk_id = StockWarehouse::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $stockitemdetails->csn_id, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages, 'st_outturn' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'mt_id' => $material_id, 'st_is_bulk' => 1, 'st_owner_id' => 5, 'warehouse_id' => $warehouse_id]);
 
-            Activity::log('Inserted Batch information with btid '.$btid. ' batch_kilograms '. $batch_weight. ' bags '. $bags_batch. ' pockets '. $pockets_batch. ' stid '. $stock_id.' btc_tare '.$tare_batch.' btc_net_weight '.$net_weight_batch);
+                } else {
+                    $st_bulk_id = $stock_details->id;
+                    StockWarehouse::where('id', '=', $st_bulk_id)
+                         ->update([ 'cgr_id' => $grower, 'csn_id' => $stockitemdetails->csn_id, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages, 'st_outturn' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'mt_id' => $material_id, 'st_is_bulk' => 1, 'st_owner_id' => 5, 'warehouse_id' => $warehouse_id]);                 
+                }
+        
 
-            $stlocid = StockLocation::insertGetId (
-            ['bt_id' => $btid, 'loc_row_id' => $rw, 'loc_column_id' => $clm, 'btc_zone' => $zone]);
+                $btid = Batch::insertGetId (
+                    ['st_id' => $st_bulk_id, 'btc_weight' => $weight_in, 'btc_tare' => 0, 'btc_net_weight' => $weight_in, 'btc_packages' => $batch_packages, 'btc_bags' => $stock_bags, 'btc_pockets' => $stock_pockets, 'ws_id' => null]);
 
-            Activity::log('Inserted StockLocation information with bt_id '.$btid. ' locrowid '. $rw. ' loccolid '. $clm. ' zone '. $zone);       
+                $stlocid = StockLocation::insertGetId (
+                    ['bt_id' => $btid, 'loc_row_id' => $new_row, 'loc_column_id' => $new_column, 'btc_zone' => $new_zone]);
 
+                foreach ($tobeprocessed as $key => $value) {
+                    $value = (object)$value;
+                    StockWarehouse::where('id', '=', $value->id)
+                         ->update(['st_bulk_id' => $st_bulk_id, 'st_bulked_by' => $user, 'st_ended_by' => $user]);
+                }
                 
             }
-            $prdetails = ProvisionalBulk::where('pbk_instruction_number', $ref_no)->first();
+          
 
+
+            $prdetails = ProvisionalBulk::where('pbk_instruction_number', $ref_no)->first();
             if ($prdetails != null) {
                 $prid = $prdetails->id;
-
                 ProvisionalBulk::where('id', '=', $prid)
                     ->update(['prcss_id' => $prc, 'ctr_id' => $cid, 'pbk_instruction_number' => $ref_no, 'pbk_weight_in' => $weight_in, 'pbk_reference_name' => $ref_no, ]);
-                
                 Activity::log('Updated Provisional Bulk information with prid ' . $prid . ' prc ' . $prc . ' ref_no ' . $ref_no . ' weight_in ' . $weight_in );
             } else {
                 $prid = ProvisionalBulk::insertGetId(['prcss_id' => $prc, 'pbk_instruction_number' => $ref_no, 'pbk_weight_in' => $weight_in,  'ctr_id' => 1, 'pbk_reference_name' => $ref_no, 'pbk_date' => $date, 'prp_id' => 1]);
-               
                 Activity::log('Inserted Provisional Bulk information with prid ' . $prid . ' prc ' . $prc . ' ref_no ' . $ref_no . ' weight_in ' . $weight_in );
             }
-
             if ($tobeprocessed != null) {
+               
                 foreach ($tobeprocessed as $key => $value) {
-                    $value = (object)$value;
-                    $cweight = null;
-                    if($value->weight != null){
-                       
-                        $cweight = $value->weight;
-                        $weight_in += $cweight;
-                                        
-                                           
-                    }
-
+                    $value= (object)$value;
+                    $cweight = $value->weight;
                     
                     $packages    = ceil($cweight / 60);
-                    // $pall_ratio = $cweight/$weight_in;
-                    $pall_ratio = 1;
 
 
                    
-                    $processAllocationDetails = ProvisionalAllocation::where('st_mill_id', $value->id)->where('pbk_id', $prid)->first();
+                    $processAllocationDetails = ProvisionalAllocation::where('st_wr_id', $value->id)->where('pbk_id', $prid)->first();
 
                     if ($cweight != null) {
                         if ($processAllocationDetails != null) {
 
                             $processAllocationID = $processAllocationDetails->id;
                             ProvisionalAllocation::where('id', '=', $processAllocationID)
-                                ->update([ 'pbk_id' => $prid, 'st_wr_id' => $value->id, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages ]);
+                                ->update([ 'pbk_id' => $prid, 'st_wr_id' =>$value->id, 'prall_allocated_weight' => $cweight, 'prall_packages' => $packages ]);
 
                             
                             Activity::log('Updated Provisional Bulk allocation information with id ' . $processAllocationID . 'prall_allocated_weight' . $cweight .'prall_packages' .'prall_processed_weight' .$packages);
@@ -649,6 +643,27 @@ class CleanBulkingController extends Controller {
                     }
                 }
             }
+          
+            $tobewithdrawn = null;
+            if ($tobewithdrawn != null) {
+                foreach ($tobewithdrawn as $key => $value) {
+                    $stockViewALLCount = StockViewALL::where('id', $value)->whereNotNull('process_number')->get();
+                    $countProcess = 0;
+                    foreach ($stockViewALLCount as $keycount => $valuecount) {
+                        $countProcess += 1;
+                    }
+
+                    if ($countProcess < 2) {
+                        StockMill::where('id', '=', $value)
+                              ->update(['st_ended_by' => null, 'pr_id' => null]);
+                    }
+
+                    $processAllocation = ProcessAllocation::where('st_id',$value)->where('pr_id', $prid);    
+                    $processAllocation->delete(); 
+                }
+          
+            }
+           
             
             $queries = DB::getQueryLog();
             if(!empty($errormessages)){
