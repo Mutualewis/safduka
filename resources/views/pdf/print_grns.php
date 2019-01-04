@@ -132,7 +132,7 @@
 						        echo "<tr>";
 
 							        echo "<td>" . $count . "</td>";
-							        echo "<td>" . $value->st_outturn . "</td>";
+							        echo "<td>" . strtoupper($value->st_outturn) . "</td>";
 							        echo "<td>" . $value->mt_name. "</td>";
 							        echo "<td>" . $value->st_mark. "</td>";
 							        echo "<td>" . $value->st_packages . "</td>";
