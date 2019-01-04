@@ -13,18 +13,18 @@ class CreateWarrantingTableMigration extends Migration
     public function up()
     {
       DB::statement("
-
             ALTER IGNORE TABLE `ngea_db`.`warrants_war` 
             CHANGE COLUMN `id` `id` INT(11) NOT NULL ,
             ADD COLUMN `st_id` INT(11) NULL AFTER `id`;
-
+            ALTER TABLE `ngea_db`.`warrants_war` 
+            ADD COLUMN `wr_printed` INT(11) NULL AFTER `st_id`;
 
             INSERT INTO `ngea_db`.`menu_mn` (`id`, `mn_name`, `mn_description`, `mn_url`, `mn_level`, `mn_parent`, `mn_order`) VALUES ('250', 'Warrant', 'Generater warrants for coffee', 'warrant', '2', '13', '10');
             INSERT INTO `ngea_db`.`groupmenu_gpm` (`id`, `dprt_id`, `mn_id`, `rl_ids`) VALUES ('850', '4', '250', '[\"1\"]');
             INSERT INTO `ngea_db`.`groupmenu_gpm` (`id`, `dprt_id`, `mn_id`, `rl_ids`) VALUES ('851', '10', '250', '[\"1\",\"4\"]');
 
         CREATE VIEW `warrantable_coffee` AS
-         SELECT 
+            SELECT 
                 `btc`.`id` AS `id`,
                 `sloc`.`id` AS `slocid`,
                 `csn`.`csn_season` AS `csn_season`,
@@ -76,7 +76,7 @@ class CreateWarrantingTableMigration extends Migration
                 `mt`.`mt_name` AS `mt_name`,
                 `st`.`st_owner_id` AS `st_owner_id`
             FROM
-                (((((((((((((((((((((((`batch_btc` `btc`
+                ((((((((((((((((((((((((`batch_btc` `btc`
                 LEFT JOIN `highest_batch` `hb` ON ((`hb`.`id` = `btc`.`id`)))
                 LEFT JOIN `stock_warehouse_st` `st` ON ((`st`.`id` = `btc`.`st_id`)))
                 LEFT JOIN `coffee_seasons_csn` `csn` ON ((`csn`.`id` = `st`.`csn_id`)))
@@ -100,15 +100,15 @@ class CreateWarrantingTableMigration extends Migration
                 LEFT JOIN `dispatch_dp` `dp` ON ((`dp`.`id` = `st`.`dp_id`)))
                 LEFT JOIN `coffee_growers_cgr` `cgr` ON ((`cgr`.`id` = `st`.`cgr_id`)))
                 LEFT JOIN `process_results_prts` `prts` ON ((`prts`.`id` = `st`.`prts_id`)))
-                left join warrants_war war on war.st_id = st.id
-
+                LEFT JOIN `warrants_war` `war` ON ((`war`.`st_id` = `st`.`id`)))
             WHERE
                 (ISNULL(`btc`.`btc_ended_by`)
                     AND (`st`.`id` IS NOT NULL)
-                    AND ISNULL(`st`.`dp_id`))
-                    and war.id is null
+                    AND ISNULL(`st`.`dp_id`)
+                    AND ISNULL(`war`.`wr_printed`))
             GROUP BY `st`.`id`
             ORDER BY `st`.`id`;
+
         ");
     }
 

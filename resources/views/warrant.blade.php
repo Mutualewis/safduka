@@ -127,11 +127,7 @@
 								</th>
 								<th>
 									Location
-								</th>
-
-								<th style="display: none;">
-									Serial
-								</th>								
+								</th>							
 							</tfoot>
 
 							<tbody>
