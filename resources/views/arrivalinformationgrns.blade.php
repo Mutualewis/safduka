@@ -1052,18 +1052,6 @@
 <script>
 	var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
-
-	// $( "#confirmgrnsbtn" ).click(function(event){
-	// 	// event.preventDefault();
-	// 	// $("#ratesModalCenter").modal();	
-	// 	event.preventDefault();
-	// 	// postConfirmMovement()
-	// })
-	// $( "#confirmgrnsModalbtn" ).click(function(event){
-	// 	event.preventDefault();
-	// 	// postConfirmMovement()	
-	// })
-
 	function postConfirmMovement(){
 		var t=null;
 		var cid = <?php echo json_encode($cidmain); ?>;
