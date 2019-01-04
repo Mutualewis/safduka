@@ -157,6 +157,8 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/transferownership', 'TransferOwnershipController@transferOwnershipForm'); 
 		Route::post('/transferownership', 'TransferOwnershipController@transferOwnership');
 
+		Route::get('/warrant', 'WarrantController@warrantForm'); 
+		Route::post('/warrant', 'WarrantController@warrant');
 
 
 		Route::get('/movementdispatch', 'DispatchController@movementDispatchForm'); 

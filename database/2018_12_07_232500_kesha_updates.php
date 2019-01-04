@@ -13,7 +13,7 @@ class KeshaUpdates extends Migration
     public function up()
     {
         DB::statement("
-            INSERT INTO `ngea_db`.`menu_mn` (`id`, `mn_name`, `mn_description`, `mn_url`, `mn_level`, `mn_parent`, `mn_order`) VALUES ('251', 'Transfer Ownership', 'Transfer ownership of coffee.', 'transferownership', '2', '13', '8') ON DUPLICATE KEY UPDATE 
+            INSERT INTO `ngea_db`.`menu_mn` (`id`, `mn_name`, `mn_description`, `mn_url`, `mn_level`, `mn_parent`, `mn_order`) VALUES ('162', 'Transfer Ownership', 'Transfer ownership of coffee.', 'transferownership', '2', '13', '8') ON DUPLICATE KEY UPDATE 
             `mn_name` = 'Transfer Ownership',
             `mn_description` = 'Transfer ownership of coffee.',
             `mn_url` = 'transferownership',
@@ -21,8 +21,8 @@ class KeshaUpdates extends Migration
             `mn_parent` = '13',
             `mn_order` = '8';
             UPDATE `ngea_db`.`menu_mn` SET `mn_order`='9' WHERE `id`='158';
-            INSERT IGNORE INTO `ngea_db`.`groupmenu_gpm` (`id`, `dprt_id`, `mn_id`, `rl_ids`) VALUES ('776', '4', '251', '[\"1\"]') ;
-            INSERT IGNORE INTO `ngea_db`.`groupmenu_gpm` (`id`, `dprt_id`, `mn_id`, `rl_ids`) VALUES ('778', '10', '251', '[\"1\",\"4\"]') ;
+            INSERT IGNORE INTO `ngea_db`.`groupmenu_gpm` (`id`, `dprt_id`, `mn_id`, `rl_ids`) VALUES ('776', '4', '162', '[\"1\"]') ;
+            INSERT IGNORE INTO `ngea_db`.`groupmenu_gpm` (`id`, `dprt_id`, `mn_id`, `rl_ids`) VALUES ('778', '10', '162', '[\"1\",\"4\"]') ;
 
             CREATE 
 
