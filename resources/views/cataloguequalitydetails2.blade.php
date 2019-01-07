@@ -1492,7 +1492,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
         $.get(url, function(data, status){
 			
             var obj = jQuery.parseJSON(data);
-			console.log(obj)
+			
 		     $('#outt_number_display_cup').html(obj.st_outturn);
 
 			//document.getElementById('coffee_grade').value = obj.pty_id;
@@ -1579,7 +1579,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 					var str1_rw = "ccls";
 
-					var str2_rw = obj.cup_class;
+					var str2_rw = obj.overall_class;
 
 					var res_rw = str1_rw.concat(str2_rw);
 
@@ -1589,7 +1589,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					}
 
 
-					if (obj.overall_comments != null) {
+					if (obj.qltyd_comments != null) {
 
 						document.getElementById('comments_cp').value = obj.qltyd_comments; 
 
@@ -2583,6 +2583,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			data: data,
 			dataType: 'json',
 			}).done(function(response) {
+				console.log(response)
 				if(response.updated) {
 					dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
 					closeBootBox();
@@ -2592,10 +2593,12 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					closeBootBox();
 					displayCup(event, null, st_id, direction, null, null, null);
 				}else if(response.error) {
+					console.error(response.error)
 					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
 					closeBootBox();
 				}
 			}).error(function(error) {
+				console.log(error.responseText)
 				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
 				closeBootBox();
 		});

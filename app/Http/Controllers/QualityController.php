@@ -516,7 +516,7 @@ class QualityController extends Controller {
 				 	$qid = $qdetails->id;
 
 					quality_details::where('id', '=', $qid)
-						->update(['rw_quality'=> $raw_current, 'qltyd_comments'=> $comments]);
+						->update(['rw_quality'=> $raw_current, 'overall_comments'=> $comments]);
 					
 					Activity::log('Updated quality for st_id'.$st_id. ' with rw_quality '. $raw_current.' comments '.$comments);
 
@@ -524,7 +524,7 @@ class QualityController extends Controller {
 				} else {
 
 					quality_details::insert(
-					    ['st_id' => $st_id, 'rw_quality'=> $raw_current, 'qltyd_comments'=> $comments]
+					    ['st_id' => $st_id, 'rw_quality'=> $raw_current, 'overall_comments'=> $comments]
 					);
 
 					Activity::log('Added quality for st_id'.$st_id. ' with  rw_quality '. $raw_current. ' comments '.$comments);
@@ -837,10 +837,11 @@ class QualityController extends Controller {
 
         try{
 				$data = (object)$request->datacup;
-				$flavour = $data->flavour;
-				$acidity = $data->acidity;
-				$body = $data->body;
-				$cup = $data->cup;
+				
+				$flavour = isset($data->flavour) ? $data->flavour : null;
+				$acidity = isset($data->acidity) ? $data->acidity : null;
+				$body = isset($data->body) ? $data->body : null;
+				$cup = isset($data->cup) ? $data->cup : null;
 				$cupclass = $data->cupclass;
 				$comments = $data->comments_cp;
 				$st_id = $request->st_id;
@@ -875,15 +876,15 @@ class QualityController extends Controller {
 				 	$qid = $qdetails->id;
 
 					quality_details::where('id', '=', $qid)
-						->update(['cup_quality'=> $cup_current, 'cup_class'=> $cupclass_current, 'overall_comments'=> $comments]);
+						->update(['cup_quality'=> $cup_current, 'overall_class'=> $cupclass_current, 'qltyd_comments'=> $comments]);
 					
-					Activity::log('Updated quality for st_id'.$st_id. ' with rw_quality '. $cup_current.' comments '.$comments. 'cup_class' . $cupclass_current);
+					Activity::log('Updated quality for st_id'.$st_id. ' with rw_quality '. $cup_current.' comments '.$comments. 'overall_class' . $cupclass_current);
 
 					
 				} else {
 
 					quality_details::insert(
-					    ['st_mill_id' => $st_id, 'cup_quality'=> $cup_current, 'overall_comments'=> $comments, 'cup_class'=> $cupclass_current]
+					    ['st_mill_id' => $st_id, 'cup_quality'=> $cup_current, 'qltyd_comments'=> $comments, 'cup_class'=> $cupclass_current]
 					);
 
 					Activity::log('Added quality for st_id'.$st_id. ' with  rw_quality '. $cup_current. ' comments '.$comments. 'cup_class' . $cupclass_current);
@@ -931,7 +932,12 @@ class QualityController extends Controller {
 							['st_mill_id' => $st_id, 'qp_id' =>  $value]);  
 						Activity::log('Added cup body Quality For Coffee ID '.$st_id. ' with quality ID '.$value); 			     	 	
 			     	 }
-			     }
+				 }
+				  return response()->json([
+                'exists' => false,
+                'inserted' => true,
+                'error' => null
+            ]);	
 			     if ($flavour != NULL) {
 			     	 foreach ($flavour as $key => $value) {
 						cupcomments::insert(
@@ -947,7 +953,7 @@ class QualityController extends Controller {
             return response()->json([
                 'exists' => false,
                 'inserted' => true,
-                'error' => 'null'
+                'error' => null
             ]);			
 
         } catch (\PDOException $e) {

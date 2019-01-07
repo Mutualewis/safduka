@@ -1239,9 +1239,9 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					}
 
 
-					if (obj.qltyd_comments != null) {
+					if (obj.overall_comments != null) {
 
-						document.getElementById('comments').value = obj.qltyd_comments; 
+						document.getElementById('comments').value = obj.overall_comments; 
 
 					} else {
 
