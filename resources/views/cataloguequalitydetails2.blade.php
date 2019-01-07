@@ -1000,7 +1000,7 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 				</div>
 
 				<div class="form-group col-md-12">
-					<label>Comments</label>
+					<label>Cup Remarks</label>
 					<textarea class="form-control" rows="3" id="comments_cp" name="comments_cp" value = "{{ old('comments_cp') }}" style="text-transform:uppercase; font-size: 15px; font-weight: bold;"><?php echo htmlspecialchars($comments); ?></textarea>
 				</div>
 			</div>	 
@@ -1439,6 +1439,10 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		clearChildren(document.getElementById("screen_div"));
 
+		if(direction == 'Search'){
+			closeBootBox();
+		}
+
 		var url = fetch_url(st_id, direction , outt_number, coffee_grade);
         $.get(url, function(data, status){
 
@@ -1585,7 +1589,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					}
 
 
-					if (obj.qltyd_comments != null) {
+					if (obj.overall_comments != null) {
 
 						document.getElementById('comments_cp').value = obj.qltyd_comments; 
 
@@ -2208,36 +2212,43 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		var direction = 'Search';
 
 		var season = null;
-
-		season = document.getElementById("crop_season").value;
-		
-		if (season == "") {
-
-			season = 0;
-
-		}
-
-
-		var outt_number = null;
-
-		
-		outt_number=$('#outt_number_screen').val()
-		
-		if (outt_number == "") {
-
-			outt_number = 0;
-
-		}
-		
-		var coffee_grade = null;
-
-		coffee_grade =$("#coffee_grade_screen").val();
-		
-		if (coffee_grade == "") {
-
-			coffee_grade = 0;
-
-		}
+			
+			season = document.getElementById("crop_season").value;
+			
+			if (season == ""|| season == 'Sale Season') {
+				bootbox.alert("Season is required")
+				return false
+				season = 0;
+	
+			}
+	
+	
+	
+			var outt_number = null;
+	
+			
+			outt_number=$('#outt_number_screen').val()
+			
+			
+			if (outt_number == "") {
+				bootbox.alert("Outturn number is required")
+				return false
+				outt_number = 0;
+	
+			}
+			
+			var coffee_grade = null;
+	
+			coffee_grade =$("#coffee_grade_screen").val();
+			
+			if (coffee_grade == "") {
+				bootbox.alert("Partchment type is required")
+				return false
+				coffee_grade = 0;
+	
+			}
+			
+			var dialog = bootbox.dialog({ message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Searching...</div>' })
 		
 		displayScreen(event, null, null, direction, outt_number, coffee_grade, season);
 
@@ -2453,217 +2464,26 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		$('#button_next_cup').on('click', function(){
 
  			var st_id = document.getElementById("st_id_cup").value;
+			 if(st_id == ""){
+				bootbox.alert('No outturn found selected, Search the outturn again!');
+				return false
+			}
 
-		var cup = null;
-		var cupclass = null;
+			var direction = 'Next';
 
-		var flavour =[]
-		var acidity =[]
-		var body =[]
-		var taint =[]
-
-
-		var direction = 'Next';
-
-		acidity = $('input[name=acidity]:checked').map(function(){
-
-			return this.value;
-
-		}).get();
-		body = $('input[name=body]:checked').map(function(){
-
-		return this.value;
-
-		}).get();
-
-		flavour = $('input[name=flavour]:checked').map(function(){
-
-		return this.value;
-
-		}).get();
-
-		cup = $('input[name=cup]:checked').map(function(){
-
-		return this.value;
-
-		}).get();
-
-		cupclass = $('input[name=cupclass]:checked').map(function(){
-
-		return this.value;
-
-		}).get();
-
-
-		var dont = document.getElementById("dnt_cp");
-
-		if (dont.checked) {
-
-			var dnt_cp = document.getElementById("dnt_cp").value;
-
-		} else {
-
-			var dnt_cp = null;
-
-		}
-
-
-
-
-		if (document.getElementById("comments_cp").value != "") {
-
-			var comments_cp = document.getElementById("comments_cp").value;
-
-		} else {
-
-			var comments_cp = null;
-
-		}
-
-		var url = '{{ route('cataloguequalitydetails.saveCup') }}';
-
-		var dialog = bootbox.dialog({
-			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-		}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-				
-
-		var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');	
-
-		datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp, cupclass: cupclass}
-
-		let data = {_token: CSRF_TOKEN, datacup:datacup, st_id : st_id}
-		console.log(JSON.stringify(data))
-		$.ajax({
-			method: "POST",
-			url: url,
-			data: data,
-			dataType: 'json',
-			}).done(function(response) {
-				if(response.updated) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-					closeBootBox();
-					displayCup(event, null, st_id, direction, null, null, null);
-				} else if(response.inserted) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
-					closeBootBox();
-					displayCup(event, null, st_id, direction, null, null, null);
-				}else if(response.error) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
-					closeBootBox();
-				}
-			}).error(function(error) {
-				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
-				closeBootBox();
-		});
-
+			saveCup(st_id, direction)
 
 		});
 
 		$('#button_previous_cup').on('click', function(){
 
  		var st_id = document.getElementById("st_id_cup").value;
-
-		var cup = null;
-		var cupclass = null;
-
-		var flavour =[]
-		var acidity =[]
-		var body =[]
-		var taint =[]
-
-
-		var direction = 'Previous';
-
-		acidity = $('input[name=acidity]:checked').map(function(){
-
-			return this.value;
-
-		}).get();
-		body = $('input[name=body]:checked').map(function(){
-
-		return this.value;
-
-		}).get();
-
-		flavour = $('input[name=flavour]:checked').map(function(){
-
-		return this.value;
-
-		}).get();
-
-		cup = $('input[name=cup]:checked').map(function(){
-
-		return this.value;
-
-		}).get();
-
-		cupclass = $('input[name=cupclass]:checked').map(function(){
-
-		return this.value;
-
-		}).get();
-
-
-		var dont = document.getElementById("dnt_cp");
-
-		if (dont.checked) {
-
-			var dnt_cp = document.getElementById("dnt_cp").value;
-
-		} else {
-
-			var dnt_cp = null;
-
-		}
-
-
-
-
-		if (document.getElementById("comments_cp").value != "") {
-
-			var comments_cp = document.getElementById("comments_cp").value;
-
-		} else {
-
-			var comments_cp = null;
-
-		}
-
-		var url = '{{ route('cataloguequalitydetails.saveCup') }}';
-
-		var dialog = bootbox.dialog({
-			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-		}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-				
-
-		var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');	
-
-		datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp, cupclass: cupclass}
-
-		let data = {_token: CSRF_TOKEN, datacup:datacup, st_id : st_id}
-		console.log(JSON.stringify(data))
-		$.ajax({
-			method: "POST",
-			url: url,
-			data: data,
-			dataType: 'json',
-			}).done(function(response) {
-				if(response.updated) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-					closeBootBox();
-					displayCup(event, null, st_id, direction, null, null, null);
-				} else if(response.inserted) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
-					closeBootBox();
-					displayCup(event, null, st_id, direction, null, null, null);
-				}else if(response.error) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
-					closeBootBox();
-				}
-			}).error(function(error) {
-				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
-				closeBootBox();
-		});
+		 if(st_id == ""){
+				bootbox.alert('No outturn found selected, Search the outturn again!');
+				return false
+			}
+			var direction = 'Previous';
+		 saveCup(st_id, direction)
 
 
 		});
@@ -2671,111 +2491,117 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		$('#button_save_cup').on('click', function(){
 
  			var st_id = document.getElementById("st_id_cup").value;
-
-		    var cup = null;
-			var cupclass = null;
-
-			var flavour =[]
-			var acidity =[]
-			var body =[]
-			var taint =[]
-			
-
-		    var direction = 'Next';
-
-		    acidity = $('input[name=acidity]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-			body = $('input[name=body]:checked').map(function(){
-
-			return this.value;
-
-			}).get();
-
-			flavour = $('input[name=flavour]:checked').map(function(){
-
-			return this.value;
-
-			}).get();
-
-			cup = $('input[name=cup]:checked').map(function(){
-
-			return this.value;
-
-			}).get();
-
-			cupclass = $('input[name=cupclass]:checked').map(function(){
-
-			return this.value;
-
-			}).get();
-
-
-			var dont = document.getElementById("dnt_cp");
-
-			if (dont.checked) {
-
-				var dnt_cp = document.getElementById("dnt_cp").value;
-
-			} else {
-
-				var dnt_cp = null;
-
+			 if(st_id == ""){
+				bootbox.alert('No outturn found selected, Search the outturn again!');
+				return false
 			}
-
-
-			
-
-			if (document.getElementById("comments_cp").value != "") {
-
-				var comments_cp = document.getElementById("comments_cp").value;
-
-			} else {
-
-				var comments_cp = null;
-
-			}
-			
-			var url = '{{ route('cataloguequalitydetails.saveCup') }}';
-
-			var dialog = bootbox.dialog({
-				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-					
-    
-			var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');	
-
-			datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp, cupclass: cupclass}
-
-			let data = {_token: CSRF_TOKEN, datacup:datacup, st_id : st_id}
-			console.log(JSON.stringify(data))
-			$.ajax({
-				method: "POST",
-				url: url,
-				data: data,
-				dataType: 'json',
-				}).done(function(response) {
-					if(response.updated) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-						closeBootBox();
-						displayCup(event, null, st_id, direction, null, null, null);
-					} else if(response.inserted) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
-						closeBootBox();
-						displayCup(event, null, st_id, direction, null, null, null);
-					}else if(response.error) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
-						closeBootBox();
-					}
-				}).error(function(error) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
-					closeBootBox();
-			});
-
+			var direction = 'Next';
+			 saveCup(st_id, direction)
 		});
 		
+		function saveCup(st_id, direction){
+			var cup = null;
+		var cupclass = null;
+
+		var flavour =[]
+		var acidity =[]
+		var body =[]
+		var taint =[]
+
+
+		acidity = $('input[name=acidity]:checked').map(function(){
+
+			return this.value;
+
+		}).get();
+		body = $('input[name=body]:checked').map(function(){
+
+		return this.value;
+
+		}).get();
+
+		flavour = $('input[name=flavour]:checked').map(function(){
+
+		return this.value;
+
+		}).get();
+
+		cup = $('input[name=cup]:checked').map(function(){
+
+		return this.value;
+
+		}).get();
+
+		cupclass = $('input[name=cupclass]:checked').map(function(){
+
+		return this.value;
+
+		}).get();
+
+
+		var dont = document.getElementById("dnt_cp");
+
+		if (dont.checked) {
+
+			var dnt_cp = document.getElementById("dnt_cp").value;
+
+		} else {
+
+			var dnt_cp = null;
+
+		}
+
+
+
+
+		if (document.getElementById("comments_cp").value != "") {
+
+			var comments_cp = document.getElementById("comments_cp").value;
+
+		} else {
+
+			var comments_cp = null;
+
+		}
+
+		var url = '{{ route('cataloguequalitydetails.saveCup') }}';
+
+		var dialog = bootbox.dialog({
+			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+		}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+				
+
+		var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');	
+
+		datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp, cupclass: cupclass}
+
+		let data = {_token: CSRF_TOKEN, datacup:datacup, st_id : st_id}
+		console.log(JSON.stringify(data))
+		$.ajax({
+			method: "POST",
+			url: url,
+			data: data,
+			dataType: 'json',
+			}).done(function(response) {
+				if(response.updated) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+					closeBootBox();
+					displayCup(event, null, st_id, direction, null, null, null);
+				} else if(response.inserted) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
+					closeBootBox();
+					displayCup(event, null, st_id, direction, null, null, null);
+				}else if(response.error) {
+					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
+					closeBootBox();
+				}
+			}).error(function(error) {
+				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+				closeBootBox();
+		});
+
+		}
+
 		$('#button_save_parchment').on('click', function(e){
 			e.prevent
 			var st_id = document.getElementById("st_id_partchment").value;
@@ -2996,11 +2822,12 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			season = document.getElementById("crop_season").value;
 
-			if (season == "") {
+			if (season == ""|| season == 'Sale Season') {
+			bootbox.alert("Season is required")
+			return false
+			season = 0;
 
-				season = 0;
-
-			}
+		}
 
 
 			var outt_number = null;
@@ -3009,20 +2836,22 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			outt_number=$('#outt_number_cup').val()
 
 			if (outt_number == "") {
+			bootbox.alert("Outturn number is required")
+			return false
+			outt_number = 0;
 
-				outt_number = 0;
-
-			}
+		}
 
 			var coffee_grade = null;
 
 			coffee_grade =$("#coffee_grade_cup").val();
 
 			if (coffee_grade == "") {
+			bootbox.alert("Partchment type is required")
+			return false
+			coffee_grade = 0;
 
-				coffee_grade = 0;
-
-			}
+		}
 
 			displayCup(event, null, null, direction, outt_number, coffee_grade, season);
 
@@ -3050,7 +2879,3 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 	
 </style>
 @endpush
-
-<!-- development version, includes helpful console warnings -->
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>

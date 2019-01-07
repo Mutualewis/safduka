@@ -348,7 +348,14 @@
 						                </table>
 						            </div>
 						        </div>
-
+								<div class="form-group col-md-12">
+										<label>Moisture Content</label>
+										<input class="form-control" rows="3" id="mc" name="mc" value = "{{ old('mc') }}" style="text-transform:uppercase; font-size: 15px; font-weight: bold;"/>
+						            </div>
+									<div class="form-group col-md-12">
+										<label>Milling Loss</label>
+										<input class="form-control" rows="3" id="ml" name="ml" value = "{{ old('ml') }}" style="text-transform:uppercase; font-size: 15px; font-weight: bold;"/>
+						            </div>
 
 				            </div>
 
@@ -1126,6 +1133,10 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		event.preventDefault();
 		clearChildren(document.getElementById("green"));
 
+		if(direction == 'Search'){
+		closeBootBox();
+		}
+
 		var url = fetch_url(st_id, direction , outt_number, coffee_grade);
 
         $.get(url, function(data, status){
@@ -1237,6 +1248,22 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 						document.getElementById('comments').value = null;
 					}
 
+					if (obj.mc != null) {
+
+document.getElementById('mc').value = obj.mc; 
+
+} else {
+
+document.getElementById('mc').value = null;
+}if (obj.ml != null) {
+
+document.getElementById('ml').value = obj.ml; 
+
+} else {
+
+document.getElementById('ml').value = null;
+}
+
 		
 				});	
 
@@ -1256,7 +1283,10 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 	
 	function displayScreen(event, value, st_id, direction, outt_number, coffee_grade, season){
 
-		clearChildren(document.getElementById("screen_div"));
+			clearChildren(document.getElementById("screen_div"));
+			if(direction == 'Search'){
+			closeBootBox();
+		}
 
 		var url = fetch_url(st_id, direction , outt_number, coffee_grade);
         $.get(url, function(data, status){
@@ -1428,8 +1458,11 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 	
 	function displayParchment (event, value, st_id, direction , outt_number, coffee_grade, season){
 	
-		event.preventDefault();
-	
+	event.preventDefault();
+
+	if(direction == 'Search'){
+		closeBootBox();
+	}
 	clearChildren(document.getElementById("parchment"));
 	
 	var url = fetch_url(st_id, direction , outt_number, coffee_grade); 
@@ -1459,8 +1492,8 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		var quality_params = null;
 
-		quality_params = obj.qualityParameterID;
-
+		quality_params = obj.qualityParameterPtyID;
+		
 		if (quality_params != null) {
 
 			$.each(quality_params.split(","), function(i,e){
@@ -1468,10 +1501,10 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 				var str1_rw = "pq";
 
-				var str2_rw = obj.pct_id;
+				var str2_rw = e;
 
 				var res_rw = str1_rw.concat(str2_rw);
-
+				
 				if (document.getElementById(res_rw) != null) {
 
 					document.getElementById(res_rw).checked = true;
@@ -1503,146 +1536,25 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 	$(document).ready(function() {	
 
+		$('body').on('hidden.bs.modal', function () {
+			if($('.modal.in').length > 0)
+			{
+				$('body').addClass('modal-open');
+			}
+		});
+
 		$('#button_next_green').on('click', function(){
 
 			var st_id = document.getElementById("st_id_green").value;
 
 			var direction = 'Next';
-
-			var dont = document.getElementById("dnt");
-
-			if (dont.checked) {
-
-				var dnt = document.getElementById("dnt").value;
-
-			} else {
-
-				var dnt = null;
-
+			if(st_id == ""){
+				bootbox.alert('No outturn found selected, Search the outturn again!');
+				return false
 			}
+			saveGreen(st_id ,direction)
 
-
-			var greensize = {};
-
-			greensize = $('input[name=greensizes]:checked').map(function(){
-
-				return this.value;
-
-			}).get();
-
-			greensize = JSON.stringify(greensize);
-
-
-			var greencolor = {};
-
-			greencolor = $('input[name=greencolor]:checked').map(function(){
-
-				return this.value;
-
-			}).get();
-
-			greencolor = JSON.stringify(greencolor);
-
-
-			var greendefects = {};
-
-			greendefects = $('input[name=greendefects]:checked').map(function(){
-
-				return this.value;
-
-			}).get();
-
-			greendefects = JSON.stringify(greendefects);
-
-
-			var process_type = {};
-
-			process_type = $('input[name=process_type]:checked').map(function(){
-
-				return this.value;
-
-			}).get();
-
-			process_type = JSON.stringify(process_type);
-
-
-			// if (document.getElementById("process") != null) {
-
-			// 	var process_loss = document.getElementById("process").value;	
-
-			// } else {
-
-			// 	var process_loss = null;
-
-			// }
-
-			var raw = {};
-
-			raw = $('input[name=raw]:checked').map(function(){
-
-				return this.value;
-
-			}).get();
-
-			raw = JSON.stringify(raw);
-
-			if (document.getElementById("comments").value != "") {
-
-				var comments = document.getElementById("comments").value;
-
-			} else {
-
-				var comments = null;
-
-			}
-
-
-
-			var url = '{{ route('cataloguequalitydetails.saveGreen',['st_id'=>":id",'dnt'=>":dnt",'greensize'=>":greensize",'greencolor'=>":greencolor",'greendefects'=>":greendefects",'raw'=>":raw", 'comments'=>":comments"]) }}';
-
-			url = url.replace(':id', st_id);
-
-			url = url.replace(':dnt', dnt);
-
-			url = url.replace(':greensize', greensize);
-
-			url = url.replace(':greencolor', greencolor);
-
-			url = url.replace(':greendefects', greendefects);
-
-			// url = url.replace(':process_type', process_type);
-
-			// url = url.replace(':process_loss', process_loss);
-
-			url = url.replace(':raw', raw);
-
-			url = url.replace(':comments', comments);
-
-			var dialog = bootbox.dialog({
-				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-						
-
-			$.ajax({
-				url: url,
-				dataType: 'json',
-				}).done(function(response) {
-					if(response.updated) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-						closeBootBox();
-						displayGreen(event, null, st_id, direction, null, null, null);
-					} else if(response.inserted) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
-						closeBootBox();
-						displayGreen(event, null, st_id, direction, null, null, null);
-					}else if(response.error) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
-						closeBootBox();
-					}
-				}).error(function(error) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
-					closeBootBox();
-			});
+			
 		});
 
 		$('#button_previous_green').on('click', function(){
@@ -1650,7 +1562,29 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 			var st_id = document.getElementById("st_id_green").value;
 
 			var direction = 'Previous';
+			if(st_id == ""){
+				bootbox.alert('No outturn found selected, Search the outturn again!');
+				return false
+			}
+			saveGreen(st_id ,direction)
+		});
 
+		$('#button_save_green').on('click', function(){
+			
+			var st_id = document.getElementById("st_id_green").value;
+
+			if(st_id == ""){
+				bootbox.alert('No outturn found selected, Search the outturn again!');
+				return false
+			}
+
+			var direction = 'Next';
+			saveGreen(st_id ,direction)
+			
+
+		});
+
+		function saveGreen(st_id , direction){
 			var dont = document.getElementById("dnt");
 
 			if (dont.checked) {
@@ -1672,7 +1606,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			}).get();
 
-			greensize = JSON.stringify(greensize);
+			
 
 
 			var greencolor = {};
@@ -1683,7 +1617,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			}).get();
 
-			greencolor = JSON.stringify(greencolor);
+			
 
 
 			var greendefects = {};
@@ -1694,7 +1628,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			}).get();
 
-			greendefects = JSON.stringify(greendefects);
+			
 
 
 			var process_type = {};
@@ -1705,7 +1639,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			}).get();
 
-			process_type = JSON.stringify(process_type);
+			
 
 
 			// if (document.getElementById("process") != null) {
@@ -1726,7 +1660,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 			}).get();
 
-			raw = JSON.stringify(raw);
+			
 
 			if (document.getElementById("comments").value != "") {
 
@@ -1737,36 +1671,41 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 				var comments = null;
 
 			}
+			if (document.getElementById("mc").value != "") {
+
+			var mc = document.getElementById("mc").value;
+
+			} else {
+
+			var mc = null;
+
+			}
+			if (document.getElementById("ml").value != "") {
+
+			var ml = document.getElementById("ml").value;
+
+			} else {
+
+			var ml = null;
+
+			}
 
 
-
-			var url = '{{ route('cataloguequalitydetails.saveGreen',['st_id'=>":id",'dnt'=>":dnt",'greensize'=>":greensize",'greencolor'=>":greencolor",'greendefects'=>":greendefects",'raw'=>":raw", 'comments'=>":comments"]) }}';
-
-			url = url.replace(':id', st_id);
-
-			url = url.replace(':dnt', dnt);
-
-			url = url.replace(':greensize', greensize);
-
-			url = url.replace(':greencolor', greencolor);
-
-			url = url.replace(':greendefects', greendefects);
-
-			// url = url.replace(':process_type', process_type);
-
-			// url = url.replace(':process_loss', process_loss);
-
-			url = url.replace(':raw', raw);
-
-			url = url.replace(':comments', comments);
+			var url = '{{ route('cataloguequalitydetails.saveGreen') }}';
 
 			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
 						
+			var greendata = { st_id : st_id, dnt: dnt, greensize : greensize, greencolor : greencolor, greendefects : greendefects , raw : raw, comments : comments, mc : mc, ml : ml}
 
+			var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');		
+			let data = {_token: CSRF_TOKEN, greendata : greendata, st_id : st_id}
+			console.log(JSON.stringify(data))
 			$.ajax({
+				method: "POST",
 				url: url,
+				data: data,
 				dataType: 'json',
 				}).done(function(response) {
 					if(response.updated) {
@@ -1785,162 +1724,19 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
 					closeBootBox();
 			});
-		});
-
-		$('#button_save_green').on('click', function(){
-			
-			var st_id = document.getElementById("st_id_green").value;
-
-			var direction = 'Next';
-
-			var dont = document.getElementById("dnt");
-
-			if (dont.checked) {
-
-				var dnt = document.getElementById("dnt").value;
-
-			} else {
-
-				var dnt = null;
-
-			}
-
-
-		    var greensize = {};
-
-		    greensize = $('input[name=greensizes]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-
-		    greensize = JSON.stringify(greensize);
-
-			
-		    var greencolor = {};
-
-		    greencolor = $('input[name=greencolor]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-
-		    greencolor = JSON.stringify(greencolor);
-
-
-		    var greendefects = {};
-
-		    greendefects = $('input[name=greendefects]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-
-		    greendefects = JSON.stringify(greendefects);
-
-
-		    var process_type = {};
-
-		    process_type = $('input[name=process_type]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-
-		    process_type = JSON.stringify(process_type);
-
-
-			// if (document.getElementById("process") != null) {
-
-			// 	var process_loss = document.getElementById("process").value;	
-
-			// } else {
-
-			// 	var process_loss = null;
-
-			// }
-
-		    var raw = {};
-
-		    raw = $('input[name=raw]:checked').map(function(){
-
-		        return this.value;
-
-		    }).get();
-
-		    raw = JSON.stringify(raw);
-
-			if (document.getElementById("comments").value != "") {
-
-				var comments = document.getElementById("comments").value;
-
-			} else {
-
-				var comments = null;
-
-			}
-			
-			
-
-			var url = '{{ route('cataloguequalitydetails.saveGreen',['st_id'=>":id",'dnt'=>":dnt",'greensize'=>":greensize",'greencolor'=>":greencolor",'greendefects'=>":greendefects",'raw'=>":raw", 'comments'=>":comments"]) }}';
-
-			url = url.replace(':id', st_id);
-
-			url = url.replace(':dnt', dnt);
-
-			url = url.replace(':greensize', greensize);
-
-			url = url.replace(':greencolor', greencolor);
-
-			url = url.replace(':greendefects', greendefects);
-
-			// url = url.replace(':process_type', process_type);
-
-			// url = url.replace(':process_loss', process_loss);
-
-			url = url.replace(':raw', raw);
-
-			url = url.replace(':comments', comments);
-
-			var dialog = bootbox.dialog({
-				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-						
-    
-			$.ajax({
-				url: url,
-				dataType: 'json',
-				}).done(function(response) {
-					if(response.updated) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-						closeBootBox();
-						displayGreen(event, null, st_id, direction, null, null, null);
-					} else if(response.inserted) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
-						closeBootBox();
-						displayGreen(event, null, st_id, direction, null, null, null);
-					}else if(response.error) {
-						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">  Some fields have not been filled!</i></div>');
-						closeBootBox();
-					}
-				}).error(function(error) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
-					closeBootBox();
-			});
-
-		});
+		}
 
 		$('#search_button_green').on('click', function(e){
 
 		e.preventDefault();
 		var direction = 'Search';
-
 		var season = null;
 
 		season = document.getElementById("crop_season").value;
 		
-		if (season == "") {
-
+		if (season == ""|| season == 'Sale Season') {
+			bootbox.alert("Season is required")
+			return false
 			season = 0;
 
 		}
@@ -1950,9 +1746,11 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		
 		 outt_number=$('#outt_number_green').val()
+		 
 		
 		if (outt_number == "") {
-
+			bootbox.alert("Outturn number is required")
+			return false
 			outt_number = 0;
 
 		}
@@ -1962,11 +1760,12 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		coffee_grade =$("#coffee_grade_green").val();
 		
 		if (coffee_grade == "") {
-
+			bootbox.alert("Partchment type is required")
+			return false
 			coffee_grade = 0;
 
 		}
-
+		var dialog = bootbox.dialog({ message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Searching...</div>' })
 
 			displayGreen(event, null, null, direction, outt_number, coffee_grade, season);
 
@@ -1981,8 +1780,9 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		season = document.getElementById("crop_season").value;
 		
-		if (season == "") {
-
+		if (season == ""|| season == 'Sale Season') {
+			bootbox.alert("Season is required")
+			return false
 			season = 0;
 
 		}
@@ -1992,9 +1792,11 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 
 		
 		 outt_number=$('#outt_number_parchment').val()
+		 
 		
 		if (outt_number == "") {
-
+			bootbox.alert("Outturn number is required")
+			return false
 			outt_number = 0;
 
 		}
@@ -2004,11 +1806,13 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		coffee_grade =$("#coffee_grade_parchment").val();
 		
 		if (coffee_grade == "") {
-
+			bootbox.alert("Partchment type is required")
+			return false
 			coffee_grade = 0;
 
 		}
-		
+		var dialog = bootbox.dialog({ message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Searching...</div>' })
+
 		displayParchment(event, null, null, direction, outt_number, coffee_grade, season);
 
 		});
@@ -2018,14 +1822,16 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		var direction = 'Search';
 
 		var season = null;
-
+			
 		season = document.getElementById("crop_season").value;
 		
-		if (season == "") {
-
+		if (season == ""|| season == 'Sale Season') {
+			bootbox.alert("Season is required")
+			return false
 			season = 0;
 
 		}
+
 
 
 		var outt_number = null;
@@ -2033,8 +1839,10 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		
 		outt_number=$('#outt_number_screen').val()
 		
+		
 		if (outt_number == "") {
-
+			bootbox.alert("Outturn number is required")
+			return false
 			outt_number = 0;
 
 		}
@@ -2044,11 +1852,14 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		coffee_grade =$("#coffee_grade_screen").val();
 		
 		if (coffee_grade == "") {
-
+			bootbox.alert("Partchment type is required")
+			return false
 			coffee_grade = 0;
 
 		}
 		
+		var dialog = bootbox.dialog({ message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Searching...</div>' })
+
 		displayScreen(event, null, null, direction, outt_number, coffee_grade, season);
 
 		});
@@ -2548,7 +2359,10 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		$('#button_save_parchment').on('click', function(e){
 			e.prevent
 			var st_id = document.getElementById("st_id_partchment").value;
-			console.log(st_id)
+			if(st_id == ""){
+				bootbox.alert('No outturn found selected, Search the ourrurn again!');
+				return false
+			}
 			var direction = 'Next';
 
 			var dont = document.getElementById("dnt");
@@ -2573,7 +2387,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 		    }).get();
 
 			if(jQuery.isEmptyObject(parchmentdesc)){
-				bootbox.alert('Nothing selected!');
+				bootbox.dialog('Nothing selected!');
 				return false
 			}
 		    parchmentdesc = JSON.stringify(parchmentdesc);	
@@ -2819,7 +2633,3 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 	
 </style>
 @endpush
-
-<!-- development version, includes helpful console warnings -->
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>

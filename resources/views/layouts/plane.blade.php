@@ -119,6 +119,13 @@
 
 	<script>
 	    $(document).ready(function(){
+			$('body').on('hidden.bs.modal', function () {
+			if($('.modal.in').length > 0)
+			{
+				$('body').addClass('modal-open');
+			}
+		});
+		
 	    	var time_input = $('input[name="time"]'); 
 	    	$(time_input).timepicker();
 			$(time_input).timepicker({

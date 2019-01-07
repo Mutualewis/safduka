@@ -354,7 +354,7 @@ class QualityController extends Controller {
     	if ($direction == 'null') {
 
 			$sale_lots= DB::table('stock_mill_st AS st')
-			->select('*', 'st.id as st_id', DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'), DB::Raw('GROUP_CONCAT(DISTINCT `ccmts`.`qp_id` SEPARATOR ",") as qualityParameterCupID'), DB::Raw('CONCAT("[", GROUP_CONCAT(DISTINCT   CONCAT("{\'",`qanl`.`acat_id`,"\':\'",`qanl`.`qanl_value`,"\'}") SEPARATOR ","),"]") as qualityParameterSCRID'))
+			->select('*', 'st.id as st_id', DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'), DB::Raw('GROUP_CONCAT(DISTINCT `pcmts`.`qp_id` SEPARATOR ",") as qualityParameterPtyID'), DB::Raw('GROUP_CONCAT(DISTINCT `ccmts`.`qp_id` SEPARATOR ",") as qualityParameterCupID'), DB::Raw('CONCAT("[", GROUP_CONCAT(DISTINCT   CONCAT("{\'",`qanl`.`acat_id`,"\':\'",`qanl`.`qanl_value`,"\'}") SEPARATOR ","),"]") as qualityParameterSCRID'))
 			->from('stock_mill_st AS st')
 			->leftJoin('parchment_type_pty AS pty', 'pty.id', '=', 'st.pty_id')
 			// ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'st.cgrad_id')
@@ -363,6 +363,7 @@ class QualityController extends Controller {
 			// ->leftJoin('seller_slr AS slr', 'st.slr_id', '=', 'slr.id')
 			->leftJoin('green_comments_grcm AS grcm', 'grcm.st_mill_id', '=', 'st.id')
 			->leftJoin('cup_comments AS ccmts', 'ccmts.st_mill_id', '=', 'st.id')
+			->leftJoin('partchment_comments AS pcmts', 'pcmts.st_mill_id', '=', 'st.id')
 			->leftJoin('quality_parameters_qp AS qp', 'qp.id', '=', 'grcm.qp_id')
 			->leftJoin('qualty_details_qltyd AS qltyd', 'qltyd.st_mill_id', '=', 'st.id')
 			->leftJoin('quality_analysis_qanl AS qanl', 'qltyd.id', '=', 'qanl.qltyd_id')
@@ -384,7 +385,7 @@ class QualityController extends Controller {
     		$st_id = $st_id + 1;
 
 			$sale_lots= DB::table('stock_mill_st AS st')
-			->select('*', 'st.id as st_id', DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'), DB::Raw('GROUP_CONCAT(DISTINCT `ccmts`.`qp_id` SEPARATOR ",") as qualityParameterCupID'), DB::Raw('CONCAT("[", GROUP_CONCAT(DISTINCT   CONCAT("{\'",`qanl`.`acat_id`,"\':\'",`qanl`.`qanl_value`,"\'}") SEPARATOR ","),"]") as qualityParameterSCRID'))
+			->select('*', 'st.id as st_id', DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'), DB::Raw('GROUP_CONCAT(DISTINCT `pcmts`.`qp_id` SEPARATOR ",") as qualityParameterPtyID'), DB::Raw('GROUP_CONCAT(DISTINCT `ccmts`.`qp_id` SEPARATOR ",") as qualityParameterCupID'), DB::Raw('CONCAT("[", GROUP_CONCAT(DISTINCT   CONCAT("{\'",`qanl`.`acat_id`,"\':\'",`qanl`.`qanl_value`,"\'}") SEPARATOR ","),"]") as qualityParameterSCRID'))
 			->from('stock_mill_st AS st')
 			->leftJoin('parchment_type_pty AS pty', 'pty.id', '=', 'st.pty_id')
 			// ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'st.cgrad_id')
@@ -393,6 +394,7 @@ class QualityController extends Controller {
 			// ->leftJoin('seller_slr AS slr', 'st.slr_id', '=', 'slr.id')
 			->leftJoin('green_comments_grcm AS grcm', 'grcm.st_mill_id', '=', 'st.id')
 			->leftJoin('cup_comments AS ccmts', 'ccmts.st_mill_id', '=', 'st.id')
+			->leftJoin('partchment_comments AS pcmts', 'pcmts.st_mill_id', '=', 'st.id')
 			->leftJoin('quality_parameters_qp AS qp', 'qp.id', '=', 'grcm.qp_id')
 			->leftJoin('qualty_details_qltyd AS qltyd', 'qltyd.st_mill_id', '=', 'st.id')
 			->leftJoin('quality_analysis_qanl AS qanl', 'qltyd.id', '=', 'qanl.qltyd_id')
@@ -414,7 +416,7 @@ class QualityController extends Controller {
     		$st_id = $st_id - 1;
 
 			$sale_lots= DB::table('stock_mill_st AS st')
-			->select('*', 'st.id as st_id', DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'), DB::Raw('GROUP_CONCAT(DISTINCT `ccmts`.`qp_id` SEPARATOR ",") as qualityParameterCupID'), DB::Raw('CONCAT("[", GROUP_CONCAT(DISTINCT   CONCAT("{\'",`qanl`.`acat_id`,"\':\'",`qanl`.`qanl_value`,"\'}") SEPARATOR ","),"]") as qualityParameterSCRID'))
+			->select('*', 'st.id as st_id', DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'), DB::Raw('GROUP_CONCAT(DISTINCT `pcmts`.`qp_id` SEPARATOR ",") as qualityParameterPtyID'), DB::Raw('GROUP_CONCAT(DISTINCT `ccmts`.`qp_id` SEPARATOR ",") as qualityParameterCupID'), DB::Raw('CONCAT("[", GROUP_CONCAT(DISTINCT   CONCAT("{\'",`qanl`.`acat_id`,"\':\'",`qanl`.`qanl_value`,"\'}") SEPARATOR ","),"]") as qualityParameterSCRID'))
 			->from('stock_mill_st AS st')
 			->leftJoin('parchment_type_pty AS pty', 'pty.id', '=', 'st.pty_id')
 			// ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'st.cgrad_id')
@@ -423,6 +425,7 @@ class QualityController extends Controller {
 			// ->leftJoin('seller_slr AS slr', 'st.slr_id', '=', 'slr.id')
 			->leftJoin('green_comments_grcm AS grcm', 'grcm.st_mill_id', '=', 'st.id')
 			->leftJoin('cup_comments AS ccmts', 'ccmts.st_mill_id', '=', 'st.id')
+			->leftJoin('partchment_comments AS pcmts', 'pcmts.st_mill_id', '=', 'st.id')
 			->leftJoin('quality_parameters_qp AS qp', 'qp.id', '=', 'grcm.qp_id')
 			->leftJoin('qualty_details_qltyd AS qltyd', 'qltyd.st_mill_id', '=', 'st.id')
 			->leftJoin('quality_analysis_qanl AS qanl', 'qltyd.id', '=', 'qanl.qltyd_id')
@@ -442,7 +445,7 @@ class QualityController extends Controller {
     	} else if ($direction == "Search") {
 
 	        $sale_lots= DB::table('stock_mill_st AS st')
-			->select('*', 'st.id as st_id', DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'), DB::Raw('GROUP_CONCAT(DISTINCT `ccmts`.`qp_id` SEPARATOR ",") as qualityParameterCupID'), DB::Raw('CONCAT("[", GROUP_CONCAT(DISTINCT   CONCAT("{\'",`qanl`.`acat_id`,"\':\'",`qanl`.`qanl_value`,"\'}") SEPARATOR ","),"]") as qualityParameterSCRID'))
+			->select('*', 'st.id as st_id', DB::Raw('GROUP_CONCAT(DISTINCT `grcm`.`qp_id` SEPARATOR ",") as qualityParameterID'), DB::Raw('GROUP_CONCAT(DISTINCT `pcmts`.`qp_id` SEPARATOR ",") as qualityParameterPtyID'), DB::Raw('GROUP_CONCAT(DISTINCT `ccmts`.`qp_id` SEPARATOR ",") as qualityParameterCupID'), DB::Raw('CONCAT("[", GROUP_CONCAT(DISTINCT   CONCAT("{\'",`qanl`.`acat_id`,"\':\'",`qanl`.`qanl_value`,"\'}") SEPARATOR ","),"]") as qualityParameterSCRID'))
 				
 				->leftJoin('parchment_type_pty AS pty', 'pty.id', '=', 'st.pty_id')
 				// ->leftJoin('coffee_grade_cgrad AS cgrad', 'cgrad.id', '=', 'st.cgrad_id')
@@ -451,6 +454,7 @@ class QualityController extends Controller {
 				// ->leftJoin('seller_slr AS slr', 'st.slr_id', '=', 'slr.id')
 				->leftJoin('green_comments_grcm AS grcm', 'grcm.st_mill_id', '=', 'st.id')
 				->leftJoin('cup_comments AS ccmts', 'ccmts.st_mill_id', '=', 'st.id')
+				->leftJoin('partchment_comments AS pcmts', 'pcmts.st_mill_id', '=', 'st.id')
 				->leftJoin('quality_parameters_qp AS qp', 'qp.id', '=', 'grcm.qp_id')
 				->leftJoin('qualty_details_qltyd AS qltyd', 'qltyd.st_mill_id', '=', 'st.id')
 				->leftJoin('quality_analysis_qanl AS qanl', 'qltyd.id', '=', 'qanl.qltyd_id')
@@ -472,17 +476,23 @@ class QualityController extends Controller {
 
     }
 
-    public function saveGreen($st_id, $dnt, $greensize, $greencolor, $greendefects, $raw, $comments)
+    public function saveGreen(Request $request)
     {
         try{
 		    	
-
-				$raw = json_decode($raw);
+			$greendetails = (object)$request->greendata;
+			$st_id = $request->st_id;
 				
-				$greensize = json_decode($greensize);
-		     	$greencolor =  json_decode($greencolor);
-		     	$greendefects =  json_decode($greendefects);
-		     	 
+				$raw = $greendetails->raw;;
+				
+				$greensize = $greendetails->greensize;
+		     	$greencolor =  $greendetails->greencolor;
+		     	$greendefects =  $greendetails->greendefects;
+				 $mc = $greendetails->mc;
+				 $ml = $greendetails->ml;
+				 $comments = $greendetails->comments;
+				 $dnt = $greendetails->dnt;
+
 				$qdetails = quality_details::where('st_mill_id', $st_id)->first(); 
 
 		    	
@@ -531,6 +541,30 @@ class QualityController extends Controller {
 
 					quality_details::where('id', '=', $qid)
 						->update(['dont'=> null]);	
+
+				}
+
+				if ($mc != 'null') {
+
+					quality_details::where('id', '=', $qid)
+						->update(['mc'=> $mc]);	
+
+				} else {
+
+					quality_details::where('id', '=', $qid)
+						->update(['mc'=> null]);	
+
+				}
+
+				if ($ml != 'null') {
+
+					quality_details::where('id', '=', $qid)
+						->update(['ml'=> $ml]);	
+
+				} else {
+
+					quality_details::where('id', '=', $qid)
+						->update(['ml'=> null]);	
 
 				}
 
@@ -596,60 +630,53 @@ class QualityController extends Controller {
 	public function saveParchment($st_id, $dnt, $parchmentdesc)
     {
         try{
-		    	$parchmentdesc = json_decode($parchmentdesc);
+		    	$partchment = json_decode($parchmentdesc);
 		     	 
 				//$cdetails = stock_st::where('id', $st_id)->first();
 			
-
-		    	$qdetails = quality_details::where('st_mill_id', $st_id)->first(); 
-			
-				
-		    	foreach ($parchmentdesc as $key => $value) {
-
-		    		$parchment = $value;
-		    		
-		    	}
-				if(empty($parchment)){
-					$parchment=null;
-				}
-		        if ($qdetails != NULL) {
-				 	
-				 	$qid = $qdetails->id;
-
-					quality_details::where('id', '=', $qid)
-						->update(['pct_id' => $parchment]);
+				if ($partchment != NULL) {
+					$ptcomments = partchment_comments::where('st_mill_id', $st_id)->get();
+						
+					foreach ($ptcomments as $key2 => $value2) {
+						
+						$ptcomments2 = partchment_comments::where('st_mill_id', $value2->st_mill_id)->first();
+						if ($ptcomments2 != NULL) {
+							$ptcommentsdel = partchment_comments::findOrFail($ptcomments2->id);	
+							$ptcommentsdel->delete(); 
+						}
+					}
 					
-					Activity::log('Updated arrival quality for st_id'.$st_id. ' with parchment quality '. $parchment);
-
-				} else {
-
-					quality_details::insert(
-					    ['st_mill_id' => $st_id,'pct_id' => $parchment]
-					);
-
-					Activity::log('Added arrival quality for st_id'.$st_id. ' with parchment quality '. $parchment);
-
+					foreach ($partchment as $key => $value) {
+					
+						
+							if ($value != NULL && is_array($value)) {
+								foreach ($value as $key2 => $value2) {
+	
+							$pdetails = partchment_comments::where('st_mill_id', $st_id)->where('qp_id',  $value2)->first(); 
+							if($pdetails != NULL){
+								$qid = $pdetails->id;
+								partchment_comments::where('id', '=', $qid)
+									->update(['st_mill_id' => $st_id, 'qp_id' =>  $value2]);
+	
+							} else {
+								partchment_comments::insert(
+									['st_mill_id' => $st_id, 'qp_id' =>  $value2]); 
+								}
+								}						
+							} else{
+								$pdetails = partchment_comments::where('st_mill_id', $st_id)->where('qp_id',  $value)->first(); 
+								if($pdetails != NULL){
+									$qid = $pdetails->id;
+									partchment_comments::where('id', '=', $qid)
+										->update(['st_mill_id' => $st_id, 'qp_id' =>  $value]);
+		
+								} else {
+									partchment_comments::insert(
+										['st_mill_id' => $st_id, 'qp_id' =>  $value]); 
+									}								
+							}
+					}
 				}
-				
-				$qdetails = quality_details::where('st_mill_id', $st_id)->first(); 
-
-			
-		        if ($qdetails != NULL) {
-				 	
-				 	$qid = $qdetails->id;
-				if ($dnt != 'null') {
-
-					quality_details::where('id', '=', $qid)
-						->update(['dont'=> "1"]);	
-
-				} else {
-
-					quality_details::where('id', '=', $qid)
-						->update(['dont'=> null]);	
-
-				}
-			}
-			
 
             return response()->json([
                 'exists' => false,
@@ -848,7 +875,7 @@ class QualityController extends Controller {
 				 	$qid = $qdetails->id;
 
 					quality_details::where('id', '=', $qid)
-						->update(['cup_quality'=> $cup_current, 'cup_class'=> $cupclass_current, 'qltyd_comments'=> $comments]);
+						->update(['cup_quality'=> $cup_current, 'cup_class'=> $cupclass_current, 'overall_comments'=> $comments]);
 					
 					Activity::log('Updated quality for st_id'.$st_id. ' with rw_quality '. $cup_current.' comments '.$comments. 'cup_class' . $cupclass_current);
 
@@ -856,7 +883,7 @@ class QualityController extends Controller {
 				} else {
 
 					quality_details::insert(
-					    ['st_mill_id' => $st_id, 'cup_quality'=> $cup_current, 'qltyd_comments'=> $comments, 'cup_class'=> $cupclass_current]
+					    ['st_mill_id' => $st_id, 'cup_quality'=> $cup_current, 'overall_comments'=> $comments, 'cup_class'=> $cupclass_current]
 					);
 
 					Activity::log('Added quality for st_id'.$st_id. ' with  rw_quality '. $cup_current. ' comments '.$comments. 'cup_class' . $cupclass_current);
