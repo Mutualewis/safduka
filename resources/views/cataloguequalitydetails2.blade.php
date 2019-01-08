@@ -1229,12 +1229,12 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 
 @push('scripts')
 <script>
-var autosubmit = <?php echo json_encode($autosubmit); ?>;
-	$(document).ready(function (){ 
-		if(autosubmit){
-			$( "#cataloguequalitydetailsform" ).submit();
-		}
-	})
+// var autosubmit = <?php echo json_encode($autosubmit); ?>;
+// 	$(document).ready(function (){ 
+// 		if(autosubmit){
+// 			$( "#cataloguequalitydetailsform" ).submit();
+// 		}
+// 	})
 
 
 </script>
@@ -2572,7 +2572,7 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 				
 
 		var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');	
-
+		
 		datacup = {flavour:flavour, acidity:acidity, body: body, taint: taint, cup:cup, dnt_cp: dnt_cp, comments_cp : comments_cp, cupclass: cupclass}
 
 		let data = {_token: CSRF_TOKEN, datacup:datacup, st_id : st_id}

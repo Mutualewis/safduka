@@ -1055,12 +1055,12 @@
 
 @push('scripts')
 <script>
-var autosubmit = <?php echo json_encode($autosubmit); ?>;
-	$(document).ready(function (){ 
-		if(autosubmit){
-			$( "#cataloguequalitydetailsform" ).submit();
-		}
-	})
+// var autosubmit = <?php echo json_encode($autosubmit); ?>;
+// 	$(document).ready(function (){ 
+// 		if(autosubmit){
+// 			$( "#cataloguequalitydetailsform" ).submit();
+// 		}
+// 	})
 
 
 </script>
