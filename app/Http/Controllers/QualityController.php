@@ -464,15 +464,31 @@ class QualityController extends Controller {
 				->leftJoin('raw_score_rw AS rw', 'qltyd.rw_id', '=', 'rw.id')
 				->leftJoin('coffee_growers_cgr AS cgr', 'st.cgr_id', '=', 'cgr.id')
 	            ->leftJoin('coffee_seasons_csn AS csn', 'st.csn_id', '=', 'csn.id')
-	            ->where('csn.id', $season)
-				->where('st.st_outturn', $outt_number)
-	            ->where('st.pty_id', $coffee_grade)
+				->where('csn.id', $season)
+				->where('st.id', $st_id)
 	            ->groupBy('st.id')
 	            ->first();
 
     	}        
 		
         return json_encode($sale_lots);
+
+	}
+	public function getLotsOutturns( $season)
+    {
+			$sale_lots= DB::table('stock_mill_st AS st')
+			->select('st.id as st_id', 'st_outturn','st_net_weight','pty_name' )
+			->from('stock_mill_st AS st')
+			->leftJoin('parchment_type_pty AS pty', 'pty.id', '=', 'st.pty_id')
+			->leftJoin('coffee_seasons_csn AS csn', 'st.csn_id', '=', 'csn.id')
+			->where('csn.id', $season)
+			->get();
+
+        
+			return response()->json([
+                'data' => $sale_lots,
+			])
+			->setStatusCode(200);
 
     }
 

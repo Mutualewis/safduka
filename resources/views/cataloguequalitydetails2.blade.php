@@ -161,7 +161,7 @@
 
 			            <div class="form-group col-md-12" style="padding-left:20px;">
 			            	<label>Season</label>
-			                <select class="form-control" id="crop_season" name="crop_season">
+			                <select class="form-control" id="crop_season" name="crop_season" onchange = "fetch_outturns()">
 			               		<option>Sale Season</option>
 								@if (isset($Season) && count($Season) > 0)
 											@foreach ($Season->all() as $season)
@@ -185,11 +185,11 @@
 						 	
 
 			            <div class="form-group col-md-4">
-							<button class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalScreenCenter'onclick='displayScreen(event, this, null, null, null, null, null)'>Screen</button>
+							<button class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalScreenCenter' type="button" onclick='displayScreen(event, this, null, null, null, null, null)'>Screen</button>
 						</div>	
 
 			            <div class="form-group col-md-4">
-			            	<button  class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalCupCenter' onclick='displayCup(event, this, null, null, null, null, null)' >Cup</button>
+			            	<button  class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalCupCenter' type="button" onclick='displayCup(event, this, null, null, null, null, null)' >Cup</button>
 
 						</div>	
 
@@ -514,7 +514,7 @@
 	</div>
 
 	<!-- Modal -->
-	<div class="modal fade form-group col-md-12" id="menuModalScreenCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal fade form-group col-md-12" id="menuModalScreenCenter" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 	  <div class="modal-dialog modal-dialog-centered" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
@@ -538,7 +538,9 @@
     
     	<div class="form-group col-md-4">
 	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" id="outt_number_screen" name="outt_number_sreen" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
+						<select type="text" class="form-control" id="outt_number_screen" name="outt_number_screen" style="text-transform:uppercase; width:400px" placeholder="Search Outturn...">
+							<option value = ''></option>
+							</select>
 
 		                        <span class="input-group-btn">
 
@@ -552,14 +554,7 @@
 	                </div>
 				
 		            <div class="form-group col-md-4">
-		                <select class="form-control" id="coffee_grade_screen" name="coffee_grade_screen" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
-		                	<option></option> 
-							@if (isset($partchment_types) && count($partchment_types) > 0)
-								@foreach ($partchment_types->all() as $partchment_type)											
-									<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
-								@endforeach									
-							@endif
-		                </select>	
+		               
 
 		                <input type="hidden" id="st_id_screen" name="st_id_screen">		
 
@@ -722,7 +717,7 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 
 
 	<!-- Modal -->
-	<div class="modal fade form-group col-md-12" id="menuModalCupCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal fade form-group col-md-12" id="menuModalCupCenter" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 	  <div class="modal-dialog modal-dialog-centered" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
@@ -745,7 +740,9 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 	        		
 					<div class="form-group col-md-4">
 	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" id="outt_number_cup" name="outt_number_cup" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
+						<select type="text" class="form-control" id="outt_number_cup" name="outt_number_cup" style="text-transform:uppercase; width:400px" placeholder="Search Outturn...">
+							<option value = ''></option>
+							</select>
 
 		                        <span class="input-group-btn">
 
@@ -759,14 +756,7 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 	                </div>
 				
 		            <div class="form-group col-md-4">
-		                <select class="form-control" id="coffee_grade_cup" name="coffee_grade_cup" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
-		                	<option></option> 
-							@if (isset($partchment_types) && count($partchment_types) > 0)
-								@foreach ($partchment_types->all() as $partchment_type)											
-									<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
-								@endforeach									
-							@endif
-		                </select>	
+		              
 
 		                <input type="hidden" id="st_id_cup" name="st_id_cup">		
 
@@ -1238,6 +1228,7 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 
 
 </script>
+	<script src="{{ asset("assets/select2/select2.min.js") }}" type="text/javascript"></script>
 
 <script type="text/javascript">
 
@@ -1270,6 +1261,40 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 		return url;
 	
 	}
+
+	function fetch_outturns() {
+
+var season = null;
+
+season = document.getElementById("crop_season").value;
+
+if (season == "") {
+
+	season = 0;
+
+}
+
+var url = '{{ route('cataloguequalitydetails.getLotsOutturns',['crop_season'=>":crop_season"]) }}';
+
+
+url = url.replace(':crop_season', season);
+$.get(url, function(data, status){
+	
+	localStorage.setItem('outturnlist', JSON.stringify(data))
+	
+	var options = '';
+		$.each(data.data, function (key, value) {
+			options += '<option value = "'+value.st_id+'">' + value.st_outturn + ' '+value.pty_name + ' '+value.st_net_weight + '</option>';
+		});
+		$('#outt_number_cup').append(options);
+		$('#outt_number_screen').append(options);
+
+		$('#outt_number_cup').select2();
+		$('#outt_number_screen').select2();
+
+});
+
+}
 
 	function closeBootBox () {
 
@@ -1440,7 +1465,8 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 		clearChildren(document.getElementById("screen_div"));
 
 		if(direction == 'Search'){
-			closeBootBox();
+			
+			st_id = outt_number
 		}
 
 		var url = fetch_url(st_id, direction , outt_number, coffee_grade);
@@ -1448,7 +1474,7 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 
             var obj = jQuery.parseJSON(data);
 			
-		     $('#outt_number_display_screen').html(obj.st_outturn);
+		     $('#outt_number_display_screen').html(obj.st_outturn + ' '+obj.pty_name + ' ' + obj.st_net_weight);;
 
 			//document.getElementById('coffee_grade').value = obj.pty_id;
 
@@ -1458,7 +1484,7 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 			
 			var screen_data = null;
 			screen_data = obj.qualityParameterSCRID
-			
+			if(screen_data != null){
 			newTemp = screen_data.replace(/'/g, '\"');
 			screen_data = JSON.parse(newTemp)
 			console.log(screen_data)
@@ -1475,7 +1501,10 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 					document.getElementById(res_ss).checked = true;
 				}
 			});
-			
+		}
+			if(direction == 'Search'){
+			closeBootBox();
+			}
         });
 
 		event.preventDefault();
@@ -1487,13 +1516,18 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 		event.preventDefault();
 
 		clearChildren(document.getElementById("cup_div"));
+		
+		if(direction == 'Search'){
+			
+			st_id = outt_number
+		}
 
 		var url = fetch_url(st_id, direction , outt_number, coffee_grade);
         $.get(url, function(data, status){
 			
             var obj = jQuery.parseJSON(data);
 			
-		     $('#outt_number_display_cup').html(obj.st_outturn);
+		     $('#outt_number_display_cup').html(obj.st_outturn + ' '+obj.pty_name + ' ' + obj.st_net_weight);;
 
 			//document.getElementById('coffee_grade').value = obj.pty_id;
 
@@ -1612,6 +1646,10 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 			}
 
 			
+			if(direction == 'Search'){
+			
+			closeBootBox();
+		}
 
 
         });	
@@ -2237,20 +2275,10 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 	
 			}
 			
-			var coffee_grade = null;
-	
-			coffee_grade =$("#coffee_grade_screen").val();
-			
-			if (coffee_grade == "") {
-				bootbox.alert("Partchment type is required")
-				return false
-				coffee_grade = 0;
-	
-			}
 			
 			var dialog = bootbox.dialog({ message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Searching...</div>' })
 		
-		displayScreen(event, null, null, direction, outt_number, coffee_grade, season);
+		displayScreen(event, null, null, direction, outt_number, null, season);
 
 		});
 
@@ -2846,15 +2874,6 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 		}
 
 			var coffee_grade = null;
-
-			coffee_grade =$("#coffee_grade_cup").val();
-
-			if (coffee_grade == "") {
-			bootbox.alert("Partchment type is required")
-			return false
-			coffee_grade = 0;
-
-		}
 
 			displayCup(event, null, null, direction, outt_number, coffee_grade, season);
 
