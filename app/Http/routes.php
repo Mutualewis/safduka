@@ -313,9 +313,10 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/parchmentreportquality', 'GridController@parchmentQualityGrid'); 
 
+		
 
+		
 });
 
-
-
+Route::post('loginapi', 'Auth\LoginController@login')->name('loginapi');
 

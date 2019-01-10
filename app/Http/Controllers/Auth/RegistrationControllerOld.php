@@ -10,8 +10,6 @@ use Ngea\Growers;
 use Ngea\Buyer;
 
 
-
-
 class RegistrationController extends Controller {
 
 

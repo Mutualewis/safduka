@@ -689,7 +689,6 @@ class CleanBulkingController extends Controller {
 		}catch (\Exception $e) {
 			
             DB::rollback();
-            dump($e); exit;
 			$errormessages[] = $e->getMessage();
 			return response()->json([
 				'exists' => false,
