@@ -25,10 +25,11 @@
 
 	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/slick/slick.css") }}" />
 	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/slick/slick-theme.css") }}" />
-
-	<script src="{{ asset("assets/jquery-v2.0.3/jquery.js") }}" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("assets/select2/select2.min.css") }}" />
 
 	
+
+	<script src="{{ asset("assets/jquery-v2.0.3/jquery.js") }}" type="text/javascript"></script>
 
 	
 	<script src="{{ asset("assets/jquery-jqGrid-v4.6.0/js/jquery.jqGrid.src.js") }}" type="text/javascript"></script>

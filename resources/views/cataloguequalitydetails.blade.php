@@ -161,7 +161,7 @@
 
 			            <div class="form-group col-md-12" style="padding-left:20px;">
 			            	<label>Season</label>
-			                <select class="form-control" id="crop_season" name="crop_season">
+			                <select class="form-control" id="crop_season" name="crop_season" onchange = "fetch_outturns()">
 			               		<option>Sale Season</option>
 								@if (isset($Season) && count($Season) > 0)
 											@foreach ($Season->all() as $season)
@@ -183,15 +183,15 @@
 			        <div class="row">
 
 						 <div class="form-group col-md-4">
-			            	<button  class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalParchmentCenter'onclick='displayParchment(event, this, null, null, null, null, null)' >Parchment</button>
+			            	<button  class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalParchmentCenter' type="button" onclick='displayParchment(event, this, null, null, null, null, null)' >Parchment</button>
 						</div>	
 
 			            <div class="form-group col-md-4">
-			            	<button class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalGreenCenter'onclick='displayGreen(event, this, null, null, null, null, null)' >Green</button>
+			            	<button class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalGreenCenter' type="button" onclick='displayGreen(event, this, null, null, null, null, null)' >Green</button>
 						</div>	
 
 			            <div class="form-group col-md-4">
-							<button class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalScreenCenter'onclick='displayScreen(event, this, null, null, null, null, null)'>Screen</button>
+							<button class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalScreenCenter' type="button" onclick='displayScreen(event, this, null, null, null, null, null)'>Screen</button>
 						</div>	
 
 			            <!-- <div class="form-group col-md-4">
@@ -220,7 +220,7 @@
 	</div>
 
 	<!-- Modal -->
-	<div class="modal fade form-group col-md-12" id="menuModalGreenCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal fade form-group col-md-12" id="menuModalGreenCenter" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 	  <div class="modal-dialog modal-dialog-centered" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
@@ -243,7 +243,9 @@
 	        		
 					<div class="form-group col-md-4">
 	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" id="outt_number_green" name="outt_number_green" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
+						<select type="text"  class="form-control" id="outt_number_green" name="outt_number_green" style="text-transform:uppercase; width:400px" placeholder="Search Outturn...">
+							<option value = ''></option>
+							</select>
 
 		                        <span class="input-group-btn">
 
@@ -257,22 +259,13 @@
 	                </div>
 				
 		            <div class="form-group col-md-4">
-		                <select class="form-control" id="coffee_grade_green" name="coffee_grade_green" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
-		                	<option></option> 
-							@if (isset($partchment_types) && count($partchment_types) > 0)
-								@foreach ($partchment_types->all() as $partchment_type)											
-									<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
-								@endforeach									
-							@endif
-		                </select>	
+		              	
 
 		                <input type="hidden" id="st_id_green" name="st_id_green">		
 
 		            </div>
 					<div class="alert-dismissible alert-info" id="coffee_grower_display_green"></div>        
 	        	</div>
-
-				
 
 				
 
@@ -527,7 +520,7 @@
 	</div>
 
 	<!-- Modal -->
-	<div class="modal fade form-group col-md-12" id="menuModalScreenCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal fade form-group col-md-12" id="menuModalScreenCenter" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 	  <div class="modal-dialog modal-dialog-centered" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
@@ -550,7 +543,9 @@
 	        		
 					<div class="form-group col-md-4">
 	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" id="outt_number_screen" name="outt_number_sreen" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
+						<select type="text" class="form-control" id="outt_number_screen" name="outt_number_screen" style="text-transform:uppercase; width:400px" placeholder="Search Outturn...">
+							<option value = ''></option>
+							</select>
 
 		                        <span class="input-group-btn">
 
@@ -564,14 +559,7 @@
 	                </div>
 				
 		            <div class="form-group col-md-4">
-		                <select class="form-control" id="coffee_grade_screen" name="coffee_grade_screen" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
-		                	<option></option> 
-							@if (isset($partchment_types) && count($partchment_types) > 0)
-								@foreach ($partchment_types->all() as $partchment_type)											
-									<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
-								@endforeach									
-							@endif
-		                </select>	
+		            	
 
 		                <input type="hidden" id="st_id_screen" name="st_id_screen">		
 
@@ -904,7 +892,7 @@
 
 
 	<!-- Modal -->
-	<div class="modal fade form-group col-md-12" id="menuModalParchmentCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal fade form-group col-md-12" id="menuModalParchmentCenter" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 	  <div class="modal-dialog modal-dialog-centered" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
@@ -927,7 +915,9 @@
 	        		
 	        		<div class="form-group col-md-4">
 	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" id="outt_number_parchment" name="outt_number_parchment" style="text-transform:uppercase; " placeholder="Search Outturn..."></input>
+	                        <select type="text" class="form-control" id="outt_number_parchment" name="outt_number_parchment" style="text-transform:uppercase; width:400px" placeholder="Search Outturn...">
+							<option value = ''></option>
+							</select>
 
 		                        <span class="input-group-btn">
 
@@ -941,14 +931,7 @@
 	                </div>
 				
 		            <div class="form-group col-md-4">
-		                <select class="form-control" id="coffee_grade_parchment" name="coffee_grade_parchment" style="text-transform:uppercase; height: 35px; font-size: 15px; font-weight: bold;">
-		                	<option></option> 
-							@if (isset($partchment_types) && count($partchment_types) > 0)
-								@foreach ($partchment_types->all() as $partchment_type)											
-									<option value="{{ $partchment_type->id }}">{{ $partchment_type->pty_name}}</option>
-								@endforeach									
-							@endif
-		                </select>	
+		                
 
 		                <input type="hidden" id="st_id_partchment" name="st_id_partchment">		
 
@@ -1064,6 +1047,7 @@
 
 
 </script>
+	<script src="{{ asset("assets/select2/select2.min.js") }}" type="text/javascript"></script>
 
 <script type="text/javascript">
 
@@ -1097,6 +1081,42 @@
 	
 	}
 
+		function fetch_outturns() {
+
+		var season = null;
+
+		season = document.getElementById("crop_season").value;
+
+		if (season == "") {
+
+			season = 0;
+
+		}
+		
+		var url = '{{ route('cataloguequalitydetails.getLotsOutturns',['crop_season'=>":crop_season"]) }}';
+
+
+		url = url.replace(':crop_season', season);
+		
+        $.get(url, function(data, status){
+			
+			localStorage.setItem('outturnlist', JSON.stringify(data))
+			
+			var options = '';
+                $.each(data.data, function (key, value) {
+					
+                    options += '<option value = "'+value.st_id+'">' + value.st_outturn + ' '+value.pty_name + ' '+value.st_net_weight + '</option>';
+                });
+				$('#outt_number_parchment').append(options);
+				$('#outt_number_green').append(options);
+				$('#outt_number_screen').append(options);
+				
+				$('#outt_number_green').select2();
+				$('#outt_number_parchment').select2();
+				$('#outt_number_screen').select2();
+        });
+
+		}
 	function closeBootBox () {
 
 		var $timeout = <?php echo $timeout; ?>;
@@ -1134,16 +1154,16 @@
 		clearChildren(document.getElementById("green"));
 
 		if(direction == 'Search'){
-		closeBootBox();
+		st_id = outt_number
 		}
-
+		
 		var url = fetch_url(st_id, direction , outt_number, coffee_grade);
 
         $.get(url, function(data, status){
 
             var obj = jQuery.parseJSON(data);
 			console.log(obj)
-		   $('#outt_number_display_green').html(obj.st_outturn);
+		   $('#outt_number_display_green').html(obj.st_outturn + ' '+obj.pty_name + ' ' + obj.st_net_weight);
 
 			//document.getElementById('coffee_grade').value = obj.pty_id;
 
@@ -1276,7 +1296,9 @@ document.getElementById('ml').value = null;
 				// document.getElementById('process').value =  0;
 
 			}
-
+			if(direction == 'Search'){
+		closeBootBox();
+		}
         });
 
 	}
@@ -1285,7 +1307,8 @@ document.getElementById('ml').value = null;
 
 			clearChildren(document.getElementById("screen_div"));
 			if(direction == 'Search'){
-			closeBootBox();
+			
+			st_id = outt_number
 		}
 
 		var url = fetch_url(st_id, direction , outt_number, coffee_grade);
@@ -1293,7 +1316,7 @@ document.getElementById('ml').value = null;
 
             var obj = jQuery.parseJSON(data);
 			console.log(obj)
-		     $('#outt_number_display_screen').html(obj.st_outturn);
+		     $('#outt_number_display_screen').html(obj.st_outturn + ' '+obj.pty_name + ' ' + obj.st_net_weight);
 
 			//document.getElementById('coffee_grade').value = obj.pty_id;
 
@@ -1321,7 +1344,10 @@ document.getElementById('ml').value = null;
 				}
 			});
 			}	
-		
+			if(direction == 'Search'){
+			
+			closeBootBox()
+		}
 			
         });
 
@@ -1461,7 +1487,7 @@ document.getElementById('ml').value = null;
 	event.preventDefault();
 
 	if(direction == 'Search'){
-		closeBootBox();
+		st_id = outt_number
 	}
 	clearChildren(document.getElementById("parchment"));
 	
@@ -1472,13 +1498,13 @@ document.getElementById('ml').value = null;
 		var obj = jQuery.parseJSON(data);
 		console.log(obj)
 		if(!jQuery.isEmptyObject(obj)){
-		$('#outt_number_display_partchment').html(obj.st_outturn);
+		$('#outt_number_display_partchment').html(obj.st_outturn + ' '+obj.pty_name + ' ' + obj.st_net_weight);
 
 		//document.getElementById('coffee_grade').value = obj.pty_id;
 
 		document.getElementById('st_id_partchment').value = obj.st_id;
 
-		$('#coffee_grower_display_partchment').html(obj.st_mark);
+		$('#coffee_grower_display_partchment').html(obj.st_mark + ' '+ obj.st_net_weight);
 
 		if (obj.dont == 1) {
 
@@ -1527,6 +1553,9 @@ document.getElementById('ml').value = null;
 
 		} 
 	}
+	if(direction == 'Search'){
+		closeBootBox()
+	}
 	});
 
 
@@ -1542,6 +1571,7 @@ document.getElementById('ml').value = null;
 				$('body').addClass('modal-open');
 			}
 		});
+		fetch_outturns();
 
 		$('#button_next_green').on('click', function(){
 
@@ -1801,19 +1831,10 @@ document.getElementById('ml').value = null;
 
 		}
 		
-		var coffee_grade = null;
-
-		coffee_grade =$("#coffee_grade_parchment").val();
 		
-		if (coffee_grade == "") {
-			bootbox.alert("Partchment type is required")
-			return false
-			coffee_grade = 0;
-
-		}
 		var dialog = bootbox.dialog({ message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Searching...</div>' })
 
-		displayParchment(event, null, null, direction, outt_number, coffee_grade, season);
+		displayParchment(event, null, null, direction, outt_number, season);
 
 		});
 
