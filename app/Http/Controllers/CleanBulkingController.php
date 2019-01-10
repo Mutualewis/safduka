@@ -131,9 +131,6 @@ class CleanBulkingController extends Controller {
 
     }
 
-   
-
-
     public function bulking(Request $request)
     {
         $id = null;
@@ -698,6 +695,35 @@ class CleanBulkingController extends Controller {
 				'errormsgs' => $errormessages
 			]);	
 		}
+    }
+
+    public function cleanResultsForm(Request $request)
+    {
+      
+        $id            = null;
+        $Season        = Season::all(['id', 'csn_season']);
+        $country       = country::all(['id', 'ctr_name', 'ctr_initial']);
+        $CoffeeGrade   = CoffeeGrade::all(['id', 'cgrad_name']);
+        $Certification = Certification::all(['id', 'crt_name']);
+        $buyer         = buyer::all(['id', 'cb_name']);
+        $processing    = processing::all(['id', 'prcss_name']);
+
+        $sale_status = sale_status::all(['id', 'sst_name']);
+        $Warehouse   = null;
+        $Mill        = null;
+
+        $cid        = null;
+        $csn_season = null;
+        $sale_cb_id = null;
+        $release_no = null;
+        $date       = null;
+        $release_no = null;
+        $st_id_selected = null;
+        
+
+        return View::make('cleanresults', compact('id',
+            'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'rates', 'teams', 'st_id_selected'));
+
     }
    
 
