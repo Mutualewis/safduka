@@ -289,6 +289,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/processingresults', 'ProcessingController@processingResultsForm'); 
 		Route::post('/processingresults', 'ProcessingController@processingResults');	
+		
 
 
 		Route::get('/processingresultsquality', 'ProcessingResultsQualityController@processingResultsQualityForm'); 
@@ -306,6 +307,9 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/cleanbulkinginstructions', 'CleanBulkingController@bulkingForm'); 
 		Route::get('/cleanbulkinginstructions/getstockview/{countryID}/{ref_no}', ['as'=>'cleanbulkinginstructions.getstockview','uses'=>'CleanBulkingController@getstockview']); 
 		Route::post('/cleanbulkinginstructions', 'CleanBulkingController@bulking');
+
+		Route::get('/cleanbulkresults', 'CleanBulkingController@cleanResultsForm'); 
+		Route::post('/cleanbulkresults', 'CleanBulkingController@processingResults');	
 
 		Route::get('/stocksallclean', 'StocksCleanGridController@stockAllAndCleanGrid');
 		

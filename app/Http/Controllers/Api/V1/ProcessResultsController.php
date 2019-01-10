@@ -80,10 +80,25 @@ class ProcessResultsController extends Controller
         ->setStatusCode(200);
     }
 
-    public function listMillingInstructionOutturns(Request $request){
+    public function listMillingInstructionOutturns($id){
+       
+        $prc = $id;
+            if ($prc != null) {
+                $refno       = Process::where('id', $prc)->first();
+                
+                $rfid = $refno->id;
+                $resultsType = ProcessResultsType::where('prcss_id', $rfid)->get();
+                if ($rfid != null) {
+                    $StockView      = StockViewALL::where('prcssid', $rfid)->get();
+                    $ProcessResults = Processes::where('id', $rfid)->where('ctrid', 1)->whereNotNull('result_type')->get();
+                }
+            }
+           
+           
+        
         return response()->json([
             'message' => "successful",
-            'data' => Process::all()->toArray(),
+            'data' => $StockView->toArray(),
         ])
         ->setStatusCode(200);
     }
