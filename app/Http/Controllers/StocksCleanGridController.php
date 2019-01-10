@@ -183,22 +183,22 @@ class StocksCleanGridController  extends Controller {
                     ,
 
                     (new FieldConfig)
-                        ->setName('btc_weight')
+                        ->setName('st_net_weight')
                         ->setLabel('Weight')
                         ->addFilter(
                             (new FilterConfig)
-                                ->setName('btc_weight')
+                                ->setName('st_net_weight')
                                 ->setOperator(FilterConfig::OPERATOR_LIKE)
                         )                         
                         ->setSortable(true)
                     ,
 
                     (new FieldConfig)
-                        ->setName('btc_packages')
+                        ->setName('st_packages')
                         ->setLabel('Packages')
                         ->addFilter(
                             (new FilterConfig)
-                                ->setName('btc_packages')
+                                ->setName('st_packages')
                                 ->setOperator(FilterConfig::OPERATOR_LIKE)
                         )                         
                         ->setSortable(true)
@@ -217,22 +217,22 @@ class StocksCleanGridController  extends Controller {
 
 
                     (new FieldConfig)
-                        ->setName('btc_bags')
+                        ->setName('st_bags')
                         ->setLabel('Bags')
                         ->addFilter(
                             (new FilterConfig)
-                                ->setName('btc_bags')
+                                ->setName('st_bags')
                                 ->setOperator(FilterConfig::OPERATOR_LIKE)
                         )                         
                         ->setSortable(true)
                     ,
 
                     (new FieldConfig)
-                        ->setName('btc_pockets')
+                        ->setName('st_pockets')
                         ->setLabel('Pockets')
                         ->addFilter(
                             (new FilterConfig)
-                                ->setName('btc_pockets')
+                                ->setName('st_pockets')
                                 ->setOperator(FilterConfig::OPERATOR_LIKE)
                         )                         
                         ->setSortable(true)

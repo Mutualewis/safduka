@@ -1738,6 +1738,7 @@ document.getElementById('ml').value = null;
 				data: data,
 				dataType: 'json',
 				}).done(function(response) {
+					console.log(response)
 					if(response.updated) {
 						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
 						closeBootBox();

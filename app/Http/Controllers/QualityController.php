@@ -494,20 +494,23 @@ class QualityController extends Controller {
 
     public function saveGreen(Request $request)
     {
+			
         try{
-		    	
+			
 			$greendetails = (object)$request->greendata;
+			
 			$st_id = $request->st_id;
+
+				$raw =  isset($greendetails->raw) ? $greendetails->raw : null;
 				
-				$raw = $greendetails->raw;;
-				
-				$greensize = $greendetails->greensize;
-		     	$greencolor =  $greendetails->greencolor;
-		     	$greendefects =  $greendetails->greendefects;
-				 $mc = $greendetails->mc;
-				 $ml = $greendetails->ml;
-				 $comments = $greendetails->comments;
-				 $dnt = $greendetails->dnt;
+				$greensize =  isset($greendetails->greensize) ? $greendetails->greensize : null;
+		     	$greencolor =  isset($greendetails->greencolor) ? $greendetails->greencolor : null;
+		     	$greendefects =  isset($greendetails->greendefects) ? $greendetails->greendefects : null;
+				 $mc = isset($greendetails->mc) ? $greendetails->mc : null;
+				 $ml = isset($greendetails->ml) ? $greendetails->ml : null;
+				 $comments = isset($greendetails->comments) ? $greendetails->comments : null;
+				 $dnt = isset($greendetails->dnt) ? $greendetails->dnt : null;
+
 
 				$qdetails = quality_details::where('st_mill_id', $st_id)->first(); 
 
@@ -518,12 +521,13 @@ class QualityController extends Controller {
 					$comments = null;
 
 				}		    	
-
+				if($raw != null){
 		    	foreach ($raw as $key => $value) {
 
 		    		$raw_current = $value;
 		    		
-		    	}
+				}
+			}
 				if(empty($raw)){
 					$raw_current=null;
 				}
@@ -539,16 +543,16 @@ class QualityController extends Controller {
 					
 				} else {
 
-					quality_details::insert(
-					    ['st_id' => $st_id, 'rw_quality'=> $raw_current, 'overall_comments'=> $comments]
+					$qid = quality_details::insertGetId(
+					    ['st_mill_id' => $st_id, 'rw_quality'=> $raw_current, 'overall_comments'=> $comments]
 					);
 
 					Activity::log('Added quality for st_id'.$st_id. ' with  rw_quality '. $raw_current. ' comments '.$comments);
 
 				}
 				
-
-				if ($dnt != 'null') {
+				
+				if ($dnt != null) {
 
 					quality_details::where('id', '=', $qid)
 						->update(['dont'=> "1"]);	
@@ -560,7 +564,7 @@ class QualityController extends Controller {
 
 				}
 
-				if ($mc != 'null') {
+				if ($mc != null) {
 
 					quality_details::where('id', '=', $qid)
 						->update(['mc'=> $mc]);	
@@ -572,7 +576,7 @@ class QualityController extends Controller {
 
 				}
 
-				if ($ml != 'null') {
+				if ($ml != null) {
 
 					quality_details::where('id', '=', $qid)
 						->update(['ml'=> $ml]);	
@@ -584,7 +588,7 @@ class QualityController extends Controller {
 
 				}
 
-			
+				
 
 		 	 if($st_id != NULL){
 
@@ -612,7 +616,8 @@ class QualityController extends Controller {
 							['st_mill_id' => $st_id, 'qp_id' =>  $value]);  
 						Activity::log('Added Quality For Coffee ID '.$st_id. ' with quality ID '.$value); 			     	 	
 			     	 }
-			     }
+				 }
+				 
 			     if ($greendefects != NULL) {
 			     	 foreach ($greendefects as $key => $value) {
 						greencomments::insert(
@@ -625,7 +630,7 @@ class QualityController extends Controller {
 
 			  }
 			
-
+			  
             return response()->json([
                 'exists' => false,
                 'inserted' => true,
