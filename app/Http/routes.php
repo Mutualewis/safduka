@@ -309,7 +309,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::post('/cleanbulkinginstructions', 'CleanBulkingController@bulking');
 
 		Route::get('/cleanbulkresults', 'CleanBulkingController@cleanResultsForm'); 
-		Route::post('/cleanbulkresults', 'CleanBulkingController@processingResults');	
+		Route::post('/cleanbulkresults', 'CleanBulkingController@cleanResults');	
 
 		Route::get('/stocksallclean', 'StocksCleanGridController@stockAllAndCleanGrid');
 		

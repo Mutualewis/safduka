@@ -250,12 +250,12 @@
 	        			<label>Instruction Number</label>
 		                <select class="form-control" name="ref_no" id="ref_no" onchange="this.form.submit()">
 		                	<option></option> 
-							@if (isset($refno) && count($refno) > 0)
-										@foreach ($refno->all() as $value)
+							@if (isset($stock_details) && count($stock_details) > 0)
+										@foreach ($stock_details->all() as $value)
 											@if ($rfid ==  $value->id)
-												<option value="{{ $value->id }}" selected="selected">{{ $value->pr_instruction_number }}</option>
+												<option value="{{ $value->id }}" selected="selected">{{ $value->st_outturn }}</option>
 											@else
-												<option value="{{ $value->id }}">{{ $value->pr_instruction_number }}</option>
+												<option value="{{ $value->id }}">{{ $value->st_outturn }}</option>
 											@endif
 
 										@endforeach
@@ -266,32 +266,9 @@
 
 	        	</div>
 
-							<h3>Outturns</h3>
-	
-	<div class="row">
-			<div class="form-group col-md-4">
-				<label>Outturns</label>
-				<select class="form-control" name="outturn" onchange="this.form.submit()">
-					<option></option> 
-					@if (isset($StockView) && count($StockView) > 0)
-								@foreach ($StockView->all() as $value)
-									@if ($otttid ==  $value->id)
-										<option value="{{ $value->id }}" selected="selected">{{ $value->outturn}}</option>
-									@else
-										<option value="{{ $value->id }}">{{ $value->outturn}}</option>
-									@endif
-
-								@endforeach
-							
-					@endif
-				</select>		
-			</div>
-	
-	
-
 					
-	</div>	
-
+	
+	
  				<h3>Results</h3>
 	
 	        	<div class="row">
