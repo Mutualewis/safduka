@@ -322,6 +322,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/parchmentreportquality', 'GridController@parchmentQualityGrid'); 
 
 		Route::get('/bulking/getInstructed/{process}', ['as'=>'bulking.getInstructed','uses'=>'CleanBulkingController@getInstructed']);
+		Route::get('/bulking/getResults/{process}', ['as'=>'bulking.getResults','uses'=>'CleanBulkingController@getResults']);
 
 		
 });

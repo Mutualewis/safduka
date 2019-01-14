@@ -543,103 +543,34 @@
 				<h3>Instruction Results</h3>
 				<table class="table table-striped">
 				<thead>
-				<tr>
+				<tr>				  
+					
 					<th>
 						Outturn
-					</th>				  
-					<th>
-						Result Type
 					</th>
 					<th>
-						Weight
+						Mark
+					</th>
+
+					<th>
+						Grade
 					</th>
 					<th>
-						Packages
+						Kilos
 					</th>
 					<th>
 						Bags
 					</th>
 					<th>
-						Pockets
+						Pkts
 					</th>
-					<th>
-						Warehouse
-					</th>
-					<th>
-						Row
-					</th>
-					<th>
-						Column
-					</th>
-					<th>
-						Zone
-					</th>
+					
+
 				  </tr>
 				</thead>
-				<tbody>
+				<tbody id="tabledataresult">
 
-
-
-					<?php
-						$total_packages = 0;
-						$total_pkts = 0;
-						$count = 0;
-						$count_green = 0;
-						$count_process = 0;
-						$count_screen = 0;
-						$count_cup = 0;
-						$total_price = 0;
-						$total = 0;
-						
-						if (isset($ProcessResults) && count($ProcessResults) > 0) {
-							
-							foreach ($ProcessResults->all() as $value) {
-								$count += 1;
-								$id = $value->id;
-
-								$total += $value->weight_out; 
-
-								$total_packages += $value->packages_out;						
-								
-
-								echo "<tr>";
-
-								echo "<td>".$value->outturn."</td>";					
-
-									echo "<td>".$value->result_type."</td>";								
-									echo "<td>".$value->weight_out."</td>";
-									echo "<td>".$value->packages_out."</td>";
-									echo "<td>".$value->bags."</td>";
-									echo "<td>".$value->pockets."</td>";
-									echo "<td>".$value->wr_name."</td>";
-									echo "<td>".$value->loc_row."</td>";
-									echo "<td>".$value->loc_column."</td>";
-									echo "<td>".$value->btc_zone."</td>";
-						
-
-								echo "</tr>";
-
-							}
-						}
-					?>
-					  <tr>
-					  <td></td>
-					  	<!-- <td>Total:</td> -->
-					    <?php
-						    echo "<td>".$count." Results</td>";
-						?>
-					    <?php
-						    echo "<td>".$total." KGs</td>";					
-						    echo "<td>".$total_packages." Pkgs</td>";
-						?>						
-						<td></td>
-						<td></td>
-
-						<td></td>
-						<td></td>
-						<td></td>
-						
-					  </tr>
+					
 				</tbody>
 				</table>
 
@@ -832,6 +763,49 @@ teams = JSON.parse(teams)
 			});         	 
 		
 			$('#tabledata').html(html)
+			getResults(process)
+							dialog.modal('hide')	
+						}).error(function(error) {
+							console.log(error)
+						dialog.find('.bootbox-body').html('<div class="progress"></div>'+
+									'<hr><div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">An error occured while attempting to complete process. Contact Database Team</i></div>');
+						});
+	}
+	function getResults(value){
+		var process = value
+		console.log(process)
+		var url = '{{ route('bulking.getResults',['process'=>":process"]) }}';
+
+				url = url.replace(':process', process);
+				
+				var dialog = bootbox.dialog({
+					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
+  					backdrop: true,
+					closeButton: true,
+					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+				});
+						$.ajax({
+						url: url,
+						type: 'GET',
+						dataType: "json",
+						}).success(function(response) {
+
+						
+							
+		var html = '';
+		$.each( response, function( key, value ) {
+			console.log(value)
+			html = html+'<tr>'
+			html = html+'<td>'+value.st_outturn+'</td>';
+			html = html+'<td>'+value.st_mark+'</td>';
+			html = html+'<td>'+value.mt_name+'</td>';
+			html = html+'<td>'+value.st_net_weight+'</td>';
+			html = html+'<td>'+value.st_bags+'</td>';
+			html = html+'<td>'+value.st_pockets+'</td>';
+			html = html+'</tr>'
+			});         	 
+		
+			$('#tabledataresult').html(html)
 
 							dialog.modal('hide')	
 						}).error(function(error) {
@@ -977,13 +951,13 @@ teams = JSON.parse(teams)
 					data: data,
 					dataType: 'json',
 					}).done(function(response) {
-						console.log(response)
+						
 						if(response.updated) {
 							dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-							
+							getResults(ref_no)
 						} else if(response.inserted) {
 							dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
-							
+							getResults(ref_no)
 							
 							//location.reload();
 						}else if(response.error) {
