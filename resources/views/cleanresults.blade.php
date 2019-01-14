@@ -170,7 +170,19 @@
 	if (!isset($rtid )) {
 		$rtid = NULL;
 	}
-	
+	if (!isset($mtid )) {
+		$mtid = NULL;
+	}
+	if (!isset($prc_season )) {
+		$prc_season = NULL;
+	}
+	if (old('grower') != NULL) {
+		$st_cgr = old('grower');
+    }
+    
+	if (!isset($st_cgr)) {
+		$st_cgr = NULL;
+	}
 	if (!isset($rfid)) {
 		$rfid = NULL;
 	}
@@ -218,8 +230,6 @@
 		$comments = $pdetails->prc_purchase_comments;
 	}
 	$BULKING_PROCESS = 4;
-	//old('outt_number'). $outt_number }}
-    
 	
 ?>
     <div class="col-md-5">
@@ -248,14 +258,14 @@
 		            
 	        		<div class="form-group col-md-4">
 	        			<label>Instruction Number</label>
-		                <select class="form-control" name="ref_no" id="ref_no" onchange="this.form.submit()">
+		                <select class="form-control" name="ref_no" id="ref_no" onchange="getInstructed(this)">
 		                	<option></option> 
-							@if (isset($stock_details) && count($stock_details) > 0)
-										@foreach ($stock_details->all() as $value)
+							@if (isset($provisionalbulk) && count($provisionalbulk) > 0)
+										@foreach ($provisionalbulk->all() as $value)
 											@if ($rfid ==  $value->id)
-												<option value="{{ $value->id }}" selected="selected">{{ $value->st_outturn }}</option>
+												<option value="{{ $value->id }}" selected="selected">{{ $value->pbk_instruction_number }}</option>
 											@else
-												<option value="{{ $value->id }}">{{ $value->st_outturn }}</option>
+												<option value="{{ $value->id }}">{{ $value->pbk_instruction_number }}</option>
 											@endif
 
 										@endforeach
@@ -264,30 +274,52 @@
 		                </select>	
 	                </div>	
 
+					<div class="form-group col-md-3">
+		            	<label>Bulking Season</label>
+		                <select class="form-control" name="Bulking_season">
+						<option value="">Season</option>
+							@if (count($Season) > 0)
+										@foreach ($Season->all() as $season)
+										@if (2 ==  $season->id)
+											<option value="{{ $season->id }}" selected="selected">{{ $season->csn_season}}</option>
+										@else
+											<option value="{{ $season->id }}">{{ $season->csn_season}}</option>
+										@endif
+										@endforeach
+									
+							@endif
+		                </select>
+		            </div>
+
 	        	</div>
 
+				<div class="row">
 					
-	
+					<div class="form-group col-md-3">
+		            	<label>Grower</label>
+		                <select class="form-control" name="grower" id="grower" style="width: 400px">
+		               		<option value="">---select grower---</option>
+							@if (count($growers) > 0)
+										@foreach ($growers->all() as $grower)
+										@if ($st_cgr ==  $grower->id)
+											<option value="{{ $grower->id }}" selected="selected">{{ $grower->cgr_grower}}    &&nbsp&nbsp&nbsp&nbsp ( {{ $grower->cgr_mark}} )</option>
+										@else
+											<option value="{{ $grower->id }}">{{ $grower->cgr_grower}} &nbsp&nbsp&nbsp&nbsp  ( {{ $grower->cgr_mark}} )</option>
+										@endif
+										@endforeach
+									
+							@endif
+		                </select>
+		            </div>
+					
+				</div>
 	
  				<h3>Results</h3>
 	
 	        	<div class="row">
 	 		            <div class="form-group col-md-4">
-			                <label>Results Type</label>
-			                <select class="form-control" name="results_type" onchange="this.form.submit()">
-			                	<option></option> 
-								@if (isset($resultsType) && count($resultsType) > 0)
-											@foreach ($resultsType->all() as $value)
-												@if ($rtid ==  $value->id)
-													<option value="{{ $value->id }}" selected="selected">{{ $value->prt_name}}</option>
-												@else
-													<option value="{{ $value->id }}">{{ $value->prt_name}}</option>
-												@endif
-
-											@endforeach
-										
-								@endif
-			                </select>		
+			                <label>Weight</label>
+		                <input class="form-control"  id="batch_weight"  name="batch_weight" oninput="myFunction()" value="{{ old('batch_weight')  }}">	
 			            </div>
 	        	
 	            <?php 
@@ -329,6 +361,22 @@
 		            <div class="form-group col-md-4">
 		                <label >Pockets</label>
 		                <input class="form-control"  id="pockets"  name="pockets" oninput="myFunction()" value="{{ old('pockets')  }}">
+		            </div>
+					<div class="form-group col-md-4">
+		                <label>Grade</label>
+		                <select class="form-control" name="material" id="material" >
+		                	<option></option> 
+							@if (isset($material))
+										@foreach ($material->all() as $value)
+										@if ($mtid ==  $value->id)
+											<option value="{{ $value->id }}" selected="selected">{{ $value->mt_name}}</option>
+										@else
+											<option value="{{ $value->id }}">{{ $value->mt_name}}</option>
+										@endif
+										@endforeach
+									
+							@endif
+		                </select>
 		            </div>	            
 	            </div>	
 
@@ -338,14 +386,14 @@
 		        <div class="row">
 		            <div class="form-group col-md-4">
 		                <label>Warehouse</label>
-		                <select class="form-control" name="warehouse" onchange="this.form.submit()">
+		                <select class="form-control" name="warehouse" onchange="getLocations(this)">
 		                	<option></option> 
-							@if (isset($Warehouse))
-										@foreach ($Warehouse->all() as $value)
-										@if ($wrhse ==  $value->wrid)
-											<option value="{{ $value->wrid }}" selected="selected">{{ $value->wr_name}}</option>
+							@if (isset($warehouse))
+										@foreach ($warehouse->all() as $value)
+										@if ($wrhse ==  $value->id)
+											<option value="{{ $value->id }}" selected="selected">{{ $value->agt_name}}</option>
 										@else
-											<option value="{{ $value->wrid }}">{{ $value->wr_name}}</option>
+											<option value="{{ $value->id }}">{{ $value->agt_name}}</option>
 										@endif
 										@endforeach
 									
@@ -356,7 +404,7 @@
 		            <div class="form-group col-md-4">
 		                <label >Row</label>
 		                <?php //echo $location;?>
-		                <select class="form-control" name="row">
+		                <select class="form-control" name="row" id="loc_row">
 		                	<option></option> 
 								@if (isset($location))
 											@foreach ($location->all() as $value)
@@ -375,7 +423,7 @@
 
 		            <div class="form-group col-md-4">
 		                <label >Column</label>
-		                <select class="form-control" name="column">
+		                <select class="form-control" name="column" id="loc_col">
 		                	<option></option> 
 								@if (isset($location))
 											@foreach ($location->all() as $value)
@@ -419,7 +467,7 @@
 							<?php
 
 						} else {
-							if (isset($Warehouse)){
+							if (isset($warehouse)){
 								?>
 									<div class="row">
 							            <div class="form-group col-md-12">
@@ -431,13 +479,17 @@
 						}
 					}
 				?>
+				<div class="row">
+							            <div class="form-group col-md-12">
+							           		<button type="submit" name="submitresults" class="btn btn-lg btn-success btn-block">Add/Update Bulking Results</button>
+							            </div>
+							        </div>
 
-
-		        <div class="row">
+		        <!-- <div class="row">
 		            <div class="form-group col-md-12">
 		           		<button type="submit" name="printresults" class="btn btn-lg btn-success btn-block">Print Processing Results</button>
 		            </div>
-		        </div>
+		        </div> -->
 
 				<!-- <div class="row">
 		            <div class="form-group col-md-12">
@@ -473,86 +525,13 @@
 					<th>
 						Pkts
 					</th>
-					<th>
-						Quality
-					</th>
-					<th>
-						Location
-					</th>
+					
 
 				  </tr>
 				</thead>
-				<tbody>
+				<tbody id="tabledata">
 
-					<?php
-						$total_bags = 0;
-						$total_pkts = 0;
-						$count = 0;
-						$count_green = 0;
-						$count_process = 0;
-						$count_screen = 0;
-						$count_cup = 0;
-						$total_price = 0;
-						$total = 0;
-						
-						if (isset($StockView)) {
-							foreach ($StockView->all() as $value) {
-								$total += $value->weight; 
-								$count += 1;
-								$id = $value->id;
-
-								$total_bags += $value->bags;
-
-								$total_pkts += $value->pockets;
-
-					    		$total_value = ($value->weight)/50 * ($value->price);
-
-								$total_price += $total_value;					
 					
-
-								echo "<tr>";
-
-									// echo "<td>".$value->sale."</td>";
-									// echo "<td>".$value->lot."</td>";
-									echo "<td>".$value->outturn."</td>";
-									echo "<td>".$value->mark."</td>";
-									echo "<td>".$value->grade."</td>";
-									echo "<td>".$value->weight."</td>";
-									echo "<td>".$value->bags."</td>";
-									echo "<td>".$value->pockets."</td>";						
-									echo "<td>".$value->quality."(".$value->code.")"."</td>";		
-									echo "<td width='12%'>".$value->location."</td>";	
-									echo "<td><input type='hidden' class='form-control' name='totalkilos' size='5' value='$total'></td>";
-									echo "<td><input type='hidden' class='form-control' name='totalvalue' size='5' value='$total_value'></td>";	
-
-								echo "</tr>";
-
-							}
-						}
-					?>
-					  <tr>
-					    <?php
-						    echo "<td>".$count." Lot(s)</td>";
-						?>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					    <?php
-						    echo "<td>".$total." KGs</td>";
-						?>
-					    <?php
-						    echo "<td>".$total_bags." Bags</td>";
-						?>
-					    <?php
-						    echo "<td>".$total_pkts." Pkts</td>";
-						?>			
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						
-					  </tr>
 				</tbody>
 				</table>
 
@@ -760,6 +739,8 @@
 @stop
 
 @push('scripts')
+<script src="{{ asset("assets/select2/select2.min.js") }}" type="text/javascript"></script>
+<script type="text/javascript" charset="utf8" src="{{ asset("assets/js/jqvalidator/jquery.validate.js") }}" ></script>
 <script>
 var autosubmit = <?php echo json_encode($autosubmit); ?>;
 var teams = null;
@@ -770,7 +751,259 @@ teams = JSON.parse(teams)
 		// if(autosubmit){
 		// 	$( "#processingresultsform" ).submit();
 		// }
+		$('#ref_no').select2();
+		$('#grower').select2();
 	})
+
+	function getLocations(value){
+		var warehouse = value.value
+
+		var url = '{{ route('arrivalinformation.getLocations',['warehouse'=>":warehouse"]) }}';
+
+				url = url.replace(':warehouse', warehouse);
+				
+				var dialog = bootbox.dialog({
+					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
+  					backdrop: true,
+					closeButton: true,
+					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+				});
+						$.ajax({
+						url: url,
+						type: 'GET',
+						dataType: "json",
+						}).success(function(response) {
+
+						console.log(response)
+						
+		var sel_body = '';
+		$.each( response, function( key, value ) {
+			sel_body = sel_body+'<option value="'+value.id+'">'+value.loc_row+'</option>';
+			});         	 
+		
+			$('#loc_row').append(sel_body)
+
+			var selcol_body = '';
+		$.each( response, function( key, value ) {
+			selcol_body = selcol_body+'<option value="'+value.id+'">'+value.loc_column+'</option>';
+			});         	 
+		
+			$('#loc_col').append(selcol_body)
+							dialog.modal('hide')	
+						}).error(function(error) {
+							console.log(error)
+						dialog.find('.bootbox-body').html('<div class="progress"></div>'+
+									'<hr><div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">An error occured while attempting to complete process. Contact Database Team</i></div>');
+						});
+	}
+
+	function getInstructed(value){
+		var process = value.value
+
+		var url = '{{ route('bulking.getInstructed',['process'=>":process"]) }}';
+
+				url = url.replace(':process', process);
+				
+				var dialog = bootbox.dialog({
+					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
+  					backdrop: true,
+					closeButton: true,
+					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+				});
+						$.ajax({
+						url: url,
+						type: 'GET',
+						dataType: "json",
+						}).success(function(response) {
+
+						
+							console.log(response)
+		var html = '';
+		$.each( response, function( key, value ) {
+			//console.log(value)
+			html = html+'<tr>'
+			html = html+'<td>'+value.st_outturn+'</td>';
+			html = html+'<td>'+value.st_mark+'</td>';
+			html = html+'<td>'+value.mt_name+'</td>';
+			html = html+'<td>'+value.st_net_weight+'</td>';
+			html = html+'<td>'+value.st_bags+'</td>';
+			html = html+'<td>'+value.st_pockets+'</td>';
+			html = html+'</tr>'
+			});         	 
+		
+			$('#tabledata').html(html)
+
+							dialog.modal('hide')	
+						}).error(function(error) {
+							console.log(error)
+						dialog.find('.bootbox-body').html('<div class="progress"></div>'+
+									'<hr><div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">An error occured while attempting to complete process. Contact Database Team</i></div>');
+						});
+	}
+
+	$("#processingresultsform").validate({
+			rules: {
+				material: "required",
+				outturn: "required",
+				grower: "required",
+				batch_weight : "required",
+				Bulking_season: "required",
+				warehouse: "required",
+				mark: {
+					required: true,
+					minlength: 2
+				},
+				// password: {
+				// 	required: true,
+				// 	minlength: 5
+				// },
+				// confirm_password: {
+				// 	required: true,
+				// 	minlength: 5,
+				// 	equalTo: "#password"
+				// },
+				// email: {
+				// 	required: true,
+				// 	email: true
+				// },
+				topic: {
+					required: ".newsletter:checked",
+					minlength: 1
+				},
+				// agree: "required"
+			},
+			messages: {
+				material: "Please select a grade",
+				ref_no: "Please enter bulk outturn",
+				weight: "Please enter bulk outturn",
+				grower: "Please select a grower",
+				mark: {
+					required: "Please enter grower mark",
+					minlength: "Mark must consist of at least 2 characters"
+				},
+				Bulking_season: "Please select a valid bulking season",
+				warehouse: "Please select a warehouse",
+				// password: {
+				// 	required: "Please provide a password",
+				// 	minlength: "Your password must be at least 5 characters long"
+				// },
+				// confirm_password: {
+				// 	required: "Please provide a password",
+				// 	minlength: "Your password must be at least 5 characters long",
+				// 	equalTo: "Please enter the same password as above"
+				// },
+				// email: "Please enter a valid email address",
+				// agree: "Please accept our policy",
+				// topic: "Please select at least 2 topics"
+			},
+			submitHandler: function(event) {
+				//event.preventDefault();
+				
+				var error =false;
+				var alertnone = false;
+				
+				if(alertnone){
+					return false
+				}
+				var batch_weight = $('[name="batch_weight"]').val();
+				var str ='weight : '+ batch_weight +' </br>'
+			    
+	
+			
+				var confirm = false
+				bootbox.confirm({ 
+				size: "large",
+				message: "Are you sure? <br> "+str, 
+				callback: function(result){ 
+					if(result){
+						saveResult()
+					}
+				 }
+				})
+  
+				console.log(confirm)
+				if(!confirm){
+					return false;
+				}else{
+
+				}
+				return false
+				
+
+				return
+			}
+		});
+
+		// propose username by combining first- and lastname
+		// $("#username").focus(function() {
+		// 	var firstname = $("#firstname").val();
+		// 	var lastname = $("#lastname").val();
+		// 	if (firstname && lastname && !this.value) {
+		// 		this.value = firstname + "." + lastname;
+		// 	}
+		// });
+		function saveResult(){
+			//post
+			var url = '{{ route('bulking.saveCleanBulkResult') }}';
+				console.log(url)
+				var country = $('[name="country"]').val();
+				var outt_season = $('[name="Bulking_season"]').val();
+				var ref_no = $('[name="ref_no"]').val();
+				var batch_weight = $('[name="batch_weight"]').val();
+				var bags = $('[name="batch_bags"]').val();
+				var pockets = $('[name="pockets"]').val();
+				var row = $('[name="row"]').val();
+				var column = $('[name="column"]').val();
+				var zone = $('[name="zone"]').val();
+				var warehouse = $('[name="warehouse"]').val();
+				
+				var grower = $('[name="grower"]').val();
+				var material = $('[name="material"]').val();
+				
+				var formdata = { country: country, outt_season: outt_season,ref_no: ref_no, grower: grower, weight : batch_weight, material: material , new_row: row, new_column: column, new_zone : zone, warehouse : warehouse }
+
+				var dialog = bootbox.dialog({
+					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
+  					backdrop: true,
+					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+				});
+
+				var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');		
+				let data = {_token: CSRF_TOKEN, data: formdata, }
+				console.log(JSON.stringify(data))
+				$.ajax({
+					method: "POST",
+					url: url,
+					data: data,
+					dataType: 'json',
+					}).done(function(response) {
+						console.log(response)
+						if(response.updated) {
+							dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+							
+						} else if(response.inserted) {
+							dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
+							
+							
+							//location.reload();
+						}else if(response.error) {
+							var msg = '';
+							$.each(response.errormsgs, function( index, value ) {
+							msg = msg +'<br>'+ value;
+						})
+							dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">'+msg +'</i></div>');
+							
+						}
+					}).error(function(error) {
+						console.error(error)
+						// var msg = '';
+						// $.each(response.errormsgs, function( index, value ) {
+						// 	msg = msg + value;
+						// })
+						// dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">'+msg +'</i></div>');
+						// closeBootBox();
+				});
+		}
 
 	$( "#generatechargesbtn" ).click(function(event){
 		event.preventDefault();
@@ -983,3 +1216,23 @@ function printRate(){
 }
 </script>
 @endpush
+
+<style>
+#processingresultsform label.error {
+		margin-left: 10px;
+		width: auto;
+		display: inline;
+		color: #a94442;
+	}
+	#processingresultsform input.error {
+		color: #a94442;
+		border: 2px solid red;
+	}
+	#processingresultsform select.error {
+		color: #a94442;
+		border: 2px solid red;
+	}
+	.help-block {
+    color: #a94442;
+	}
+</style>
