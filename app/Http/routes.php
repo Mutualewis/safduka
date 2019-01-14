@@ -309,7 +309,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::post('/cleanbulkinginstructions', 'CleanBulkingController@bulking');
 
 		Route::get('/cleanbulkresults', 'CleanBulkingController@cleanResultsForm'); 
-		Route::post('/cleanbulkresults', 'CleanBulkingController@processingResults');	
+		Route::post('/cleanbulkresults', 'CleanBulkingController@cleanResults');	
 
 		Route::get('/stocksallclean', 'StocksCleanGridController@stockAllAndCleanGrid');
 		
@@ -317,9 +317,11 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::post('/bulking/saveCleanBulk', ['as'=>'bulking.saveCleanBulk','uses'=>'CleanBulkingController@bulkingApi']);
 
+		Route::post('/bulking/saveCleanBulkResult', ['as'=>'bulking.saveCleanBulkResult','uses'=>'CleanBulkingController@bulkingResultApi']);
+
 		Route::get('/parchmentreportquality', 'GridController@parchmentQualityGrid'); 
 
-		
+		Route::get('/bulking/getInstructed/{process}', ['as'=>'bulking.getInstructed','uses'=>'CleanBulkingController@getInstructed']);
 
 		
 });
