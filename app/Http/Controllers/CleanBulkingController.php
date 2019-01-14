@@ -790,6 +790,34 @@ class CleanBulkingController extends Controller {
         
 
     }
+    public function getResults($process){
+        try {
+
+            if ($process !== NULL) {
+
+                $stockview = DB::table('provisional_bulk_results_pbrts as pbrts')
+                ->leftJoin('stock_warehouse_st as st', 'pbrts.st_wr_id', '=', 'st.id')
+                ->leftJoin('material_mt as mt', 'st.mt_id', '=', 'mt.id')
+                ->where('pr_id', '=', $process)
+                ->whereNotNull('pbrts.st_wr_id')
+                ->get();
+
+            }
+
+            return response()->json(
+                $stockview
+            );                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+        
+
+    }
     public function bulkingResultApi(Request $request){
         DB::connection()->enableQueryLog();
         $errormessages = [];
@@ -841,12 +869,12 @@ class CleanBulkingController extends Controller {
                 
                 // exit();
                 if ($stock_details == null) {
-                    $st_bulk_id = StockWarehouse::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages, 'st_outturn' => $outturn,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'mt_id' => $material_id, 'st_is_bulk' => 1, 'st_owner_id' => 5, 'warehouse_id' => $warehouse_id]);
+                    $st_bulk_id = StockWarehouse::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $outturn, 'st_mark' => $mark, 'st_packages'=>$batch_packages, 'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'mt_id' => $material_id, 'st_is_bulk' => 1, 'st_owner_id' => 5, 'warehouse_id' => $warehouse_id]);
 
                 } else {
                     $st_bulk_id = $stock_details->id;
                     StockWarehouse::where('id', '=', $st_bulk_id)
-                         ->update([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $outturn, 'st_mark' => $mark, 'st_packages'=>$batch_packages, 'st_outturn' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'mt_id' => $material_id, 'st_is_bulk' => 1, 'st_owner_id' => 5, 'warehouse_id' => $warehouse_id]);                 
+                         ->update([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $outturn, 'st_mark' => $mark, 'st_packages'=>$batch_packages, 'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'mt_id' => $material_id, 'st_is_bulk' => 1, 'st_owner_id' => 5, 'warehouse_id' => $warehouse_id]);                 
                 }
 
                 $results_details = ProvisionalResults::where('pr_id', $ref_no)->first();
