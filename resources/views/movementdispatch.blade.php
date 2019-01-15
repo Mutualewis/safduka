@@ -443,7 +443,7 @@
 		                	if ($role == $admin) {
 		                	?>
 								<th>
-									Remove
+									Withdraw
 								</th>
 							<?php 
 							}
@@ -1044,8 +1044,6 @@
 
 	          		html += '<tr><td>' + value["btc_weight"] + 
 	                    '</td><td>' + value["btc_tare"] + '</td><td>' + value["btc_net_weight"] + '</td><td>' + value["btc_packages"] + '</td><td>' + value["wr_name"] + '</td><td>' + value["loc_row"] + '</td><td>' + value["loc_column"] + '</td><td>' + value["btc_zone"] + '</td><td><button type="button" onclick="batch_delete(' + value["btcid"] + ')" class="btn btn-success btn-danger">Delete</button></td></tr>';
-
-
 				});
 				$('#batch_table tr').first().after(html);
 		});
@@ -1263,7 +1261,7 @@
 				net = parseInt(net) + parseInt(value["st_net_weight"]);
 
           		html += '<tr><td>' + count + 
-                    '</td><td>' + value["st_outturn"] + '</td><td>' + value["mt_name"] + '</td><td>' + value["st_packages"] + '</td><td>' + value["st_gross"] + '</td><td>' + value["st_tare"] + '</td><td>' + value["st_net_weight"] + '</td><td>' + value["st_moisture"] + '</td><td><button type="button" onclick="outturn_delete(' + value["stid"] + ')"  class="btn btn-success btn-danger">Delete</button></td></tr>';
+                    '</td><td>' + value["st_outturn"] + '</td><td>' + value["mt_name"] + '</td><td>' + value["st_packages"] + '</td><td>' + value["st_gross"] + '</td><td>' + value["st_tare"] + '</td><td>' + value["st_net_weight"] + '</td><td>' + value["st_moisture"] + '</td><td><button type="button" onclick="outturn_withdraw_dispatch(' + value["stid"] + ')"  class="btn btn-success btn-danger">Delete</button></td></tr>';
 
 			});		
 
@@ -1283,6 +1281,38 @@
 
 
 	}
+
+	function outturn_withdraw_dispatch(stock_id)
+	{
+		var url="{{ route('movementdispatch.outturn_withdraw_dispatch',['stock_id'=>":stock_id"] ) }}";		
+		url = url.replace(':stock_id', stock_id);
+
+		
+		var dialog = bootbox.alert({
+			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+		}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+					
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			if (response != null) {
+				dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+				closeBootBox();
+			} else {
+				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+				closeBootBox();
+			}
+
+			refreshOutturnsTable();
+			displayBatch();
+		}).error(function(error) {
+			dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+			closeBootBox();
+		});  
+
+	}
+	
 
 	function outturn_delete(stock_id)
 	{
