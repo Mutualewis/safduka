@@ -38,7 +38,7 @@ use Ngea\RoleUser;
 use Ngea\User;
 use Ngea\coffeegrower;
 use Ngea\Items;
-use Ngea\agent;
+use Ngea\Agent;
 use Ngea\Material;
 use Ngea\StockWarehouse;
 use Ngea\StockMill;
