@@ -21,6 +21,6 @@ class StockWarehouse extends Model {
 	 * @var array
 	 */
 	
-	protected $fillable = ['id', 'prc_id', 'gr_id', 'st_dispatch_net', 'st_gross', 'st_tare', 'st_moisture', 'pkg_id', 'usr_id', 'created_at', 'updated_at'];
+	protected $fillable = ['id', 'prc_id', 'gr_id', 'st_dispatch_net','st_net_weight', 'st_gross', 'st_tare', 'st_moisture', 'pkg_id', 'usr_id', 'created_at', 'updated_at'];
            
 }

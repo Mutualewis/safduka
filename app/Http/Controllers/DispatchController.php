@@ -883,6 +883,30 @@ class DispatchController extends Controller {
 
     }
 
+    public function outturn_withdraw_dispatch($id)
+    {  
+        try { 
+
+            $stock_details = StockWarehouse::where('id', $id)->first();  
+
+            if ($stock_details) {
+                StockWarehouse::where('id', '=', $id)
+                            ->update([ 'dp_id' => null ,'st_ended_by' => null]);
+            }
+
+            return $id;
+
+        } catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+
+        
+    }
+
     public function outturn_delete($id)
     {  
         try { 

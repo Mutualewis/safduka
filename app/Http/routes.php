@@ -150,26 +150,18 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/arrivalinformation/addDispatch/{grn_number}/{outt_number}/{outt_season}/{coffee_grower}/{outturn_type}/{moisture}/{basket}/{packaging}/{warehouse}', ['as'=>'arrivalinformation.addDispatch','uses'=>'GRNSController@addDispatch']);
 
-		
 
 		Route::get('/arrivalinformation/addBatch/{outt_number}/{outt_season}/{coffee_grower}/{outturn_type_batch}/{weigh_scales}/{packaging}/{zone}/{packages_batch}/{batch_kilograms}/{batch_kilograms_hidden}/{selectedRow}/{selectedColumn}/{warehouse}/{grn_number}/{pallet_kgs}', ['as'=>'arrivalinformation.addBatch','uses'=>'GRNSController@addBatch']);
 
-		Route::get('/transferownership', 'TransferOwnershipController@transferOwnershipForm'); 
-		Route::post('/transferownership', 'TransferOwnershipController@transferOwnership');
-
-		Route::get('/warrant', 'WarrantController@warrantForm'); 
-		Route::post('/warrant', 'WarrantController@warrant');
-
-
 		Route::get('/movementdispatch', 'DispatchController@movementDispatchForm'); 
 		Route::post('/movementdispatch', 'DispatchController@movementDispatch');
-
 		Route::get('/movementdispatch/generateGDN/{warehouse}', ['as'=>'movementdispatch.generateGDN','uses'=>'Controller@generateGDN']);
 		Route::get('/movementdispatch/getDispatch/{dispatch_type}', ['as'=>'movementdispatch.getDispatch','uses'=>'DispatchController@getDispatch']);
 		Route::get('/movementdispatch/getGrower/{outt_number_search}', ['as'=>'movementdispatch.getGrower','uses'=>'DispatchController@getGrower']);
-		Route::get('/movementdispatch/addDispatch/{warehouse}/{grn_number}/{weighbridgeTK}/{outt_season}/{dispatch_type}/{agent_id}/{outt_number_search}', ['as'=>'movementdispatch.addDispatch','uses'=>'DispatchController@addDispatch']);
+		Route::get('/movementdispatch/addDispatch/{warehouse}/{grn_number}/{weighbridgeTK}/{outt_season}/{dispatch_type}/{agent_id}/{outt_number_search}', ['as'=>'movementdispatch.addDispatch','uses'=>'DispatchController@addDispatch']); 
 		
-		Route::get('/movementdispatch/getGDNContents/{grn_number}/{warehouse}', ['as'=>'movementdispatch.getGDNContents','uses'=>'DispatchController@getGDNContents']);	
+		Route::get('/movementdispatch/getGDNContents/{grn_number}/{warehouse}', ['as'=>'movementdispatch.getGDNContents','uses'=>'DispatchController@getGDNContents']);			
+		Route::get('/movementdispatch/outturn_withdraw_dispatch/{id}', ['as'=>'movementdispatch.outturn_withdraw_dispatch','uses'=>'DispatchController@outturn_withdraw_dispatch']);
 
 
 		Route::get('/weighnote', 'WeightNoteController@weighNoteForm'); 
@@ -239,14 +231,10 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::post('/cataloguequalitydetailslist', 'QualityController@addQualityDetailsList'); 
 
-		Route::get('/cataloguequalitydetails/getLots/{season}/{st_id}/{direction}/{outt_number}/{coffee_grade}', ['as'=>'cataloguequalitydetails.getLots','uses'=>'QualityController@getLots']);
-		
-		Route::get('/cataloguequalitydetails/getLotsOutturns/{season}', ['as'=>'cataloguequalitydetails.getLotsOutturns','uses'=>'QualityController@getLotsOutturns']);
+		Route::get('/cataloguequalitydetails/getLots/{season}/{st_id}/{direction}/{outt_number}/{coffee_grade}', ['as'=>'cataloguequalitydetails.getLots','uses'=>'QualityController@getLots']); 
 
 	//tablet quality
-	// Route::get('/cataloguequalitydetails/saveGreen/{st_id}/{dnt}/{greensize}/{greencolor}/{greendefects}/{raw}/{comments}', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'QualityController@saveGreen']);
-
-	Route::post('/cataloguequalitydetails/saveGreen', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'QualityController@saveGreen']);
+	Route::get('/cataloguequalitydetails/saveGreen/{st_id}/{dnt}/{greensize}/{greencolor}/{greendefects}/{raw}/{comments}', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'QualityController@saveGreen']);
 
 	Route::post('/cataloguequalitydetails/saveScreen', ['as'=>'cataloguequalitydetails.saveScreen','uses'=>'QualityController@saveScreen']);
 
@@ -303,6 +291,9 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/bulkinginstructions/getstockview/{countryID}/{ref_no}', ['as'=>'bulkinginstructions.getstockview','uses'=>'BulkingController@getstockview']); 
 		Route::post('/bulkinginstructions', 'BulkingController@bulking');
 
+
+
+
 		Route::get('/cleanbulkinginstructions', 'CleanBulkingController@bulkingForm'); 
 		Route::get('/cleanbulkinginstructions/getstockview/{countryID}/{ref_no}', ['as'=>'cleanbulkinginstructions.getstockview','uses'=>'CleanBulkingController@getstockview']); 
 		Route::post('/cleanbulkinginstructions', 'CleanBulkingController@bulking');
@@ -314,8 +305,6 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::post('/bulking/saveCleanBulk', ['as'=>'bulking.saveCleanBulk','uses'=>'CleanBulkingController@bulkingApi']);
 
 		Route::get('/parchmentreportquality', 'GridController@parchmentQualityGrid'); 
-
-
 });
 
 

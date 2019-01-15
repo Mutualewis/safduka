@@ -13,7 +13,7 @@ class CreateWarrantingTableMigration extends Migration
     public function up()
     {
       DB::statement("
-            ALTER IGNORE TABLE `ngea_db`.`warrants_war` 
+            ALTER  TABLE `ngea_db`.`warrants_war` 
             CHANGE COLUMN `id` `id` INT(11) NOT NULL ,
             ADD COLUMN `st_id` INT(11) NULL AFTER `id`;
             ALTER TABLE `ngea_db`.`warrants_war` 

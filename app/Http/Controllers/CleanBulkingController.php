@@ -30,6 +30,7 @@ use Ngea\processing;
 use Ngea\processing_instruction;
 use Ngea\ProcessInstructions;
 use Ngea\ProcessResults;
+use Ngea\ProvisionalResults;
 use Ngea\ProcessResultsType;
 use Ngea\quality_parameters;
 use Ngea\rawscore;
@@ -123,16 +124,13 @@ class CleanBulkingController extends Controller {
         }
         
         $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_code', 'cgr_mark']);
-        
+        $provisionalbulk = ProvisionalBulk::all(['id', 'pbk_instruction_number']);
   
 
         return View::make('cleanbulking', compact('id',
-            'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'certs', 'StockStatus', 'growers', 'provisionalPurpose', 'material', 'rw', 'clm', 'zone', 'warehouse'));
+            'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'certs', 'StockStatus', 'growers', 'provisionalPurpose', 'material', 'rw', 'clm', 'zone', 'warehouse', 'provisionalbulk'));
 
     }
-
-   
-
 
     public function bulking(Request $request)
     {
@@ -689,7 +687,6 @@ class CleanBulkingController extends Controller {
 		}catch (\Exception $e) {
 			
             DB::rollback();
-            dump($e); exit;
 			$errormessages[] = $e->getMessage();
 			return response()->json([
 				'exists' => false,
@@ -700,7 +697,255 @@ class CleanBulkingController extends Controller {
 			]);	
 		}
     }
-   
+
+    public function cleanResultsForm(Request $request)
+    {
+      
+        $id            = null;
+        $Season        = Season::all(['id', 'csn_season']);
+        $country       = country::all(['id', 'ctr_name', 'ctr_initial']);
+        $CoffeeGrade   = CoffeeGrade::all(['id', 'cgrad_name']);
+        $Certification = Certification::all(['id', 'crt_name']);
+        $buyer         = buyer::all(['id', 'cb_name']);
+        $processing    = processing::all(['id', 'prcss_name']);
+        $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_code', 'cgr_mark']);
+
+        $bulkinstructions = StockWarehouse::whereNotNull('st_is_bulk')->get();
+        
+        $sale_status = sale_status::all(['id', 'sst_name']);
+        $warehouse = agent::where('agtc_id', 4)->orWhere('agtc_id', 1)->get();
+        $material = Material::all(['id', 'mt_name']);
+
+        $Mill        = null;
+
+        $cid        = null;
+        $csn_season = null;
+        $sale_cb_id = null;
+        $release_no = null;
+        $date       = null;
+        $release_no = null;
+        $st_id_selected = null;
+        $provisionalbulk = ProvisionalBulk::all(['id', 'pbk_instruction_number']);
+
+        
+        return View::make('cleanresults', compact('id',
+            'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'rates', 'teams', 'st_id_selected', 'stock_details', 'provisionalbulk', 'material', 'growers'));
+
+    }
+
+    public function cleanResults(Request $request)
+    {
+      
+        $id            = null;
+        $Season        = Season::all(['id', 'csn_season']);
+        $country       = country::all(['id', 'ctr_name', 'ctr_initial']);
+        $CoffeeGrade   = CoffeeGrade::all(['id', 'cgrad_name']);
+        $Certification = Certification::all(['id', 'crt_name']);
+        $buyer         = buyer::all(['id', 'cb_name']);
+        $processing    = processing::all(['id', 'prcss_name']);
+
+        $sale_status = sale_status::all(['id', 'sst_name']);
+        $Warehouse   = null;
+        $Mill        = null;
+
+        $cid        = null;
+        $csn_season = null;
+        $sale_cb_id = null;
+        $release_no = null;
+        $date       = null;
+        $release_no = null;
+        $st_id_selected = null;
+        
+        //$stock_details = StockWarehouse::whereNotNull('st_is_bulk')->get();
+
+        return View::make('cleanresults', compact('id',
+            'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'rates', 'teams', 'st_id_selected', 'stock_details'));
+
+    }
+    public function getInstructed($process){
+        try {
+
+            if ($process !== NULL) {
+
+                $stockview = DB::table('provisional_allocation_prall as prall')
+                ->leftJoin('stock_warehouse_st as st', 'prall.st_wr_id', '=', 'st.id')
+                ->leftJoin('material_mt as mt', 'st.mt_id', '=', 'mt.id')
+                ->where('pbk_id', '=', $process)
+                ->whereNotNull('prall.st_wr_id')
+                ->get();
+
+            }
+
+            return response()->json(
+                $stockview
+            );                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+        
+
+    }
+    public function getResults($process){
+        try {
+
+            if ($process !== NULL) {
+
+                $stockview = DB::table('provisional_bulk_results_pbrts as pbrts')
+                ->leftJoin('stock_warehouse_st as st', 'pbrts.st_wr_id', '=', 'st.id')
+                ->leftJoin('material_mt as mt', 'st.mt_id', '=', 'mt.id')
+                ->where('pr_id', '=', $process)
+                ->whereNotNull('pbrts.st_wr_id')
+                ->get();
+
+            }
+
+            return response()->json(
+                $stockview
+            );                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+        
+
+    }
+    public function bulkingResultApi(Request $request){
+        DB::connection()->enableQueryLog();
+        $errormessages = [];
+        
+		try{
+            DB::beginTransaction();
+            $formdata = (object)$request->data;
+            
+            $user_data = Auth::user();
+            $user = $user_data->id;
+
+            $prc                   = 1;
+            $ref_no                = $formdata->ref_no;
+           
+            $season                = $formdata->outt_season;
+            $grower                =$formdata->grower;
+            $cid                =$formdata->country;
+            $material_id                =$formdata->material;
+           
+            
+            $new_row = $formdata->new_row;
+            $new_column = $formdata->new_column;
+            $new_zone = $formdata->new_zone;
+            $warehouse_id = $formdata->warehouse;
+
+            $reference_no = $ref_no;
+            
+            $weight_in             = $formdata->weight;;
+
+      
+            
+            $st_bulk_id = null;
+
+            $prdetails = ProvisionalBulk::where('id', $ref_no)->first();
+
+            $grower_details = coffeegrower::where('id', $grower)->first();
+            $mark = $grower_details->cgr_mark;
+            
+            if ($prdetails != null) {
+                
+                $outturn = $prdetails->pbk_instruction_number;
+
+                $stock_net = $weight_in;
+                $stock_bags    = floor($stock_net / 60);
+                $stock_pockets = $stock_net % 60;     
+                $batch_packages = ceil($stock_net / 60);   
+
+                $stock_details = StockWarehouse::where('st_outturn', $outturn)->where('mt_id', $material_id)->first();
+                
+                // exit();
+                if ($stock_details == null) {
+                    $st_bulk_id = StockWarehouse::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $outturn, 'st_mark' => $mark, 'st_packages'=>$batch_packages, 'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'mt_id' => $material_id, 'st_is_bulk' => 1, 'st_owner_id' => 5, 'warehouse_id' => $warehouse_id]);
+
+                } else {
+                    $st_bulk_id = $stock_details->id;
+                    StockWarehouse::where('id', '=', $st_bulk_id)
+                         ->update([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $outturn, 'st_mark' => $mark, 'st_packages'=>$batch_packages, 'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'mt_id' => $material_id, 'st_is_bulk' => 1, 'st_owner_id' => 5, 'warehouse_id' => $warehouse_id]);                 
+                }
+
+                $results_details = ProvisionalResults::where('pr_id', $ref_no)->first();
+                
+                // exit();
+                if ($results_details == null) {
+                    $result_id = ProvisionalResults::insertGetId([ 'pr_id' => $ref_no, 'st_wr_id' => $st_bulk_id, 'prts_weight' => $weight_in, 'prts_packages' => $batch_packages]);
+
+                } else {
+                    $result_id = $results_details->id;
+                    ProvisionalResults::where('id', '=', $st_bulk_id)
+                         ->update([ 'pr_id' => $ref_no, 'st_wr_id' => $st_bulk_id, 'prts_weight' => $weight_in, 'prts_packages' => $batch_packages]);                 
+                }
+               
+                
+                $btid = Batch::insertGetId (
+                    ['st_id' => $st_bulk_id, 'btc_weight' => $weight_in, 'btc_tare' => 0, 'btc_net_weight' => $weight_in, 'btc_packages' => $batch_packages, 'btc_bags' => $stock_bags, 'btc_pockets' => $stock_pockets, 'ws_id' => null]);
+
+                $stlocid = StockLocation::insertGetId (
+                    ['bt_id' => $btid, 'loc_row_id' => $new_row, 'loc_column_id' => $new_column, 'btc_zone' => $new_zone]);
+
+                $prid = $prdetails->id;
+                ProvisionalBulk::where('id', '=', $prid)
+                    ->update(['pbk_confirmed_by' => $user ]);
+                Activity::log('Updated Provisional Bulk information with prid ' . $prid . ' prc ' . $prc . ' ref_no ' . $ref_no . ' weight_in ' . $weight_in );
+                
+            }else{
+                return response()->json([
+                    'exists' => false,
+                    'inserted' => false,
+                    'updated' => false,
+                    'error' => true,
+                    'errormsgs' => "Instruction not found"
+                ]);	
+            }
+          
+            
+            $queries = DB::getQueryLog();
+            if(!empty($errormessages)){
+                return response()->json([
+                    'exists' => false,
+                    'inserted' => false,
+                    'updated' => false,
+                    'error' => true,
+                    'errormsgs' => $errormessages
+                ]);	
+            }else{ 
+           DB::commit();
+			return response()->json([
+					'exists' => false,
+					'inserted' => true,
+					'updated' => false,
+					'error' => false,
+					'errormsg' => '',
+					'errormsgs' => $errormessages
+				]);
+			}
+			
+		}catch (\Exception $e) {
+			
+            DB::rollback();
+			$errormessages[] = $e->getMessage();
+			return response()->json([
+				'exists' => false,
+				'inserted' => false,
+				'updated' => false,
+				'error' => true,
+				'errormsgs' => $errormessages
+			]);	
+		}
+    }
 
 }
 
