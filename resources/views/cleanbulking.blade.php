@@ -284,7 +284,7 @@
 	                    <div class="input-group custom-search-form">
 	                        <input type="text" class="form-control" name="outturn" id ="outturn" placeholder="Outturn No..."  value="{{ old('outturn').$outturn }}" ></input>
 	                        <span class="input-group-btn">
-	                        <button type="submit" id="searchButtonOuttturn" name="searchButton" class="btn btn-default">
+	                        <button type="submit" id="searchButtonOuttturn" name="searchButton" class="btn btn-default" formnovalidate>
 	                        	<i class="fa fa-search"></i>
 	                        </button>	                       
 	                    </div>

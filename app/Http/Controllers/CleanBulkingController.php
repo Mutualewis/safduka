@@ -20,7 +20,7 @@ use Ngea\coffeegrower;
 use Ngea\ProvisionalBulk;
 
 use Ngea\Http\Controllers\Controller;
-use Ngea\agent;
+use Ngea\Agent;
 
 use Ngea\Location;
 use Ngea\mills_region;

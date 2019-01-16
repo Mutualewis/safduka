@@ -27,6 +27,7 @@
 
 				</div>				
 			</div>
+
 <div class="col-md-14">
     <form role="form" method="POST" action="warrant">
     	<input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -150,11 +151,17 @@
 
 										foreach ($stocks_details->all() as $value) {
 											$id = $value->stid;
+											$war_no = $value->war_no;
 											$agt_id = $value->st_owner_id;
 								    		$total_value = ($value->weight)/50 * ($value->price);
 								    		$total_lots += 1;
 											echo "<tr>";
-												echo "<td width='2%' ><input type='checkbox' class='chkWarrant' name='chkWarrant' value=' $id' onclick='computeBricPrice()'></td>";
+												if ($war_no != null) {
+													echo "<td width='2%' ><input type='checkbox' class='chkWarrant' name='chkWarrant' value='$id' onClick='updateWarrant(this.value,$value->st_net_weight,$war_no)' checked='checked'></td>";
+												} else {
+													echo "<td width='2%' ><input type='checkbox' class='chkWarrant' name='chkWarrant' value='$id' onClick='updateWarrant(this.value,$value->st_net_weight,$ref_no)'></td>";													
+												}
+												
 												echo "<td width='2%' >".$value->csn_season."</td>";
 												echo "<td>".$value->gr_number."</td>";
 												echo "<td>".$value->st_outturn."</td>";
@@ -167,11 +174,16 @@
 												echo "<td>".$value->pkg_name."</td>";
 												echo "<td>".$value->location."</td>";
 												echo "<input class='form-control' type='hidden' name='stock_id[]' value='$value->id'></td>";
-
-								                echo "<td width='15%'><input class='form-control' type='text' name='stock_id[]' value='$value->id'></td></td>";										
+								                	
+												if ($war_no != null) {
+													echo "<td width='15%'><input class='form-control' type='text' name='serial' value='$war_no'></td></td>";
+												} else {
+													echo "<td width='15%'><input class='form-control' type='text' name='serial' value='$ref_no'></td></td>";
+													$ref_no = sprintf("%06d", ($ref_no + 1));		
+												}
 
 											echo "</tr>";
-
+											
 										}
 									}
 								?>
@@ -219,8 +231,6 @@
 		     		}
 		     	}
 
-
-
 	     	],
 
 	        initComplete: function () {
@@ -251,9 +261,9 @@
 </script>
 <script type="text/javascript">
 	var selected_array = new Array();
-	function updateOwner(selected)
+	function updateWarrant(selected, weight, serial_no)
 	{
-		selected_array.push(selected);
+		selected_array.push(selected + '-' + weight + '-' + serial_no);
 		$('#stock_items').val(selected_array);
 	}
 </script>
