@@ -223,6 +223,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/cataloguequalitydetailslist', 'QualityController@qualityListForm'); 
 		Route::get('/cataloguequalitydetailslist/getsalelots/{countryID}/{saleSeason}/{saleNumber}/{seller}', ['as'=>'cataloguequalitydetailslist.getsalelots','uses'=>'QualityController@getSaleLots']); 
+		Route::get('/cataloguequalitydetails/getLotsOutturns/{saleSeason}', ['as'=>'cataloguequalitydetails.getLotsOutturns','uses'=>'QualityController@getLotsOutturns']); 
 
 		Route::post('/cataloguequalitydetailslist', 'QualityController@addQualityDetailsList'); 
 

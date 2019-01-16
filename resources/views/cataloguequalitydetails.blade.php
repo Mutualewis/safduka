@@ -1720,9 +1720,15 @@ document.getElementById('ml').value = null;
 
 			}
 
+			var url = '{{ route('cataloguequalitydetails.saveGreen',['st_id'=>":st_id",'dnt'=>":dnt",'greensize'=>":greensize",'greendefects'=>":greendefects",'raw'=>":raw",'comments'=>":comments"]) }}';
 
-			var url = '{{ route('cataloguequalitydetails.saveGreen') }}';
-
+			url = url.replace(':st_id', st_id);
+			url = url.replace(':dnt', dnt);
+			url = url.replace(':greensize', greensize);
+			url = url.replace(':greendefects', greendefects);
+			url = url.replace(':raw', raw);
+			url = url.replace(':comments', comments);
+				
 			var dialog = bootbox.dialog({
 				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
