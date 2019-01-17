@@ -514,6 +514,95 @@ class CleanBulkingController extends Controller {
             ->make(true);
     }
 
+    public function cleanBulkingResultsApi(Request $request){
+        DB::connection()->enableQueryLog();
+        $errormessages = [];
+        
+        try{
+            DB::beginTransaction();
+            $formdata = (object)$request->data;
+            
+            $user_data = Auth::user();
+            $user = $user_data->id;
+
+            $prc                   = 1;
+            $ref_no                = $formdata->ref_no;
+            $season                = $formdata->outt_season;
+            $grower                =$formdata->grower;
+            $cid                =$formdata->country;
+            $material_id                =$formdata->material;
+            $weight_in                =$formdata->weight;
+            // $date                = date('Y-m-d', strtotime($formdata->date));
+
+            $stock_bags    = $formdata->bags;
+            $stock_pockets = $formdata->pockets;
+
+            $batch_packages = $stock_bags;   
+            if ($stock_pockets != 0 && $stock_pockets != null) {
+                $batch_packages = $batch_packages + 1;
+            }
+                
+            
+            $new_row = $formdata->new_row;
+            $new_column = $formdata->new_column;
+            $new_zone = $formdata->new_zone;
+            $warehouse_id = $formdata->warehouse;
+
+            $provisionalbulk = ProvisionalBulk::where('id', $ref_no)->first();
+            $outturn = $provisionalbulk->pbk_instruction_number;
+            
+            $stock_details = StockWarehouse::where('st_outturn', $outturn)->where('mt_id', $material_id)->first();
+            if ($stock_details != null) {
+                $st_bulk_id = $stock_details->id;
+                StockWarehouse::where('id', '=', $st_bulk_id)
+                         ->update([ 'st_net_weight' => $weight_in,'st_packages' => $batch_packages, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'mt_id' => $material_id, 'warehouse_id' => $warehouse_id]);  
+                Batch::where('st_id', '=', $st_bulk_id)
+                         ->update([ 'btc_net_weight' => $weight_in, 'btc_packages' => $batch_packages, 'btc_bags' => $stock_bags, 'btc_pockets' => $stock_pockets]);  
+                $batch_details = Batch::where('st_id', $st_bulk_id)->first(); 
+                $batch_id = $batch_details->id;
+
+                StockLocation::where('bt_id', '=', $batch_id)
+                         ->update([ 'loc_row_id' => $new_row, 'loc_column_id' => $new_column, 'btc_zone' => $new_zone]);  
+            }    
+                
+            
+            $queries = DB::getQueryLog();
+            if(!empty($errormessages)){
+                return response()->json([
+                    'exists' => false,
+                    'inserted' => false,
+                    'updated' => false,
+                    'error' => true,
+                    'errormsgs' => $errormessages
+                ]); 
+            }else{ 
+            DB::commit();
+            return response()->json([
+                    'exists' => false,
+                    'inserted' => true,
+                    'updated' => false,
+                    'error' => false,
+                    'errormsg' => '',
+                    'errormsgs' => $errormessages
+                ]);
+            }
+            
+        }catch (\Exception $e) {
+            
+            DB::rollback();
+            $errormessages[] = $e->getMessage();
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'updated' => false,
+                'error' => true,
+                'errormsgs' => $errormessages
+            ]); 
+        }
+    }
+
+
+
     public function bulkingApi(Request $request){
         DB::connection()->enableQueryLog();
         $errormessages = [];
@@ -762,6 +851,7 @@ class CleanBulkingController extends Controller {
             'Season', 'country', 'cid', 'csn_season', 'sale', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'seller', 'sale_lots', 'saleid', 'greensize', 'greencolor', 'greendefects', 'processing', 'screens', 'cupscore', 'rawscore', 'buyer', 'sale_status', 'basket', 'slr', 'sale_cb_id', 'transporters', 'trp', 'release_no', 'date', 'sale_lots_released', 'ref_no', 'rates', 'teams', 'st_id_selected', 'stock_details'));
 
     }
+
     public function getInstructed($process){
         try {
 
@@ -795,18 +885,22 @@ class CleanBulkingController extends Controller {
 
             if ($process !== NULL) {
 
-                $stockview = DB::table('provisional_bulk_results_pbrts as pbrts')
-                ->leftJoin('stock_warehouse_st as st', 'pbrts.st_wr_id', '=', 'st.id')
+                $stockview = DB::table('provisional_bulk_pbk as pbrts')
+                ->leftJoin('stock_warehouse_st as st', 'pbrts.pbk_instruction_number', '=', 'st.st_outturn')
                 ->leftJoin('material_mt as mt', 'st.mt_id', '=', 'mt.id')
-                ->where('pr_id', '=', $process)
-                ->whereNotNull('pbrts.st_wr_id')
+                ->leftJoin('batch_btc as btc', 'btc.st_id', '=', 'st.id')
+                ->leftJoin('stock_location_sloc as sloc', 'sloc.bt_id', '=', 'btc.id')
+                ->leftJoin('location_loc as loc_row', 'loc_row.id', '=', 'sloc.loc_row_id')
+                ->leftJoin('location_loc as loc_col', 'loc_col.id', '=', 'sloc.loc_column_id')
+                ->leftJoin('agent_agt as agt', 'agt.id', '=', 'loc_row.agt_id')
+                ->where('pbrts.id', '=', $process)
+                ->groupBy('st.id')
                 ->get();
+
 
             }
 
-            return response()->json(
-                $stockview
-            );                    
+            return response()->json($stockview);                    
         
         }catch (\PDOException $e) {
             return response()->json([

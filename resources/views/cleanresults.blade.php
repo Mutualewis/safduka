@@ -299,7 +299,7 @@
 		            	<label>Grower</label>
 		                <select class="form-control" name="grower" id="grower" style="width: 400px">
 		               		<option value="">---select grower---</option>
-							@if (count($growers) > 0)
+							@if (isset($growers))
 										@foreach ($growers->all() as $grower)
 										@if ($st_cgr ==  $grower->id)
 											<option value="{{ $grower->id }}" selected="selected">{{ $grower->cgr_grower}}    &&nbsp&nbsp&nbsp&nbsp ( {{ $grower->cgr_mark}} )</option>
@@ -564,6 +564,18 @@
 					<th>
 						Pkts
 					</th>
+					<th>
+						Warehouse
+					</th>
+					<th>
+						Row
+					</th>
+					<th>
+						Column
+					</th>
+					<th>
+						Zone
+					</th>
 					
 
 				  </tr>
@@ -775,26 +787,26 @@ teams = JSON.parse(teams)
 		var process = value
 		console.log(process)
 		var url = '{{ route('bulking.getResults',['process'=>":process"]) }}';
+		url = url.replace(':process', process);
 
-				url = url.replace(':process', process);
+		var dialog = bootbox.dialog({
+			onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
+				backdrop: true,
+			closeButton: true,
+			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+		});
+				$.ajax({
+				url: url,
+				type: 'GET',
+				dataType: "json",
+				}).success(function(response) {
+
 				
-				var dialog = bootbox.dialog({
-					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
-  					backdrop: true,
-					closeButton: true,
-					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-				});
-						$.ajax({
-						url: url,
-						type: 'GET',
-						dataType: "json",
-						}).success(function(response) {
-
-						
 							
 		var html = '';
 		$.each( response, function( key, value ) {
 			console.log(value)
+			
 			html = html+'<tr>'
 			html = html+'<td>'+value.st_outturn+'</td>';
 			html = html+'<td>'+value.st_mark+'</td>';
@@ -802,9 +814,13 @@ teams = JSON.parse(teams)
 			html = html+'<td>'+value.st_net_weight+'</td>';
 			html = html+'<td>'+value.st_bags+'</td>';
 			html = html+'<td>'+value.st_pockets+'</td>';
+			html = html+'<td>'+value.agt_name+'</td>';
+			html = html+'<td>'+value.loc_row+'</td>';
+			html = html+'<td>'+value.loc_column+'</td>';
+			html = html+'<td>'+value.btc_zone+'</td>';
 			html = html+'</tr>'
 			});         	 
-		
+					
 			$('#tabledataresult').html(html)
 
 							dialog.modal('hide')	
@@ -934,7 +950,7 @@ teams = JSON.parse(teams)
 				var grower = $('[name="grower"]').val();
 				var material = $('[name="material"]').val();
 				
-				var formdata = { country: country, outt_season: outt_season,ref_no: ref_no, grower: grower, weight : batch_weight, material: material , new_row: row, new_column: column, new_zone : zone, warehouse : warehouse }
+				var formdata = { country: country, outt_season: outt_season,ref_no: ref_no, grower: grower, weight : batch_weight, material: material , new_row: row, new_column: column, new_zone : zone, warehouse : warehouse , bags : bags , pockets : pockets }
 
 				var dialog = bootbox.dialog({
 					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
@@ -954,10 +970,10 @@ teams = JSON.parse(teams)
 						
 						if(response.updated) {
 							dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-							getResults(ref_no)
+							getResults(ref_no);
 						} else if(response.inserted) {
 							dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
-							getResults(ref_no)
+							getResults(ref_no);
 							
 							//location.reload();
 						}else if(response.error) {

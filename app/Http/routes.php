@@ -234,18 +234,19 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/cataloguequalitydetails/getLots/{season}/{st_id}/{direction}/{outt_number}/{coffee_grade}', ['as'=>'cataloguequalitydetails.getLots','uses'=>'QualityController@getLots']); 
 
-	//tablet quality
-	Route::get('/cataloguequalitydetails/saveGreen/{st_id}/{dnt}/{greensize}/{greencolor}/{greendefects}/{raw}/{comments}', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'QualityController@saveGreen']);
+		//tablet quality
+		Route::get('/cataloguequalitydetails/saveGreen/{st_id}/{dnt}/{greensize}/{greencolor}/{greendefects}/{raw}/{comments}', ['as'=>'cataloguequalitydetails.saveGreen','uses'=>'QualityController@saveGreen']);
 
-	Route::post('/cataloguequalitydetails/saveScreen', ['as'=>'cataloguequalitydetails.saveScreen','uses'=>'QualityController@saveScreen']);
+		Route::post('/cataloguequalitydetails/saveScreen', ['as'=>'cataloguequalitydetails.saveScreen','uses'=>'QualityController@saveScreen']);
 
-	Route::post('/cataloguequalitydetails/saveScreenA', ['as'=>'cataloguequalitydetails.saveScreenA','uses'=>'QualityController@saveScreenA']);
+		Route::post('/cataloguequalitydetails/saveScreenA', ['as'=>'cataloguequalitydetails.saveScreenA','uses'=>'QualityController@saveScreenA']);
 
-	Route::post('/cataloguequalitydetails/saveCup', ['as'=>'cataloguequalitydetails.saveCup','uses'=>'QualityController@saveCup']);
+		Route::post('/cataloguequalitydetails/saveCup', ['as'=>'cataloguequalitydetails.saveCup','uses'=>'QualityController@saveCup']);
 
-	Route::get('/cataloguequalitydetails/saveParchment/{st_id}/{dnt}/{parchmentdesc}', ['as'=>'cataloguequalitydetails.saveParchment','uses'=>'QualityController@saveParchment']);
-	
-	Route::get('/processinginstructions', 'ProcessingController@processingInstructionsForm'); 
+		Route::get('/cataloguequalitydetails/saveParchment/{st_id}/{dnt}/{parchmentdesc}', ['as'=>'cataloguequalitydetails.saveParchment','uses'=>'QualityController@saveParchment']);
+		
+		Route::get('/processinginstructions', 'ProcessingController@processingInstructionsForm'); 
+
 		Route::get('/processinginstructions/getstockview/{countryID}/{ref_no}', ['as'=>'processinginstructions.getstockview','uses'=>'ProcessingController@getstockview']); 
 		Route::post('/processinginstructions', 'ProcessingController@processingInstructions');
 		Route::get('/processingtests', 'ProcessingController@processingtestsForm'); 
@@ -253,7 +254,6 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/processingprovisional', 'ProvisionalController@provisionalInstructionsForm'); 	
 		Route::get('/processingprovisional/getstockpurchasedview/{countryID}/{ref_no}', ['as'=>'processingprovisional.getstockpurchasedview','uses'=>'ProvisionalController@getstockpurchasedview']); 
 		Route::post('/processingprovisional', 'ProvisionalController@processingProvisional');
-
 
 		Route::get('/processingprovisionalview', 'ProcessingProvisionalViewController@processingProvisionalViewForm'); 
 		Route::get('/processingprovisionalview/getprocessview', ['as'=>'processingprovisionalview.getprocessview','uses'=>'ProcessingProvisionalViewController@getprocessview']); 
@@ -299,11 +299,21 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/cleanbulkinginstructions/getstockview/{countryID}/{ref_no}', ['as'=>'cleanbulkinginstructions.getstockview','uses'=>'CleanBulkingController@getstockview']); 
 		Route::post('/cleanbulkinginstructions', 'CleanBulkingController@bulking');
 
+
+		
+		Route::get('/cleanbulkresults', 'CleanBulkingController@cleanResultsForm'); 	
+		Route::post('/cleanbulkresults', 'CleanBulkingController@cleanResults');
+		Route::get('/bulking/getInstructed/{process}', ['as'=>'bulking.getInstructed','uses'=>'CleanBulkingController@getInstructed']); 
+		Route::get('/bulking/getResults/{process}', ['as'=>'bulking.getResults','uses'=>'CleanBulkingController@getResults']); 
+
+
 		Route::get('/stocksallclean', 'StocksCleanGridController@stockAllAndCleanGrid');
 		
 		Route::post('/bulking/savePBulk', ['as'=>'bulking.savePBulk','uses'=>'BulkingController@bulkingApi']);
 
 		Route::post('/bulking/saveCleanBulk', ['as'=>'bulking.saveCleanBulk','uses'=>'CleanBulkingController@bulkingApi']);
+		Route::post('/bulking/saveCleanBulkResult', ['as'=>'bulking.saveCleanBulkResult','uses'=>'CleanBulkingController@bulkingApi']);
+		Route::post('/bulking/saveCleanBulkResult', ['as'=>'bulking.saveCleanBulkResult','uses'=>'CleanBulkingController@cleanBulkingResultsApi']);
 
 		Route::get('/parchmentreportquality', 'GridController@parchmentQualityGrid'); 
 });
