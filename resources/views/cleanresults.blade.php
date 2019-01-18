@@ -746,6 +746,7 @@ teams = JSON.parse(teams)
 		var url = '{{ route('bulking.getInstructed',['process'=>":process"]) }}';
 
 				url = url.replace(':process', process);
+
 				
 				var dialog = bootbox.dialog({
 					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
@@ -806,7 +807,6 @@ teams = JSON.parse(teams)
 		var html = '';
 		$.each( response, function( key, value ) {
 			console.log(value)
-			
 			html = html+'<tr>'
 			html = html+'<td>'+value.st_outturn+'</td>';
 			html = html+'<td>'+value.st_mark+'</td>';

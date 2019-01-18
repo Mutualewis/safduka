@@ -137,7 +137,7 @@
 
 						        echo "<tr>";
 
-							        echo "<td>" . $value->st_outturn . "</td>";
+							        echo "<td>" . strtoupper($value->st_outturn) . "</td>";
 							        echo "<td>" . $mark . "</td>";
 							        echo "<td>" . $value->mt_name . "</td>";
 							        echo "<td>" . $value->st_bags . "</td>";
