@@ -885,6 +885,7 @@ class CleanBulkingController extends Controller {
             if ($process !== NULL) {
 
                 $stockview = DB::table('provisional_bulk_pbk as pbrts')
+                ->select('*', db::raw('loc_row.loc_row as row'), db::raw('loc_col.loc_column as col'))
                 ->leftJoin('stock_warehouse_st as st', 'pbrts.pbk_instruction_number', '=', 'st.st_outturn')
                 ->leftJoin('material_mt as mt', 'st.mt_id', '=', 'mt.id')
                 ->leftJoin('batch_btc as btc', 'btc.st_id', '=', 'st.id')

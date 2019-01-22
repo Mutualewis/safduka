@@ -747,7 +747,7 @@ teams = JSON.parse(teams)
 
 				url = url.replace(':process', process);
 
-				
+
 				var dialog = bootbox.dialog({
 					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
   					backdrop: true,
@@ -815,8 +815,8 @@ teams = JSON.parse(teams)
 			html = html+'<td>'+value.st_bags+'</td>';
 			html = html+'<td>'+value.st_pockets+'</td>';
 			html = html+'<td>'+value.agt_name+'</td>';
-			html = html+'<td>'+value.loc_row+'</td>';
-			html = html+'<td>'+value.loc_column+'</td>';
+			html = html+'<td>'+value.row+'</td>';
+			html = html+'<td>'+value.col+'</td>';
 			html = html+'<td>'+value.btc_zone+'</td>';
 			html = html+'</tr>'
 			});         	 
