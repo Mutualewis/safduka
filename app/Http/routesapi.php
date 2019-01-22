@@ -23,7 +23,7 @@ Route::group(['prefix' => 'api/v1', 'namespace' => 'Api\V1', 'middleware' => ['a
             
             Route::get('millinglinstructionslist', 'ProcessResultsController@listMillingInstructions')->name('millinglinstructionslist.list');
 
-            Route::get('outturnlist/{id}', 'ProcessResultsController@listMillingInstructionOutturns')->name('outturnlist.list');
+            Route::get('outturnlist', 'ProcessResultsController@listMillingInstructionOutturns')->name('outturnlist.list');
 
             Route::get('gradeslist', 'ProcessResultsController@listGrades')->name('grades.list');
 
