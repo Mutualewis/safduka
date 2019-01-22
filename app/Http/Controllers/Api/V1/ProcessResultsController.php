@@ -70,6 +70,9 @@ use niklasravnsborg\LaravelPdf\Facades\Pdf as PDF;
 use View;
 use Mail;
 
+use Ngea\Material;
+use Ngea\ProcessResults as ResultResource;
+
 class ProcessResultsController extends Controller
 {
     public function listMillingInstructions(Request $request){
@@ -102,5 +105,68 @@ class ProcessResultsController extends Controller
         ])
         ->setStatusCode(200);
     }
+    public function listGrades(Request $request){
+        return response()->json([
+            'message' => "successful",
+            'data' => ProcessResultsType::all(['id', 'prt_name'])->toArray(),
+        ])
+        ->setStatusCode(200);
+    }
+    public function resultslist($st_id){
+        if ($st_id !== NULL) {
+
+            $stockresults = DB::table('process_results_prts as prts')
+            ->leftJoin('processing_results_type_prt as prt', 'prt.id', '=', 'prts.prt_id')
+            ->leftJoin('stock_mill_st as st', 'prts.st_mill_id', '=', 'st.id')
+            ->where('prts.st_mill_id', '=', $st_id)
+            ->groupBy('prts.prt_id')
+            ->get();
+
+
+        }
+        return response()->json([
+            'message' => "successful",
+            'data' => $stockresults,
+        ])
+        ->setStatusCode(200);
+    }
+    public function saveResults(Request $request)
+    {
+        $user = auth('api')->user();
+        
+        $this->validate($request, [
+            'prts_bags' => 'required',
+            'prts_pockets' => 'required',
+            'st_mill_id' => 'required',
+            'prt_id' => 'required',
+        ]);
+        try{
+        DB::beginTransaction();
+        $results_details = ProcessResults::where('st_mill_id', '=', $request->st_mill_id)->where('prt_id', '=', $request->prt_id)->first();
+        if($results_details!=null){
+            
+            $results = ProcessResults::where('id', '=', $results_details->id)
+            ->update($request->all());
+        }else{
+            $results = ProcessResults::create($request->all());
+            $results = $results->toArray();
+        }
+        DB::commit();
+        return response()->json([
+            'message' => "successful",
+            'data' => $results,
+        ])
+        ->setStatusCode(201);
+        }catch (\Exception $e) {
+                
+            DB::rollback();
+            $errormessages[] = $e->getMessage();
+            return response()->json([
+                'message' => $errormessages
+            ])
+            ->setStatusCode(500); 
+        }
+    }
+  
    
 }
