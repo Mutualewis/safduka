@@ -21,5 +21,18 @@ class BatchMill extends Model {
 	 */
 	
 	protected $fillable = ['id', 'st_id', 'btc_number', 'btc_weight', 'btc_bags', 'btc_pockets', 'created_at', 'updated_at'];
+
+	public function stock()
+    {
+        return $this->belongsTo('Ngea\StockMill', 'st_id');
+	}
+	public function grn()
+    {
+        return $this->belongsTo('Ngea\StockMill', 'st_id');
+	}
+	public function partchmenttype()
+    {
+        return $this->belongsTo('Ngea\StockMill', 'st_id');
+	}
            
 }

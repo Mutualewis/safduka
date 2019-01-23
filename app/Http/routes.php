@@ -333,7 +333,11 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 	    Route::get('/settingsraw', 'SettingsController@settingsRawForm');
 	    Route::post('/settingsraw', 'SettingsController@settingsRaw');
 	    Route::get('/settingsraw/raw_delete/{rawID}', ['as'=>'settingsraw.raw_delete','uses'=>'SettingsController@raw_delete']);
-		  
+		
+		Route::get('/editparchmentbatch', 'ParchmentController@getBatchGrid');
+		Route::get('/editparchmentbatchedit', 'ParchmentController@BatchEdit');
+		Route::patch('/editparchmentbatchedit', 'ParchmentController@BatchEdit');
+		Route::delete('/editparchmentbatchedit', 'ParchmentController@BatchEdit');
 });
 
 
