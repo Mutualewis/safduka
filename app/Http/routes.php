@@ -317,7 +317,11 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/parchmentreportquality', 'GridController@parchmentQualityGrid');
 
-		Route::get('/editparchment', 'ParchmentController@getGrid');  
+		Route::get('/editparchment', 'ParchmentController@getGrid');
+		Route::get('/editparchmentedit', 'ParchmentController@Edit');
+		Route::patch('/editparchmentedit', 'ParchmentController@Edit');
+		Route::delete('/editparchmentedit', 'ParchmentController@Edit');
+		  
 });
 
 

@@ -22,5 +22,13 @@ class StockMill extends Model {
 	 */
 	
 	protected $fillable = ['id', 'prc_id', 'gr_id', 'st_dispatch_net', 'st_gross', 'st_tare', 'st_moisture', 'pkg_id', 'usr_id', 'created_at', 'updated_at'];
-           
+	
+	public function grn()
+    {
+        return $this->belongsTo('Ngea\Grn', 'grn_id');
+	}
+	public function partchmenttype()
+    {
+        return $this->belongsTo('Ngea\ParchmentType', 'pty_id');
+    }
 }
