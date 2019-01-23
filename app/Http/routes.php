@@ -321,6 +321,18 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/editparchmentedit', 'ParchmentController@Edit');
 		Route::patch('/editparchmentedit', 'ParchmentController@Edit');
 		Route::delete('/editparchmentedit', 'ParchmentController@Edit');
+
+		Route::get('/settingsquality', 'SettingsController@settingsQualityForm');
+	    Route::post('/settingsquality', 'SettingsController@settingsQuality');
+	    Route::get('/settingsquality/quality_delete/{qualityID}', ['as'=>'settingsquality.quality_delete','uses'=>'SettingsController@quality_delete']);
+
+	    Route::get('/settingscup', 'SettingsController@settingsCupForm');
+	    Route::post('/settingscup', 'SettingsController@settingsCup');
+	    Route::get('/settingscup/cup_delete/{cupID}', ['as'=>'settingscup.cup_delete','uses'=>'SettingsController@cup_delete']);
+
+	    Route::get('/settingsraw', 'SettingsController@settingsRawForm');
+	    Route::post('/settingsraw', 'SettingsController@settingsRaw');
+	    Route::get('/settingsraw/raw_delete/{rawID}', ['as'=>'settingsraw.raw_delete','uses'=>'SettingsController@raw_delete']);
 		  
 });
 
