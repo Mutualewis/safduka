@@ -122,6 +122,7 @@ class ParchmentController extends Controller {
         $edit->add('cgr_id','Grower','select')->options(coffeegrower::pluck("cgr_grower", "id")->all());
         $edit->add('pty_id','Partchmant Type','select')->options(ParchmentType::pluck("pty_name", "id")->all());
         $edit->add('mt_id','Material','select')->options(Material::pluck("mt_name", "id")->all());
+        $edit->add('grn_id','Grn','select')->options(Grn::pluck("gr_number", "id")->all());
         // $edit->add('author_id','Author','select')->options(Author::pluck("firstname", "id")->all());
         // $edit->add('publication_date','Date','date')->format('d/m/Y', 'it');
         // $edit->add('photo','Photo', 'image')->move('uploads/demo/')->fit(240, 160)->preview(120,80);

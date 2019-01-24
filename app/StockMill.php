@@ -2,10 +2,14 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Activity;
+use Spatie\Activitylog\LogsActivityInterface;
+use Spatie\Activitylog\LogsActivity;
+
 // use Illuminate\Auth\Reminders\RemindableInterface;
 
-class StockMill extends Model {
+class StockMill extends Model implements LogsActivityInterface{
 
+	use LogsActivity;
 	/**
 	 * The database table used by the model.
 	 *
@@ -30,5 +34,26 @@ class StockMill extends Model {
 	public function partchmenttype()
     {
         return $this->belongsTo('Ngea\ParchmentType', 'pty_id');
-    }
+	}
+	
+	public function getActivityDescriptionForEvent($eventName)
+	{
+		//dd($eventName); exit;
+		if ($eventName == 'created')
+		{
+			return 'stock item "' . $this->st_outturn . '" was created';
+		}
+
+		if ($eventName == 'updated')
+		{
+			return 'stock item "' . $this->st_outturn . '" was updated';
+		}
+
+		if ($eventName == 'deleted')
+		{
+			return 'stock item "' . $this->st_outturn . '" was deleted';
+		}
+
+		return '';
+	}
 }
