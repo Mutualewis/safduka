@@ -137,9 +137,9 @@ class ParchmentController extends Controller {
     {
         $filter = \DataFilter::source(DB::table('batch_mill_btc as btc')
         ->select( '*', 'btc.id as id')
-        ->join('stock_mill_st as st', 'st.id', '=', 'btc.st_id')
-        ->join('parchment_type_pty as pty', 'st.pty_id', '=', 'pty.id')
-        ->join('grn_gr as gr', 'gr.id', '=', 'st.grn_id')
+        ->leftjoin('stock_mill_st as st', 'st.id', '=', 'btc.st_id')
+        ->leftjoin('parchment_type_pty as pty', 'st.pty_id', '=', 'pty.id')
+        ->leftjoin('grn_gr as gr', 'gr.id', '=', 'st.grn_id')
         );
         $filter->add('st_outturn','Outturn', 'text');
         $filter->add('gr_number','Grn Number', 'text');
@@ -213,8 +213,8 @@ class ParchmentController extends Controller {
     {
         $filter = \DataFilter::source(DB::table('grn_gr as gr')
         ->select( '*', 'gr.id as id')
-        ->join('users_usr as usr', 'usr.id', '=', 'gr.gr_confirmed_by')
-        ->join('coffee_growers_cgr as cgr', 'cgr.id', '=', 'gr.cgr_id')
+        ->leftjoin('users_usr as usr', 'usr.id', '=', 'gr.gr_confirmed_by')
+        ->leftjoin('coffee_growers_cgr as cgr', 'cgr.id', '=', 'gr.cgr_id')
         );
         $filter->add('gr_number','Grn', 'text');
         $filter->add('cgr_grower','Grower', 'text');
