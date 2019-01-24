@@ -26,6 +26,8 @@ class Grn extends Model {
 
 
 
-	protected $fillable = ['id', 'ctr_id', 'wb_id', 'gr_number', 'created_at', 'updated_at'];
-           
+	protected $fillable = ['id', 'ctr_id', 'cgr_id', 'gr_confirmed_by', 'wb_id', 'gr_number', 'created_at', 'updated_at'];
+
+	
+	
 }

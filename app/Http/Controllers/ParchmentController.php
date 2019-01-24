@@ -132,6 +132,7 @@ class ParchmentController extends Controller {
     public function getBatchGrid()
     {
         $filter = \DataFilter::source(DB::table('batch_mill_btc as btc')
+        ->select( '*', 'btc.id as id')
         ->join('stock_mill_st as st', 'st.id', '=', 'btc.st_id')
         ->join('parchment_type_pty as pty', 'st.pty_id', '=', 'pty.id')
         ->join('grn_gr as gr', 'gr.id', '=', 'st.grn_id')
@@ -196,6 +197,72 @@ class ParchmentController extends Controller {
         $edit->add('btc_pockets','Pockets', 'number')->rule('required|min:1');
         
         // $edit->add('author_id','Author','select')->options(Author::pluck("firstname", "id")->all());
+        // $edit->add('publication_date','Date','date')->format('d/m/Y', 'it');
+        // $edit->add('photo','Photo', 'image')->move('uploads/demo/')->fit(240, 160)->preview(120,80);
+        // $edit->add('public','Public','checkbox');
+        // $edit->add('categories.name','Categories','tags');
+
+        return $edit->view('editparchmentbatchedit', compact('edit'));
+
+    }
+    public function getParchmentGrnGrid()
+    {
+        $filter = \DataFilter::source(DB::table('grn_gr as gr')
+        ->select( '*', 'gr.id as id')
+        ->join('users_usr as usr', 'usr.id', '=', 'gr.gr_confirmed_by')
+        ->join('coffee_growers_cgr as cgr', 'cgr.id', '=', 'gr.cgr_id')
+        );
+        $filter->add('gr_number','Grn', 'text');
+        $filter->add('cgr_grower','Grower', 'text');
+        // $filter->add('publication_date','publication date','daterange')->format('m/d/Y', 'en');
+        $filter->submit('search');
+        $filter->reset('reset');
+        $filter->build();
+
+        $grid = \DataGrid::source($filter);
+        
+        // $grid->add('id','ID', true)->style("width:100px");
+        $grid->add('gr_number','Grn', 'text');
+        $grid->add('cgr_grower','Grower', 'text');
+        $grid->add('usr_email','Confirmed By', 'text');
+      
+        //$grid->add('{!! str_limit($body,4) !!}','Body');
+       
+        //$grid->add('{{ implode(", ", $categories->pluck("name")->all()) }}','Categories');
+
+        $grid->edit('editparchmentgrnedit', 'Edit','show|modify|delete');
+        // $grid->link('/editparchment/edit',"New Item", "TR");
+        $grid->orderBy('gr.id','desc');
+        $grid->paginate(10);
+
+        $grid->row(function ($row) {
+            // $row->cell('st.st_outturn')->style("font-weight:bold");
+        //    if ($row->cell('id')->value == 20) {
+        //        $row->style("background-color:#CCFF66");
+        //    } elseif ($row->cell('id')->value > 15) {
+        //        $row->cell('st_outturn')->style("font-weight:bold");
+        //        $row->style("color:#f00");
+        //    }
+        });
+        
+        return  view('editparchmentgrn', compact('filter','grid'));
+    }
+
+    public function ParchmentGrnEdit()
+    {
+        if (\Input::get('do_delete')==1) return  "not the first";
+
+        $edit = \DataEdit::source(new Grn());
+        $edit->label('Edit Partchment Grn Item');
+        // $edit->link("editparchment/filter","Stock", "TR")->back();
+        $edit->add('gr_number','Gr no', 'text')->rule('required|min:1');
+
+        // $edit->add('body','Body', 'redactor');
+        // $edit->add('detail.note','Note', 'textarea')->attributes(array('rows'=>2));
+       
+        
+        $edit->add('cgr_id','Grower','select')->options(coffeegrower::pluck("cgr_grower", "id")->all());
+        $edit->add('gr_confirmed_by','User','select')->options(User::pluck("usr_email", "id")->all());
         // $edit->add('publication_date','Date','date')->format('d/m/Y', 'it');
         // $edit->add('photo','Photo', 'image')->move('uploads/demo/')->fit(240, 160)->preview(120,80);
         // $edit->add('public','Public','checkbox');
