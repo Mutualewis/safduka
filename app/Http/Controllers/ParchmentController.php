@@ -119,10 +119,10 @@ class ParchmentController extends Controller {
         $edit->add('st_packages','Packages', 'number')->rule('required|min:1');
         $edit->add('st_bags','Bags', 'number')->rule('required|min:1');
         $edit->add('st_pockets','Pockets', 'number')->rule('required|min:1');
-        $edit->add('cgr_id','Grower','select')->options(coffeegrower::pluck("cgr_grower", "id")->all());
-        $edit->add('pty_id','Partchmant Type','select')->options(ParchmentType::pluck("pty_name", "id")->all());
-        $edit->add('mt_id','Material','select')->options(Material::pluck("mt_name", "id")->all());
-        $edit->add('grn_id','Grn','select')->options(Grn::pluck("gr_number", "id")->all());
+        $edit->add('cgr_id','Grower','select')->options(coffeegrower::orderBy('cgr_grower')->pluck("cgr_grower", "id")->all());
+        $edit->add('pty_id','Partchmant Type','select')->options(ParchmentType::orderBy('pty_name')->pluck("pty_name", "id")->all());
+        $edit->add('mt_id','Material','select')->options(Material::orderBy('mt_name')->pluck("mt_name", "id")->all());
+        $edit->add('grn_id','Grn','select')->options(Grn::orderBy('gr_number')->pluck("gr_number", "id")->all());
         // $edit->add('author_id','Author','select')->options(Author::pluck("firstname", "id")->all());
         // $edit->add('publication_date','Date','date')->format('d/m/Y', 'it');
         // $edit->add('photo','Photo', 'image')->move('uploads/demo/')->fit(240, 160)->preview(120,80);
@@ -265,7 +265,7 @@ class ParchmentController extends Controller {
         // $edit->add('detail.note','Note', 'textarea')->attributes(array('rows'=>2));
        
         
-        $edit->add('cgr_id','Grower','select')->options(coffeegrower::pluck("cgr_grower", "id")->all());
+        $edit->add('cgr_id','Grower','select')->options(coffeegrower::orderBy('cgr_grower')->pluck("cgr_grower", "id")->all());
         $edit->add('gr_confirmed_by','User','select')->options(User::pluck("usr_email", "id")->all());
         // $edit->add('publication_date','Date','date')->format('d/m/Y', 'it');
         // $edit->add('photo','Photo', 'image')->move('uploads/demo/')->fit(240, 160)->preview(120,80);
