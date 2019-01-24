@@ -112,6 +112,7 @@ class ParchmentController extends Controller {
 
         // $edit->add('body','Body', 'redactor');
         // $edit->add('detail.note','Note', 'textarea')->attributes(array('rows'=>2));
+        $edit->add('st_outturn','Outturn', 'text')->rule('required|min:1');
         $edit->add('st_net_weight','Net Weight', 'number')->rule('required|min:1');
         $edit->add('st_mark','Mark', 'text')->rule('required|min:1');
         $edit->add('st_gross','Gross Weight', 'number')->rule('required|min:1');
