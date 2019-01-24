@@ -226,7 +226,7 @@ class DispatchController extends Controller {
                 ->leftJoin('coffee_growers_cgr as cgr', 'cgr.id', '=', 'st.cgr_id')
                 ->where('st.dp_id', $grn_id)
                 ->get(); 
-            // dd($dispatch_view); exit;
+            //  dd($dispatch_view); exit;
             $pdf = PDF::loadView('pdf.print_dispatch', compact('dispatch_view','client', 'delivery_date', 'movement_permit', 'vehicle', 'weighbridge_ticket', 'time_received', 'received_by', 'driver_name', 'time_received_stop', 'driver_id', 'dp_number', 'warehouse_manager', 'agent_description', 'agent_initial'));
 
             
