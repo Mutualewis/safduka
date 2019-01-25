@@ -104,7 +104,7 @@ class ParchmentController extends Controller {
     public function Edit()
     {
         if (\Input::get('do_delete')==1) return  "not the first";
-
+        
         $edit = \DataEdit::source(new StockMill());
         $edit->label('Edit Partchment Item');
         // $edit->link("editparchment/filter","Stock", "TR")->back();
@@ -255,25 +255,32 @@ class ParchmentController extends Controller {
     public function ParchmentGrnEdit()
     {
         if (\Input::get('do_delete')==1) return  "not the first";
-
+        // dd(\Input::get('gr_confirmed_by'));exit;
+        // if(\Input::get('gr_confirmed_by')==null){
+        //     dd(\Input::get('gr_confirmed_by'));exit;
+        // }
         $edit = \DataEdit::source(new Grn());
         $edit->label('Edit Partchment Grn Item');
-        // $edit->link("editparchment/filter","Stock", "TR")->back();
+        $edit->link("editparchment/unconfirm/{$edit->model->id}","Unconfirm", "TR")->back();
         $edit->add('gr_number','Gr no', 'text')->rule('required|min:1');
-
+        
         // $edit->add('body','Body', 'redactor');
         // $edit->add('detail.note','Note', 'textarea')->attributes(array('rows'=>2));
        
         
         $edit->add('cgr_id','Grower','select')->options(coffeegrower::orderBy('cgr_grower')->pluck("cgr_grower", "id")->all());
-        $edit->add('gr_confirmed_by','User','select')->options(User::pluck("usr_email", "id")->all());
+        $edit->add('gr_confirmed_by','Confirmed By','select')->options(User::pluck("usr_email", "id")->all());
         // $edit->add('publication_date','Date','date')->format('d/m/Y', 'it');
         // $edit->add('photo','Photo', 'image')->move('uploads/demo/')->fit(240, 160)->preview(120,80);
-        // $edit->add('public','Public','checkbox');
         // $edit->add('categories.name','Categories','tags');
 
         return $edit->view('editparchmentbatchedit', compact('edit'));
 
+    }
+    public function unconfirm($id){
+        Grn::where('id', '=', $id)
+                        ->update(['gr_confirmed_by' => null]);
+            return redirect()->action('ParchmentController@getParchmentGrnGrid');
     }
 
 
