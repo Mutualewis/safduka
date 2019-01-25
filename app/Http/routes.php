@@ -343,6 +343,16 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/editparchmentgrnedit', 'ParchmentController@ParchmentGrnEdit');
 		Route::patch('/editparchmentgrnedit', 'ParchmentController@ParchmentGrnEdit');
 		Route::delete('/editparchmentgrnedit', 'ParchmentController@ParchmentGrnEdit');
+
+		Route::get('/editclean', 'CleanController@getGrid');
+		Route::get('/editcleanedit', 'CleanController@Edit');
+		Route::patch('/editcleanedit', 'CleanController@Edit');
+		Route::delete('/editcleanedit', 'CleanController@Edit');
+
+		Route::get('/editcleanbatch', 'CleanController@getBatchGrid');
+		Route::get('/editcleanbatchedit', 'CleanController@BatchEdit');
+		Route::patch('/editcleanbatchedit', 'CleanController@BatchEdit');
+		Route::delete('/editcleanbatchedit', 'CleanController@BatchEdit');
 });
 
 
