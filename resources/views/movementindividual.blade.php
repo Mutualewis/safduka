@@ -311,22 +311,22 @@
 										if (isset($stlocdetails)) {
 
 											foreach ($stlocdetails->all() as $value) {
-												$total += $value->btc_weight; 
+												$total += $value->st_weight; 
 												$count += 1;
 												$id = $value->stid;
 												$btid = $value->id;
 
-												$total_bags += $value->btc_bags;
+												$total_bags += $value->st_bags;
 
-												$total_pkts += $value->btc_pockets;							
+												$total_pkts += $value->st_pockets;							
 											
 
 												echo "<tr>";
 													echo "<td>".$value->st_outturn."</td>";
 													echo "<td>".$value->mt_name."</td>";
-													echo "<td><input size = '5' style='text-align:center;' type='text'  value='".$value->btc_weight."' disabled></td>";
-													echo "<td>".$value->btc_bags."</td>";
-													echo "<td>".$value->btc_pockets."</td>";
+													echo "<td><input size = '5' style='text-align:center;' type='text'  value='".$value->st_weight."' disabled></td>";
+													echo "<td>".$value->st_bags."</td>";
+													echo "<td>".$value->st_pockets."</td>";
 													echo "<td>".$value->code."</td>";
 													echo "<td>".$value->pkg_name."</td>";
 													echo "<td>".$value->loc_row.$value->loc_column.$value->btc_zone."</td>";
@@ -558,7 +558,7 @@
 
 			    var packages = document.createElement("label");
 
-			    packages.innerHTML = "&nbsp;<strong>Packages:</strong>&nbsp;" +obj[i].btc_packages;
+			    packages.innerHTML = "&nbsp;<strong>Packages:</strong>&nbsp;" +obj[i].st_packages;
 
 			    news.appendChild(packages);
 
@@ -577,7 +577,7 @@
 
 			    newInput.name = 'weight'+ obj[i].id;
 
-			    newInput.value = obj[i].btc_net_weight;
+			    newInput.value = obj[i].st_net_weight;
 
 
 
@@ -596,7 +596,7 @@
 
 
 
-			    var count = obj[i].btc_net_weight/2000;
+			    var count = obj[i].st_net_weight/2000;
 
 			  //   for (var l = 0; l < count; l++) {
 
