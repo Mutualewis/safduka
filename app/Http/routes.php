@@ -355,6 +355,9 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/editcleanbatchedit', 'CleanController@BatchEdit');
 		Route::patch('/editcleanbatchedit', 'CleanController@BatchEdit');
 		Route::delete('/editcleanbatchedit', 'CleanController@BatchEdit');
+
+		Route::get('/transferownership', 'TransferOwnershipController@transferOwnershipForm'); 
+		Route::post('/transferownership', 'TransferOwnershipController@transferOwnership');
 });
 
 

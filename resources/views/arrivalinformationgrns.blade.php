@@ -438,7 +438,7 @@
 					</div>	
 
 		            <div class="form-group col-md-6">
-						<button type="submit" id ="batchdetails" name="batchdetails" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalBatchCenter'onclick='displayBatch()' data-dprtname='{$value->dprt_name}'>Add Batch</button>
+						<button type="submit" id ="batchdetails" name="batchdetails" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalBatchCenter' onclick='displayBatch()' data-dprtname='{$value->dprt_name}'>Add Batch</button>
 					</div>	
 
 				</div>
