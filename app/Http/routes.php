@@ -357,10 +357,10 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::delete('/editcleanbatchedit', 'CleanController@BatchEdit');
 
 		Route::get('/editgrower', 'GrowerController@getGrid');
-		Route::get('/editgrower', 'GrowerController@Edit');
-		Route::post('/editgrower', 'GrowerController@Edit');
-		Route::patch('/editgrower', 'GrowerController@Edit');
-		Route::delete('/editgrower', 'GrowerController@BEdit');
+		Route::get('/editgroweredit', 'GrowerController@Edit');
+		Route::post('/editgroweredit', 'GrowerController@Edit');
+		Route::patch('/editgroweredit', 'GrowerController@Edit');
+		Route::delete('/editgroweredit', 'GrowerController@BEdit');
 
 		Route::get('/transferownership', 'TransferOwnershipController@transferOwnershipForm'); 
 		Route::post('/transferownership', 'TransferOwnershipController@transferOwnership');
