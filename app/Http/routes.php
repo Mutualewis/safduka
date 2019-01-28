@@ -355,6 +355,12 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/editcleanbatchedit', 'CleanController@BatchEdit');
 		Route::patch('/editcleanbatchedit', 'CleanController@BatchEdit');
 		Route::delete('/editcleanbatchedit', 'CleanController@BatchEdit');
+
+		Route::get('/editgrower', 'GrowerController@getGrid');
+		Route::get('/editgroweredit', 'GrowerController@Edit');
+		Route::post('/editgroweredit', 'GrowerController@Edit');
+		Route::patch('/editgroweredit', 'GrowerController@Edit');
+		Route::delete('/editgroweredit', 'GrowerController@Edit');
 });
 
 
