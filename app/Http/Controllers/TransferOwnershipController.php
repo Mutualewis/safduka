@@ -13,14 +13,15 @@ use Ngea\StocksWarehouse;
 use Ngea\Agent;
 use Ngea\StockWarehouse;
 use Ngea\User;
+use Yajra\Datatables\Datatables;
 
 class TransferOwnershipController extends Controller
 {
 
     public function transferOwnershipForm(Request $request)
     {
-    	$stocks_details = StocksWarehouse::get();
-    	$agent = Agent::where('agtc_id',2)->orwhere('agtc_id',3)->get();
+    	// $stocks_details = StocksWarehouse::get();
+    	$agent = Agent::select('*', DB::raw('id as agtid'))->where('agtc_id',2)->orwhere('agtc_id',3)->get();
         return View::make('transferownership', compact('stocks_details', 'agent'));
     }
 
@@ -36,21 +37,29 @@ class TransferOwnershipController extends Controller
     		$stock_items = Input::get('stock_items');
     		$stock_items = explode(',', $stock_items);
 
+
     		foreach ($stock_items as $stock_item) {
     			$stock_id = null;
     			$agt_id = null;
     			$stock_item = explode('-', $stock_item);
     			$stock_id = $stock_item[0];
     			$agt_id = $stock_item[1];
-
 				StockWarehouse::where('id', '=', $stock_id)
                     ->update(['st_owner_id' => $agt_id]);  
-
                 Activity::log('Inserted Stock information with stock_id '.$stock_id. ' with  agt_id'. $agt_id. ' user '. $user);
     		}
     		
     	}
-    	$stocks_details = StocksWarehouse::get();
+    	$agent = Agent::select('*', DB::raw('id as agtid'))->where('agtc_id',2)->orwhere('agtc_id',3)->get();
         return View::make('transferownership', compact('stocks_details', 'agent'));
     }
+
+    public function getstockview()
+    {
+        $stocks_details = StocksWarehouse::get();
+        return Datatables::of($stocks_details)
+            ->make(true);
+    }
+
+
 }

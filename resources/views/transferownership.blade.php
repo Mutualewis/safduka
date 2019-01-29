@@ -38,6 +38,11 @@
 
 		<input class='form-control' type='hidden' name='stock_items' id='stock_items' value=''>
 
+		<?php
+		if (!isset($agent)) {
+			$agent = null;
+		}
+		?>
 	    <div class="col-md-12">
 		    <h3>Outturns</h3>
 		    <div class="row">			
@@ -79,7 +84,10 @@
 
 								<th>
 									Owner
-								</th>
+								</th>	
+								<th style="display: none;">
+									ID
+								</th>	
 							  </tr>
 							</thead>
 							<tfoot style="display: table-header-group; text-align:left; width: inherit; width:100%;">
@@ -116,69 +124,12 @@
 
 								<th style="display: none;">
 									Owner
+								</th>	
+								<th style="display: none;">
+									ID
 								</th>								
 							</tfoot>
-
-							<tbody>
-
-
-
-								<?php
-									$total_bags = 0;
-									$total_pkts = 0;
-									$count = 0;
-									$count_green = 0;
-									$count_process = 0;
-									$count_screen = 0;
-									$count_cup = 0;
-									$total_price = 0;
-									$total_lots = 0;
-									$total = 0;
-
-									if (isset($stocks_details) && count($stocks_details) > 0) {
-
-										foreach ($stocks_details->all() as $value) {
-											$id = $value->stid;
-											$agt_id = $value->st_owner_id;
-								    		$total_value = ($value->weight)/50 * ($value->price);
-								    		$total_lots += 1;
-											echo "<tr>";
-												echo "<td width='2%' >".$value->csn_season."</td>";
-												echo "<td>".$value->gr_number."</td>";
-												echo "<td>".$value->st_outturn."</td>";
-												echo "<td>".$value->grade."</td>";
-												echo "<td>".$value->st_mark."</td>";
-												echo "<td>".$value->st_net_weight."</td>";
-												echo "<td>".$value->st_packages."</td>";
-												echo "<td>".$value->st_bags."</td>";
-												echo "<td>".$value->st_pockets."</td>";
-												echo "<td>".$value->location."</td>";
-												echo "<input class='form-control' type='hidden' name='stock_id[]' value='$value->id'></td>";
-
-								                echo "<td width='15%'><select class='form-control' id='coffee_agent' name='coffee_agent' onchange='updateOwner(this.value)'>";
-								               		echo "<option></option>";
-												if (isset($agent) && count($agent) > 0){									
-													foreach ($agent->all() as $value_agt) {
-														if ($agt_id == $value_agt->id ) {
-															echo "<option value='' selected='selected'>$value_agt->agt_name</option>";
-														}
-														else{
-															echo "<option value='$id-$value_agt->id'>$value_agt->agt_name</option>";
-														}
-													}
-												
-												} 
-								                echo "</select></td>";										
-
-											echo "</tr>";
-
-										}
-									}
-								?>
-								
-							</tbody>
-
-							</table>
+						</table>
 				</div>
 			</div>
 
@@ -189,9 +140,11 @@
 @push('scripts')
 <script>
 	$(document).ready(function() {
+		var url = '{{ route('transferownership.getstockview') }}';
 	    var table = $('#stocks-table').DataTable({
 			dom: 'Bfrtip',      	
 	   		type: 'POST',
+	   		ajax: url,
 	        processing: true,
 	        deferRender: true,
 	     	autoWidth: true,
@@ -223,6 +176,56 @@
 
 	     	],
 
+	        columns: [
+	            { data: 'csn_season', name: 'csn_season', searchable: false },
+	            { data: 'gr_number', name: 'gr_number'},
+				{ data: 'st_outturn', name: 'st_outturn'},
+	            { data: 'grade', name: 'grade' },
+	            { data: 'st_mark', name: 'st_mark' },
+	            { data: 'st_net_weight', name: 'st_net_weight'},
+	            { data: 'st_packages', name: 'st_packages'},
+				{ data: 'st_bags', name: 'st_bags'},
+	            { data: 'st_pockets', name: 'st_pockets'},
+	            { data: 'location', name: 'location'},
+	            { data: 'st_owner_id', name: 'st_owner_id'},
+	            { data: 'stid', name: 'stid'}
+	        ],   
+								
+	        columnDefs: [
+		     	{targets: 10,
+		     		'render': function (data, type, full, meta, row){
+						var agent = <?php echo json_encode($agent); ?>;
+						var stockSelected = table.cell(meta.row,11).data();
+						var agentSelected = table.cell(meta.row,10).data();
+
+						var select = null;
+						var selectStart = "<select class='form-control' id='coffee_agent' name='coffee_agent'  onchange='updateOwner( "+stockSelected+",this.value)'>";				
+
+						var selectBody = null;
+						var extraAnalysisID = null; 
+
+						var agentSelected = table.cell(meta.row,10).data();
+						selectBody += "<option value=''>Not Set</option>";
+
+						agent.forEach(function(entry) {
+							if (agentSelected == entry.agtid) {
+								selectBody += "<option value='"+entry.agtid+"' selected='selected'>"+entry.agt_name+"</option>";
+							} else {
+								selectBody += "<option value='"+entry.agtid+"'>"+entry.agt_name+"</option>";
+							}
+
+						});
+						var selectEnd = "</select>";
+						var select = selectStart.concat(selectBody.concat(selectEnd));
+						return select;
+					}
+		     	},
+		     	{targets: 11,
+		     		"visible": false
+		     	},
+
+		    ],
+
 	        initComplete: function () {
 	            this.api().columns().every( function () {
 	                var column = this;
@@ -251,10 +254,13 @@
 </script>
 <script type="text/javascript">
 	var selected_array = new Array();
-	function updateOwner(selected)
+	var selected = null;
+	function updateOwner(stockSelected, agentSelected)
 	{
+		selected = stockSelected + "-" +agentSelected;
 		selected_array.push(selected);
 		$('#stock_items').val(selected_array);
+		// alert(selected_array);
 	}
 </script>
 <style type="text/css">

@@ -364,6 +364,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/transferownership', 'TransferOwnershipController@transferOwnershipForm'); 
 		Route::post('/transferownership', 'TransferOwnershipController@transferOwnership');
+		Route::get('/transferownership/getstockview', ['as'=>'transferownership.getstockview','uses'=>'TransferOwnershipController@getstockview']); 
 });
 
 
