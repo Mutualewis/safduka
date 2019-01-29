@@ -231,6 +231,7 @@
 		}
 
 	}
+	$prc_season = 2;
 ?>
     <div class="col-md-12">
 	        <form id="bulkingform" role="form" method="POST" action="/bulkinginstructions">
@@ -289,7 +290,13 @@
 		        			<label>Bulk Outturn Number</label>
 		                    <div class="input-group custom-search-form">
 		                        <input type="text" class="form-control" name="outturn" id ="outturn" placeholder="Outturn No..."  value="{{ old('outturn') }}" ></input>
-		                       
+								<input type='hidden' name='old_outturn' id='old_outturn' value='' >
+			                        <span class="input-group-btn">
+			                        <button type="button" name="searchInstruction" class="btn btn-default" onclick = "setTable()">
+			                        	<i class="fa fa-search"></i>
+			                        </button>
+
+		                    </span>
 		                    </div>
 		                </div>	
 
@@ -424,6 +431,10 @@
 									<th>
 										Pockets
 									</th>
+									<th>
+									
+									</th>
+									
 						        </tr>
 						    </thead>
 						    <tfoot style="display: table-header-group; text-align:left; width: inherit; max-width:100%;">
@@ -461,6 +472,10 @@
 									<th>
 										Pockets
 									</th>
+									<th>
+									
+									</th>
+									
 									
 						        </tr>
 						    </tfoot>
@@ -471,210 +486,237 @@
 @push('scripts')
 
 <script>
+
+	$(document).ready(function (){   
+	setTable()
+
+   });
+
+function setTable(){
+	$("#stocks-table").dataTable().fnDestroy();
+	localStorage.clear();
 	var countryID = document.getElementById("country").value;
 	var ref_no = document.getElementById("outturn").value;
-
+	console.log(ref_no)
 	if (countryID == "") {
 		countryID = 0;
 	}
 	if (ref_no == "") {
 		ref_no = 0;
 	}
-	$(document).ready(function (){   
-	localStorage.clear();
+
 	var url = '{{ route('bulkinginstructions.getstockview',['countryID'=>":id",'ref_no'=>":rf"]) }}';
 
-	url = url.replace(':id', countryID);
-	url = url.replace(':rf', ref_no);
+url = url.replace(':id', countryID);
+url = url.replace(':rf', ref_no);
 
-    var table = $('#stocks-table').DataTable({
-		dom: 'Bfrtip',      	
-   		type: 'POST',
-   		url: 'Bulkinginstructions',
-        Bulking: true,
-        deferRender: true,
-     	ajax: url,
-     	autoWidth: true,
-     	pageLength: 100,
+var table = $('#stocks-table').DataTable({
+	dom: 'Bfrtip',      	
+	   type: 'POST',
+	   url: 'Bulkinginstructions',
+	Bulking: true,
+	deferRender: true,
+	 ajax: url,
+	 autoWidth: true,
+	 pageLength: 100,
 
-     	buttons: [
-     		'pageLength' , 
-     		'colvis',
-     	],
+	 buttons: [
+		 'pageLength' , 
+		 'colvis',
+	 ],
 
-        columns: [
-            { data: 'id', name: 'tobeprocessed', searchable: false },
-            { data: 'csn_season', name: 'csn_season'},
-			{ data: 'mark', name: 'grower'},
-            { data: 'outturn', name: 'outturn' },
-            { data: 'mark', name: 'mark' },
-            { data: 'grade', name: 'grade'},
-            
-            { data: 'st_net_weight', name: 'weight'},
-			{ data: 'st_net_weight', name: 'st_net_weight'},
-            { data: 'st_bags', name: 'bags'},
-            { data: 'st_pockets', name: 'pockets'}
-            
-
-        ],    
-
-        language: {
-            lengthMenu: "Display _MENU_ records per page",
-            zeroRecords: "Nothing found - sorry",
-            info: "Showing page _PAGE_ of _PAGES_",
-            infoEmpty: "No records available",
-            infoFiltered: "(filtered from _MAX_ total records)"
-        },
-		columnDefs: [
-
-		{targets: 0,
-			'searchable':false,
-			'orderable':false,
-			'className': 'dt-body-center',
-			'render': function (data, type, full, meta, row){
-			// var ended = table.cell(meta.row,19).data();
-			//var stockid = $('<div/>').text(data).html();
-			var stockid = table.cell(meta.row,0).data();
-			// var status = table.cell(meta.row,22).data();
-			var outturn = table.cell(meta.row,3).data();
-			var weight = table.cell(meta.row,6).data();
+	columns: [
+		{ data: 'id', name: 'tobeprocessed', searchable: false },//0
+		{ data: 'csn_season', name: 'csn_season'},//1
+		{ data: 'mark', name: 'grower'},//2
+		{ data: 'outturn', name: 'outturn' },//3
+		{ data: 'mark', name: 'mark' },//4
+		{ data: 'grade', name: 'grade'},//5
 		
-				// if (ended == null) {
-				return '<input type="checkbox" class="chk" name="tobeprocessed[]" value="' + stockid + '"  data-outturn="' + outturn + '" data-weight="' + weight + '"  value="' + stockid + '" >';
-				// } else {
-				// 	var viewedfield = '<input type="hidden" name="tobeprocessed[]" value="' + stockid + '" >';
-				// 	var hiddenfield = '<input type="checkbox" checked="checked" value="' + stockid + '" disabled>';
-				// 	var combined = viewedfield.concat(hiddenfield);
-				// 	return combined;
-				// }
-			
+		{ data: 'st_net_weight', name: 'weight'},//6
+		{ data: 'st_net_weight', name: 'st_net_weight'},//7
+		{ data: 'st_bags', name: 'bags'},//8
+		{ data: 'st_pockets', name: 'pockets'},//9
+		{ data: 'bulked_by', name: 'bulked_by'},//10
+		
+		
 
+	],    
 
-			
-		}},
-		{targets: 7, 
-				'searchable':true,
-				'orderable': true,
-				'render': function (data, type, full, meta, row){
-					return '<input size = "5" style="text-align:center;" type="text" name="'+"cweight["+ table.cell(meta.row,0).data()+"]"+'" id="'+"cweight"+ table.cell(meta.row,0).data()+""+'" value="' + $('<div/>').text(data).html() + '">';
-			}},
+	language: {
+		lengthMenu: "Display _MENU_ records per page",
+		zeroRecords: "Nothing found - sorry",
+		info: "Showing page _PAGE_ of _PAGES_",
+		infoEmpty: "No records available",
+		infoFiltered: "(filtered from _MAX_ total records)"
+	},
+	columnDefs: [
+
+	{targets: 0,
+		'searchable':false,
+		'orderable':false,
+		'className': 'dt-body-center',
+		'render': function (data, type, full, meta, row){
+		 var ended = table.cell(meta.row,10).data();
+		//var stockid = $('<div/>').text(data).html();
+		var stockid = table.cell(meta.row,0).data();
+		// var status = table.cell(meta.row,22).data();
+		var outturn = table.cell(meta.row,3).data();
+		var weight = table.cell(meta.row,6).data();
 	
-		],
-		fnDrawCallback: function( oSettings ) {
-			var jArray= <?php echo json_encode($lots); ?>;
-		    var stockArray= <?php echo json_encode($stockArray); ?>;
+			if (ended == null) {
+			return '<input type="checkbox" class="chk" name="tobeprocessed[]" value="' + stockid + '"  data-outturn="' + outturn + '" data-weight="' + weight + '"  value="' + stockid + '" >';
+			} else {
+				var viewedfield = '<input type="hidden" name="tobeprocessed[]" value="' + stockid + '" >';
+				var hiddenfield = '<input type="checkbox" class="chk" checked="checked" value="' + stockid + '"  data-outturn="' + outturn + '" data-weight="' + weight + '"  value="' + stockid + '" >';
+				var combined = viewedfield.concat(hiddenfield);
 
-		    $(document).ready(function() {
-		    	
-
-			$('.chk').off('click').on('click', function(){
-				var selectedID = $(this).val();
-				var checked = $(this).is(":checked");
-				var outturn = $(this).data('outturn');
-				var weight = $(this).data('weight');
-				selectedID = parseInt(selectedID);	
-				var totalsWeight = null;
-				var bags = null;
-				var pockets = null;
-				
 				var data = [];
+			
+			if (localStorage.getItem("lotsinbulk") != null) {
+				data = JSON.parse(localStorage.getItem('lotsinbulk'));
+			}
+			
 				
-				if (localStorage.getItem("lotsinbulk") != null) {
-					data = JSON.parse(localStorage.getItem('lotsinbulk'));
+				
+				var result = $.grep(data, function(e){ 
+					return e.id == stockid; 
+				});
+				
+				if(jQuery.isEmptyObject(result)){
+				data.push({"id": stockid,"outturn": outturn,"weight": weight});
 				}
-				
-				if(checked){
-					
-					var result = $.grep(data, function(e){ 
-						return e.id == selectedID; 
-					});
-					console.log(result)
-					if(jQuery.isEmptyObject(result)){
-					data.push({"id": selectedID,"outturn": outturn,"weight": weight});
-					}
-				}else{
-					data = data.filter(function( obj ) {
-					return obj.id !== selectedID;
-					});
-				}
-				
-				
 			
 			
-				localStorage.setItem('lotsinbulk', JSON.stringify(data));
+			localStorage.setItem('lotsinbulk', JSON.stringify(data));
 
-			    var totalWeight= $("#totalWeight").text();
-				totalWeight = parseInt(+totalWeight.replace(',', ''), 10);			    
-			    // var total_bags= $("#total_bags").text();
-			    // var total_pkts= $("#total_pkts").text();
-			   
-		    	var stringName = "cweight";
+				return combined;
+
+			}
+		
+
+
+		
+	}},
+	
+	{targets: 7, 
+			'searchable':true,
+			'orderable': true,
+			'render': function (data, type, full, meta, row){
+				return '<input size = "5" style="text-align:center;" type="text" name="'+"cweight["+ table.cell(meta.row,0).data()+"]"+'" id="'+"cweight"+ table.cell(meta.row,0).data()+""+'" value="' + $('<div/>').text(data).html() + '">';
+		}},
+
+	],
+	fnDrawCallback: function( oSettings ) {
+		var jArray= <?php echo json_encode($lots); ?>;
+		var stockArray= <?php echo json_encode($stockArray); ?>;
+
+		$(document).ready(function() {
+			
+
+		$('.chk').off('click').on('click', function(){
+			console.log("clicked")
+			var selectedID = $(this).val();
+			var checked = $(this).is(":checked");
+			var outturn = $(this).data('outturn');
+			var weight = $(this).data('weight');
+			selectedID = parseInt(selectedID);	
+			var totalsWeight = null;
+			var bags = null;
+			var pockets = null;
+			
+			var data = [];
+			
+			if (localStorage.getItem("lotsinbulk") != null) {
+				data = JSON.parse(localStorage.getItem('lotsinbulk'));
+			}
+			
+			if(checked){
+				
+				var result = $.grep(data, function(e){ 
+					return e.id == selectedID; 
+				});
+				
+				if(jQuery.isEmptyObject(result)){
+				data.push({"id": selectedID,"outturn": outturn,"weight": weight});
+				}
+			}else{
+				data = data.filter(function( obj ) {
+				return obj.id !== selectedID;
+				});
+			}
+			console.log(data)
+			localStorage.setItem('lotsinbulk', JSON.stringify(data));
+
+			var totalWeight= $("#totalWeight").text();
+			totalWeight = parseInt(+totalWeight.replace(',', ''), 10);			    
+			// var total_bags= $("#total_bags").text();
+			// var total_pkts= $("#total_pkts").text();
+		   
+			var stringName = "cweight";
+			var stringID = selectedID;
+			var res = stringName.concat(stringID);
+			res = res.concat("");
+			var cweight = null;
+			if(document.getElementById(res)==null){
+				var stringName = "cweightpurchased";
 				var stringID = selectedID;
 				var res = stringName.concat(stringID);
 				res = res.concat("");
-				var cweight = null;
 				if(document.getElementById(res)==null){
-					var stringName = "cweightpurchased";
-					var stringID = selectedID;
-					var res = stringName.concat(stringID);
-					res = res.concat("");
-					if(document.getElementById(res)==null){
-					var stringName = "cweightbal";
-					var stringID = selectedID;
-					var res = stringName.concat(stringID);
-					res = res.concat("");
-					if(document.getElementById(res)==null){
-					var stringName = "cweightbalpurchased";
-					var stringID = selectedID;
-					var res = stringName.concat(stringID);
-					res = res.concat("");
-				}
-				}
-				}
+				var stringName = "cweightbal";
+				var stringID = selectedID;
+				var res = stringName.concat(stringID);
+				res = res.concat("");
+				if(document.getElementById(res)==null){
+				var stringName = "cweightbalpurchased";
+				var stringID = selectedID;
+				var res = stringName.concat(stringID);
+				res = res.concat("");
+			}
+			}
+			}
 
-				cweight = document.getElementById(res).value;
+			cweight = document.getElementById(res).value;
 
-				Number.prototype.format = function(n,x){
-					var re = '(\\d)(?=(\\d{'+(x || 3)+'})+'+(n>0?'\\.':'$')+')';
-					return this.toFixed(Math.max(0, ~~n)).replace(new RegExp(re,'g'), '$1,');
-				};
+			Number.prototype.format = function(n,x){
+				var re = '(\\d)(?=(\\d{'+(x || 3)+'})+'+(n>0?'\\.':'$')+')';
+				return this.toFixed(Math.max(0, ~~n)).replace(new RegExp(re,'g'), '$1,');
+			};
 
-				if ($(this).is(':checked')) {
-					totalsWeight = totalWeight + parseInt(cweight, 10);
-				    bags = Math.floor(totalsWeight / 60);
-				    pockets = Math.floor(totalsWeight % 60);
-				} else {
-					totalsWeight = totalWeight - parseInt(cweight, 10);
-				    bags = Math.floor(totalsWeight / 60);
-				    pockets = Math.floor(totalsWeight % 60);					
-				}
+			if ($(this).is(':checked')) {
+				totalsWeight = totalWeight + parseInt(cweight, 10);
+				bags = Math.floor(totalsWeight / 60);
+				pockets = Math.floor(totalsWeight % 60);
+			} else {
+				totalsWeight = totalWeight - parseInt(cweight, 10);
+				bags = Math.floor(totalsWeight / 60);
+				pockets = Math.floor(totalsWeight % 60);					
+			}
 
 
-				totalsWeight = totalsWeight.format();
+			totalsWeight = totalsWeight.format();
 
-				$('#totalWeight').html(totalsWeight);
-				$('#total_bags').html(bags);
-				$('#total_pkts').html(pockets);
-				
-				
-			});
+			$('#totalWeight').html(totalsWeight);
+			$('#total_bags').html(bags);
+			$('#total_pkts').html(pockets);
+			
+			
+		});
 
 
-		    });
+		});
 
 
 
-	    },
-	
-
-
-        });
+	},
 
 
 
-   });
+	});
 
 
+}
 
 </script>
 
