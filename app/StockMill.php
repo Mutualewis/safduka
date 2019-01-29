@@ -19,7 +19,7 @@ class StockMill extends Model implements LogsActivityInterface{
 	protected $table = 'stock_mill_st';
 	protected static $logAttributes = '*';
 	
-	public $timestamps = true;
+	public $timestamps = false;
 	/**
 	 * The attributes that are mass assignable.
 	 *

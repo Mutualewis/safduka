@@ -156,9 +156,12 @@ class ProcessResultsController extends Controller
         DB::commit();
         //$resultstring = $request->all()->toJson();
         $resultsstring = json_encode($request->all());
-        Activity::user($user)
-        ->withProperties($request->all())
-        ->log('Added Process Results '. $resultsstring. ' user ' .$username);
+        if($results ==1){
+            Activity::log('Updated Process Results '. $resultsstring. ' user ' .$username);
+        }else{
+            Activity::log('Added Process Results '. $resultsstring. ' user ' .$username);
+        }
+        
         return response()->json([
             'message' => "successful",
             'data' => $results,
