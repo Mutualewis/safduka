@@ -560,9 +560,10 @@ class BulkingController extends Controller {
                
                     StockMill::where('st_bulk_id', '=', $st_bulk_id)
                          ->update(['st_bulk_id' => null, 'st_bulked_by' => null]);
-                
+                    Activity::log('Removed stock items from bulk ' . $st_bulk_id . 'Outurn' . $ref_no );
                     StockMill::where('id', '=', $st_bulk_id)
                          ->delete();
+                    Activity::log('Deleted bulk id ' . $st_bulk_id . 'outturn' . $ref_no );
             }
             if ($tobeprocessed != null) {
                 foreach ($tobeprocessed as $key => $value) {
@@ -591,11 +592,13 @@ class BulkingController extends Controller {
                 
                 $st_bulk_id = StockMill::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages,'mt_id'=>$material, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $stockitemdetails->pty_id, 'st_is_bulk' => 1]);
     
-                
+                Activity::log('Inserted parchment bulk ' . $st_bulk_id . ' outturn ' . $ref_no);
+
                     foreach ($tobeprocessed as $key => $value) {
                         $value = (object)$value;
                         StockMill::where('id', '=', $value->id)
                              ->update(['st_bulk_id' => $st_bulk_id, 'st_bulked_by' => $user]);
+                        Activity::log('Updated bulking information information on stock id ' . $value->id . ' st_bulk_id ' . $st_bulk_id .' bulked by ' .$user);
                     }
                 
             }

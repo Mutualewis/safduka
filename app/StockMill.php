@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Activity;
+use Auth;
 use Spatie\Activitylog\LogsActivityInterface;
 use Spatie\Activitylog\LogsActivity;
 
@@ -38,15 +39,19 @@ class StockMill extends Model implements LogsActivityInterface{
 	
 	public function getActivityDescriptionForEvent($eventName)
 	{
-		//dd($eventName); exit;
+		$user_data = Auth::user();
+		$user      = $user_data->id;
+		$username      = $user_data->usr_name;
+		$changeset = json_encode($this->getDirty());
 		if ($eventName == 'created')
 		{
-			return 'stock item "' . $this->st_outturn . '" was created';
+			Activity::log('Added stock item '. $this->st_outturn . ' user ' .$username);
+			return 'stock item "' . $this->st_outturn . '" was created by '. $username ;
 		}
 
 		if ($eventName == 'updated')
 		{
-			return 'stock item "' . $this->st_outturn . '" was updated';
+			return 'stock item "' . $this->st_outturn . '" was updated by '. $username .' with '.$changeset;
 		}
 
 		if ($eventName == 'deleted')

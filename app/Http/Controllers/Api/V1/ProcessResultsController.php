@@ -133,6 +133,8 @@ class ProcessResultsController extends Controller
     public function saveResults(Request $request)
     {
         $user = auth('api')->user();
+        $username = $user->usr_name;
+        $userid = $user->id;
         
         $this->validate($request, [
             'prts_bags' => 'required',
@@ -152,6 +154,11 @@ class ProcessResultsController extends Controller
             $results = $results->toArray();
         }
         DB::commit();
+        //$resultstring = $request->all()->toJson();
+        $resultsstring = json_encode($request->all());
+        Activity::user($user)
+        ->withProperties($request->all())
+        ->log('Added Process Results '. $resultsstring. ' user ' .$username);
         return response()->json([
             'message' => "successful",
             'data' => $results,
