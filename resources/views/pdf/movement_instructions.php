@@ -137,11 +137,11 @@
 
 						    foreach ($StockView->all() as $value) {
 
-						        $total += $value->btc_weight;
+						        $total += $value->st_weight;
 						        $count += 1;
 						        $id = $value->id;
-						        $total_bags += $value->btc_bags;
-						        $total_pkts += $value->btc_pockets;
+						        $total_bags += $value->st_bags;
+						        $total_pkts += $value->st_pockets;
 						        if ($value->warrant_no == null) {
 
 						            echo "<tr style='color:red;'>";
@@ -153,9 +153,9 @@
 						        $name = substr($value->name, 0, 8);					        
 						        echo "<td>" . $name . "</td>";
 						        echo "<td>" . $value->grade . "</td>";						        
-						        echo "<td>" . $value->btc_bags . "</td>";
-						        echo "<td>" . $value->btc_pockets . "</td>";
-						        echo "<td>" . $value->btc_weight . "</td>";
+						        echo "<td>" . $value->st_bags . "</td>";
+						        echo "<td>" . $value->st_pockets . "</td>";
+						        echo "<td>" . $value->st_weight . "</td>";
 						        echo "<td>" . $value->code."</td>";
 						        echo "<td>" . $value->wr_name."-".$value->loc_row.$value->loc_column.$value->btc_zone."</td>";
 						        echo "<td>" . $value->new_location."</td>";
