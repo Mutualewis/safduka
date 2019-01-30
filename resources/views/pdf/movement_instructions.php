@@ -155,7 +155,7 @@
 						        echo "<td>" . $value->grade . "</td>";						        
 						        echo "<td>" . $value->st_bags . "</td>";
 						        echo "<td>" . $value->st_pockets . "</td>";
-						        echo "<td>" . $value->st_weight . "</td>";
+						        echo "<td>" . $value->st_net_weight . "</td>";
 						        echo "<td>" . $value->code."</td>";
 						        echo "<td>" . $value->wr_name."-".$value->loc_row.$value->loc_column.$value->btc_zone."</td>";
 						        echo "<td>" . $value->new_location."</td>";
