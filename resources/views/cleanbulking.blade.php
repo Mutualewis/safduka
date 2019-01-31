@@ -977,8 +977,9 @@
 				var column = $('[name="new_column"]').val();
 				var zone = $('[name="new_zone"]').val();
 				var warehouse = $('[name="warehouse"]').val();
-
 				var material = $('[name="material"]').val();
+
+				
 				
 				var formdata = { country: country, outt_season: outt_season,outturn: outturn, mark: mark, grower: grower, material: material, date: date , new_row: row, new_column: column, new_zone : zone, warehouse : warehouse }
 

@@ -317,8 +317,6 @@ class CleanBulkingController extends Controller {
                 $warehouse_id = Input::get('warehouse');
                 $cweight = Input::get('cweight');
 
-
-
                 if ($tobeprocessed != null) {
                     foreach ($tobeprocessed as $key => $value) {
                         $stockitemdetails = StockWarehouse::where('id', '=', $value)->first(); 
@@ -541,7 +539,6 @@ class CleanBulkingController extends Controller {
             if ($stock_pockets != 0 && $stock_pockets != null) {
                 $batch_packages = $batch_packages + 1;
             }
-                
             
             $new_row = $formdata->new_row;
             $new_column = $formdata->new_column;
@@ -551,11 +548,14 @@ class CleanBulkingController extends Controller {
             $provisionalbulk = ProvisionalBulk::where('id', $ref_no)->first();
             $outturn = $provisionalbulk->pbk_instruction_number;
             
+            $growerDetails = coffeegrower::where('id', $grower)->first();
+            $mark = $growerDetails->cgr_mark;
+
             $stock_details = StockWarehouse::where('st_outturn', $outturn)->where('mt_id', $material_id)->first();
             if ($stock_details != null) {
                 $st_bulk_id = $stock_details->id;
                 StockWarehouse::where('id', '=', $st_bulk_id)
-                         ->update([ 'st_net_weight' => $weight_in,'st_packages' => $batch_packages, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'mt_id' => $material_id, 'warehouse_id' => $warehouse_id]);  
+                         ->update([ 'st_net_weight' => $weight_in,'st_packages' => $batch_packages, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'mt_id' => $material_id, 'warehouse_id' => $warehouse_id, 'cgr_id' => $grower, 'st_mark' => $mark]);  
                 Batch::where('st_id', '=', $st_bulk_id)
                          ->update([ 'btc_net_weight' => $weight_in, 'btc_packages' => $batch_packages, 'btc_bags' => $stock_bags, 'btc_pockets' => $stock_pockets]);  
                 $batch_details = Batch::where('st_id', $st_bulk_id)->first(); 
