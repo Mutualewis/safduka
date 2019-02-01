@@ -561,9 +561,9 @@ class BulkingController extends Controller {
                     StockMill::where('st_bulk_id', '=', $st_bulk_id)
                          ->update(['st_bulk_id' => null, 'st_bulked_by' => null]);
                     Activity::log('Removed stock items from bulk ' . $st_bulk_id . 'Outurn' . $ref_no );
-                    StockMill::where('id', '=', $st_bulk_id)
-                         ->delete();
-                    Activity::log('Deleted bulk id ' . $st_bulk_id . 'outturn' . $ref_no );
+                    //StockMill::where('id', '=', $st_bulk_id)
+                    //     ->delete();
+                    //Activity::log('Deleted bulk id ' . $st_bulk_id . 'outturn' . $ref_no );
             }
             if ($tobeprocessed != null) {
                 foreach ($tobeprocessed as $key => $value) {
@@ -590,9 +590,19 @@ class BulkingController extends Controller {
                 $stock_pockets = $stock_net % 60;     
                 $batch_packages = ceil($stock_net / 60);   
                 
-                $st_bulk_id = StockMill::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages,'mt_id'=>$material, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $stockitemdetails->pty_id, 'st_is_bulk' => 1]);
+                if($st_bulk_id == null){
+                    $st_bulk_id = StockMill::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages,'mt_id'=>$material, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $stockitemdetails->pty_id, 'st_is_bulk' => 1]);
+
+                    Activity::log('Inserted parchment bulk ' . $st_bulk_id . ' outturn ' . $ref_no);
+                }else{
+                    StockMill::where('st_bulk_id', '=', $st_bulk_id)
+                    ->update([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages,'mt_id'=>$material, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $stockitemdetails->pty_id, 'st_is_bulk' => 1]);
+
+                 Activity::log('Updated parchment bulk ' . $st_bulk_id . ' st_outturn ' . $ref_no);
+                }
+               
     
-                Activity::log('Inserted parchment bulk ' . $st_bulk_id . ' outturn ' . $ref_no);
+                
 
                     foreach ($tobeprocessed as $key => $value) {
                         $value = (object)$value;
