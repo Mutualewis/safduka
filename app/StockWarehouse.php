@@ -44,6 +44,7 @@ class StockWarehouse extends Model implements LogsActivityInterface{
 		$user      = $user_data->id;
 		$username      = $user_data->usr_name;
 		$changeset = json_encode($this->getDirty());
+		
 		if ($eventName == 'created')
 		{
 			Activity::log('Added stock warehouse item '. $this->st_outturn . ' user ' .$username);

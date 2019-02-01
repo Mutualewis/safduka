@@ -274,7 +274,7 @@ class ParchmentController extends Controller {
         // $edit->add('photo','Photo', 'image')->move('uploads/demo/')->fit(240, 160)->preview(120,80);
         // $edit->add('categories.name','Categories','tags');
 
-        return $edit->view('editparchmentbatchedit', compact('edit'));
+        return $edit->view('editparchmentgrnedit', compact('edit'));
 
     }
     public function unconfirm($id){
