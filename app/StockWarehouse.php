@@ -58,7 +58,7 @@ class StockWarehouse extends Model implements LogsActivityInterface{
 
 		if ($eventName == 'deleted')
 		{
-			return 'stock warehouse item "' . $this->st_outturn . '" was deleted';
+			return 'stock warehouse item "' . $this->st_outturn . '" was deleted by '. $username;
 		}
 
 		return '';

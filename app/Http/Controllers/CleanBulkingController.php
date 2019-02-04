@@ -653,6 +653,10 @@ class CleanBulkingController extends Controller {
                 StockWarehouse::where('st_bulk_id', '=', $st_bulk_id)
                          ->update(['st_bulk_id' => null, 'st_bulked_by' => null]);
                     Activity::log('Removed stock warehouse items from bulk ' . $st_bulk_id . 'Outurn' . $ref_no );
+                    $prdetails = ProvisionalBulk::where('pbk_instruction_number', $ref_no)->first();
+                if ($prdetails != null) {
+                    ProvisionalAllocation::where('pbk_id', $prdetails->id)->delete(); 
+                }
                     //StockMill::where('id', '=', $st_bulk_id)
                     //     ->delete();
                     //Activity::log('Deleted bulk id ' . $st_bulk_id . 'outturn' . $ref_no );
