@@ -283,10 +283,13 @@
 	        			<label>Bulk Outturn Number</label>
 	                    <div class="input-group custom-search-form">
 	                        <input type="text" class="form-control" name="outturn" id ="outturn" placeholder="Outturn No..."  value="{{ old('outturn').$outturn }}" ></input>
-	                        <span class="input-group-btn">
-	                        <button type="submit" id="searchButtonOuttturn" name="searchButton" class="btn btn-default" formnovalidate>
-	                        	<i class="fa fa-search"></i>
-	                        </button>	                       
+							<input type='hidden' name='old_outturn' id='old_outturn' value='' >
+			                        <span class="input-group-btn">
+			                        <button type="button" name="searchInstruction" class="btn btn-default" onclick = "setTable()">
+			                        	<i class="fa fa-search"></i>
+			                        </button>
+
+		                    </span>	                       
 	                    </div>
 	                </div>	
 
@@ -524,6 +527,15 @@
 @push('scripts')
 
 <script>
+	
+	$(document).ready(function (){ 
+		setTable()
+
+   });
+function setTable(){
+	$("#stocks-table").dataTable().fnDestroy();
+	localStorage.clear();
+
 	var countryID = document.getElementById("country").value;
 	var ref_no = document.getElementById("outturn").value;
 
@@ -533,13 +545,12 @@
 	if (ref_no == "") {
 		ref_no = 0;
 	}
-	$(document).ready(function (){   
-	localStorage.clear();
+
 	var url = '{{ route('cleanbulkinginstructions.getstockview',['countryID'=>":id",'ref_no'=>":rf"]) }}';
 
 	url = url.replace(':id', countryID);
 	url = url.replace(':rf', ref_no);
-
+	console.log(url)
 
     var table = $('#stocks-table').DataTable({
 		dom: 'Bfrtip',      	
@@ -583,27 +594,51 @@
 		columnDefs: [
 
 		{targets: 0,
-			'searchable':false,
-			'orderable':false,
-			'className': 'dt-body-center',
-			'render': function (data, type, full, meta, row){
-			var ended = table.cell(meta.row,10).data();
-			//var stockid = $('<div/>').text(data).html();
-			var stockid = table.cell(meta.row,0).data();
-			// var status = table.cell(meta.row,22).data();
-			var outturn = table.cell(meta.row,3).data();
-			var weight = table.cell(meta.row,6).data();
-		
+		'searchable':false,
+		'orderable':false,
+		'className': 'dt-body-center',
+		'render': function (data, type, full, meta, row){
+		 var ended = table.cell(meta.row,10).data();
+		//var stockid = $('<div/>').text(data).html();
+		var stockid = table.cell(meta.row,0).data();
+		// var status = table.cell(meta.row,22).data();
+		var outturn = table.cell(meta.row,3).data();
+		var weight = table.cell(meta.row,6).data();
+	
 			if (ended == null) {
-				return '<input type="checkbox" class="chk" name="tobeprocessed[]" value="' + stockid + '"  data-outturn="' + outturn + '" data-weight="' + weight + '"  value="' + stockid + '" >';
+			return '<input type="checkbox" class="chk" name="tobeprocessed[]" value="' + stockid + '"  data-outturn="' + outturn + '" data-weight="' + weight + '"  value="' + stockid + '" >';
 			} else {
 				var viewedfield = '<input type="hidden" name="tobeprocessed[]" value="' + stockid + '" >';
-				var hiddenfield = '<input type="checkbox" checked="checked" value="' + stockid + '" disabled>';
+				var hiddenfield = '<input type="checkbox" class="chk" checked="checked" value="' + stockid + '"  data-outturn="' + outturn + '" data-weight="' + weight + '"  value="' + stockid + '" >';
 				var combined = viewedfield.concat(hiddenfield);
-				return combined;
+
+				var data = [];
+			
+			if (localStorage.getItem("lotsinbulk") != null) {
+				data = JSON.parse(localStorage.getItem('lotsinbulk'));
 			}
-	
-		}},
+			
+				
+				
+				var result = $.grep(data, function(e){ 
+					return e.id == stockid; 
+				});
+				
+				if(jQuery.isEmptyObject(result)){
+				data.push({"id": stockid,"outturn": outturn,"weight": weight});
+				}
+			
+			
+			localStorage.setItem('lotsinbulk', JSON.stringify(data));
+
+				return combined;
+
+			}
+		
+
+
+		
+	}},
     	{targets: 10,
 			'visible':false
 		},
@@ -757,11 +792,7 @@
         },
 
         });
-
-
-
-   });
-
+}
 
 
 </script>

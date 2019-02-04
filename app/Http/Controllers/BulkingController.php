@@ -547,7 +547,7 @@ class BulkingController extends Controller {
             
             $reference_no = $ref_no;
             
-            $weight_in             = null;
+            $weight_in    = null;
 
             $tobeprocessed = $request->lotsinbulk;
             

@@ -497,11 +497,17 @@ class CleanBulkingController extends Controller {
     public function getstockview($countryID, $ref_no)
     {
         if ($countryID != null) {
-            if($ref_no != null){
-                $stockview = StockViewWarehouse::select('*')->where('process_number', $ref_no)->orWhereNull('process_number')->whereNull('bulked_by')->orderByRaw(DB::raw("FIELD(process_number, '$ref_no') DESC"));
-
+            if($ref_no != null && $ref_no!=0){
+                
+                $refid = StockWarehouse::where('st_outturn', $ref_no)->first();
+                if($refid !=null){
+                $refid = $refid->id;
+                $stockview = StockViewWarehouse::select('*')->where('st_bulk_id', $refid)->orWhereNull('bulked_by')->orderByRaw(DB::raw("FIELD(st_bulk_id, '$refid') DESC"));
+                }else{
+                    $stockview = StockViewALL::select('*')->whereNull('bulked_by');
+                }
             } else {
-                $stockview = StockViewWarehouse::select('*')->whereNull('bulked_by');
+                $stockview = StockViewALL::select('*')->whereNull('bulked_by');
             }
 
         } else {
@@ -606,7 +612,6 @@ class CleanBulkingController extends Controller {
     public function bulkingApi(Request $request){
         DB::connection()->enableQueryLog();
         $errormessages = [];
-        
 		try{
             DB::beginTransaction();
             $formdata = (object)$request->data;
@@ -640,7 +645,19 @@ class CleanBulkingController extends Controller {
 
             $tobeprocessed = $request->lotsinbulk;;
             //$tobewithdrawn = Input::get('tobewithdrawn');
-      
+            $st_bulk_details =  StockWarehouse::where('st_outturn', '=', $ref_no)->first();
+            
+            if($st_bulk_details != null){
+                $st_bulk_id = $st_bulk_details->id;
+               
+                StockWarehouse::where('st_bulk_id', '=', $st_bulk_id)
+                         ->update(['st_bulk_id' => null, 'st_bulked_by' => null]);
+                    Activity::log('Removed stock warehouse items from bulk ' . $st_bulk_id . 'Outurn' . $ref_no );
+                    //StockMill::where('id', '=', $st_bulk_id)
+                    //     ->delete();
+                    //Activity::log('Deleted bulk id ' . $st_bulk_id . 'outturn' . $ref_no );
+            }
+            
             if ($tobeprocessed != null) {
                 foreach ($tobeprocessed as $key => $value) {
                     $value = (object)$value;
@@ -659,7 +676,7 @@ class CleanBulkingController extends Controller {
                 $stock_pockets = $stock_net % 60;     
                 $batch_packages = ceil($stock_net / 60);   
 
-                $stock_details = StockWarehouse::where('st_outturn', $ref_no)->where('mt_id', $material_id)->first();
+                $stock_details = StockWarehouse::where('st_outturn', $ref_no)->first();
                
                 // exit();
                 if ($stock_details == null) {
