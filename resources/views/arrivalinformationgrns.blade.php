@@ -412,9 +412,7 @@
 	                    <div class="input-group custom-search-form" id="outt_number_div" name="outt_number_div" >
 	                        <input type="text" class="form-control" id="outt_number" name="outt_number" style="text-transform:uppercase; " placeholder="Add/Search Outturn..."  value="{{ old('outt_number'). $outt_number }}" onchange="getMaterialsInOutturn()"></input>
 	                        <input type="hidden" class="form-control" id="outt_number_search" name="outt_number_search" style="text-transform:uppercase; " placeholder="Add/Search Outturn..."  value="{{ old('outt_number'). $outt_number }}" ></input>
-
 		                        <span class="input-group-btn">
-
 		                        <button type="submit" id="searchButtonOuttturn" name="searchButton" class="btn btn-default">
 		                        	<i class="fa fa-search"></i>
 		                        </button>
@@ -515,7 +513,7 @@
 
 			        ?>
 			            <div class="form-group col-md-12">
-							<button type="submit" id="confirmgrnsbtn" name="confirmgrns" class="btn btn-lg btn-danger btn-block" formnovalidate>Confirm GRN</button>	           		
+							<button type="submit" id="confirmgrnsbtn" name="confirmgrns" onclick="confirmGRNDetails(this)" class="btn btn-lg btn-danger btn-block" formnovalidate>Confirm GRN</button>	           		
 			            </div>	
 
 			        <?php
@@ -841,6 +839,54 @@
 		event.preventDefault();
 	})
 
+	$( "#confirmgrnsbtn" ).click(function(event){
+
+		var grn_number = $('#grn_number').val();
+		var warehouse = $('#warehouse').val();
+		var package_diffrence = 0;
+		
+		var url="{{ route('arrivalinformationgrns.confirmGRNDetails',['grn_number'=>":grn_number", 'warehouse'=>":warehouse"]) }}";
+		url = url.replace(':grn_number', grn_number);
+		url = url.replace(':warehouse', warehouse);
+
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			package_diffrence = response.error;	
+
+			if(package_diffrence != 0){
+				var alert_error = confirm("The GRN has a diffrence of "+ package_diffrence + "% compared to the DMP, are you sure you want to continue ?");
+				if (alert_error == true) {
+					confirmGRNReceived(grn_number, warehouse, package_diffrence);
+				} else {
+				}
+			}	
+		}).error(function(error) {
+			console.log(error)
+		});  
+		
+		event.preventDefault();
+
+		
+	})
+
+	function confirmGRNReceived (grn_number, warehouse, package_diffrence){
+
+		var url="{{ route('arrivalinformationgrns.confirmGRNReceived',['grn_number'=>":grn_number", 'warehouse'=>":warehouse", 'package_diffrence'=>":package_diffrence"]) }}";
+		url = url.replace(':grn_number', grn_number);
+		url = url.replace(':warehouse', warehouse);
+		url = url.replace(':package_diffrence', package_diffrence);
+
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			location.reload();
+		}).error(function(error) {
+			console.log(error)
+		});  
+	}
 
 	$(document).ready(function (){ 
 		
@@ -947,102 +993,143 @@
 		})
 
 		$( "#submitbatch" ).on('click', function(){
+				var outt_number = $('#outt_number').val();
+				var outt_season = $('#outt_season').val();
+				var coffee_grower = $('#coffee_grower').val();
+				var warehouse = $('#warehouse').val();
+				var pallet_kgs = $('#pallet_kgs').val();
 
-			var outt_number = $('#outt_number').val();
-			var outt_season = $('#outt_season').val();
-			var coffee_grower = $('#coffee_grower').val();
-			var warehouse = $('#warehouse').val();
-			var pallet_kgs = $('#pallet_kgs').val();
+				if (outt_number == '') {
+					outt_number = $("#outt_number_select option:selected").text();
+					outt_number = outt_number.substr(0, outt_number.indexOf('-')); 
+				}
 
-			if (outt_number == '') {
-				outt_number = $("#outt_number_select option:selected").text();
-				outt_number = outt_number.substr(0, outt_number.indexOf('-')); 
-			}
-
-
-			var grn_number = $('#grn_number').val();
-			var outturn_type_batch = $('#outturn_type_batch').val();
-			var weigh_scales = $('#weigh_scales').val();
-			var packaging = $('#packaging').val();
-			var zone = $('#zone').val();
-			var packages_batch = $('#packages_batch').val();
-			var batch_kilograms = $('#batch_kilograms').val();
-			var batch_kilograms_hidden = $('#batch_kilograms_hidden').val();
-
-			if (batch_kilograms_hidden == '') {
-				batch_kilograms_hidden = batch_kilograms;
-			} else if (batch_kilograms == '') {
-				batch_kilograms = batch_kilograms_hidden;
-			} 
-
-			batch_kilograms = batch_kilograms-pallet_kgs;
-			batch_kilograms_hidden = batch_kilograms_hidden-pallet_kgs;
+				var grn_number = $('#grn_number').val();
+				var outturn_type_batch = $('#outturn_type_batch').val();
+				var weigh_scales = $('#weigh_scales').val();
+				var packaging = $('#packaging').val();
+				var zone = $('#zone').val();
+				var packages_batch = $('#packages_batch').val();
+				var batch_kilograms = $('#batch_kilograms').val();
+				var batch_kilograms_hidden = $('#batch_kilograms_hidden').val();
 
 
-			var selectedRow = "";
-			var selected = $("input[type='radio'][name='row_id']:checked");
-			if (selected.length > 0) {
-			    selectedRow = selected.val();
-			}
+				if (batch_kilograms_hidden == '') {
+					batch_kilograms_hidden = batch_kilograms;
+				} else if (batch_kilograms == '') {
+					batch_kilograms = batch_kilograms_hidden;
+				} 
+
+				batch_kilograms = batch_kilograms-pallet_kgs;
+				batch_kilograms_hidden = batch_kilograms_hidden-pallet_kgs;
 
 
-			var selectedColumn = "";
-			var selected_col = $("input[type='radio'][name='column_id']:checked");
-			if (selected_col.length > 0) {
-			    selectedColumn = selected_col.val();
-			}
+				var selectedRow = "";
+				var selected = $("input[type='radio'][name='row_id']:checked");
+				if (selected.length > 0) {
+				    selectedRow = selected.val();
+				}
 
 
-			if (packaging == 3) {
-				selectedRow = 0;
-			    selectedColumn = 0;
-			}
+				var selectedColumn = "";
+				var selected_col = $("input[type='radio'][name='column_id']:checked");
+				if (selected_col.length > 0) {
+				    selectedColumn = selected_col.val();
+				}
 
 
+				if (packaging == 3) {
+					selectedRow = 0;
+				    selectedColumn = 0;
+				}
 
-			var url="{{ route('arrivalinformation.addBatch',['outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type_batch'=>":outturn_type_batch", 'weigh_scales'=>":weigh_scales", 'packaging'=>":packaging", 'zone'=>":zone", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'batch_kilograms_hidden'=>":batch_kilograms_hidden", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'warehouse' =>":warehouse", 'grn_number' =>":grn_number", 'pallet_kgs' =>":pallet_kgs"]) }}";
-
-			url = url.replace(':grn_number', grn_number);
-			url = url.replace(':outt_number', outt_number);
-			url = url.replace(':outt_season', outt_season);
-			url = url.replace(':coffee_grower', coffee_grower);
-			url = url.replace(':outturn_type_batch', outturn_type_batch);
-			url = url.replace(':weigh_scales', weigh_scales);
-			url = url.replace(':packaging', packaging);
-			url = url.replace(':zone', zone);
-			url = url.replace(':packages_batch', packages_batch);
-			url = url.replace(':batch_kilograms', batch_kilograms);
-			url = url.replace(':batch_kilograms_hidden', batch_kilograms_hidden);
-			url = url.replace(':selectedRow', selectedRow);
-			url = url.replace(':selectedColumn', selectedColumn);
-			url = url.replace(':warehouse', warehouse);
-			url = url.replace(':pallet_kgs', pallet_kgs);
-
-			var dialog = bootbox.alert({
-				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-			}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-						
-			$.ajax({
-			url: url,
-			type: 'GET',
-			}).success(function(response) {
-				dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-				closeBootBox();
-				refreshOutturnsTable();
-				populateBatches();
-
-			}).error(function(error) {
-				dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
-				closeBootBox();
-			});  
+				var packages_computed = Math.ceil(batch_kilograms/60);
+				var package_weight_diffrence = Math.abs(packages_batch - packages_computed);
 
 
+				if(package_weight_diffrence > 0){
+					var alert_error = confirm("The packages and weight diffrence is high, do you still wish to continue ?");
+					if (alert_error == true) {
+						var url="{{ route('arrivalinformation.addBatch',['outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type_batch'=>":outturn_type_batch", 'weigh_scales'=>":weigh_scales", 'packaging'=>":packaging", 'zone'=>":zone", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'batch_kilograms_hidden'=>":batch_kilograms_hidden", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'warehouse' =>":warehouse", 'grn_number' =>":grn_number", 'pallet_kgs' =>":pallet_kgs"]) }}";
+
+						url = url.replace(':grn_number', grn_number);
+						url = url.replace(':outt_number', outt_number);
+						url = url.replace(':outt_season', outt_season);
+						url = url.replace(':coffee_grower', coffee_grower);
+						url = url.replace(':outturn_type_batch', outturn_type_batch);
+						url = url.replace(':weigh_scales', weigh_scales);
+						url = url.replace(':packaging', packaging);
+						url = url.replace(':zone', zone);
+						url = url.replace(':packages_batch', packages_batch);
+						url = url.replace(':batch_kilograms', batch_kilograms);
+						url = url.replace(':batch_kilograms_hidden', batch_kilograms_hidden);
+						url = url.replace(':selectedRow', selectedRow);
+						url = url.replace(':selectedColumn', selectedColumn);
+						url = url.replace(':warehouse', warehouse);
+						url = url.replace(':pallet_kgs', pallet_kgs);
+
+						var dialog = bootbox.alert({
+							message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+						}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+									
+						$.ajax({
+						url: url,
+						type: 'GET',
+						}).success(function(response) {
+							dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+							closeBootBox();
+							refreshOutturnsTable();
+							populateBatches();
+
+						}).error(function(error) {
+							dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+							closeBootBox();
+						});  
+
+
+					}
+				} else {
+
+					var url="{{ route('arrivalinformation.addBatch',['outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type_batch'=>":outturn_type_batch", 'weigh_scales'=>":weigh_scales", 'packaging'=>":packaging", 'zone'=>":zone", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'batch_kilograms_hidden'=>":batch_kilograms_hidden", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'warehouse' =>":warehouse", 'grn_number' =>":grn_number", 'pallet_kgs' =>":pallet_kgs"]) }}";
+
+					url = url.replace(':grn_number', grn_number);
+					url = url.replace(':outt_number', outt_number);
+					url = url.replace(':outt_season', outt_season);
+					url = url.replace(':coffee_grower', coffee_grower);
+					url = url.replace(':outturn_type_batch', outturn_type_batch);
+					url = url.replace(':weigh_scales', weigh_scales);
+					url = url.replace(':packaging', packaging);
+					url = url.replace(':zone', zone);
+					url = url.replace(':packages_batch', packages_batch);
+					url = url.replace(':batch_kilograms', batch_kilograms);
+					url = url.replace(':batch_kilograms_hidden', batch_kilograms_hidden);
+					url = url.replace(':selectedRow', selectedRow);
+					url = url.replace(':selectedColumn', selectedColumn);
+					url = url.replace(':warehouse', warehouse);
+					url = url.replace(':pallet_kgs', pallet_kgs);
+
+					var dialog = bootbox.alert({
+						message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+					}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
+								
+					$.ajax({
+					url: url,
+					type: 'GET',
+					}).success(function(response) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+						closeBootBox();
+						refreshOutturnsTable();
+						populateBatches();
+
+					}).error(function(error) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
+						closeBootBox();
+					});  
+					
+				}
 
 			event.preventDefault();
 		})
-
-
-
 
 	});
 
@@ -1352,10 +1439,8 @@
 	}
 
 	function populateFooter(){
-
         var btn_add = "<button id=add_items class='btn btn-primary btn-block' style='font-size: 35px;'>Add</button></br>";
         $('#footer').append(btn_add); 
-
         var btn_add = "<button id=add_items class='btn btn-secondary btn-block' style='font-size: 35px;'>Close</Close></br>";
         $('#footer').append(btn_add); 
 	}
@@ -1376,7 +1461,6 @@
 
 		if (item_id != '') {
 			var url="{{ route('arrivalinformation.getMaterials',['item_id'=>":item_id"]) }}";
-			
 			url = url.replace(':item_id', item_id);
 			outturn_type.find('option').remove(); 
 
@@ -1428,8 +1512,6 @@
 			url = url.replace(':grn_number', grn_number);
 			url = url.replace(':warehouse', warehouse);
 			outturn_type_batch.find('option').remove(); 
-
-
 			$.ajax({
 			url: url,
 			type: 'GET',
@@ -1660,7 +1742,6 @@
 			deliverydetails.hide();			
 			// batchdetails.hide();			
 			var url="{{ route('arrivalinformationgrns.getOuttturns') }}";
-
 			var sel = $('<select id ="outt_number_select" name ="outt_number_select" width="100%" onchange="getMaterialsInOutturn()" >').appendTo(outt_number_div);
 			sel.append($("<option>").attr('value','').text(''));
 
@@ -1671,7 +1752,7 @@
 				var outturns = jQuery.parseJSON(response);
 				$.each(outturns,function(key, value) 
 				{	
-					sel.append($("<option>").attr('value',value["prtsid"]).text(value["outturn"]+'-'+value["prt_name"]));
+					sel.append($("<option>").attr('value',value["prtsid"]).text(value["outturn"]+'-'+value["csn_season"]));
 				});
 			}).error(function(error) {
 				console.log(error)

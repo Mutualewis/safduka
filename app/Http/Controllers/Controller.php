@@ -13,7 +13,7 @@ use Ngea\Thresholds;
 use Ngea\InstructedLocationRef;
 use Ngea\Season;
 use Ngea\OutturnNumberSettings;
-use Ngea\agent;
+use Ngea\Agent;
 use Ngea\WeightScales;
 use Ngea\Location;
 use Ngea\Material;

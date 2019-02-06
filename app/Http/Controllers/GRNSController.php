@@ -38,7 +38,7 @@ use Ngea\RoleUser;
 use Ngea\User;
 use Ngea\coffeegrower;
 use Ngea\Items;
-use Ngea\agent;
+use Ngea\Agent;
 use Ngea\Material;
 use Ngea\StockWarehouse;
 use Ngea\StockMill;
@@ -54,6 +54,7 @@ use niklasravnsborg\LaravelPdf\Facades\Pdf as PDF;
 use Activity;
 use Excel;
 use Auth;
+use Mail;
 
 class GRNSController extends Controller {
 
@@ -171,14 +172,11 @@ class GRNSController extends Controller {
 
                 Grn::where('id', '=', $grn_id)
                         ->update(['ctr_id' => $cid, 'gr_number' => $grn_number, 'wbi_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'gr_confirmed_by' => $user]);
-
                 Activity::log('Updated Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wbi_id '. $weighbridgeTK . 'grn_number' . $grn_number );
 
             } else {
-
                 $grn_id = Grn::insertGetId (
                         ['ctr_id' => $cid, 'gr_number' => $grn_number, 'wbi_id' => $weighbridgeTK, 'csn_id' => $outt_season, 'gr_confirmed_by' => $user]);
-
                 Activity::log('Inserted Grn information with grn_id '.$grn_id. ' ctr_id '. $cid. ' wbi_id '. $weighbridgeTK . 'grn_number' . $grn_number );
             }
 
@@ -199,29 +197,35 @@ class GRNSController extends Controller {
             }
             if (NULL !== Input::get('outt_number_select')) {
 
+                $results_details = DB::table('process_results_prts AS prts')->where('prts.id', Input::get('outt_number_select'))->first(); 
+
                 $outturns = DB::table('process_results_prts AS prts')
                     ->select('*', 'prts.id as prtsid', DB::Raw('IFNULL( `gr`.`cgr_id` , st.cgr_id ) as cgrid'))
                     ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
                     ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'st.grn_id')
                     ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
                     ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
-                    ->where('prts.id', Input::get('outt_number_select'))
-                    ->first(); 
+                    ->where('prts.st_mill_id', $results_details->st_mill_id)
+                    ->get();
 
-                $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('prts_id', '=', Input::get('outt_number_select'))->where('mt_id', '=', $outturns->prt_id)->where('grn_id', $grn_id)->first();
+                foreach ($outturns as $key_outt => $value_outt) {
+                    $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('prts_id', '=', $value_outt->prtsid)->where('mt_id', '=', $value_outt->prt_id)->where('grn_id', $grn_id)->first();
 
-                if ($stock_details == null) {
+                    if ($stock_details == null) {
 
-                    $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid, 'cgr_id' => $outturns->cgrid, 'st_owner_id' => 5]);
+                        $st_id = StockWarehouse::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $value_outt->prt_id,'st_outturn' => $value_outt->st_outturn, 'st_mark' => $value_outt->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $value_outt->prtsid, 'cgr_id' => $value_outt->cgrid, 'st_owner_id' => 5]);
 
-                } else {
+                    } else {
 
-                    StockWarehouse::where('id', '=', $stock_details->id)
-                        ->update(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $outturns->prt_id,'st_outturn' => $outturns->st_outturn, 'st_mark' => $outturns->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $outturns->prtsid, 'cgr_id' => $outturns->cgrid, 'st_owner_id' => 5]);
+                        StockWarehouse::where('id', '=', $stock_details->id)
+                            ->update(['grn_id' => $grn_id,'csn_id' => $outt_season,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'mt_id' => $value_outt->prt_id,'st_outturn' => $value_outt->st_outturn, 'st_mark' => $value_outt->st_mark, 'warehouse_id' => $wrhse, 'st_to_dispatch' => $to_dispatch, 'prts_id' => $value_outt->prtsid, 'cgr_id' => $value_outt->cgrid, 'st_owner_id' => 5]);
+                    }
+
+                     Grn::where('id', '=', $grn_id)
+                        ->update(['cgr_id' => $value_outt->cgrid]);
                 }
-
-                Grn::where('id', '=', $grn_id)
-                        ->update(['cgr_id' => $outturns->cgrid]);
+                // print_r($outturns);
+                // exit(); 
 
 
 
@@ -434,9 +438,11 @@ class GRNSController extends Controller {
                 ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
                 ->leftJoin('stock_warehouse_st AS stw', 'stw.prts_id', '=', 'prts.id')
                 ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'stw.grn_id')
+                ->leftJoin('coffee_seasons_csn AS csn', 'csn.id', '=', 'st.csn_id')
                 ->whereNull('gr.gr_confirmed_by')
                 ->orderBy('st.st_outturn')
                 ->orderBy('st.mt_id')
+                ->groupBy('st.st_outturn', 'st.csn_id')
                 ->get(); 
 
             return json_encode($outturns);                    
@@ -873,7 +879,93 @@ class GRNSController extends Controller {
         
     }
 
+    public function confirmGRNReceived($grn_number, $warehouse, $package_diffrence){
+        try {
+            $user_data = Auth::user();
+            $user = $user_data->id;    
 
+            $grn_details = Grn::where('gr_number', $grn_number)->where('agt_id', $warehouse)->first(); 
+            $grn_id = null;
+            $threshold_name = 'Arrival';
+
+            if ($grn_details != null) {
+                $grn_id = $grn_details->id;
+            } 
+            Grn::where('id', '=', $grn_id)
+                    ->update(['gr_confirmed_by' => $user]);
+            if($package_diffrence != NULL || $package_diffrence > 0){
+
+                $data = array('name'=>"Admin Department", "threshold_name"=>$threshold_name, "identifier"=>"GRN-".$grn_number, "diffrence"=>$package_diffrence);    
+
+                Mail::send(['text'=>'maildiscrepancy'], $data, function($message) {
+
+                    $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+
+                    $message->cc('lewis.mutua@nkg.coffee');
+
+                    $message->from('lewis.mutua@nkg.coffee','Ibero Database');
+
+                });
+            }
+
+            return $grn_id;
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+
+    }
+
+    public function confirmGRNDetails($grn_number, $warehouse){
+
+        try {
+
+            $stock_details =  DB::table('stock_warehouse_st AS st')
+            ->leftJoin('process_results_prts AS prts', 'prts.id', '=', 'st.prts_id')
+            ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'st.grn_id')
+            ->where('gr_number', '=', $grn_number)
+            ->where('gr.agt_id', $warehouse)
+            ->get();
+            $sum_prts_packages = 0;
+            $sum_st_packages = 0;
+
+            foreach ($stock_details as $key => $value) {
+                $prts_packages = 0;
+                $prts_bags = $value->prts_bags;
+                $prts_pockets = $value->prts_pockets;
+                if ($prts_pockets != null || $prts_pockets > 0) {
+                    $prts_packages = $prts_bags + 1;
+                } else {
+                    $prts_packages = $prts_bags;
+                }
+                $sum_prts_packages += $prts_packages;
+                $sum_st_packages += $value->st_packages;
+            }
+
+            $diffrence = abs($sum_prts_packages - $sum_st_packages);
+            $percentage_diff = ($diffrence/$sum_prts_packages) * 100;
+            $error = 0;
+
+            if ($percentage_diff > 0) {
+                $error = $percentage_diff;
+            }           
+
+            return response()->json([
+                'error' => $error
+            ]);                 
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'found' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+                
     public function computeNetWeight(){
 
     }
