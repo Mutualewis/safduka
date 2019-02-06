@@ -504,10 +504,10 @@ class CleanBulkingController extends Controller {
                 $refid = $refid->id;
                 $stockview = StockViewWarehouse::select('*')->where('st_bulk_id', $refid)->orWhereNull('bulked_by')->orderByRaw(DB::raw("FIELD(st_bulk_id, '$refid') DESC"));
                 }else{
-                    $stockview = StockViewALL::select('*')->whereNull('bulked_by');
+                    $stockview = StockViewWarehouse::select('*')->whereNull('bulked_by');
                 }
             } else {
-                $stockview = StockViewALL::select('*')->whereNull('bulked_by');
+                $stockview = StockViewWarehouse::select('*')->whereNull('bulked_by');
             }
 
         } else {
