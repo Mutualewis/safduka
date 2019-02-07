@@ -513,7 +513,7 @@
 
 			        ?>
 			            <div class="form-group col-md-12">
-							<button type="submit" id="confirmgrnsbtn" name="confirmgrns" onclick="confirmGRNDetails(this)" class="btn btn-lg btn-danger btn-block" formnovalidate>Confirm GRN</button>	           		
+							<button type="submit" id="confirmgrnsbtn" name="confirmgrns" class="btn btn-lg btn-danger btn-block" formnovalidate>Confirm GRN</button>	           		
 			            </div>	
 
 			        <?php
@@ -840,7 +840,6 @@
 	})
 
 	$( "#confirmgrnsbtn" ).click(function(event){
-
 		var grn_number = $('#grn_number').val();
 		var warehouse = $('#warehouse').val();
 		var package_diffrence = 0;
@@ -848,6 +847,7 @@
 		var url="{{ route('arrivalinformationgrns.confirmGRNDetails',['grn_number'=>":grn_number", 'warehouse'=>":warehouse"]) }}";
 		url = url.replace(':grn_number', grn_number);
 		url = url.replace(':warehouse', warehouse);
+		
 
 		$.ajax({
 		url: url,
@@ -856,11 +856,13 @@
 			package_diffrence = response.error;	
 
 			if(package_diffrence != 0){
-				var alert_error = confirm("The GRN has a diffrence of "+ package_diffrence + "% compared to the DMP, are you sure you want to continue ?");
-				if (alert_error == true) {
+				//var alert_error = confirm("The GRN has a diffrence of "+ package_diffrence + "% compared to the DMP, are you sure you want to continue ?");
+				//if (alert_error == true) {
 					confirmGRNReceived(grn_number, warehouse, package_diffrence);
-				} else {
-				}
+				//} else {
+				//}
+			} else {
+				confirmGRNReceived(grn_number, warehouse, package_diffrence);
 			}	
 		}).error(function(error) {
 			console.log(error)
@@ -877,7 +879,7 @@
 		url = url.replace(':grn_number', grn_number);
 		url = url.replace(':warehouse', warehouse);
 		url = url.replace(':package_diffrence', package_diffrence);
-
+		alert(url);
 		$.ajax({
 		url: url,
 		type: 'GET',
@@ -1048,8 +1050,8 @@
 
 
 				if(package_weight_diffrence > 0){
-					var alert_error = confirm("The packages and weight diffrence is high, do you still wish to continue ?");
-					if (alert_error == true) {
+					//var alert_error = confirm("The packages and weight diffrence is high, do you still wish to continue ?");
+					//if (alert_error == true) {
 						var url="{{ route('arrivalinformation.addBatch',['outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type_batch'=>":outturn_type_batch", 'weigh_scales'=>":weigh_scales", 'packaging'=>":packaging", 'zone'=>":zone", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'batch_kilograms_hidden'=>":batch_kilograms_hidden", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'warehouse' =>":warehouse", 'grn_number' =>":grn_number", 'pallet_kgs' =>":pallet_kgs"]) }}";
 
 						url = url.replace(':grn_number', grn_number);
@@ -1087,7 +1089,7 @@
 						});  
 
 
-					}
+					//}
 				} else {
 
 					var url="{{ route('arrivalinformation.addBatch',['outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type_batch'=>":outturn_type_batch", 'weigh_scales'=>":weigh_scales", 'packaging'=>":packaging", 'zone'=>":zone", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'batch_kilograms_hidden'=>":batch_kilograms_hidden", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'warehouse' =>":warehouse", 'grn_number' =>":grn_number", 'pallet_kgs' =>":pallet_kgs"]) }}";
@@ -1368,6 +1370,7 @@
 	function displayBatch(){
 
 		clearChildren(document.getElementById("batch_modal"));
+		getMaterialsInOutturn()
 		var warehouse = $('#warehouse').val();
 		if (warehouse == '') {
 			warehouse = <?php echo json_encode($warehouse_id); ?>;
@@ -1463,7 +1466,7 @@
 			var url="{{ route('arrivalinformation.getMaterials',['item_id'=>":item_id"]) }}";
 			url = url.replace(':item_id', item_id);
 			outturn_type.find('option').remove(); 
-
+			
 			$.ajax({
 			url: url,
 			type: 'GET',
@@ -1512,6 +1515,7 @@
 			url = url.replace(':grn_number', grn_number);
 			url = url.replace(':warehouse', warehouse);
 			outturn_type_batch.find('option').remove(); 
+			console.log(url)
 			$.ajax({
 			url: url,
 			type: 'GET',

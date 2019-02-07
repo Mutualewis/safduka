@@ -879,7 +879,7 @@ class CleanBulkingController extends Controller {
             if ($process !== NULL) {
 
                 $stockview = DB::table('provisional_allocation_prall as prall')
-                ->leftJoin('stock_warehouse_st as st', 'st.id', '=', DB::raw("ifnull(prall.st_wr_id,st_id)") )
+                ->leftJoin('stock_warehouse_st as st', 'st.id', '=', "prall.st_wr_id" )
                 ->leftJoin('material_mt as mt', 'st.mt_id', '=', 'mt.id')
                 ->where('pbk_id', '=', $process)
                 ->get();

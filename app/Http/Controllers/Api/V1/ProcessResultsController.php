@@ -147,13 +147,13 @@ class ProcessResultsController extends Controller
         $results_details = ProcessResults::where('st_mill_id', '=', $request->st_mill_id)->where('prt_id', '=', $request->prt_id)->first();
         if($results_details!=null){
             
-            // $results = ProcessResults::where('id', '=', $results_details->id)
-            // ->update($request->all());
-            return response()->json([
-                'message' => "exists",
-                'data' => '',
-            ])
-            ->setStatusCode(200);
+            $results = ProcessResults::where('id', '=', $results_details->id)
+            ->update($request->all());
+            // return response()->json([
+            //     'message' => "exists",
+            //     'data' => '',
+            // ])
+            // ->setStatusCode(200);
         }else{
             $results = ProcessResults::create($request->all());
             $results = $results->toArray();

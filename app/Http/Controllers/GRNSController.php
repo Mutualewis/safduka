@@ -893,7 +893,7 @@ class GRNSController extends Controller {
             } 
             Grn::where('id', '=', $grn_id)
                     ->update(['gr_confirmed_by' => $user]);
-            if($package_diffrence != NULL || $package_diffrence > 0){
+            if($package_diffrence == NULL || $package_diffrence > 0){
 
                 $data = array('name'=>"Admin Department", "threshold_name"=>$threshold_name, "identifier"=>"GRN-".$grn_number, "diffrence"=>$package_diffrence);    
 
