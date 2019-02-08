@@ -62,6 +62,7 @@ use Ngea\warehouses_region;
 use Yajra\Datatables\Datatables;
 
 use Ngea\StockProcessedView;
+use Ngea\StockMill;
 
 use Ngea\ProcessAllocation;
 use Ngea\StockBreakdownOutturns;
@@ -92,7 +93,7 @@ class ProcessResultsController extends Controller
                 // $rfid = $refno->id;
                 // $resultsType = ProcessResultsType::where('prcss_id', $rfid)->get();
                 // if ($rfid != null) {
-                $StockView  = StockViewALL::all();
+                $StockView  = StockViewALL::whereNull('milling_confirmed_by')->get();
                 //     $ProcessResults = Processes::where('id', $rfid)->where('ctrid', 1)->whereNotNull('result_type')->get();
                 // }
             // }
@@ -170,6 +171,42 @@ class ProcessResultsController extends Controller
         return response()->json([
             'message' => "successful",
             'data' => $results,
+        ])
+        ->setStatusCode(201);
+        }catch (\Exception $e) {
+                
+            DB::rollback();
+            $errormessages[] = $e->getMessage();
+            return response()->json([
+                'message' => $errormessages
+            ])
+            ->setStatusCode(500); 
+        }
+    }
+    public function confirmResults(Request $request)
+    {
+        $user = auth('api')->user();
+        $username = $user->usr_name;
+        $userid = $user->id;
+        
+        $this->validate($request, [
+            'st_mill_id' => 'required',
+        ]);
+        try{
+        DB::beginTransaction();
+        $stock_details = StockMill::where('id', '=', $request->st_mill_id)->update(['milling_confirmed_by'=> $userid]);
+       
+        DB::commit();
+        //$resultstring = $request->all()->toJson();
+        $resultsstring = json_encode($request->all());
+       
+        
+            Activity::log('Updated Stock Mill confirmed by'. $resultsstring. ' user ' .$username);
+        
+        
+        return response()->json([
+            'message' => "successful",
+            'data' => '',
         ])
         ->setStatusCode(201);
         }catch (\Exception $e) {

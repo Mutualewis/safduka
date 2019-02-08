@@ -32,4 +32,6 @@ Route::group(['prefix' => 'api/v1', 'namespace' => 'Api\V1', 'middleware' => ['a
             Route::get('user-actions', 'UserActionsController@index')->name('user-actions.index');
 
             Route::post('postresult', 'ProcessResultsController@saveResults')->name('result.save');
+
+            Route::post('confirmresults', 'ProcessResultsController@confirmResults')->name('result.confirm');
         });
