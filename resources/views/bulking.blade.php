@@ -862,6 +862,9 @@ var table = $('#stocks-table').DataTable({
 				$.ajax({
 					method: "POST",
 					url: url,
+					headers: {
+						"Accept":"application/json",
+					},
 					data: data,
 					dataType: 'json',
 					}).done(function(response) {
@@ -884,6 +887,7 @@ var table = $('#stocks-table').DataTable({
 						}
 					}).error(function(error) {
 						console.error(error)
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">'+error +'</i></div>');
 						// var msg = '';
 						// $.each(response.errormsgs, function( index, value ) {
 						// 	msg = msg + value;

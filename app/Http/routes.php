@@ -133,7 +133,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/arrivalinformationgrns/confirmGRNDetails/{grn_number}/{warehouse}', ['as'=>'arrivalinformationgrns.confirmGRNDetails','uses'=>'GRNSController@confirmGRNDetails']);
 		Route::get('/arrivalinformationgrns/confirmGRNReceived/{grn_number}/{warehouse}/{package_diffrence}', ['as'=>'arrivalinformationgrns.confirmGRNReceived','uses'=>'GRNSController@confirmGRNReceived']);
 
-		Route::get('/arrivalinformation/getMaterialsInOutturn/{item_id}/{outt_number}/{outt_season}/{grn_number}/{warehouse}', ['as'=>'arrivalinformation.getMaterialsInOutturn','uses'=>'Controller@getMaterialsInOutturn']);
+		Route::get('/arrivalinformation/getMaterialsInOutturn/{item_id}/{outt_season}/{grn_number}/{warehouse}', ['as'=>'arrivalinformation.getMaterialsInOutturn','uses'=>'Controller@getMaterialsInOutturn']);
 
 		Route::get('/arrivalinformation/getGrower/{outt_number_select}', ['as'=>'arrivalinformation.getGrower','uses'=>'GRNSController@getGrower']);
 
@@ -311,6 +311,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 
 		Route::get('/stocksallclean', 'StocksCleanGridController@stockAllAndCleanGrid');
+		Route::get('/stocksdmp', 'DMPGridController@stocksDMP');
 		
 		Route::post('/bulking/savePBulk', ['as'=>'bulking.savePBulk','uses'=>'BulkingController@bulkingApi']);
 

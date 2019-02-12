@@ -48,6 +48,7 @@ use Ngea\AgentCategory;
 use Ngea\BatchMill;
 use Ngea\StockLocationBatch;
 use Ngea\OutturnNumberSettings;
+use Ngea\Outturns;
 
 use Yajra\Datatables\Datatables;
 use niklasravnsborg\LaravelPdf\Facades\Pdf as PDF;
@@ -677,8 +678,7 @@ class GRNSController extends Controller {
                 }
             } 
 
-            $agent_type = $this->getAgentType($warehouse);
-            
+            $agent_type = $this->getAgentType($warehouse);            
             $material_details = Material::where('id', $outturn_type)->first();
             if ($material_details != null) {
                 $outturn_type_name = $material_details->mt_name;
@@ -699,14 +699,24 @@ class GRNSController extends Controller {
             if ($moisture > $moisture_threshold) {
                 $st_id = "Moisture content does not meet the required threshold.";
             } else {
-
+                $outt_id = null;
                 if ($agent_type == 'Miller') {
                     $stock_details = StockMill::where('csn_id', '=', $outt_season)->where('mt_id', '=', $outturn_type)->where('pty_id', '=', $parchment_type_id)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
+                    $outturns_details = Outturns::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('mt_id', '=', $outturn_type)->where('pty_id', '=', $parchment_type_id)->first();
+                    if ($outturns_details == null) {
+                        $outt_id = Outturns::insertGetId(['csn_id' => $outt_season, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'warehouse_id' => $warehouse, 'cgr_id' => $coffee_grower]);
+                    } else {
+                        $outt_id = $outturns_details->id;
+                        Outturns::where('id', '=', $outt_id)
+                                    ->update([ 'st_mark' => $st_mark, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id, 'st_moisture' => $moisture, 'bs_id' => $basket, 'pkg_id' => $packaging, 'cgr_id' => $coffee_grower]);
+
+                    }  
+
                     if ($stock_details == null) {
                         // $stock_details = StockMill::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->first();
                         // if ($stock_details != null) {
 
-                            $st_id = StockMill::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'warehouse_id' => $warehouse, 'cgr_id' => $coffee_grower]);
+                            $st_id = StockMill::insertGetId(['grn_id' => $grn_id,'csn_id' => $outt_season, 'outt_id' => $outt_id, 'st_moisture' =>  $moisture,  'pkg_id' =>  $packaging, 'usr_id' =>  $user, 'sts_id' => '1', 'bs_id' => $basket, 'ibs_id' => $basket, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id,'st_outturn' => $outt_number, 'st_mark' => $st_mark, 'warehouse_id' => $warehouse, 'cgr_id' => $coffee_grower]);
 
                         // } else {
                         //     $st_id = "Please update Outturn information first.";
@@ -716,7 +726,7 @@ class GRNSController extends Controller {
 
                         $st_id = $stock_details->id;
                         StockMill::where('id', '=', $stock_details->id)
-                                    ->update([ 'st_mark' => $st_mark, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id, 'st_moisture' => $moisture, 'bs_id' => $basket, 'pkg_id' => $packaging, 'cgr_id' => $coffee_grower]);
+                                    ->update([ 'st_mark' => $st_mark, 'outt_id' => $outt_id, 'mt_id' => $outturn_type, 'pty_id' => $parchment_type_id, 'st_moisture' => $moisture, 'bs_id' => $basket, 'pkg_id' => $packaging, 'cgr_id' => $coffee_grower]);
 
                     }  
                 } else {
@@ -787,6 +797,7 @@ class GRNSController extends Controller {
                 } 
 
                 $stock_item_id = $stock_details->id;
+                $stock_outt_id = $stock_details->outt_id;
                 $net_weight_batch = $batch_kilograms - $tare_batch;
                 $bags_batch = floor($net_weight_batch/60);
                 $pockets_batch = floor($net_weight_batch % 60);
@@ -796,11 +807,12 @@ class GRNSController extends Controller {
 
                 if ($agent_type == 'Miller') {
 
+                    
                     $preious_batch = BatchMill::where('st_id', $stock_item_id)->get();
+                    
 
                     $btid = BatchMill::insertGetId (
                     ['st_id' => $stock_item_id, 'btc_weight' => $batch_kilograms, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $weigh_scales, 'btc_pallet_kgs' => $pallet_kgs]);
-
 
                     if ($preious_batch != null) {
 
@@ -820,6 +832,23 @@ class GRNSController extends Controller {
                     $pockets_batch = floor($net_weight_batch % 60);         
                     StockMill::where('id', '=', $stock_item_id)
                                 ->update([ 'pkg_id' => $packaging, 'st_net_weight' => $net_weight_batch ,'st_tare' => $tare_batch, 'st_bags' => $bags_batch, 'st_pockets' => $pockets_batch, 'st_gross' => $batch_kilograms, 'st_packages' => $packages_batch]);
+
+
+
+                    $outturns_details = Outturns::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('mt_id', '=', $outturn_type_batch)->first();
+                    if ($outturns_details != null) {
+                        $outt_gross_weight = $outturns_details->st_gross + $batch_kilograms;
+                        $outt_net_weight = $outturns_details->st_net_weight + $net_weight_batch;
+                        $outt_tare = $outturns_details->st_tare + $tare_batch;
+                        $outt_bags = floor($outt_net_weight/60);
+                        $outt_pockets = floor($outt_net_weight % 60); 
+                        $outt_packages = $outturns_details->st_packages + $packages_batch;
+
+                        Outturns::where('id', '=', $stock_outt_id)
+                                ->update([ 'pkg_id' => $packaging, 'st_net_weight' => $outt_net_weight ,'st_tare' => $outt_tare, 'st_bags' => $outt_bags, 'st_pockets' => $outt_pockets, 'st_gross' => $outt_gross_weight, 'st_packages' => $outt_packages]);
+
+                    }
+
 
                     Activity::log('Inserted Batch information with btid '.$btid. ' batch_kilograms '. $batch_kilograms. ' bags '. $bags_batch. ' pockets '. $pockets_batch. ' stid '. $stock_item_id.' btc_tare '.$tare_batch.' btc_net_weight '.$net_weight_batch);
 

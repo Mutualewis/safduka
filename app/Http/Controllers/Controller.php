@@ -185,7 +185,7 @@ class Controller extends BaseController
     
     }
 
-    public function getMaterialsInOutturn ($item_id, $outt_number, $outt_season, $grn_number, $warehouse) {
+    public function getMaterialsInOutturn ($item_id,  $outt_season, $grn_number, $warehouse) {
 
         try{
             $grn_id = null;
@@ -200,9 +200,9 @@ class Controller extends BaseController
             $agent_type = $this->getAgentType($warehouse);
 
             if ($agent_type == 'Miller') {
-                $stock_details = StockMill::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->get();
+                $stock_details = StockMill::where('csn_id', '=', $outt_season)->where('grn_id', '=', $grn_id)->get();
             } else {
-                $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('st_outturn', '=', $outt_number)->where('grn_id', '=', $grn_id)->get();
+                $stock_details = StockWarehouse::where('csn_id', '=', $outt_season)->where('grn_id', '=', $grn_id)->get();
             }
             
 

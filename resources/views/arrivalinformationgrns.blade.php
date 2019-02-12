@@ -276,7 +276,7 @@
 			    	<div class="form-group col-md-12">
 			    		<label>GRN</label>
 	                    <div class="input-group custom-search-form">
-	                        <input type="text" class="form-control" id="grn_number" name="grn_number" name="grn_number" style="text-transform:uppercase; " placeholder="Search/Enter GRN..."  value="{{ $grn_number}}"></input>
+	                        <input type="text" class="form-control" id="grn_number" name="grn_number" style="text-transform:uppercase; " placeholder="Search/Enter GRN..."  value="{{ $grn_number}}"></input>
 
 		                        <span class="input-group-btn">
 
@@ -937,6 +937,7 @@
 		
 		grn_number.val(<?php echo json_encode($grn_number); ?>);
 
+	    getMaterialsInOutturn();
 
 		$( "#add_items_delivery" ).on('click', function(){
 
@@ -1368,9 +1369,10 @@
 	}	
 
 	function displayBatch(){
-
+		
 		clearChildren(document.getElementById("batch_modal"));
-		getMaterialsInOutturn()
+		getMaterialsInOutturn();
+		
 		var warehouse = $('#warehouse').val();
 		if (warehouse == '') {
 			warehouse = <?php echo json_encode($warehouse_id); ?>;
@@ -1500,7 +1502,6 @@
     	var grn_number = $('#grn_number').val();
     	var warehouse = $('#warehouse').val();
 		var outturn_type_batch = $('#outturn_type_batch');
-		
 		getGrower();
 		if (outt_number == '') {
 			outt_number = $("#outt_number_select option:selected").text();
@@ -1508,7 +1509,7 @@
 		}
 
 		if (item_id != '') {
-			var url="{{ route('arrivalinformation.getMaterialsInOutturn',['item_id'=>":item_id", 'outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'grn_number'=>":grn_number", 'warehouse'=>":warehouse"] ) }}";			
+			var url="{{ route('arrivalinformation.getMaterialsInOutturn',['item_id'=>":item_id", 'outt_season'=>":outt_season", 'grn_number'=>":grn_number", 'warehouse'=>":warehouse"] ) }}";			
 			url = url.replace(':item_id', item_id);
 			url = url.replace(':outt_number', outt_number);
 			url = url.replace(':outt_season', outt_season);
@@ -1516,6 +1517,7 @@
 			url = url.replace(':warehouse', warehouse);
 			outturn_type_batch.find('option').remove(); 
 			console.log(url)
+			
 			$.ajax({
 			url: url,
 			type: 'GET',

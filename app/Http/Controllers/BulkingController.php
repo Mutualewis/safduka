@@ -551,7 +551,7 @@ class BulkingController extends Controller {
 
             $tobeprocessed = $request->lotsinbulk;
             
-           
+            $st_bulk_id = null;
             $cweight = Input::get('cweight');
             
             $st_bulk_details =  StockMill::where('st_outturn', '=', $ref_no)->first();
