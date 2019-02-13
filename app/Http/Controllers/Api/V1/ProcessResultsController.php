@@ -201,7 +201,7 @@ class ProcessResultsController extends Controller
         $resultsstring = json_encode($request->all());
        
         
-            Activity::log('Updated Stock Mill confirmed by'. $resultsstring. ' user ' .$username);
+        Activity::log('Updated Stock Mill outturn '.$stock_details->st_outturn.' confirmed by'. $resultsstring. ' user ' .$username);
         
         
         return response()->json([

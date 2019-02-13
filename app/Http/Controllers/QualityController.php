@@ -36,6 +36,7 @@ use Ngea\StockViewALL;
 
 use  Ngea\Warehouse;
 use  Ngea\Region;
+use  Ngea\Outturns;
 
 use Yajra\Datatables\Datatables;
 //use PDF;
@@ -512,8 +513,23 @@ class QualityController extends Controller {
 				 $dnt = isset($greendetails->dnt) ? $greendetails->dnt : null;
 
 
-				$qdetails = quality_details::where('st_mill_id', $st_id)->first(); 
+				 $stock_mill_details = StockMill::where('id', $st_id)->first();
 
+				$outt_id = $stock_mill_details->outt_id;
+				
+				$outt_mill_details = StockMill::where('outt_id', $outt_id)->get();
+
+				$sum_net_kilos = 0;
+				$st_ids = [];
+				foreach($outt_mill_details as $key => $valuestmill){
+					$sum_net_kilos += $valuestmill->st_net_weight;
+					$st_ids[] = $valuestmill->id;
+				}
+				
+				$qdetails = quality_details::where('st_mill_id', $st_id)->first();
+				
+				$outt_qdetails = quality_details::where('outt_id', $outt_id)->first();
+				
 		    	
 
 				if ($comments == 'null') {
@@ -551,15 +567,39 @@ class QualityController extends Controller {
 
 				}
 				
+				if ($outt_qdetails != NULL) {
+				 	
+					$oqid = $outt_qdetails->id;
+
+				   quality_details::where('id', '=', $oqid)
+					   ->update(['rw_quality'=> $raw_current, 'overall_comments'=> $comments]);
+				   
+				   Activity::log('Updated quality for outtid '.$outt_id. ' with rw_quality '. $raw_current.' comments '.$comments);
+
+				   
+			   } else {
+
+				   $oqid = quality_details::insertGetId(
+					   ['outt_id' => $outt_id, 'rw_quality'=> $raw_current, 'overall_comments'=> $comments]
+				   );
+
+				   Activity::log('Added quality for outt_id '.$outt_id. ' with  rw_quality '. $raw_current. ' comments '.$comments);
+
+			   }
+				
 				
 				if ($dnt != null) {
 
 					quality_details::where('id', '=', $qid)
+						->update(['dont'=> "1"]);
+					quality_details::where('id', '=', $oqid)
 						->update(['dont'=> "1"]);	
 
 				} else {
 
 					quality_details::where('id', '=', $qid)
+						->update(['dont'=> null]);
+					quality_details::where('id', '=', $oqid)
 						->update(['dont'=> null]);	
 
 				}
@@ -567,8 +607,26 @@ class QualityController extends Controller {
 				if ($mc != null) {
 
 					quality_details::where('id', '=', $qid)
-						->update(['mc'=> $mc]);	
-
+						->update(['mc'=> $mc]);
+						$sumkilos = 0;
+						$sumweightedmc = 0;
+						
+					foreach($st_ids as $key => $value){
+						$stock_mill_details = StockMill::where('id',$st_id)->first();
+						$st_net_weight = $stock_mill_details->st_net_weight;
+						$sumkilos += $st_net_weight;
+						$quality_mc_details = quality_details::where('st_mill_id', $value)->first();
+						if($quality_mc_details != null)
+						$mc = $quality_mc_details->mc;{
+						$weighted_mc = $mc*$st_net_weight;
+						}
+						$sumweightedmc += $weighted_mc;
+					}
+					$outt_mc = $sumweightedmc/$sumkilos;
+					
+					quality_details::where('id', '=', $oqid)
+						->update(['mc'=> $outt_mc]);
+					
 				} else {
 
 					quality_details::where('id', '=', $qid)
@@ -579,7 +637,26 @@ class QualityController extends Controller {
 				if ($ml != null) {
 
 					quality_details::where('id', '=', $qid)
-						->update(['ml'=> $ml]);	
+						->update(['ml'=> $ml]);
+					
+						$sumkilos = 0;
+						$sumweightedml = 0;
+						
+					foreach($st_ids as $key => $value){
+						$stock_mill_details = StockMill::where('id',$st_id)->first();
+						$st_net_weight = $stock_mill_details->st_net_weight;
+						$sumkilos += $st_net_weight;
+						$quality_ml_details = quality_details::where('st_mill_id', $value)->first();
+						if($quality_ml_details != null)
+						$mc = $quality_ml_details->ml;{
+						$weighted_ml = $mc*$st_net_weight;
+						}
+						$sumweightedml += $weighted_ml;
+					}
+					$outt_ml = $sumweightedml/$sumkilos;
+					
+					quality_details::where('id', '=', $oqid)
+						->update(['ml'=> $outt_ml]);
 
 				} else {
 
