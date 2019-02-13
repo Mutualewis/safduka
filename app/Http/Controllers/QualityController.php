@@ -814,13 +814,29 @@ class QualityController extends Controller {
 			   Activity::log('Added arrival quality for st_id '.$st_id);
 
 		   }
-			
+		   
+		   $stock_mill_details = StockMill::where('id', $st_id)->first();
+
+		   $outt_id = $stock_mill_details->outt_id;
+		   
+		   $outt_mill_details = StockMill::where('outt_id', $outt_id)->get();
+
+		   $sum_net_kilos = 0;
+		   $st_ids = [];
+		   foreach($outt_mill_details as $key => $valuestmill){
+			   $sum_net_kilos += $valuestmill->st_net_weight;
+			   $st_ids[] = $valuestmill->id;
+		   }
+		   
+		   $qdetails = quality_details::where('st_mill_id', $st_id)->first();
+		   
+		   $outt_qdetails = quality_details::where('outt_id', $outt_id)->first();
 			//update screen details	
 			foreach ($screendetails as $key => $value) {
 				
 				$acatid = key($value);
 				$screen_size = $value[$acatid];
-				
+
 				$qadetails = QualityAnalysis::where('qltyd_id', $qid)->where('acat_id', $acatid)->first(); 
 			
 				if ($qadetails != NULL) {
@@ -844,6 +860,27 @@ class QualityController extends Controller {
 			
 			}
 			
+		   $stock_mill_details = StockMill::where('id', $st_id)->first();
+
+		   $outt_id = $stock_mill_details->outt_id;
+		   
+		   $outt_mill_details = StockMill::where('outt_id', $outt_id)->get();
+
+		   $sum_net_kilos = 0;
+		   $st_ids = [];
+		   foreach($outt_mill_details as $key => $valuestmill){
+			   $sum_net_kilos += $valuestmill->st_net_weight;
+			   $st_ids[] = $valuestmill->id;
+		   }
+		   
+		   $outtsqdetails = quality_details::whereIn('st_mill_id', $st_ids)->get();
+		   $q_ids = [];
+		   foreach($outtsqdetails as $key3 => $valueqdet){
+			   $q_ids[] = $valueqdet->id;
+		   }
+		   
+		   dd($q_ids); exit;
+		   $outt_qdetails = quality_details::where('outt_id', $outt_id)->first();
 		
             return response()->json([
                 'exists' => false,
