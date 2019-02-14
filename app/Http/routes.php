@@ -331,7 +331,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 		Route::get('/settingsquality', 'SettingsController@settingsQualityForm');
 	    Route::post('/settingsquality', 'SettingsController@settingsQuality');
-	    
+		Route::get('/settingsquality/quality_delete/{qualityID}', ['as'=>'settingsquality.quality_delete','uses'=>'SettingsController@quality_delete']);
 
 	    Route::get('/settingscup', 'SettingsController@settingsCupForm');
 	    Route::post('/settingscup', 'SettingsController@settingsCup');
