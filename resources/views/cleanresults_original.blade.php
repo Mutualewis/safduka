@@ -232,7 +232,7 @@
 	$BULKING_PROCESS = 4;
 	
 ?>
-    <div class="col-md-14">
+    <div class="col-md-5">
 	        <form role="form" method="POST" action="/cleanbulkresults" id="processingresultsform">
 	        	<input type="hidden" name="_token" value="{{ csrf_token() }}">
 				
@@ -240,7 +240,7 @@
             	 <!-- <label class="glyphicon glyphicon-menu-down"></label></h3>   -->
             	<!-- <div id='green' class='collapse in' > -->		
 	        	<div class="row">
-		            <div class="form-group col-md-12">
+		            <div class="form-group col-md-4">
 		                <label>Country</label>
 		                <select class="form-control" name="country"  onchange="this.form.submit()" disabled>
 		                	<option></option> 
@@ -255,9 +255,8 @@
 							@endif
 		                </select>		
 		            </div>
-		        </div>
-		        <div class="row">
-	        		<div class="form-group col-md-12">
+		            
+	        		<div class="form-group col-md-4">
 	        			<label>Instruction Number</label>
 		                <select class="form-control" name="ref_no" id="ref_no" onchange="getInstructed(this)">
 		                	<option></option> 
@@ -274,11 +273,10 @@
 							@endif
 		                </select>	
 	                </div>	
-	            </div>
-	            <div class="row">
-					<div class="form-group col-md-12">
+
+					<div class="form-group col-md-3">
 		            	<label>Bulking Season</label>
-		                <select class="form-control" id="bulking_season" name="bulking_season">
+		                <select class="form-control" name="Bulking_season">
 						<option value="">Season</option>
 							@if (count($Season) > 0)
 										@foreach ($Season->all() as $season)
@@ -295,32 +293,11 @@
 
 	        	</div>
 
-	        	<div class="row">
-	        		
-					<div class="form-group col-md-12">
-		                <label>Grade</label>
-		                <select class="form-control" name="material" id="material" >
-		                	<option></option> 
-							@if (isset($material))
-										@foreach ($material->all() as $value)
-										@if ($mtid ==  $value->id)
-											<option value="{{ $value->id }}" selected="selected">{{ $value->mt_name}}</option>
-										@else
-											<option value="{{ $value->id }}">{{ $value->mt_name}}</option>
-										@endif
-										@endforeach
-									
-							@endif
-		                </select>
-		            </div>	
-
-	        	</div>
-
 				<div class="row">
 					
-					<div class="form-group col-md-12">
+					<div class="form-group col-md-3">
 		            	<label>Grower</label>
-		                <select class="form-control" name="grower" id="grower">
+		                <select class="form-control" name="grower" id="grower" style="width: 400px">
 		               		<option value="">---select grower---</option>
 							@if (isset($growers))
 										@foreach ($growers->all() as $grower)
@@ -336,137 +313,45 @@
 		            </div>
 					
 				</div>
-        		<div class="row">
-		            <div class="form-group col-md-12">
-		                <label>Warehouse</label>
-		                <select class="form-control" id="warehouse" name="warehouse" onchange="fetchWarehouseDetails(this)" >
-		                	<option></option> 
-							@if (isset($warehouse))
-										@foreach ($warehouse->all() as $value)
-										@if ($wrhse ==  $value->id)
-											<option value="{{ $value->id }}" selected="selected">{{ $value->agt_name}}</option>
-										@else
-											<option value="{{ $value->id }}">{{ $value->agt_name}}</option>
-										@endif
-										@endforeach
-									
-							@endif
-		                </select>
-		            </div>
-		        </div>
-
-
-<!-- 				<div class="row">
-					<div class="col-md-12 col-md-offset-0 pre-scrollable" style="max-height: 800px;">
-					        	<input type="hidden" name="_token" value="{{ csrf_token() }}">		
-								<h3>Coffee In Instruction</h3>
-								<table class="table table-striped">
-								<thead>
-								<tr>				  
-									
-									<th>
-										Outturn
-									</th>
-									<th>
-										Mark
-									</th>
-
-									<th>
-										Grade
-									</th>
-									<th>
-										Kilos
-									</th>
-									<th>
-										Bags
-									</th>
-									<th>
-										Pkts
-									</th>
-									
-
-								  </tr>
-								</thead>
-								<tbody id="tabledata">
-
-									
-								</tbody>
-								</table>
-
-					</div>
-
-				</div> -->
-				<div class="col-md-12 col-md-offset-0 pre-scrollable" style="max-height: 800px;">
-				        	<input type="hidden" name="_token" value="{{ csrf_token() }}">		
-							<h3>Instruction Results</h3>
-							<table class="table table-striped">
-							<thead>
-							<tr>				  
-								
-								<th>
-									Outturn
-								</th>
-								<th>
-									Mark
-								</th>
-
-								<th>
-									Grade
-								</th>
-								<th>
-									Kilos
-								</th>
-								<th>
-									Bags
-								</th>
-								<th>
-									Pkts
-								</th>
-								<th>
-									Warehouse
-								</th>
-								<th>
-									Row
-								</th>
-								<th>
-									Column
-								</th>
-								<th>
-									Zone
-								</th>
-								
-
-							  </tr>
-							</thead>
-							<tbody id="tabledataresult">
-
-								
-							</tbody>
-							</table>
-
-				</div>
-
-				<div class="row">
-		            <div class="form-group col-md-6">
-		            	<button type="submit" id ="outturns_in_instruction" name="outturns_in_instruction" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalContentView'onclick='displayInstructionDetails(event, this)' data-dprtname='{$value->dprt_name}'>View Instruction</button>
-					</div>	
-
-		            <div class="form-group col-md-6">
-						<button type="submit" id ="batchdetails" name="batchdetails" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalBatchCenter' onclick='displayBatch()' data-dprtname='{$value->dprt_name}'>Add Batch</button>
-					</div>	
-				</div>	
-
-
-
- 				<!-- <h3>Results</h3> -->
 	
-	        	<!-- <div class="row"> -->
- 		         <!--    <div class="form-group col-md-4">
-		                <label>Weight</label>
-	                <input class="form-control"  id="batch_weight"  name="batch_weight" oninput="myFunction()" value="{{ old('batch_weight')  }}">	
-		            </div>
+ 				<h3>Results</h3>
+	
+	        	<div class="row">
+	 		            <div class="form-group col-md-4">
+			                <label>Weight</label>
+		                <input class="form-control"  id="batch_weight"  name="batch_weight" oninput="myFunction()" value="{{ old('batch_weight')  }}">	
+			            </div>
 	        	
+	            <?php 
+	            	if ($prc != $BULKING_PROCESS) {
+		            			?>
+<!-- 	 		            <div class="form-group col-md-4">
+			                <label>Results Type</label>
+			                <select class="form-control" name="results_type" onchange="this.form.submit()">
+			                	<option></option> 
+								@if (isset($resultsType) && count($resultsType) > 0)
+											@foreach ($resultsType->all() as $value)
+												@if ($rtid ==  $value->id)
+													<option value="{{ $value->id }}" selected="selected">{{ $value->prt_name}}</option>
+												@else
+													<option value="{{ $value->id }}">{{ $value->prt_name}}</option>
+												@endif
 
+											@endforeach
+										
+								@endif
+			                </select>		
+			            </div> -->
+
+		            			<?php
+
+		            	} else {
+		            		?>
+		            		<!-- <input type="hidden" name="results_type" value="1"> -->
+		            		<?php
+
+		            	}
+		            ?>
 
 		            <div class="form-group col-md-4">
 		                <label>Bags</label>
@@ -492,13 +377,13 @@
 									
 							@endif
 		                </select>
-		            </div>	       -->      
-	            <!-- </div>	 -->
+		            </div>	            
+	            </div>	
 
 	
 
-				<!-- <h3>New Location</h3> -->
-		       <!--  <div class="row">
+				<h3>New Location</h3>
+		        <div class="row">
 		            <div class="form-group col-md-4">
 		                <label>Warehouse</label>
 		                <select class="form-control" name="warehouse" onchange="getLocations(this)">
@@ -554,19 +439,51 @@
 								@endif
 		                </select>
 		            </div>	
-	            </div> -->
-	        <!--     <div class="row">
+	            </div>
+	            <div class="row">
 		            <div class="form-group col-md-4">
 		                <label >Zone</label>
 		                <input class="form-control"  id="zone"  name="zone" oninput="myFunction()" value="{{ old('zone').$zone  }}">
 		            </div>	
-		        </div> -->
 
-			<!-- 	<div class="row">
-		            <div class="form-group col-md-12">
-		           		<button type="submit" name="submitresults" class="btn btn-lg btn-success btn-block">Add/Update Bulking Results</button>
-		            </div>
-		        </div> -->
+
+
+
+		        </div>
+				<?php
+					if (isset($prdetails)){
+						if ($prdetails->pr_confirmed_by != NULL) {
+							?>
+								<div class="row">
+						            <div class="form-group col-md-12">
+						           		<button type="submit" name="submitresults" class="btn btn-lg btn-success btn-block" disabled>Add/Update Processing Results</button>
+						            </div>
+						        </div>
+						        <div class="row">
+						            <div class="form-group col-md-12">
+						           		<button type="submit" name="confirmresults" class="btn btn-lg btn-danger btn-block" disabled>Confirmed!!</button>
+						            </div>
+						        </div>
+							<?php
+
+						} else {
+							if (isset($warehouse)){
+								?>
+									<div class="row">
+							            <div class="form-group col-md-12">
+							           		<button type="submit" name="submitresults" class="btn btn-lg btn-success btn-block">Add/Update Processing Results</button>
+							            </div>
+							        </div>
+								<?php 
+							}
+						}
+					}
+				?>
+				<div class="row">
+							            <div class="form-group col-md-12">
+							           		<button type="submit" name="submitresults" class="btn btn-lg btn-success btn-block">Add/Update Bulking Results</button>
+							            </div>
+							        </div>
 
 		        <!-- <div class="row">
 		            <div class="form-group col-md-12">
@@ -582,7 +499,94 @@
 			
 
 	</div>
+	<div class="col-md-7 col-md-offset-0 pre-scrollable" style="max-height: 800px;">
+	        	<input type="hidden" name="_token" value="{{ csrf_token() }}">		
+				<h3>Coffee In Instruction</h3>
+				<table class="table table-striped">
+				<thead>
+				<tr>				  
+					
+					<th>
+						Outturn
+					</th>
+					<th>
+						Mark
+					</th>
 
+					<th>
+						Grade
+					</th>
+					<th>
+						Kilos
+					</th>
+					<th>
+						Bags
+					</th>
+					<th>
+						Pkts
+					</th>
+					
+
+				  </tr>
+				</thead>
+				<tbody id="tabledata">
+
+					
+				</tbody>
+				</table>
+
+
+
+
+
+	        	<input type="hidden" name="_token" value="{{ csrf_token() }}">		
+				<h3>Instruction Results</h3>
+				<table class="table table-striped">
+				<thead>
+				<tr>				  
+					
+					<th>
+						Outturn
+					</th>
+					<th>
+						Mark
+					</th>
+
+					<th>
+						Grade
+					</th>
+					<th>
+						Kilos
+					</th>
+					<th>
+						Bags
+					</th>
+					<th>
+						Pkts
+					</th>
+					<th>
+						Warehouse
+					</th>
+					<th>
+						Row
+					</th>
+					<th>
+						Column
+					</th>
+					<th>
+						Zone
+					</th>
+					
+
+				  </tr>
+				</thead>
+				<tbody id="tabledataresult">
+
+					
+				</tbody>
+				</table>
+
+	</div>
 
 	
 		<!-- Modal -->
@@ -674,233 +678,6 @@
 		</div>
 
 	</form>
-
-
-<div class="modal fade" id="menuModalContentView" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="title">
-        <div class="alert alert-info" role="alert">
-		  <h4 class="alert-heading">Coffee In Instruction</h4>
-			<button type="button" class="btn btn-secondary btn-next" data-dismiss="modal" style="font-size: 35px;">Close</button>
-
-		</div>
-    	</h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id = "instructions_modal" style="font-size: 35px;">
-	      	<div>
-	            <div role="tabpanel" class="tab-pane" class="tab-pane" id="tab-batches">
-			        <div class="row">		
-					<div class="col-md-12 col-md-offset-0 pre-scrollable" style="max-height: 800px;">
-					        	<input type="hidden" name="_token" value="{{ csrf_token() }}">		
-								<h3>Coffee In Instruction</h3>
-								<table class="table table-striped">
-								<thead>
-								<tr>				  
-									
-									<th>
-										Outturn
-									</th>
-									<th>
-										Mark
-									</th>
-
-									<th>
-										Grade
-									</th>
-									<th>
-										Kilos
-									</th>
-									<th>
-										Bags
-									</th>
-									<th>
-										Pkts
-									</th>
-									
-
-								  </tr>
-								</thead>
-								<tbody id="tabledata">
-
-									
-								</tbody>
-								</table>
-
-					</div>
-			        </div>
-			    </div>
-			</div>
-				
-      </div>
-      <div class="modal-footer" id="footer"> 
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="modal fade" id="menuModalBatchCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="title">
-        <div class="alert alert-info" role="alert">
-		  <h4 class="alert-heading">Batch Details</h4>
-			<button type="button" name="submitbatch" id="submitbatch" class="btn btn-primary btn-prev" style="font-size: 35px;">Add</button>
-			<button type="button" class="btn btn-secondary btn-next" data-dismiss="modal" style="font-size: 35px;">Close</button>
-
-		</div>
-    	</h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id = "batch_modal" style="font-size: 35px;">
-	      	<div>
-	        	<div class="row">
-					<div class="form-group col-md-6">
-		                <label>Weigh Scale</label>
-		                <select class="form-control" id="weigh_scales" name="weigh_scales"  onchange='checkIfReset()'>
-		                	<option></option> 
-	            		</select>
-					</div>
-			        <div class="form-group col-md-6">
-		                <label >Zone</label>
-		                <input class="form-control"  id="zone"  name="zone" value="{{ old('zone').$zone  }}">
-			        </div>	
-
-				</div>
-
-				<div class="row">
-	  
-		            <div class="form-group col-md-6">
-		                <label>Packaging</label>
-		                <select class="form-control" id="packaging"  name="packaging" required>
-		                	<option></option> 
-								@if (isset($packaging))
-											@foreach ($packaging->all() as $value)
-											@if ($pkg ==  $value->id)
-												<option value="{{ $value->id }}" selected="selected">{{ $value->pkg_name}}</option>
-												<?php $pkg_weight = $value->pkg_weight; ?>
-											@else
-												<option value="{{ $value->id }}">{{ $value->pkg_name}}</option>
-											@endif
-											@endforeach
-										
-								@endif
-		                </select>	
-		        	</div>
-			        <div class="form-group col-md-6">
-		                <label >Packages</label>
-		                <input class="form-control"  id="packages_batch"  name="packages_batch" oninput="calculateValue()" value="{{ old('packages_batch') }}">		            
-			        </div>	
-		        </div>
-		        <div class="row">	
-
-			        <div class="form-group col-md-6">
-		                <label>Weight (KGS)</label>
-		                <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" oninput="arrivalBags()" value="{{ old('batch_kilograms').$batch_kilograms  }}" >
-		                <input type="hidden"  class="form-control"  id="batch_kilograms_hidden"  name="batch_kilograms_hidden" oninput="arrivalBags()" value="{{ old('batch_kilograms')  }}" >
-			        </div>	
-			        <div class="form-group col-md-6">
-		                <label>Palette (KGS)</label>
-		                <input class="form-control"  id="pallet_kgs"  name="pallet_kgs" value="">	
-			        </div>
-			    </div>
-
-
-				<div class="row">	
-			        <div class="form-group col-md-6" id="btn_weight">
-			        	<label></label>
-						<button type="submit" id="fetch_weight" name="fetchweight" class="btn btn-lg btn-success btn-block" onclick='fetchWeight()'>Fetch</button>		       
-					</div>
-				</div>
-				<h3  data-toggle="collapse" data-target="#tabpanel">Location</h3> 
-				<div id="tabpanel" class="tabpanel">
-
-				    <ul class="nav nav-tabs" role="tablist">
-
-				            <li role="presentation" class="active">
-				                <a href="#tab-row" aria-controls="#tab-row" role="tab" data-toggle="tab">Row</a>
-				            </li>
-				            <li role="presentation">
-				                <a href="#tab-column" aria-controls="#tab-column" role="tab" data-toggle="tab">Column</a>
-				            </li>
-				            <li role="presentation">
-				                <a href="#tab-batches" aria-controls="#tab-batches" role="tab" data-toggle="tab">Batches</a>
-				            </li>
-				    
-				    </ul>
-
-				    <div class="tab-content">
-			            <div role="tabpanel" class="tab-pane active" class="tab-pane" id="tab-row">
-					        <div class="row" id="row_list">		        	
-					        </div>
-					    </div>
-
-			            <div role="tabpanel" class="tab-pane" class="tab-pane" id="tab-column">
-					        <div class="row" id="column_list">	
-					        </div>
-					    </div>
-
-			            <div role="tabpanel" class="tab-pane" class="tab-pane" id="tab-batches">
-					        <div class="row">		        	
-					            <div class="form-group col-md-12">
-									<table class="table table-striped" id="batch_table">
-									<thead>
-									<tr>			
-										<th>
-											Kilos
-										</th>
-										<th>
-											Tare
-										</th>
-										<th>
-											Net
-										</th>
-										<th>
-											Packages
-										</th>
-										<th>
-											Warehouse
-										</th>
-										<th>
-											Row
-										</th>
-										<th>
-											Column
-										</th>
-										<th>
-											Zone
-										</th>
-										<th>
-											Remove
-										</th>
-									</tr>
-									</thead>
-									<tbody>
-
-									</tbody>
-									</table>
-					            </div>
-					        </div>
-					    </div>
-
-					</div>
-			</div>
-				
-      </div>
-      <div class="modal-footer" id="footer"> 
-      </div>
-    </div>
-  </div>
-</div>
-
 </div>	
 @stop
 
@@ -912,15 +689,6 @@ var autosubmit = <?php echo json_encode($autosubmit); ?>;
 var teams = null;
 
 var teamcount = 0;
-
-$( "#outturns_in_instruction" ).click(function(event){
-	event.preventDefault();
-})
-
-$( "#batchdetails" ).click(function(event){
-	event.preventDefault();
-})
-
 teams = JSON.parse(teams)
 	$(document).ready(function (){ 
 		// if(autosubmit){
@@ -929,125 +697,6 @@ teams = JSON.parse(teams)
 		$('#ref_no').select2();
 		$('#grower').select2();
 	})
-	function fetch_url_scales(warehouse) {
-		var url="{{ route('arrivalinformation.getScales',['warehouse'=>":warehouse"]) }}";
-		url = url.replace(':warehouse', warehouse);
-		return url;
-
-	}
-
-	function fetch_url_locations(warehouse) {
-		var url="{{ route('arrivalinformation.getLocations',['warehouse'=>":warehouse"]) }}";
-		url = url.replace(':warehouse', warehouse);
-		return url;
-
-	}
-
-	function fetchWarehouseDetails()
-	{
-		var warehouse = $('#warehouse').val();
-		var weigh_scales = $('#weigh_scales');
-		var row = $('#row');
-		var column = $('#column');
-		var grn_number = $('#grn_number');
-
-		if (warehouse == null) {
-			warehouse = <?php echo json_encode($warehouse); ?>;
-		}
-
-		weigh_scales.find('option').remove();   
-		row.find('option').remove();   
-		column.find('option').remove();   
-
-
-		var url="{{ route('arrivalinformation.getScales',['warehouse'=>":warehouse"]) }}";
-		url = url.replace(':warehouse', warehouse);
-
-		$.ajax({
-		url: url,
-		type: 'GET',
-		}).success(function(response) {
-			var scales = jQuery.parseJSON(response);
-			weigh_scales.append('<option></option>');
-			$.each(scales,function(key, value) 
-			{	
-				weigh_scales.append('<option value=' + value["id"] + '>&nbsp;&nbsp;&nbsp;' + value["ws_equipment_number"] + '</option>');
-
-			});
-		}).error(function(error) {
-			console.log(error)
-		});  
-
-		var url_grns="{{ route('arrivalinformation.generateGRN',['warehouse'=>":warehouse"]) }}";
-		url_grns = url_grns.replace(':warehouse', warehouse);
-		grn_number.val('');
-
-		$.ajax({
-		url: url_grns,
-		type: 'GET',
-		}).success(function(response) {
-			var grn = jQuery.parseJSON(response);
-			if (<?php echo json_encode($grn_number); ?> == null) {
-				grn_number.val(grn);
-			}
-		}).error(function(error) {
-			console.log(error)
-		});
-
-	}
-
-	function displayBatch(){
-		
-		// clearChildren(document.getElementById("batch_modal"));
-		// getMaterialsInOutturn();
-		
-		var warehouse = $('#warehouse').val();
-		// 
-		var url_scales = fetch_url_scales(warehouse); 
-		var url_location = fetch_url_locations(warehouse); 
-
-        $.get(url_scales, function(data, status){
-			var scales = jQuery.parseJSON(data);
-
-			var select = $('#weigh_scales');
-			select.find('option').remove();   
-			select.append('<option></option>');
-
-			$.each(scales,function(key, value) 
-			{	
-				select.append('<option value=' + value["id"] + '>' + value["ws_equipment_number"] + '</option>');
-			});
-
-		});
-
-        $.get(url_location, function(data, status){
-			var locations = jQuery.parseJSON(data);
-            $("#row_list").empty();
-            $("#column_list").empty();
-
-			$.each(locations,function(key, value) 
-			{
-				if (value["loc_row"] != null) {
-
-                    var rdb_row = "<label style='font-size: 35px;' class='row_label'><input id=row." + value['id'] + "  onclick=RecordCheck(this) type=radio name=row_id  value=" + value['id'] + ">&nbsp&nbsp"+ value['loc_row'] +"</label></br>";
-
-                    $('#row_list').append(rdb_row); 
-
-				}
-				
-				if (value["loc_column"] != null && (value["loc_column"] != 0)) {
-
-                    var rdb_row = "<label style='font-size: 35px;' ><input id=column." + value['id'] + "  onclick=RecordCheck(this) type=radio name=column_id  value=" + value['id'] + ">&nbsp&nbsp"+ value['loc_column'] +"</label></br>";
-
-                    $('#column_list').append(rdb_row); 
-				}
-				
-			});
-      
-		});
-
-
-	}
 
 	function getLocations(value){
 		var warehouse = value.value
@@ -1098,6 +747,7 @@ teams = JSON.parse(teams)
 
 				url = url.replace(':process', process);
 
+
 				var dialog = bootbox.dialog({
 					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
   					backdrop: true,
@@ -1113,17 +763,8 @@ teams = JSON.parse(teams)
 						
 							console.log(response)
 		var html = '';
-
-		var st_net_weight = 0;
-		var st_bags = 0;
-		var st_pockets = 0
-
 		$.each( response, function( key, value ) {
 			//console.log(value)
-			st_net_weight += parseInt(value.st_net_weight);
-			st_bags += parseInt(value.st_bags);
-			st_pockets += parseInt(value.st_pockets);
-
 			html = html+'<tr>'
 			html = html+'<td>'+value.st_outturn+'</td>';
 			html = html+'<td>'+value.st_mark+'</td>';
@@ -1131,18 +772,8 @@ teams = JSON.parse(teams)
 			html = html+'<td>'+value.st_net_weight+'</td>';
 			html = html+'<td>'+value.st_bags+'</td>';
 			html = html+'<td>'+value.st_pockets+'</td>';
-			html = html+'</tr>';
+			html = html+'</tr>'
 			});         	 
-
-
-			html = html+'<tr>'
-			html = html+'<td></td>';
-			html = html+'<td></td>';
-			html = html+'<td></td>';
-			html = html+'<td>'+st_net_weight+'</td>';
-			html = html+'<td>'+st_bags+'</td>';
-			html = html+'<td>'+st_pockets+'</td>';
-			html = html+'</tr>';
 		
 			$('#tabledata').html(html)
 			getResults(process)
@@ -1154,8 +785,7 @@ teams = JSON.parse(teams)
 						});
 	}
 	function getResults(value){
-		var process = value;
-		var coffee_grower = $('#grower');
+		var process = value
 		console.log(process)
 		var url = '{{ route('bulking.getResults',['process'=>":process"]) }}';
 		url = url.replace(':process', process);
@@ -1177,12 +807,6 @@ teams = JSON.parse(teams)
 		var html = '';
 		$.each( response, function( key, value ) {
 			console.log(value)
-
-
-			$("#grower").val(value.cgr_id).change();
-			$("#material").val(value.mt_id).change();
-			// coffee_grower.val(value.cgr_id).prop('selected', true);
-
 			html = html+'<tr>'
 			html = html+'<td>'+value.st_outturn+'</td>';
 			html = html+'<td>'+value.st_mark+'</td>';
@@ -1195,11 +819,8 @@ teams = JSON.parse(teams)
 			html = html+'<td>'+value.col+'</td>';
 			html = html+'<td>'+value.btc_zone+'</td>';
 			html = html+'</tr>'
-			});   
-
-
-
-
+			});         	 
+					
 			$('#tabledataresult').html(html)
 
 							dialog.modal('hide')	
@@ -1208,201 +829,7 @@ teams = JSON.parse(teams)
 						dialog.find('.bootbox-body').html('<div class="progress"></div>'+
 									'<hr><div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">An error occured while attempting to complete process. Contact Database Team</i></div>');
 						});
-
 	}
-	function fetchWeight()
-	{
-		var weigh_scales = $('#weigh_scales').val();
-		var batch_kilograms = $('#batch_kilograms');
-		var batch_kilograms_hidden = $('#batch_kilograms_hidden');
-		var submitbatch = $('#submitbatch');
-
-		batch_kilograms.val('');
-
-		var url="{{ route('arrivalinformation.getWeight',['weigh_scales'=>":weigh_scales"]) }}";
-		url = url.replace(':weigh_scales', weigh_scales);
-		console.log(url)
-		$.ajax({
-		url: url,
-		type: 'GET',
-		}).success(function(response) {
-			console.info(response)
-			var weight = jQuery.parseJSON(response);
-			if (weight != 'error') {
-				batch_kilograms.val(weight);
-				batch_kilograms_hidden.val(weight);
-				checkIfReset();
-				submitbatch.prop('disabled', false);
-			}
-		}).error(function(error) {
-			console.log(error)
-		});  
-
-	}
-
-	function resetWeight()
-	{
-		var weigh_scales = $('#weigh_scales').val();
-		var batch_kilograms = $('#batch_kilograms');
-		var batch_kilograms_hidden = $('#batch_kilograms_hidden');
-		var submitbatch = $('#submitbatch');
-
-		var url="{{ route('arrivalinformation.reSetWeight',['weigh_scales'=>":weigh_scales"]) }}";
-		url = url.replace(':weigh_scales', weigh_scales);
-
-		$.ajax({
-		url: url,
-		type: 'GET',
-		}).success(function(response) {
-			var weight = jQuery.parseJSON(response);
-			if (weight != 'error') {
-				batch_kilograms.val(weight);
-				batch_kilograms_hidden.val(weight);
-				checkIfReset();
-				submitbatch.prop('disabled', true);
-			}
-		}).error(function(error) {
-			console.log(error)
-		});  
-
-	}
-
-	$( "#submitbatch" ).on('click', function(){
-
-			var ref_no = $('#ref_no').val();
-			var warehouse = $('#warehouse').val();
-			var weigh_scales = $('#weigh_scales').val();
-			var zone = $('#zone').val();
-			var packaging = $('#packaging').val();
-			var packages_batch = $('#packages_batch').val();
-			var batch_kilograms = $('#batch_kilograms').val();
-			var batch_kilograms_hidden = $('#batch_kilograms_hidden').val();
-			var pallet_kgs = $('#pallet_kgs').val();
-			var material = $('#material').val();
-			var grower = $('#grower').val();
-
-			if (batch_kilograms_hidden == '') {
-				batch_kilograms_hidden = batch_kilograms;
-			} else if (batch_kilograms == '') {
-				batch_kilograms = batch_kilograms_hidden;
-			} 
-			batch_kilograms = batch_kilograms-pallet_kgs;
-			batch_kilograms_hidden = batch_kilograms_hidden-pallet_kgs;
-
-			var selectedRow = "";
-			var selected = $("input[type='radio'][name='row_id']:checked");
-			if (selected.length > 0) {
-			    selectedRow = selected.val();
-			}
-
-
-			var selectedColumn = "";
-			var selected_col = $("input[type='radio'][name='column_id']:checked");
-			if (selected_col.length > 0) {
-			    selectedColumn = selected_col.val();
-			}
-
-
-			if (packaging == 3) {
-				selectedRow = 0;
-			    selectedColumn = 0;
-			}
-
-			var packages_computed = Math.ceil(batch_kilograms/60);
-			var package_weight_diffrence = Math.abs(packages_batch - packages_computed);
-
-
-
-
-
-
-
-
-
-
-
-
-			if(package_weight_diffrence > 0){
-				//var alert_error = confirm("The packages and weight diffrence is high, do you still wish to continue ?");
-				//if (alert_error == true) {
-				var url="{{ route('cleanresuls.addBatch',['ref_no'=>":ref_no", 'warehouse'=>":warehouse", 'weigh_scales'=>":weigh_scales",'zone'=>":zone", 'packaging'=>":packaging", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'pallet_kgs'=>":pallet_kgs", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'material'=>":material", 'grower'=>":grower"]) }}";
-
-				url = url.replace(':ref_no', ref_no);
-				url = url.replace(':warehouse', warehouse);
-				url = url.replace(':weigh_scales', weigh_scales);
-				url = url.replace(':zone', zone);
-				url = url.replace(':packaging', packaging);
-				url = url.replace(':packages_batch', packages_batch);
-				url = url.replace(':batch_kilograms', batch_kilograms);
-				url = url.replace(':pallet_kgs', pallet_kgs);
-				url = url.replace(':selectedRow', selectedRow);
-				url = url.replace(':selectedColumn', selectedColumn);
-				url = url.replace(':material', material);
-				url = url.replace(':grower', grower);
-
-
-				var dialog = bootbox.alert({
-					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-				}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-							
-				$.ajax({
-				url: url,
-				type: 'GET',
-				}).success(function(response) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-					closeBootBox();
-					refreshOutturnsTable();
-					populateBatches();
-					getResults(ref_no);
-
-				}).error(function(error) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
-					closeBootBox();
-				});  
-
-
-				//}
-			} else {
-
-				var url="{{ route('cleanresuls.addBatch',['ref_no'=>":ref_no", 'warehouse'=>":warehouse", 'weigh_scales'=>":weigh_scales",'zone'=>":zone", 'packaging'=>":packaging", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'pallet_kgs'=>":pallet_kgs", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'material'=>":material", 'grower'=>":grower"]) }}";
-
-				url = url.replace(':ref_no', ref_no);
-				url = url.replace(':warehouse', warehouse);
-				url = url.replace(':weigh_scales', weigh_scales);
-				url = url.replace(':zone', zone);
-				url = url.replace(':packaging', packaging);
-				url = url.replace(':packages_batch', packages_batch);
-				url = url.replace(':batch_kilograms', batch_kilograms);
-				url = url.replace(':pallet_kgs', pallet_kgs);
-				url = url.replace(':selectedRow', selectedRow);
-				url = url.replace(':selectedColumn', selectedColumn);
-				url = url.replace(':material', material);
-				url = url.replace(':grower', grower);
-
-
-				var dialog = bootbox.alert({
-					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-				}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
-							
-				$.ajax({
-				url: url,
-				type: 'GET',
-				}).success(function(response) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-					closeBootBox();
-					refreshOutturnsTable();
-					populateBatches();
-					getResults(ref_no);
-
-				}).error(function(error) {
-					dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x"> Some fields have not been filled!</i></div>');
-					closeBootBox();
-				});  
-				
-			}
-
-		event.preventDefault();
-	})
 
 	$("#processingresultsform").validate({
 			rules: {
@@ -1778,46 +1205,6 @@ function printRate(){
 	
 }
 </script>
-
-
-<style type="text/css">
-	
-	.modal-dialog {
-		overflow: scroll;
-		width: 100%;
-		height: 100%;
-		margin: 0;
-		padding: 0;
-	}
-
-	.modal-content {
-		overflow: scroll;
-		height: auto;
-		min-height: 100%;
-		border-radius: 0;
-	}
-	
-	.modal-open {
-		overflow: scroll;
-	}
-
-	.img {
-	  height: 10;
-	  width: 10;
-	}
-
-	.radio_buttons{
-		transform: scale(2);
-	}
-	/*	.hide { 
-		display: none; 
-	}
-	table#batch_table td:last-child {
-		display: none; 
-	}*/
-
-</style>
-
 @endpush
 
 <style>
