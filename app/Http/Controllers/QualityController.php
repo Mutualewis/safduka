@@ -648,7 +648,8 @@ class QualityController extends Controller {
 						$sumkilos += $st_net_weight;
 						$quality_ml_details = quality_details::where('st_mill_id', $value)->first();
 						if($quality_ml_details != null)
-						$mc = $quality_ml_details->ml;{
+						{
+						$mc = $quality_ml_details->ml;
 						$weighted_ml = $mc*$st_net_weight;
 						}
 						$sumweightedml += $weighted_ml;
@@ -814,23 +815,6 @@ class QualityController extends Controller {
 			   Activity::log('Added arrival quality for st_id '.$st_id);
 
 		   }
-		   
-		   $stock_mill_details = StockMill::where('id', $st_id)->first();
-
-		   $outt_id = $stock_mill_details->outt_id;
-		   
-		   $outt_mill_details = StockMill::where('outt_id', $outt_id)->get();
-
-		   $sum_net_kilos = 0;
-		   $st_ids = [];
-		   foreach($outt_mill_details as $key => $valuestmill){
-			   $sum_net_kilos += $valuestmill->st_net_weight;
-			   $st_ids[] = $valuestmill->id;
-		   }
-		   
-		   $qdetails = quality_details::where('st_mill_id', $st_id)->first();
-		   
-		   $outt_qdetails = quality_details::where('outt_id', $outt_id)->first();
 			//update screen details	
 			foreach ($screendetails as $key => $value) {
 				
@@ -860,27 +844,6 @@ class QualityController extends Controller {
 			
 			}
 			
-		   $stock_mill_details = StockMill::where('id', $st_id)->first();
-
-		   $outt_id = $stock_mill_details->outt_id;
-		   
-		   $outt_mill_details = StockMill::where('outt_id', $outt_id)->get();
-
-		   $sum_net_kilos = 0;
-		   $st_ids = [];
-		   foreach($outt_mill_details as $key => $valuestmill){
-			   $sum_net_kilos += $valuestmill->st_net_weight;
-			   $st_ids[] = $valuestmill->id;
-		   }
-		   
-		   $outtsqdetails = quality_details::whereIn('st_mill_id', $st_ids)->get();
-		   $q_ids = [];
-		   foreach($outtsqdetails as $key3 => $valueqdet){
-			   $q_ids[] = $valueqdet->id;
-		   }
-		   
-		   dd($q_ids); exit;
-		   $outt_qdetails = quality_details::where('outt_id', $outt_id)->first();
 		
             return response()->json([
                 'exists' => false,
@@ -904,8 +867,21 @@ class QualityController extends Controller {
         try{
 			$screendetails = $request->screens;
 			$st_id = $request->st_id;
-			$qdetails = quality_details::where('st_mill_id', $st_id)->first(); 
+			 
 			
+			$stock_mill_details = StockMill::where('id', $st_id)->first();
+
+			$outt_id = $stock_mill_details->outt_id;
+			
+			$outt_mill_details = StockMill::where('outt_id', $outt_id)->get();
+
+			$sum_net_kilos = 0;
+			$st_ids = [];
+			foreach($outt_mill_details as $key => $valuestmill){
+				$sum_net_kilos += $valuestmill->st_net_weight;
+				$st_ids[] = $valuestmill->id;
+			}
+			$qdetails = quality_details::where('st_mill_id', $st_id)->first();
 			if ($qdetails != NULL) {
 				 
 				$qid = $qdetails->id;
@@ -948,8 +924,74 @@ class QualityController extends Controller {
 			   }
 			
 			}
+			foreach ($screendetails as $key => $value) {
+				
+				$acatid = $value["id"];
+				$screen_size = $value["screensize"];
+				$sumkilos = 0;
+				$sumweightedscrval =0;
+				$outtscr = null;
+				$count =0;
+			foreach($st_ids as $key => $value2){
+				$weighted_scr= 0;
+				$scr_value = 0;
+				$stock_mill_details = StockMill::where('id',$value2)->first();
+				$st_net_weight = $stock_mill_details->st_net_weight;
+				$sumkilos += $st_net_weight;
+				$quality_details = quality_details::where('st_mill_id', $value2)->first();
+				if($quality_details != null)
+				{
+				$qanlid = $quality_details->id;
+				
+				$analysis_details = QualityAnalysis::where('qltyd_id', '=', $qanlid)->where('acat_id', $acatid)->first();
+				
+				if($analysis_details != null){
+					$scr_value = $analysis_details->qanl_value;
+					
+					$weighted_scr = (float)$scr_value * (float)$st_net_weight;
+				}
+				}
+				$sumweightedscrval += $weighted_scr;
+				$count++;
+			}
+			$outtscr = $sumweightedscrval/$sumkilos;
 			
-		
+			$qdetails = quality_details::where('outt_id', $outt_id)->first();
+			if ($qdetails != NULL) {
+				 
+				$qid = $qdetails->id;
+
+		   } else {
+
+			   $qid = quality_details::insertGetId(
+				   ['outt_id' => $outt_id]
+			   );
+
+			   Activity::log('Added arrival quality for outt_id '.$st_id);
+
+		   }
+		   $qadetails = QualityAnalysis::where('qltyd_id', $qid)->where('acat_id', $acatid)->first(); 
+			
+				if ($qadetails != NULL) {
+					 
+					$qanlid = $qadetails->id;
+	
+					QualityAnalysis::where('id', '=', $qanlid)->where('acat_id', $acatid)
+					->update(['qanl_value'=> $outtscr]);
+				   
+				   Activity::log('Updated screen quality for quality id '.$qid. ' with analysis id '.$acatid.' and screen size '. $outtscr);
+	
+			   } else {
+	
+				QualityAnalysis::insert(
+					['acat_id' => $acatid, 'qltyd_id' => $qid,  'qanl_value' =>  $outtscr ]
+				);
+	
+				   Activity::log('Added arrival quality for screens for quality id '.$qid .' with acat_id '. $acatid . ' screen value '. $outtscr);
+	
+			   }
+
+			}
             return response()->json([
                 'exists' => false,
                 'inserted' => true,

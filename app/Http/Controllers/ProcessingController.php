@@ -44,6 +44,7 @@ use Ngea\Stock;
 use Ngea\StockStatus;
 use Ngea\StockView;
 use Ngea\StockViewALL;
+use Ngea\StockViewALLOutt;
 use Ngea\SalesContract;
 use Ngea\transporters;
 use Ngea\User;
@@ -63,6 +64,7 @@ use Ngea\processrates;
 use Ngea\processcharges;
 use Ngea\teams;
 use Ngea\StockMill;
+use Ngea\Outturns;
 
 class ProcessingController extends Controller
 {
@@ -469,7 +471,7 @@ class ProcessingController extends Controller
 
                    
 
-                    $processAllocationDetails = ProcessAllocation::where('st_mill_id', $value)->where('pr_id', $prid)->first();
+                    $processAllocationDetails = ProcessAllocation::where('outt_id', $value)->where('pr_id', $prid)->first();
 
                     if ($cweight != null) {
 
@@ -477,85 +479,27 @@ class ProcessingController extends Controller
 
                             $processAllocationID = $processAllocationDetails->id;
                             ProcessAllocation::where('id', '=', $processAllocationID)
-                                ->update([ 'pr_id' => $prid, 'st_mill_id' => $value, 'pall_allocated_weight' => $cweight, 'pall_packages' => $packages, 'pall_processed_weight' => null, 'pall_ratios' => $pall_ratio, 'pall_extra_processing' => null ]);
+                                ->update([ 'pr_id' => $prid, 'outt_id' => $value, 'pall_allocated_weight' => $cweight, 'pall_packages' => $packages, 'pall_processed_weight' => null, 'pall_ratios' => $pall_ratio, 'pall_extra_processing' => null ]);
 
                             $request->session()->flash('alert-success', 'Process Information Updated!!');
                             Activity::log('Updated process allocation information with id ' . $processAllocationID . 'pall_allocated_weight' . $cweight .'pall_packages' .'pall_processed_weight' .$packages. 'pall_extra_processing' . null );
 
                         } else {
 
-                            $processAllocationID = ProcessAllocation::insertGetId(['pr_id' => $prid, 'st_mill_id' => $value, 'pall_allocated_weight' => $cweight, 'pall_packages' => $packages, 'pall_processed_weight' => null, 'pall_ratios' => $pall_ratio, 'pall_extra_processing' => null]);
+                            $processAllocationID = ProcessAllocation::insertGetId(['pr_id' => $prid, 'outt_id' => $value, 'pall_allocated_weight' => $cweight, 'pall_packages' => $packages, 'pall_processed_weight' => null, 'pall_ratios' => $pall_ratio, 'pall_extra_processing' => null]);
                             $request->session()->flash('alert-success', 'Process Information Added!!');
                             Activity::log('Added process allocation information with id ' . $processAllocationID . 'pall_allocated_weight' . $cweight .'pall_packages' .'pall_processed_weight' .$packages. 'pall_extra_processing' . null );                                
                         }
                         
                     }
 
-                        StockMill::where('id', '=', $value)
+                    Outturns::where('id', '=', $value)
                          ->update(['st_ended_by' => $user, 'pr_id' => $prid]);
+                    Activity::log('Updated outturns_ott with st_ended_by ' . $user . 'instruction' . $prid  );
                 }
             }
 
-            $temp_value2 = null;
-            $new_reference_no = null;
-            $temp_array =  array();
-            $temp_ref_array = arraY();
-
-            $temp_regrading = array();
-            $temp_ref_regrading = array();
-
-
-            if ($instructions_selected != null) {
-                if ($pridetails != null) {
-                    $pridetailsdel = ProcessInstructions::find($pridetails->id);
-                    $pridetailsdel->delete();
-                }
-
-                $priid = ProcessInstructions::insertGetId(['pr_id' => $prid, 'pri_id' => $instructions_selected]);
-                $request->session()->flash('alert-success', 'Process Information Updated!!');
-                Activity::log('Inserted Process information with priid ' . $priid . ' instructions_selected ' . $instructions_selected);
-            } else if ($instructions_checked != null) {
-                foreach ($instructions_checked as $key => $value) {
-                    $pridetails = ProcessInstructions::where('pr_id', $prid)->where('pri_id', $value)->first();
-                    if ($pridetails != null) {
-                        $pridetailsdel = ProcessInstructions::find($pridetails->id);
-                        $pridetailsdel->delete();
-                    }
-
-                    $priid = ProcessInstructions::insertGetId(['pr_id' => $prid, 'pri_id' => $value]);
-                    $request->session()->flash('alert-success', 'Process Information Updated!!');
-                    Activity::log('Inserted Process information with priid ' . $priid . ' instructions_selected ' . $value);
-                }
-            }
-
-            if ($tobeprocessed != null) {
-                if (sizeof($tobeprocessed) == 1) {
-                    foreach ($tobeprocessed as $key => $value) {
-                        $new_stockdetails = StockMill::where('id', $value)->first();
-                        Process::where('id', '=', $prid)
-                                ->update(['cgrad_id' => $new_stockdetails->cgrad_id, 'bs_id' => $new_stockdetails->bs_id, 'csn_id' => $prc_season ]);
-                    }
-                }
-            }
-
-            if ($tobewithdrawn != null) {
-                foreach ($tobewithdrawn as $key => $value) {
-                    $stockViewALLCount = StockViewALL::where('id', $value)->whereNotNull('process_number')->get();
-                    $countProcess = 0;
-                    foreach ($stockViewALLCount as $keycount => $valuecount) {
-                        $countProcess += 1;
-                    }
-
-                    if ($countProcess < 2) {
-                        StockMill::where('id', '=', $value)
-                              ->update(['st_ended_by' => null, 'pr_id' => null]);
-                    }
-
-                    $processAllocation = ProcessAllocation::where('st_id',$value)->where('pr_id', $prid);    
-                    $processAllocation->delete(); 
-                }
-          
-            }
+            
             DB::commit();
             }catch (\PDOException $e) {
                 
@@ -790,8 +734,6 @@ class ProcessingController extends Controller
             $person_fname      = $personDetails->per_fname;
             $person_sname      = $personDetails->per_sname;
 
-
-        
 
             $pdf = PDF::loadView('pdf.processing_instructions_stuffed', compact('TO',  'ATTENTION', 'FROM', 'reference', 'ref_no', 'contractNumber', 'user',  'date', 'StockView', 'seasonName', 'person_fname', 'person_sname', 'process_type', 'process_instructions', 'process_other_instructions'));
             return $pdf->stream($ref_no . ' processing_instructions.pdf');
@@ -1044,9 +986,9 @@ class ProcessingController extends Controller
     {
         if ($countryID != null) {
             if($ref_no != null){
-                $stockview = StockViewALL::select('*')->whereNull('st_ended_by')->whereNull('bulked_by');
+                $stockview = StockViewALLOutt::select('*')->whereNull('st_ended_by')->whereNull('bulked_by');
             } else {
-                $stockview = StockViewALL::select('*')->where('ctr_id', $countryID)->whereNull('st_ended_by')->whereNull('bulked_by');
+                $stockview = StockViewALLOutt::select('*')->where('ctr_id', $countryID)->whereNull('st_ended_by')->whereNull('bulked_by');
             }
 
         } else {
