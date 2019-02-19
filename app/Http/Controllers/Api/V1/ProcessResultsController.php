@@ -207,35 +207,36 @@ class ProcessResultsController extends Controller
         $mlvariance = $this->getMlVariance($request->st_mill_id, $request->empty_bag_weight);
         if($mlvariance == null){
             return response()->json([
-                'message' => "Unable to get variance, Confirmation failed"
+                'message' => "validate",
+                'errors' => ["Unable to get variance, Confirmation failed"]
             ])
-            ->setStatusCode(500);
+            ->setStatusCode(200);
         }
         if($mlvariance == NULL || $mlvariance > 0.2){
 
             $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"DMP-".$outturn_details->st_outturn, "difference"=>$mlvariance*100);    
 
-            // Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
+            Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
 
-            //     $message->to('john.gachunga@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                $message->to('john.gachunga@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
 
-            //     // $message->cc('lewis.mutua@nkg.coffee');
-            //     // $message->cc('john.gachunga@nkg.coffee');
+                // $message->cc('lewis.mutua@nkg.coffee');
+                // $message->cc('john.gachunga@nkg.coffee');
 
-            //     $message->from('lewis.mutua@nkg.coffee','Ibero Database');
+                $message->from('lewis.mutua@nkg.coffee','Ibero Database');
 
-            // });
+            });
         }
-        $scrvariance = $this->getSCRVariance($request->st_mill_id, $request->empty_bag_weight);
+        $this->getSCRVariance($request->st_mill_id, $request->empty_bag_weight);
 
-        $stock_details = Outturns::where('id', '=', $request->st_mill_id)->update(['milling_confirmed_by'=> $userid]);
+        $stock_details = Outturns::where('id', '=', $request->st_mill_id)->update(['milling_confirmed_by'=> $userid, 'empty_bag_weight'=> $request->empty_bag_weight ]);
     
         DB::commit();
         //$resultstring = $request->all()->toJson();
         $resultsstring = json_encode($request->all());
        
         
-        Activity::log('Updated Stock Mill outturn '.$outturn_details->st_outturn.' confirmed by'. $resultsstring. ' user ' .$username);
+        Activity::log('Updated Stock outturn '.$outturn_details->st_outturn.' confirmed by'. $resultsstring. ' user ' .$username);
         
         
         return response()->json([
@@ -287,8 +288,47 @@ class ProcessResultsController extends Controller
                 return null;
             }
         }else{
-            
-            return null;
+            //get quality for related outturns
+            //get quality using stock mill
+            $outt_mill_details = StockMill::where('outt_id', $outt_id)->get();
+
+				$sum_net_kilos = 0;
+				$st_ids = [];
+				foreach($outt_mill_details as $key => $valuestmill){
+					$sum_net_kilos += $valuestmill->st_net_weight;
+					$st_ids[] = $valuestmill->id;
+                }
+                $sumkilos = 0;
+				$sumweightedml = 0;
+                foreach($st_ids as $key => $value){
+                    $stock_mill_details = StockMill::where('id',$value)->first();
+                    $st_net_weight = $stock_mill_details->st_net_weight;
+                    $sumkilos += $st_net_weight;
+                    $quality_ml_details = quality_details::where('st_mill_id', $value)->first();
+                    if($quality_ml_details != null)
+                    $mc = $quality_ml_details->ml;{
+                    $weighted_ml = $mc*$st_net_weight;
+                    }
+                    $sumweightedml += $weighted_ml;
+                }
+                $outt_ml = $sumweightedml/$sumkilos;
+                
+            //milling loss variance
+            $output_weight = DB::table('process_results_prts')
+                ->where('outt_id', $outt_id)
+                ->sum(DB::Raw('prts_bags*60+prts_pockets'));
+            if($output_weight != null){
+                $outturn_details = Outturns::where('id', '=', $outt_id)->first();
+                if($outturn_details != null){
+                $net_input_weight = $outturn_details->st_net_weight-$empty_bag_weight;
+                $mlvariance = abs(($net_input_weight - $output_weight)/$net_input_weight);
+                return $mlvariance;
+                }else{
+                    return null;
+                }
+            }else{
+                return null;
+            }
         }
     }
     public function getSCRVariance($outt_id, $empty_bag_weight){
@@ -328,7 +368,7 @@ class ProcessResultsController extends Controller
                 ->where('outt_id', $outt_id)->whereIn('prt_id', [10, 13, 11])
                 ->sum(DB::Raw('prts_bags*60+prts_pockets'));
             $scr14output_weight = DB::table('process_results_prts')
-                ->where('outt_id', $outt_id)->whereIn('prt_id', [12, 14])
+                ->where('outt_id', $outt_id)->whereIn('prt_id', [12, 14, 15])
                 ->sum(DB::Raw('prts_bags*60+prts_pockets'));
             if($output_weight != null){
                 $scr18variance = abs(($scr18output_weight/ $output_weight*100)-$scr18);
@@ -388,7 +428,127 @@ class ProcessResultsController extends Controller
                 }
             
         }else{
+            $outt_mill_details = StockMill::where('outt_id', $outt_id)->get();
+
+				$sum_net_kilos = 0;
+				$st_ids = [];
+				foreach($outt_mill_details as $key => $valuestmill){
+					$sum_net_kilos += $valuestmill->st_net_weight;
+					$st_ids[] = $valuestmill->id;
+                }
+                $sumkilos = 0;
+                $sumweightedml = 0;
+                $screendetails = [1, 2,3,4];
+                foreach ($screendetails as $key => $value) {
+                    $acatid = $value;
+                    $sumkilos = 0;
+                    $sumweightedscrval =0;
+                    $outtscr = null;
+                    $count =0;
+                foreach($st_ids as $key => $value2){
+                    $weighted_scr= 0;
+                    $scr_value = 0;
+                    $stock_mill_details = StockMill::where('id',$value2)->first();
+                    $st_net_weight = $stock_mill_details->st_net_weight;
+                    $sumkilos += $st_net_weight;
+                    $quality_details = quality_details::where('st_mill_id', $value2)->first();
+                    if($quality_details != null)
+                    {
+                    $qanlid = $quality_details->id;
+                    
+                    $analysis_details = QualityAnalysis::where('qltyd_id', '=', $qanlid)->where('acat_id', $acatid)->first();
+                    
+                    if($analysis_details != null){
+                        $scr_value = $analysis_details->qanl_value;
+                        
+                        $weighted_scr = (float)$scr_value * (float)$st_net_weight;
+                    }
+                    }
+                    $sumweightedscrval += $weighted_scr;
+                    $count++;
+                }
+                $outtscr = $sumweightedscrval/$sumkilos;
+                if($value == 1){
+                    $scr18 = $outtscr;
+                }
+                if($value == 2){
+                    $scr16 = $outtscr;
+                }
+                if($value == 3){
+                    $scr14 = $outtscr;
+                }
+                
+            }
+            $outturn_details = Outturns::where('id', '=', $outt_id)->first();
+            //milling loss variance
+            $output_weight = DB::table('process_results_prts')
+                ->where('outt_id', $outt_id)
+                ->sum(DB::Raw('prts_bags*60+prts_pockets'));
+            $scr18output_weight = DB::table('process_results_prts')
+                ->where('outt_id', $outt_id)->whereIn('prt_id', [9,23])
+                ->sum(DB::Raw('prts_bags*60+prts_pockets'));
+            $scr16output_weight = DB::table('process_results_prts')
+                ->where('outt_id', $outt_id)->whereIn('prt_id', [10, 13, 11])
+                ->sum(DB::Raw('prts_bags*60+prts_pockets'));
+            $scr14output_weight = DB::table('process_results_prts')
+                ->where('outt_id', $outt_id)->whereIn('prt_id', [12, 14, 15])
+                ->sum(DB::Raw('prts_bags*60+prts_pockets'));
+            if($output_weight != null){
+                $scr18variance = abs(($scr18output_weight/ $output_weight*100)-$scr18);
+                $scr16variance = abs(($scr16output_weight/ $output_weight*100)-$scr16);
+                $scr14variance = abs(($scr14output_weight/ $output_weight*100)-$scr14);
+
+                if($scr18variance>2){
+                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR18-".$outturn_details->st_outturn, "difference"=>$scr18variance);    
+
+                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
+        
+                        $message->to('john.gachunga@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+        
+                        // $message->cc('lewis.mutua@nkg.coffee');
+                        // $message->cc('john.gachunga@nkg.coffee');
+        
+                        $message->from('lewis.mutua@nkg.coffee','Ibero Database');
+        
+                    });
+
             
+                }
+                if($scr16variance>2){
+                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR16-".$outturn_details->st_outturn, "difference"=>$scr16variance);    
+
+                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
+        
+                        $message->to('john.gachunga@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+        
+                        // $message->cc('lewis.mutua@nkg.coffee');
+                        // $message->cc('john.gachunga@nkg.coffee');
+        
+                        $message->from('lewis.mutua@nkg.coffee','Ibero Database');
+        
+                    });
+
+            
+                }
+                if($scr14variance>2){
+                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR14-".$outturn_details->st_outturn, "difference"=>$scr14variance);    
+
+                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
+        
+                        $message->to('john.gachunga@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+        
+                        // $message->cc('lewis.mutua@nkg.coffee');
+                        // $message->cc('john.gachunga@nkg.coffee');
+        
+                        $message->from('lewis.mutua@nkg.coffee','Ibero Database');
+        
+                    });
+
+            
+                }
+                }else{
+                    return null;
+                }
             return null;
         }
     }
