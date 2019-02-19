@@ -502,13 +502,36 @@ class CleanBulkingController extends Controller {
                 
                 $refid = StockWarehouse::where('st_outturn', $ref_no)->first();
                 if($refid !=null){
-                $refid = $refid->id;
-                $stockview = StockViewWarehouse::select('*')->where('st_bulk_id', $refid)->orWhereNull('bulked_by')->orderByRaw(DB::raw("FIELD(st_bulk_id, '$refid') DESC"));
+                    $refid = $refid->id;
+                    $stockview = DB::table('stock_warehouse_st as st')
+                    ->select('st.id as id', 'csn_season', 'mt_name as grade', 'st_mark as mark', 'st_outturn as outturn', 'st_net_weight', 'st_bags', 'st_pockets', 'st_bulked_by as bulked_by')
+                    ->leftJoin('coffee_seasons_csn as csn', 'csn.id', '=', "st.csn_id" )
+                    ->leftJoin('material_mt as mt', 'st.mt_id', '=', 'mt.id')
+                    ->whereNull('st_ended_by')
+                    ->orwhereNull('st_bulked_by')
+                    ->where('st_bulk_id', $refid)
+                    ->orderByRaw(DB::raw("FIELD(st_bulk_id, '$refid') DESC"));
                 }else{
-                    $stockview = StockViewWarehouse::select('*')->whereNull('bulked_by')->where('st_owner_id', 5)->whereNull('st_is_bulk');
+
+                    $stockview = DB::table('stock_warehouse_st as st')
+                    ->select('id', 'csn_season', 'mt_name as grade', 'st_mark as mark', 'st_outturn as outturn', 'st_net_weight', 'st_bags', 'st_pockets', 'st_bulked_by as bulked_by')
+                    ->leftJoin('coffee_seasons_csn as csn', 'st.id', '=', "prall.st_wr_id" )
+                    ->leftJoin('material_mt as mt', 'st.mt_id', '=', 'mt.id')
+                    ->whereNull('st_ended_by')
+                    ->whereNull('bulked_by')
+                    ->whereNull('st_is_bulk')
+                    ->get();
                 }
             } else {
-                $stockview = StockViewWarehouse::select('*')->whereNull('bulked_by')->where('st_owner_id', 5)->whereNull('st_is_bulk');
+
+
+                    $stockview = DB::table('stock_warehouse_st as st')
+                    ->select('st.id as id', 'csn_season', 'mt_name as grade', 'st_mark as mark', 'st_outturn as outturn', 'st_net_weight', 'st_bags', 'st_pockets', 'st_bulked_by as bulked_by')
+                    ->leftJoin('coffee_seasons_csn as csn', 'csn.id', '=', "st.csn_id" )
+                    ->leftJoin('material_mt as mt', 'st.mt_id', '=', 'mt.id')
+                    ->whereNull('st_ended_by')
+                    ->whereNull('st_bulked_by')
+                    ->whereNull('st_is_bulk');
             }
 
         } else {
