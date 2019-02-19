@@ -507,9 +507,10 @@ class CleanBulkingController extends Controller {
                     ->select('st.id as id', 'csn_season', 'mt_name as grade', 'st_mark as mark', 'st_outturn as outturn', 'st_net_weight', 'st_bags', 'st_pockets', 'st_bulked_by as bulked_by')
                     ->leftJoin('coffee_seasons_csn as csn', 'csn.id', '=', "st.csn_id" )
                     ->leftJoin('material_mt as mt', 'st.mt_id', '=', 'mt.id')
-                    ->whereNull('st_ended_by')
-                    ->orwhereNull('st_bulked_by')
+                    // ->whereNull('st_ended_by')
                     ->where('st_bulk_id', $refid)
+                    ->orwhereNull('st_bulked_by')
+                     ->whereNull('st_ended_by')
                     ->orderByRaw(DB::raw("FIELD(st_bulk_id, '$refid') DESC"));
                 }else{
 
