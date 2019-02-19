@@ -1267,6 +1267,35 @@ teams = JSON.parse(teams)
 
 	}
 
+
+
+	function checkIfReset()
+	{
+		var weigh_scales = $('#weigh_scales').val();
+		var weigh_scale_session = "scale - "+weigh_scales+"";
+
+		var url="{{ route('arrivalinformation.checkScaleSession',['weigh_scale_session'=>":weigh_scale_session"]) }}";
+		url = url.replace(':weigh_scale_session', weigh_scale_session);
+
+		$.ajax({
+		url: url,
+		type: 'GET',
+		}).success(function(response) {
+			var session = jQuery.parseJSON(response);
+
+			if (session == 1) {
+				$("#fetch_weight").replaceWith("<button type='button' id='resetweight' name='resetweight' class='btn btn-lg btn-danger btn-block' formnovalidate onclick='resetWeight()'>Reset</button>");
+			} else {
+				$("#resetweight").replaceWith("<button type='button' id='fetch_weight' name='fetchweight' class='btn btn-lg btn-success btn-block' onclick='fetchWeight()'>Fetch</button>");
+			}
+
+		}).error(function(error) {
+			console.log(error)
+		});  
+
+
+	}
+
 	$( "#submitbatch" ).on('click', function(){
 
 			var ref_no = $('#ref_no').val();

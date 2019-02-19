@@ -558,9 +558,10 @@ function setTable(){
    		url: 'Bulkinginstructions',
         Bulking: true,
         deferRender: true,
+        processing: true,
      	ajax: url,
      	autoWidth: true,
-     	pageLength: 100,
+     	pageLength: 50,
 
      	buttons: [
      		'pageLength' , 

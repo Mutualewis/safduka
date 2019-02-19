@@ -1748,6 +1748,7 @@
 			deliverydetails.hide();			
 			// batchdetails.hide();			
 			var url="{{ route('arrivalinformationgrns.getOuttturns') }}";
+
 			var sel = $('<select id ="outt_number_select" name ="outt_number_select" width="100%" onchange="getMaterialsInOutturn()" >').appendTo(outt_number_div);
 			sel.append($("<option>").attr('value','').text(''));
 

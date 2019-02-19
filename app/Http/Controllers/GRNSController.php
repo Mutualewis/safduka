@@ -432,7 +432,7 @@ class GRNSController extends Controller {
         try {
 
             $outturns = DB::table('process_results_prts AS prts')
-                ->select('*', 'prts.id as prtsid', 'st.st_outturn as outturn')
+                ->select('csn_season', 'prts.id as prtsid', 'st.st_outturn as outturn')
                 ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
                 ->leftJoin('grn_gr AS grm', 'grm.id', '=', 'st.grn_id')
                 ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
