@@ -1051,8 +1051,8 @@
 
 
 				if(package_weight_diffrence > 0){
-					//var alert_error = confirm("The packages and weight diffrence is high, do you still wish to continue ?");
-					//if (alert_error == true) {
+					var alert_error = confirm("The packages and weight diffrence is high, do you still wish to continue ?");
+					if (alert_error == true) {
 						var url="{{ route('arrivalinformation.addBatch',['outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type_batch'=>":outturn_type_batch", 'weigh_scales'=>":weigh_scales", 'packaging'=>":packaging", 'zone'=>":zone", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'batch_kilograms_hidden'=>":batch_kilograms_hidden", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'warehouse' =>":warehouse", 'grn_number' =>":grn_number", 'pallet_kgs' =>":pallet_kgs"]) }}";
 
 						url = url.replace(':grn_number', grn_number);
@@ -1090,7 +1090,7 @@
 						});  
 
 
-					//}
+					}
 				} else {
 
 					var url="{{ route('arrivalinformation.addBatch',['outt_number'=>":outt_number", 'outt_season'=>":outt_season", 'coffee_grower'=>":coffee_grower",'outturn_type_batch'=>":outturn_type_batch", 'weigh_scales'=>":weigh_scales", 'packaging'=>":packaging", 'zone'=>":zone", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'batch_kilograms_hidden'=>":batch_kilograms_hidden", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'warehouse' =>":warehouse", 'grn_number' =>":grn_number", 'pallet_kgs' =>":pallet_kgs"]) }}";

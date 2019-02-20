@@ -306,7 +306,7 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		
 		Route::get('/cleanbulkresults', 'CleanBulkingController@cleanResultsForm'); 	
 		Route::post('/cleanbulkresults', 'CleanBulkingController@cleanResults');
-		Route::get('/cleanresuls/addBatch/{ref_no}/{warehouse}/{weigh_scales}/{zone}/{packaging}/{packages_batch}/{batch_kilograms}/{pallet_kgs}/{selectedRow}/{selectedColumn}/{material}/{grower}', ['as'=>'cleanresuls.addBatch','uses'=>'CleanBulkingController@addBatch']);
+		Route::get('/cleanresuls/addBatch/{ref_no}/{warehouse}/{weigh_scales}/{zone}/{packaging}/{packages_batch}/{batch_kilograms}/{pallet_kgs}/{selectedRow}/{selectedColumn}/{material}/{grower bn}', ['as'=>'cleanresuls.addBatch','uses'=>'CleanBulkingController@addBatch']);
 
 		
 		Route::get('/bulking/getInstructed/{process}', ['as'=>'bulking.getInstructed','uses'=>'CleanBulkingController@getInstructed']); 
