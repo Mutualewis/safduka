@@ -202,7 +202,7 @@ class GRNSController extends Controller {
 
                 $outturns = DB::table('process_results_prts AS prts')
                     ->select('*', 'prts.id as prtsid', DB::Raw('IFNULL( `gr`.`cgr_id` , st.cgr_id ) as cgrid'))
-                    ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
+                    ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.outt_id')
                     ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'st.grn_id')
                     ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
                     ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
@@ -433,7 +433,7 @@ class GRNSController extends Controller {
 
             $outturns = DB::table('process_results_prts AS prts')
                 ->select('csn_season', 'prts.id as prtsid', 'st.st_outturn as outturn')
-                ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
+                ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.outt_id')
                 ->leftJoin('grn_gr AS grm', 'grm.id', '=', 'st.grn_id')
                 ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
                 ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
@@ -464,7 +464,7 @@ class GRNSController extends Controller {
 
             $outturns = DB::table('process_results_prts AS prts')
                 ->select('*', 'prts.id as prtsid', DB::Raw('IFNULL( `grm`.`cgr_id` , st.cgr_id ) as cgrid'))
-                ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.st_mill_id')
+                ->leftJoin('stock_mill_st AS st', 'st.id', '=', 'prts.outt_id')
                 ->leftJoin('grn_gr AS grm', 'grm.id', '=', 'st.grn_id')
                 ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
                 ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
