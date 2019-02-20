@@ -123,9 +123,9 @@ class GrowerController extends Controller {
         $edit->add('cg_postal_address','Postal Address', 'text');
         $edit->add('cg_land_line','Landline', 'text');
         $edit->add('cg_physical_address','Physical Address', 'text');
-        $edit->add('gt_id','Grower type','select')->options(growertype::orderBy('id')->pluck("gt_name", "id")->all())->rule('required|min:1');
+        $edit->add('gt_id','Grower type','select')->option("","")->options(growertype::orderBy('id')->pluck("gt_name", "id")->all())->rule('required|min:1');
         $edit->add('cg_postal_town','Postal Town', 'text');
-        $edit->add('cg_cert','Cerification', 'text');
+        $edit->add('cg_cert','Certification', 'text');
         $edit->add('cgr_pin','Pin', 'text');
 
         return $edit->view('editgroweredit', compact('edit'));
