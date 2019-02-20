@@ -205,6 +205,7 @@ class ProcessResultsController extends Controller
         $outturn_details = Outturns::where('id', '=', $request->st_mill_id)->first();
 
         $mlvariance = $this->getMlVariance($request->st_mill_id, $request->empty_bag_weight);
+        $mlvariance = abs($mlvariance);
         if($mlvariance == null){
             return response()->json([
                 'message' => "validate",
@@ -212,16 +213,16 @@ class ProcessResultsController extends Controller
             ])
             ->setStatusCode(200);
         }
-        if($mlvariance == NULL || $mlvariance > 0.2){
+        if($mlvariance == NULL || $mlvariance > 2){
 
-            $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"DMP-".$outturn_details->st_outturn, "difference"=>$mlvariance*100);    
+            $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss ", "identifier"=>"DMP-Milling Loss".$outturn_details->st_outturn, "difference"=>$mlvariance);    
 
             Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
 
-                $message->to('john.gachunga@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                $message->to('jane.nyambura@nkg.coffee', 'Discrepancy : MILLING LOSS DMP')->subject('Discrepancy');
 
-                // $message->cc('lewis.mutua@nkg.coffee');
-                // $message->cc('john.gachunga@nkg.coffee');
+                $message->cc('lewis.mutua@nkg.coffee');
+                $message->cc('john.gachunga@nkg.coffee');
 
                 $message->from('lewis.mutua@nkg.coffee','Ibero Database');
 
@@ -279,7 +280,8 @@ class ProcessResultsController extends Controller
                 $outturn_details = Outturns::where('id', '=', $outt_id)->first();
                 if($outturn_details != null){
                 $net_input_weight = $outturn_details->st_net_weight-$empty_bag_weight;
-                $mlvariance = abs(($net_input_weight - $output_weight)/$net_input_weight);
+                $mloutput = abs(($net_input_weight - $output_weight)/$net_input_weight);
+                $mlvariance = $mloutput*100 - $ml;
                 return $mlvariance;
                 }else{
                     return null;
@@ -321,7 +323,8 @@ class ProcessResultsController extends Controller
                 $outturn_details = Outturns::where('id', '=', $outt_id)->first();
                 if($outturn_details != null){
                 $net_input_weight = $outturn_details->st_net_weight-$empty_bag_weight;
-                $mlvariance = abs(($net_input_weight - $output_weight)/$net_input_weight);
+                $mloutput = abs(($net_input_weight - $output_weight)/$net_input_weight);
+                $mlvariance = $mloutput*100 - $outt_ml;
                 return $mlvariance;
                 }else{
                     return null;
@@ -380,10 +383,10 @@ class ProcessResultsController extends Controller
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
         
-                        $message->to('john.gachunga@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
         
-                        // $message->cc('lewis.mutua@nkg.coffee');
-                        // $message->cc('john.gachunga@nkg.coffee');
+                        $message->cc('lewis.mutua@nkg.coffee');
+                        $message->cc('john.gachunga@nkg.coffee');
         
                         $message->from('lewis.mutua@nkg.coffee','Ibero Database');
         
@@ -396,10 +399,10 @@ class ProcessResultsController extends Controller
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
         
-                        $message->to('john.gachunga@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
         
-                        // $message->cc('lewis.mutua@nkg.coffee');
-                        // $message->cc('john.gachunga@nkg.coffee');
+                        $message->cc('lewis.mutua@nkg.coffee');
+                        $message->cc('john.gachunga@nkg.coffee');
         
                         $message->from('lewis.mutua@nkg.coffee','Ibero Database');
         
@@ -412,10 +415,10 @@ class ProcessResultsController extends Controller
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
         
-                        $message->to('john.gachunga@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
         
-                        // $message->cc('lewis.mutua@nkg.coffee');
-                        // $message->cc('john.gachunga@nkg.coffee');
+                        $message->cc('lewis.mutua@nkg.coffee');
+                        $message->cc('john.gachunga@nkg.coffee');
         
                         $message->from('lewis.mutua@nkg.coffee','Ibero Database');
         
@@ -438,7 +441,7 @@ class ProcessResultsController extends Controller
                 }
                 $sumkilos = 0;
                 $sumweightedml = 0;
-                $screendetails = [1, 2,3,4];
+                $screendetails = [1, 2,3, 4];
                 foreach ($screendetails as $key => $value) {
                     $acatid = $value;
                     $sumkilos = 0;
@@ -503,10 +506,10 @@ class ProcessResultsController extends Controller
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
         
-                        $message->to('john.gachunga@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
         
-                        // $message->cc('lewis.mutua@nkg.coffee');
-                        // $message->cc('john.gachunga@nkg.coffee');
+                        $message->cc('lewis.mutua@nkg.coffee');
+                        $message->cc('john.gachunga@nkg.coffee');
         
                         $message->from('lewis.mutua@nkg.coffee','Ibero Database');
         
@@ -519,10 +522,10 @@ class ProcessResultsController extends Controller
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
         
-                        $message->to('john.gachunga@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
         
-                        // $message->cc('lewis.mutua@nkg.coffee');
-                        // $message->cc('john.gachunga@nkg.coffee');
+                        $message->cc('lewis.mutua@nkg.coffee');
+                        $message->cc('john.gachunga@nkg.coffee');
         
                         $message->from('lewis.mutua@nkg.coffee','Ibero Database');
         
@@ -535,10 +538,10 @@ class ProcessResultsController extends Controller
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
         
-                        $message->to('john.gachunga@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
         
-                        // $message->cc('lewis.mutua@nkg.coffee');
-                        // $message->cc('john.gachunga@nkg.coffee');
+                        $message->cc('lewis.mutua@nkg.coffee');
+                        $message->cc('john.gachunga@nkg.coffee');
         
                         $message->from('lewis.mutua@nkg.coffee','Ibero Database');
         
