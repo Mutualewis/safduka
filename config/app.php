@@ -165,7 +165,11 @@ return [
         'Collective\Html\HtmlServiceProvider',
 
         'Spatie\Activitylog\ActivitylogServiceProvider',
+<<<<<<< HEAD
          Zofe\Rapyd\RapydServiceProvider::class,
+=======
+        Zofe\Rapyd\RapydServiceProvider::class,
+>>>>>>> 8c8a518f79193ce3a09a6d2cdd7a004104c377f0
         Zizaco\Entrust\EntrustServiceProvider::class,
         'Maatwebsite\Excel\ExcelServiceProvider',
         Yajra\Datatables\DatatablesServiceProvider::class,
