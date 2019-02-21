@@ -2,7 +2,7 @@
 /node_modules
 /public/storage
 /storage
-/config/*
+/config
 /config/app.php
 Homestead.yaml
 Homestead.json

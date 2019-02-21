@@ -964,6 +964,7 @@ class GRNSController extends Controller {
             $sum_prts_packages = 0;
             $sum_st_packages = 0;
 
+
             foreach ($stock_details as $key => $value) {
                 $prts_packages = 0;
                 $prts_bags = $value->prts_bags;
@@ -977,13 +978,15 @@ class GRNSController extends Controller {
                 $sum_st_packages += $value->st_packages;
             }
 
+            
+
             $diffrence = abs($sum_prts_packages - $sum_st_packages);
             $percentage_diff = ($diffrence/$sum_prts_packages) * 100;
             $error = 0;
-
+            
             if ($percentage_diff > 0) {
                 $error = $percentage_diff;
-            }           
+            }      
 
             return response()->json([
                 'error' => $error
