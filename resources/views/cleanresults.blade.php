@@ -447,13 +447,20 @@
 				</div>
 
 				<div class="row">
-		            <div class="form-group col-md-6">
+		            <div class="form-group col-md-12">
 		            	<button type="submit" id ="outturns_in_instruction" name="outturns_in_instruction" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalContentView'onclick='displayInstructionDetails(event, this)' data-dprtname='{$value->dprt_name}'>View Instruction</button>
 					</div>	
-
-		            <div class="form-group col-md-6">
+				</div>
+				<div class="row">
+		            <div class="form-group col-md-12">
 						<button type="submit" id ="batchdetails" name="batchdetails" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalBatchCenter' onclick='displayBatch()' data-dprtname='{$value->dprt_name}'>Add Batch</button>
 					</div>	
+				</div>
+				<div class="row">					
+		            <div class="form-group col-md-12">
+						<button type="button" name="printresults" class="btn btn-lg btn-success btn-block" onclick='printResults()' >Print Results</button>	           		
+		            </div>	
+
 				</div>	
 
 
@@ -809,10 +816,17 @@
 			        </div>	
 			        <div class="form-group col-md-6">
 		                <label>Palette (KGS)</label>
-		                <input class="form-control"  id="pallet_kgs"  name="pallet_kgs" value="">	
+		                <input class="form-control"  id="pallet_kgs"  name="pallet_kgs">	
 			        </div>
 			    </div>
 
+
+		        <div class="row">
+			        <div class="form-group col-md-6">
+		                <label>Sample (KGS)</label>
+		                <input class="form-control"  id="sample"  name="sample">	
+			        </div>
+		    	</div>
 
 				<div class="row">	
 			        <div class="form-group col-md-6" id="btn_weight">
@@ -920,6 +934,11 @@ $( "#outturns_in_instruction" ).click(function(event){
 $( "#batchdetails" ).click(function(event){
 	event.preventDefault();
 })
+function printResults(){
+	var ref_no = $('#ref_no').val();
+	var url = '{{ route('bulking.printResults',['ref_no'=>":ref_no"]) }}';
+	url = url.replace(':ref_no', ref_no);
+}
 
 teams = JSON.parse(teams)
 	$(document).ready(function (){ 
@@ -1092,23 +1111,23 @@ teams = JSON.parse(teams)
 	}
 
 	function getInstructed(value){
-		var process = value.value
+		var process = value.value;
 
 		var url = '{{ route('bulking.getInstructed',['process'=>":process"]) }}';
 
-				url = url.replace(':process', process);
+		url = url.replace(':process', process);
 
-				var dialog = bootbox.dialog({
-					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
-  					backdrop: true,
-					closeButton: true,
-					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-				});
-						$.ajax({
-						url: url,
-						type: 'GET',
-						dataType: "json",
-						}).success(function(response) {
+		var dialog = bootbox.dialog({
+			onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
+				backdrop: true,
+			closeButton: true,
+			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+		});
+		$.ajax({
+		url: url,
+		type: 'GET',
+		dataType: "json",
+		}).success(function(response) {
 
 						
 							console.log(response)
@@ -1309,6 +1328,7 @@ teams = JSON.parse(teams)
 			var pallet_kgs = $('#pallet_kgs').val();
 			var material = $('#material').val();
 			var grower = $('#grower').val();
+			var sample = $('#sample').val();
 
 			if (batch_kilograms_hidden == '') {
 				batch_kilograms_hidden = batch_kilograms;
@@ -1354,7 +1374,7 @@ teams = JSON.parse(teams)
 			if(package_weight_diffrence > 0){
 				//var alert_error = confirm("The packages and weight diffrence is high, do you still wish to continue ?");
 				//if (alert_error == true) {
-				var url="{{ route('cleanresuls.addBatch',['ref_no'=>":ref_no", 'warehouse'=>":warehouse", 'weigh_scales'=>":weigh_scales",'zone'=>":zone", 'packaging'=>":packaging", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'pallet_kgs'=>":pallet_kgs", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'material'=>":material", 'grower'=>":grower"]) }}";
+				var url="{{ route('cleanresuls.addBatch',['ref_no'=>":ref_no", 'warehouse'=>":warehouse", 'weigh_scales'=>":weigh_scales",'zone'=>":zone", 'packaging'=>":packaging", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'pallet_kgs'=>":pallet_kgs", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'material'=>":material", 'grower'=>":grower", 'sample'=>":sample"]) }}";
 
 				url = url.replace(':ref_no', ref_no);
 				url = url.replace(':warehouse', warehouse);
@@ -1368,6 +1388,7 @@ teams = JSON.parse(teams)
 				url = url.replace(':selectedColumn', selectedColumn);
 				url = url.replace(':material', material);
 				url = url.replace(':grower', grower);
+				url = url.replace(':sample', sample);
 
 
 				var dialog = bootbox.alert({
@@ -1393,7 +1414,7 @@ teams = JSON.parse(teams)
 				//}
 			} else {
 
-				var url="{{ route('cleanresuls.addBatch',['ref_no'=>":ref_no", 'warehouse'=>":warehouse", 'weigh_scales'=>":weigh_scales",'zone'=>":zone", 'packaging'=>":packaging", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'pallet_kgs'=>":pallet_kgs", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'material'=>":material", 'grower'=>":grower"]) }}";
+				var url="{{ route('cleanresuls.addBatch',['ref_no'=>":ref_no", 'warehouse'=>":warehouse", 'weigh_scales'=>":weigh_scales",'zone'=>":zone", 'packaging'=>":packaging", 'packages_batch'=>":packages_batch", 'batch_kilograms'=>":batch_kilograms", 'pallet_kgs'=>":pallet_kgs", 'selectedRow'=>":selectedRow", 'selectedColumn'=>":selectedColumn", 'material'=>":material", 'grower'=>":grower", 'sample'=>":sample"]) }}";
 
 				url = url.replace(':ref_no', ref_no);
 				url = url.replace(':warehouse', warehouse);
@@ -1407,7 +1428,7 @@ teams = JSON.parse(teams)
 				url = url.replace(':selectedColumn', selectedColumn);
 				url = url.replace(':material', material);
 				url = url.replace(':grower', grower);
-
+				url = url.replace(':sample', sample);
 
 				var dialog = bootbox.alert({
 					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'

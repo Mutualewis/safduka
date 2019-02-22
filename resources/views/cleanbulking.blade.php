@@ -128,6 +128,9 @@
 		$reference = NULL;
 	}
 
+	if (!isset($instruction)) {
+		$instruction = NULL;
+	}
 
 	if (!isset($active_season)) {
 		$active_season = NULL;
@@ -136,6 +139,11 @@
 
 	if (!isset($outturn)) {
 		$outturn = NULL;
+	}
+
+
+	if (!isset($process)) {
+		$process = NULL;
 	}
 
 
@@ -259,7 +267,7 @@
 
 		            <div class="form-group col-md-3">
 		            	<label>Bulking Season</label>
-		                <select class="form-control" name="Bulking_season">
+		                <select class="form-control" id="bulking_season" name="bulking_season">
 						<option value="">Season</option>
 							@if (count($Season) > 0)
 										@foreach ($Season->all() as $season)
@@ -297,15 +305,8 @@
 
 				<div class="row">
 					<div class="form-group col-md-3">
-	        			<label>Bulk Mark</label>
-	                    <div class="form-group">
-	                        <input type="text" class="form-control" name="mark" id ="mark" placeholder="Mark..."  value="{{ old('mark').$mark }}" ></input>
-	                       
-	                    </div>
-	                </div>
-					<div class="form-group col-md-3">
 		            	<label>Grower</label>
-		                <select class="form-control" name="grower">
+		                <select class="form-control" id="grower"  name="grower"  onchange = "setMark()">
 		               		<option value="">---select grower---</option>
 							@if (count($growers) > 0)
 										@foreach ($growers->all() as $grower)
@@ -320,8 +321,15 @@
 		                </select>
 		            </div>
 					<div class="form-group col-md-3">
+	        			<label>Bulk Mark</label>
+	                    <div class="form-group">
+	                        <input type="text" class="form-control" name="mark" id ="mark" placeholder="Mark..."  value="{{ old('mark').$mark }}" ></input>
+	                       
+	                    </div>
+	                </div>
+					<div class="form-group col-md-3">
 		            	<label>Grade</label>
-		                <select class="form-control" name="material">
+		                <select class="form-control" id="material" name="material">
 		               		<option value="">---select grade---</option>
 							@if (count($material) > 0)
 										@foreach ($material->all() as $materials)
@@ -355,6 +363,13 @@
 				</div>
 
 		        <div class="row">
+					<div class="form-group col-md-3">
+	        			<label>Instruction Number</label>
+	                    <div class="form-group">
+	                        <input type="text" class="form-control" name="instruction" id ="instruction" placeholder="Instruction No..."  value="{{ old('instruction').$instruction }}" ></input>
+	                       
+	                    </div>
+	                </div>
 
 		            <div class="form-group col-md-3">
 		                <label>New Row</label>
@@ -529,15 +544,24 @@
 <script>
 	
 	$(document).ready(function (){ 
-		setTable()
+		setTable();
 
    });
+
+	function setMark(){
+		var grower = $("#grower").find('option:selected').text();
+		var result = grower.match(/\((.*)\)/);
+		$("#mark").val(result[1]);
+	}
+
 function setTable(){
 	$("#stocks-table").dataTable().fnDestroy();
 	localStorage.clear();
 
 	var countryID = document.getElementById("country").value;
 	var ref_no = document.getElementById("outturn").value;
+
+	refreshDetails(ref_no);
 
 	if (countryID == "") {
 		countryID = 0;
@@ -793,6 +817,9 @@ function setTable(){
         },
 
         });
+
+	
+
 }
 
 
@@ -800,8 +827,40 @@ function setTable(){
 
 <script>
 	
-		
-		
+		function refreshDetails(ref_no){
+
+			var process = ref_no;
+			var bulking_season = $('#bulking_season').val();
+			var url = '{{ route('bulking.getBulkDetails',['process'=>":process", 'bulking_season'=>":bulking_season"]) }}';
+			url = url.replace(':process', process);
+			url = url.replace(':bulking_season', bulking_season);
+
+
+			$.ajax({
+			url: url,
+			type: 'GET',
+			dataType: "json",
+			}).success(function(response) {
+				console.log(response.st_outturn);
+
+				$("#outturn").val(response.st_outturn);
+				$("#grower").val(response.cgr_id).prop('selected', true);
+				$("#mark").val(response.st_mark);
+				$("#material").val(response.mt_id).prop('selected', true);
+				$("#instruction").val(response.pbk_reference_name);
+				$("#warehouse").val(response.warehouse_id).prop('selected', true);
+				
+				$('#totalWeight').html(response.st_net_weight);
+				$('#total_bags').html(response.st_bags);
+				$('#total_pkts').html(response.st_pockets);
+					
+			}).error(function(error) {
+				console.log(error)
+			});
+
+		}
+			
+
 		// validate signup form on keyup and submit
 		 $("#cleanbulkingform").validate({
 			rules: {
@@ -1000,7 +1059,7 @@ function setTable(){
 			var url = '{{ route('bulking.saveCleanBulk') }}';
 				console.log(url)
 				var country = $('[name="country"]').val();
-				var outt_season = $('[name="Bulking_season"]').val();
+				var outt_season = $('[name="bulking_season"]').val();
 				var outturn = $('[name="outturn"]').val();
 				var mark = $('[name="mark"]').val();
 				var grower = $('[name="grower"]').val();
@@ -1010,10 +1069,12 @@ function setTable(){
 				var zone = $('[name="new_zone"]').val();
 				var warehouse = $('[name="warehouse"]').val();
 				var material = $('[name="material"]').val();
+				var instruction = $('[name="instruction"]').val();
+
 
 				
 				
-				var formdata = { country: country, outt_season: outt_season,outturn: outturn, mark: mark, grower: grower, material: material, date: date , new_row: row, new_column: column, new_zone : zone, warehouse : warehouse }
+				var formdata = { country: country, outt_season: outt_season,outturn: outturn, mark: mark, grower: grower, material: material, date: date , new_row: row, new_column: column, new_zone : zone, warehouse : warehouse , instruction : instruction }
 
 				var dialog = bootbox.dialog({
 					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
