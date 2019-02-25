@@ -261,12 +261,12 @@
 	        			<label>Instruction Number</label>
 		                <select class="form-control" name="ref_no" id="ref_no" onchange="getInstructed(this)">
 		                	<option></option> 
-							@if (isset($provisionalbulk) && count($provisionalbulk) > 0)
-										@foreach ($provisionalbulk->all() as $value)
+							@if (isset($bulkinstructions) && count($bulkinstructions) > 0)
+										@foreach ($bulkinstructions->all() as $value)
 											@if ($rfid ==  $value->id)
-												<option value="{{ $value->id }}" selected="selected">{{ $value->pbk_instruction_number }}</option>
+												<option value="{{ $value->id }}" selected="selected">{{ $value->st_outturn}}</option>
 											@else
-												<option value="{{ $value->id }}">{{ $value->pbk_instruction_number }}</option>
+												<option value="{{ $value->id }}">{{ $value->st_outturn}}</option>
 											@endif
 
 										@endforeach
@@ -458,7 +458,7 @@
 				</div>
 				<div class="row">					
 		            <div class="form-group col-md-12">
-						<button type="button" name="printresults" class="btn btn-lg btn-success btn-block" onclick="printResults()" >Print Results</button>	           		
+						<button type="submit" name="printresults" class="btn btn-lg btn-success btn-block" onclick="printResults()" >Print Results</button>	           		
 		            </div>	
 
 				</div>	
@@ -985,6 +985,7 @@
 							'<hr><div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">An error occured while attempting to complete process. Contact Database Team</i></div>');
 			});
 	}
+
 	function getResults(value){
 		var process = value;
 		var coffee_grower = $('#grower');
@@ -1207,33 +1208,7 @@
 		var ref_no = $('#ref_no').val();
 		var url = '{{ route('bulking.printResults',['ref_no'=>":ref_no"]) }}';
 		url = url.replace(':ref_no', ref_no);
-		alert(url);
 	}
-</script>
-
-<script type="text/javascript">
-	var autosubmit = <?php echo json_encode($autosubmit); ?>;
-	var teams = null;
-
-	var teamcount = 0;
-
-	$( "#outturns_in_instruction" ).click(function(event){
-		event.preventDefault();
-	})
-
-	$( "#batchdetails" ).click(function(event){
-		event.preventDefault();
-	})
-
-
-	teams = JSON.parse(teams);
-	$(document).ready(function (){ 
-		// if(autosubmit){
-		// 	$( "#processingresultsform" ).submit();
-		// }
-		$('#ref_no').select2();
-		$('#grower').select2();
-	});
 
 
 	function fetchWeight()
@@ -1263,6 +1238,15 @@
 		}).error(function(error) {
 			console.log(error)
 		});  
+
+	}
+	function closeBootBox () {
+
+		var $timeout = 2000;
+
+		window.setTimeout(function(){
+		    bootbox.hideAll();
+		}, $timeout);		
 
 	}
 
@@ -1317,6 +1301,35 @@
 			console.log(error)
 		});  
 	}
+
+</script>
+
+<script type="text/javascript">
+	var autosubmit = <?php echo json_encode($autosubmit); ?>;
+	var teams = null;
+
+	var teamcount = 0;
+
+	$( "#outturns_in_instruction" ).click(function(event){
+		event.preventDefault();
+	})
+
+	$( "#batchdetails" ).click(function(event){
+		event.preventDefault();
+	})
+
+
+	teams = JSON.parse(teams);
+	$(document).ready(function (){ 
+		// if(autosubmit){
+		// 	$( "#processingresultsform" ).submit();
+		// }
+		$('#ref_no').select2();
+		$('#grower').select2();
+	});
+
+
+
 
 	$( "#submitbatch" ).on('click', function(){
 
@@ -1433,6 +1446,8 @@
 				url = url.replace(':grower', grower);
 				url = url.replace(':sample', sample);
 
+				alert(url);
+
 				var dialog = bootbox.alert({
 					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 				}).css({'opacity': '0.2', 'font-weight' : 'bold', color: '#F00', 'font-size': '2em', 'filter': 'alpha(opacity=50)' /* For IE8 and earlier */} );
@@ -1454,101 +1469,101 @@
 				
 			}
 
-		event.preventDefault();
+		// saveResult();
 	});
 
-	$("#processingresultsform").validate({
-			rules: {
-				material: "required",
-				outturn: "required",
-				grower: "required",
-				batch_weight : "required",
-				Bulking_season: "required",
-				warehouse: "required",
-				mark: {
-					required: true,
-					minlength: 2
-				},
-				// password: {
-				// 	required: true,
-				// 	minlength: 5
-				// },
-				// confirm_password: {
-				// 	required: true,
-				// 	minlength: 5,
-				// 	equalTo: "#password"
-				// },
-				// email: {
-				// 	required: true,
-				// 	email: true
-				// },
-				topic: {
-					required: ".newsletter:checked",
-					minlength: 1
-				},
-				// agree: "required"
-			},
-			messages: {
-				material: "Please select a grade",
-				ref_no: "Please enter bulk outturn",
-				weight: "Please enter bulk outturn",
-				grower: "Please select a grower",
-				mark: {
-					required: "Please enter grower mark",
-					minlength: "Mark must consist of at least 2 characters"
-				},
-				Bulking_season: "Please select a valid bulking season",
-				warehouse: "Please select a warehouse",
-				// password: {
-				// 	required: "Please provide a password",
-				// 	minlength: "Your password must be at least 5 characters long"
-				// },
-				// confirm_password: {
-				// 	required: "Please provide a password",
-				// 	minlength: "Your password must be at least 5 characters long",
-				// 	equalTo: "Please enter the same password as above"
-				// },
-				// email: "Please enter a valid email address",
-				// agree: "Please accept our policy",
-				// topic: "Please select at least 2 topics"
-			},
-			submitHandler: function(event) {
-				//event.preventDefault();
+	// $("#processingresultsform").validate({
+	// 		rules: {
+	// 			material: "required",
+	// 			outturn: "required",
+	// 			grower: "required",
+	// 			batch_weight : "required",
+	// 			Bulking_season: "required",
+	// 			warehouse: "required",
+	// 			mark: {
+	// 				required: true,
+	// 				minlength: 2
+	// 			},
+	// 			// password: {
+	// 			// 	required: true,
+	// 			// 	minlength: 5
+	// 			// },
+	// 			// confirm_password: {
+	// 			// 	required: true,
+	// 			// 	minlength: 5,
+	// 			// 	equalTo: "#password"
+	// 			// },
+	// 			// email: {
+	// 			// 	required: true,
+	// 			// 	email: true
+	// 			// },
+	// 			topic: {
+	// 				required: ".newsletter:checked",
+	// 				minlength: 1
+	// 			},
+	// 			// agree: "required"
+	// 		},
+	// 		messages: {
+	// 			material: "Please select a grade",
+	// 			ref_no: "Please enter bulk outturn",
+	// 			weight: "Please enter bulk outturn",
+	// 			grower: "Please select a grower",
+	// 			mark: {
+	// 				required: "Please enter grower mark",
+	// 				minlength: "Mark must consist of at least 2 characters"
+	// 			},
+	// 			Bulking_season: "Please select a valid bulking season",
+	// 			warehouse: "Please select a warehouse",
+	// 			// password: {
+	// 			// 	required: "Please provide a password",
+	// 			// 	minlength: "Your password must be at least 5 characters long"
+	// 			// },
+	// 			// confirm_password: {
+	// 			// 	required: "Please provide a password",
+	// 			// 	minlength: "Your password must be at least 5 characters long",
+	// 			// 	equalTo: "Please enter the same password as above"
+	// 			// },
+	// 			// email: "Please enter a valid email address",
+	// 			// agree: "Please accept our policy",
+	// 			// topic: "Please select at least 2 topics"
+	// 		},
+	// 		submitHandler: function(event) {
+	// 			//event.preventDefault();
 				
-				var error =false;
-				var alertnone = false;
+	// 			var error =false;
+	// 			var alertnone = false;
 				
-				if(alertnone){
-					return false
-				}
-				var batch_weight = $('[name="batch_weight"]').val();
-				var str ='weight : '+ batch_weight +' </br>'
+	// 			if(alertnone){
+	// 				return false
+	// 			}
+	// 			var batch_weight = $('[name="batch_weight"]').val();
+	// 			var str ='weight : '+ batch_weight +' </br>'
 			    
 	
 			
-				var confirm = false
-				bootbox.confirm({ 
-				size: "large",
-				message: "Are you sure? <br> "+str, 
-				callback: function(result){ 
-					if(result){
-						saveResult()
-					}
-				 }
-				})
+	// 			var confirm = false
+	// 			bootbox.confirm({ 
+	// 			size: "large",
+	// 			message: "Are you sure? <br> "+str, 
+	// 			callback: function(result){ 
+	// 				if(result){
+	// 					saveResult()
+	// 				}
+	// 			 }
+	// 			})
   
-				console.log(confirm)
-				if(!confirm){
-					return false;
-				}else{
+	// 			console.log(confirm)
+	// 			if(!confirm){
+	// 				return false;
+	// 			}else{
 
-				}
-				return false
+	// 			}
+	// 			return false
 				
 
-				return
-			}
-	});
+	// 			return
+	// 		}
+	// });
 
 
 	function saveResult(){
