@@ -785,6 +785,10 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 		<li role="presentation">
 			<a href="#tab-flavour" aria-controls="#tab-flavour" role="tab" data-toggle="tab">Flavour</a>
 		</li>
+
+		<li role="presentation">
+			<a href="#tab-taint" aria-controls="#tab-taint" role="tab" data-toggle="tab">Taint</a>
+		</li>
 	   
 		<li role="presentation">
 			<a href="#tab-cupquality" aria-controls="#tab-cupquality" role="tab" data-toggle="tab">Quality</a>
@@ -941,7 +945,51 @@ if (isset($coffeeclass) && count($coffeeclass) > 0){
 
 		</div>
 
-		
+		<div role="tabpanel" class="tab-pane" class="tab-pane" id="tab-taint">
+
+			<div class="row">
+				<div class="form-group col-md-6">
+
+					<table align="left">		                	
+						<?php
+
+							if (isset($taints) && count($taints) > 0){
+
+								$count = 0;
+
+								foreach ($taints->all() as $value){
+
+									$count += 1;
+
+									if ($count > 3) {
+
+										$count = 1;
+
+										echo "</tr>";
+
+										echo "<tr>";
+
+									} else if ($count == 0) {
+
+										echo "<tr>";
+
+									}
+
+									echo '<td><label><input type="checkbox" id="tnt'.$value->id.'" name="taint" value="'.$value->id.'">&nbsp&nbsp'.$value->qp_parameter.'</input>&nbsp&nbsp </label></td>';
+
+								}
+
+
+							}
+
+						?>	      
+						</tr>          	
+					</table>
+
+				</div>
+			</div>
+
+		</div>
 
 		<div role="tabpanel" class="tab-pane" class="tab-pane" id="tab-cupquality">
 

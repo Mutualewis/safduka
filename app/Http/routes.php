@@ -372,6 +372,11 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		Route::get('/transferownership', 'TransferOwnershipController@transferOwnershipForm'); 
 		Route::post('/transferownership', 'TransferOwnershipController@transferOwnership');
 		Route::get('/transferownership/getstockview', ['as'=>'transferownership.getstockview','uses'=>'TransferOwnershipController@getstockview']); 
+
+		Route::get('/editoutturns', 'ParchmentController@getOutturnGrid');
+		Route::get('/editoutturnsedit', 'ParchmentController@EditOutturn');
+		Route::patch('/editoutturnsedit', 'ParchmentController@EditOutturn');
+		Route::delete('/editoutturnsedit', 'ParchmentController@EditOutturn');
 });
 
 

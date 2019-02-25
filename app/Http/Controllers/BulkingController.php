@@ -561,6 +561,9 @@ class BulkingController extends Controller {
                
                     StockMill::where('st_bulk_id', '=', $st_bulk_id)
                          ->update(['st_bulk_id' => null, 'st_bulked_by' => null]);
+                    StockMill::where('st_bulk_id', '=', $st_bulk_id)
+                         ->update(['st_bulk_id' => null, 'st_bulked_by' => null]);
+
                     Activity::log('Removed stock items from bulk ' . $st_bulk_id . 'Outurn' . $ref_no );
                     //StockMill::where('id', '=', $st_bulk_id)
                     //     ->delete();
@@ -597,12 +600,17 @@ class BulkingController extends Controller {
                     Activity::log('Inserted parchment bulk ' . $st_bulk_id . ' outturn ' . $ref_no);
                     $st_outt_bulk_id = Outturns::insertGetId([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages,'mt_id'=>$material, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $stockitemdetails->pty_id, 'st_is_bulk' => 1]);
 
+                    StockMill::where('st_bulk_id', '=', $st_bulk_id)
+                    ->update([ 'outt_id' => $st_outt_bulk_id]);
+
                     Activity::log('Inserted parchment bulk ' . $st_bulk_id . ' outturn ' . $ref_no);
                 }else{
                     StockMill::where('st_bulk_id', '=', $st_bulk_id)
                     ->update([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages,'mt_id'=>$material, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $stockitemdetails->pty_id, 'st_is_bulk' => 1]);
                     Outturns::where('st_bulk_id', '=', $st_bulk_id)
                     ->update([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages,'mt_id'=>$material, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $stockitemdetails->pty_id, 'st_is_bulk' => 1]);
+                    StockMill::where('st_bulk_id', '=', $st_bulk_id)
+                    ->update([ 'outt_id' => $st_outt_bulk_id]);
 
                  Activity::log('Updated parchment bulk ' . $st_bulk_id . ' st_outturn ' . $ref_no);
                 }
@@ -617,9 +625,10 @@ class BulkingController extends Controller {
                          $outt_det = StockMill::where('id', '=', $value->id);
                         if($outt_id = null){
                             $outt_id = $outt_det->outt_id;
+                            Outturns::where('id', '=', $outt_id)
+                            ->update(['st_bulk_id' => $st_bulk_id, 'st_bulked_by' => $user]);
                         }
-                        Outturns::where('id', '=', $value->id)
-                        ->update(['st_bulk_id' => $st_bulk_id, 'st_bulked_by' => $user]);
+                       
                         
                         Activity::log('Updated bulking information information on stock id ' . $value->id . ' st_bulk_id ' . $st_bulk_id .' bulked by ' .$user);
                     }

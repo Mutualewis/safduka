@@ -113,7 +113,9 @@ class QualityController extends Controller {
 
 		$acidities = quality_parameters::where('qg_id', '7')->orderBy('qp_parameter', 'ASC')->get();
     	
-    	$flavours = quality_parameters::where('qg_id', '10')->orderBy('qp_parameter', 'ASC')->get();
+		$flavours = quality_parameters::where('qg_id', '10')->orderBy('qp_parameter', 'ASC')->get();
+		
+		$taints = quality_parameters::where('qg_id', '9')->orderBy('qp_parameter', 'ASC')->get();
     	
 		$bodies = quality_parameters::where('qg_id', '8')->orderBy('qp_parameter', 'ASC')->get();
 
@@ -252,7 +254,9 @@ class QualityController extends Controller {
 		$acidities = quality_parameters::where('qg_id', '7')->orderBy('qp_parameter', 'ASC')->get();
     	
     	$flavours = quality_parameters::where('qg_id', '10')->orderBy('qp_parameter', 'ASC')->get();
-    	
+		
+		$taints = quality_parameters::where('qg_id', '9')->orderBy('qp_parameter', 'ASC')->get();
+
 		$bodies = quality_parameters::where('qg_id', '8')->orderBy('qp_parameter', 'ASC')->get();
 
     	$processing = processing::where('prcss_auction', '1')->get();
@@ -278,7 +282,7 @@ class QualityController extends Controller {
 		$coffeequality = quality_parameters::where('qg_id', '11')->orderBy('qp_parameter', 'ASC')->get();
 		$screensanalysis = analysis_categories::orderBy('id', 'ASC')->get();
 
-    	return View::make('cataloguequalitydetails2', compact('id', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'largest', 'greensize', 'greencolor', 'greendefects', 'processing', 'cupscore', 'rawscore', 'screens', 'seller', 'sale', 'sale_lots', 'serve', 'timeout', 'partchment', 'cupscorecomments', 'coffeequality', 'acidities', 'bodies', 'flavours', 'screensanalysis', 'partchment_types', 'coffeeclass'));
+    	return View::make('cataloguequalitydetails2', compact('id', 'Season', 'country', 'CoffeeGrade', 'Warehouse', 'Mill', 'Certification', 'largest', 'greensize', 'greencolor', 'greendefects', 'processing', 'cupscore', 'rawscore', 'screens', 'seller', 'sale', 'sale_lots', 'serve', 'timeout', 'partchment', 'cupscorecomments', 'coffeequality', 'acidities', 'bodies', 'flavours', 'screensanalysis', 'partchment_types', 'coffeeclass', 'taints'));
 
     }
 

@@ -42,6 +42,7 @@ use Ngea\agent;
 use Ngea\Material;
 use Ngea\StockWarehouse;
 use Ngea\StockMill;
+use Ngea\Outturns;
 use Ngea\ParchmentType;
 use Ngea\Thresholds;
 use Ngea\AgentCategory;
@@ -283,6 +284,85 @@ class ParchmentController extends Controller {
                         ->update(['gr_confirmed_by' => null]);
             return redirect()->action('ParchmentController@getParchmentGrnGrid');
     }
+
+    public function getOutturnGrid()
+    {
+        $filter = \DataFilter::source(Outturns::with('partchmenttype'));
+        $filter->add('st_outturn','Outturn', 'text');
+        //$filter->add('grn.gr_number','Grn number','text');
+        // $filter->add('publication_date','publication date','daterange')->format('m/d/Y', 'en');
+        $filter->submit('search');
+        $filter->reset('reset');
+        $filter->build();
+
+        $grid = \DataGrid::source($filter);
+        
+        $grid->add('id','ID', true)->style("width:100px");
+        $grid->add('st_outturn','Outturn');
+        
+        $grid->add('st_mark','Mark');
+        $grid->add('{{ $partchmenttype->pty_name }}','Parchment Type', 'pty_name');
+        $grid->add('st_gross','Gross Weight');
+        $grid->add('st_net_weight','Net Weight');
+        $grid->add('st_packages','Packages');
+        $grid->add('st_bags','Bags');
+        $grid->add('st_pockets','Pockets');
+        $grid->add('empty_bag_weight','Empty Bag Weight');
+        //$grid->add('{!! str_limit($body,4) !!}','Body');
+        // $grid->add('{{ $grn->gr_number }}','Grn', 'grn_id');
+        //$grid->add('{{ implode(", ", $categories->pluck("name")->all()) }}','Categories');
+
+        $grid->edit('editoutturnsedit', 'Edit','show|modify|delete');
+        $grid->link('/editoutturnsedit/edit',"New Item", "TR");
+        $grid->orderBy('id','desc');
+        $grid->paginate(10);
+
+        $grid->row(function ($row) {
+            $row->cell('st_outturn')->style("font-weight:bold");
+        //    if ($row->cell('id')->value == 20) {
+        //        $row->style("background-color:#CCFF66");
+        //    } elseif ($row->cell('id')->value > 15) {
+        //        $row->cell('st_outturn')->style("font-weight:bold");
+        //        $row->style("color:#f00");
+        //    }
+        });
+        
+        return  view('editparchment', compact('filter','grid'));
+    }
+
+    public function EditOutturn()
+    {
+        if (\Input::get('do_delete')==1) return  "not the first";
+        
+        $edit = \DataEdit::source(new Outturns());
+        $edit->label('Edit Outturn Parchment Item');
+        // $edit->link("editparchment/filter","Stock", "TR")->back();
+        // $edit->add('title','Title', 'text')->rule('required|min:5');
+
+        // $edit->add('body','Body', 'redactor');
+        // $edit->add('detail.note','Note', 'textarea')->attributes(array('rows'=>2));
+        $edit->add('st_outturn','Outturn', 'text');
+        $edit->add('st_moisture','Moisture', 'text');
+        $edit->add('st_net_weight','Net Weight', 'number');
+        $edit->add('st_mark','Mark', 'text');
+        $edit->add('st_gross','Gross Weight', 'number');
+        $edit->add('st_packages','Packages', 'number');
+        $edit->add('st_bags','Bags', 'number');
+        $edit->add('st_pockets','Pockets', 'number');
+        $edit->add('cgr_id','Grower','select')->options(coffeegrower::orderBy('cgr_grower')->pluck("cgr_grower", "id")->all());
+        $edit->add('pty_id','Partchmant Type','select')->options(ParchmentType::orderBy('pty_name')->pluck("pty_name", "id")->all());
+        $edit->add('mt_id','Material','select')->options(Material::orderBy('mt_name')->pluck("mt_name", "id")->all());
+        $edit->add('grn_id','Grn','select')->options(Grn::orderBy('gr_number')->pluck("gr_number", "id")->all());
+        // $edit->add('author_id','Author','select')->options(Author::pluck("firstname", "id")->all());
+        // $edit->add('publication_date','Date','date')->format('d/m/Y', 'it');
+        // $edit->add('photo','Photo', 'image')->move('uploads/demo/')->fit(240, 160)->preview(120,80);
+        // $edit->add('public','Public','checkbox');
+        // $edit->add('categories.name','Categories','tags');
+
+        return $edit->view('editparchmentedit', compact('edit'));
+
+    }
+
 
 
 }
