@@ -306,11 +306,14 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 		
 		Route::get('/cleanbulkresults', 'CleanBulkingController@cleanResultsForm'); 	
 		Route::post('/cleanbulkresults', 'CleanBulkingController@cleanResults');
-		Route::get('/cleanresuls/addBatch/{ref_no}/{warehouse}/{weigh_scales}/{zone}/{packaging}/{packages_batch}/{batch_kilograms}/{pallet_kgs}/{selectedRow}/{selectedColumn}/{material}/{grower bn}', ['as'=>'cleanresuls.addBatch','uses'=>'CleanBulkingController@addBatch']);
+		Route::get('/cleanresuls/addBatch/{ref_no}/{warehouse}/{weigh_scales}/{zone}/{packaging}/{packages_batch}/{batch_kilograms}/{pallet_kgs}/{selectedRow}/{selectedColumn}/{material}/{grower}/{sample}', ['as'=>'cleanresuls.addBatch','uses'=>'CleanBulkingController@addBatch']);
 
 		
 		Route::get('/bulking/getInstructed/{process}', ['as'=>'bulking.getInstructed','uses'=>'CleanBulkingController@getInstructed']); 
 		Route::get('/bulking/getResults/{process}', ['as'=>'bulking.getResults','uses'=>'CleanBulkingController@getResults']); 
+		Route::get('/bulking/getBulkDetails/{process}/{bulking_season}', ['as'=>'bulking.getBulkDetails','uses'=>'CleanBulkingController@getBulkDetails']); 
+		Route::get('/bulking/printResults/{ref_no}', ['as'=>'bulking.printResults','uses'=>'CleanBulkingController@printResults']); 
+
 
 
 		Route::get('/stocksallclean', 'StocksCleanGridController@stockAllAndCleanGrid');

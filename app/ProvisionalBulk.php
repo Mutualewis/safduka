@@ -21,6 +21,6 @@ class ProvisionalBulk extends Model {
 	 */ 
 	// Code  Mark  Type Total_Weight cgr_date_added		
 	
-	protected $fillable = ['id', 'ctr_id', 'csn_id', 'sct_id', 'prcss_id', 'pbk_instruction_number', 'pbk_reference_name', 'pbk_weight_in', 'pbk_other_instructions', 'pbk_weight_processed', 'pbk_confirmed_by', 'cgrad_id', 'bs_id', 'pbk_date', 'created_at', 'updated_at'];
+	protected $fillable = ['id', 'ctr_id', 'csn_id', 'sct_id', 'prcss_id', 'st_wr_id', 'pbk_instruction_number', 'pbk_reference_name', 'pbk_weight_in', 'pbk_other_instructions', 'pbk_weight_processed', 'pbk_confirmed_by', 'cgrad_id', 'bs_id', 'pbk_date', 'created_at', 'updated_at'];
            
 }
