@@ -724,7 +724,7 @@
 
 			        <div class="form-group col-md-6">
 		                <label>Weight (KGS)</label>
-		                <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" value="{{ old('batch_kilograms').$batch_kilograms  }}" disabled>
+		                <input class="form-control"  id="batch_kilograms"  name="batch_kilograms" value="{{ old('batch_kilograms').$batch_kilograms  }}">
 		                <input type="hidden"  class="form-control"  id="batch_kilograms_hidden"  name="batch_kilograms_hidden" value="{{ old('batch_kilograms')  }}" >
 			        </div>
 			    </div>

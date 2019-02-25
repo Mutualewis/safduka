@@ -1037,7 +1037,7 @@ class CleanBulkingController extends Controller {
 
             $pdf = PDF::loadView('pdf.print_clean_results', compact('st_outturn','st_mark', 'mt_name', 'instruction_number', 'st_bags_instructed', 'st_pockets_instructed', 'st_net_weight_instructed', 'certification', 'pkg_name', 'st_bags_results', 'st_pockets_results', 'st_net_weight_results', 'st_gross', 'st_bulk_gain', 'st_bulk_loss', 'user_name', 'sample', 'location', 'creation_date'));
 
-            return $pdf->stream('print_clean_results.pdf');
+            return $pdf->download('print_clean_results.pdf');
 
 
         

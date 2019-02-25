@@ -641,12 +641,13 @@ class QualityController extends Controller {
 					
 						$sumkilos = 0;
 						$sumweightedml = 0;
-						
+						$weighted_ml = null;
 					foreach($st_ids as $key => $value){
 						$stock_mill_details = StockMill::where('id',$value)->first();
 						$st_net_weight = $stock_mill_details->st_net_weight;
 						$sumkilos += $st_net_weight;
 						$quality_ml_details = quality_details::where('st_mill_id', $value)->first();
+						
 						if($quality_ml_details != null)
 						{
 						$mc = $quality_ml_details->ml;

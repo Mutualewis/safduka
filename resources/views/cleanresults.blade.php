@@ -448,17 +448,17 @@
 
 				<div class="row">
 		            <div class="form-group col-md-12">
-		            	<button type="submit" id ="outturns_in_instruction" name="outturns_in_instruction" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalContentView'onclick='displayInstructionDetails(event, this)' data-dprtname='{$value->dprt_name}'>View Instruction</button>
+		            	<button type="button" id ="outturns_in_instruction" name="outturns_in_instruction" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalContentView'onclick='displayInstructionDetails(event, this)' data-dprtname='{$value->dprt_name}'>View Instruction</button>
 					</div>	
 				</div>
 				<div class="row">
 		            <div class="form-group col-md-12">
-						<button type="submit" id ="batchdetails" name="batchdetails" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalBatchCenter' onclick='displayBatch()' data-dprtname='{$value->dprt_name}'>Add Batch</button>
+						<button type="button" id ="batchdetails" name="batchdetails" class="btn btn-lg btn-warning btn-block" data-toggle='modal' data-target='#menuModalBatchCenter' onclick='displayBatch()' data-dprtname='{$value->dprt_name}'>Add Batch</button>
 					</div>	
 				</div>
 				<div class="row">					
 		            <div class="form-group col-md-12">
-						<button type="button" name="printresults" class="btn btn-lg btn-success btn-block" onclick='printResults()' >Print Results</button>	           		
+						<button type="button" name="printresults" class="btn btn-lg btn-success btn-block" onclick="printResults()" >Print Results</button>	           		
 		            </div>	
 
 				</div>	
@@ -921,33 +921,127 @@
 @push('scripts')
 <script src="{{ asset("assets/select2/select2.min.js") }}" type="text/javascript"></script>
 <script type="text/javascript" charset="utf8" src="{{ asset("assets/js/jqvalidator/jquery.validate.js") }}" ></script>
-<script>
-var autosubmit = <?php echo json_encode($autosubmit); ?>;
-var teams = null;
 
-var teamcount = 0;
+<script type="text/javascript">
+	
+	function getInstructed(value){
+		// $("#grower").val(1).change();
+		var process = value.value;
 
-$( "#outturns_in_instruction" ).click(function(event){
-	event.preventDefault();
-})
+		var url = '{{ route('bulking.getInstructed',['process'=>":process"]) }}';
 
-$( "#batchdetails" ).click(function(event){
-	event.preventDefault();
-})
-function printResults(){
-	var ref_no = $('#ref_no').val();
-	var url = '{{ route('bulking.printResults',['ref_no'=>":ref_no"]) }}';
-	url = url.replace(':ref_no', ref_no);
-}
+		url = url.replace(':process', process);
 
-teams = JSON.parse(teams)
-	$(document).ready(function (){ 
-		// if(autosubmit){
-		// 	$( "#processingresultsform" ).submit();
-		// }
-		$('#ref_no').select2();
-		$('#grower').select2();
-	})
+		var dialog = bootbox.dialog({
+			onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
+				backdrop: true,
+			closeButton: true,
+			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+		});
+		$.ajax({
+		url: url,
+		type: 'GET',
+		dataType: "json",
+		}).success(function(response) {
+		console.log(response)
+		var html = '';
+
+		var st_net_weight = 0;
+		var st_bags = 0;
+		var st_pockets = 0
+
+		$.each( response, function( key, value ) {
+			//console.log(value)
+			st_net_weight += parseInt(value.st_net_weight);
+			st_bags += parseInt(value.st_bags);
+			st_pockets += parseInt(value.st_pockets);
+
+			html = html+'<tr>'
+			html = html+'<td>'+value.st_outturn+'</td>';
+			html = html+'<td>'+value.st_mark+'</td>';
+			html = html+'<td>'+value.mt_name+'</td>';
+			html = html+'<td>'+value.st_net_weight+'</td>';
+			html = html+'<td>'+value.st_bags+'</td>';
+			html = html+'<td>'+value.st_pockets+'</td>';
+			html = html+'</tr>';
+			});         	 
+
+
+			html = html+'<tr>'
+			html = html+'<td></td>';
+			html = html+'<td></td>';
+			html = html+'<td></td>';
+			html = html+'<td>'+st_net_weight+'</td>';
+			html = html+'<td>'+st_bags+'</td>';
+			html = html+'<td>'+st_pockets+'</td>';
+			html = html+'</tr>';
+		
+			$('#tabledata').html(html)
+				getResults(process)
+				dialog.modal('hide')	
+			}).error(function(error) {
+				console.log(error)
+				dialog.find('.bootbox-body').html('<div class="progress"></div>'+
+							'<hr><div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">An error occured while attempting to complete process. Contact Database Team</i></div>');
+			});
+	}
+	function getResults(value){
+		var process = value;
+		var coffee_grower = $('#grower');
+		console.log(process)
+		var url = '{{ route('bulking.getResults',['process'=>":process"]) }}';
+		url = url.replace(':process', process);
+
+		var dialog = bootbox.dialog({
+			onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
+				backdrop: true,
+			closeButton: true,
+			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+		});
+		$.ajax({
+		url: url,
+		type: 'GET',
+		dataType: "json",
+		}).success(function(response) {
+
+		
+							
+		var html = '';
+		$.each( response, function( key, value ) {
+			console.log(value)
+
+
+			$("#grower").val(value.cgr_id).change();
+			$("#material").val(value.mt_id).change();
+			// coffee_grower.val(value.cgr_id).prop('selected', true);
+
+			html = html+'<tr>'
+			html = html+'<td>'+value.st_outturn+'</td>';
+			html = html+'<td>'+value.st_mark+'</td>';
+			html = html+'<td>'+value.mt_name+'</td>';
+			html = html+'<td>'+value.st_net_weight+'</td>';
+			html = html+'<td>'+value.st_bags+'</td>';
+			html = html+'<td>'+value.st_pockets+'</td>';
+			html = html+'<td>'+value.agt_name+'</td>';
+			html = html+'<td>'+value.row+'</td>';
+			html = html+'<td>'+value.col+'</td>';
+			html = html+'<td>'+value.btc_zone+'</td>';
+			html = html+'</tr>'
+			});   
+
+
+
+
+			$('#tabledataresult').html(html)
+
+				dialog.modal('hide')	
+			}).error(function(error) {
+				console.log(error)
+			dialog.find('.bootbox-body').html('<div class="progress"></div>'+
+						'<hr><div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">An error occured while attempting to complete process. Contact Database Team</i></div>');
+			});
+
+	}
 	function fetch_url_scales(warehouse) {
 		var url="{{ route('arrivalinformation.getScales',['warehouse'=>":warehouse"]) }}";
 		url = url.replace(':warehouse', warehouse);
@@ -1081,154 +1175,67 @@ teams = JSON.parse(teams)
 					closeButton: true,
 					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
 				});
-						$.ajax({
-						url: url,
-						type: 'GET',
-						dataType: "json",
-						}).success(function(response) {
-
-						console.log(response)
-						
-		var sel_body = '';
-		$.each( response, function( key, value ) {
-			sel_body = sel_body+'<option value="'+value.id+'">'+value.loc_row+'</option>';
-			});         	 
-		
-			$('#loc_row').append(sel_body)
-
-			var selcol_body = '';
-		$.each( response, function( key, value ) {
-			selcol_body = selcol_body+'<option value="'+value.id+'">'+value.loc_column+'</option>';
-			});         	 
-		
-			$('#loc_col').append(selcol_body)
-							dialog.modal('hide')	
-						}).error(function(error) {
-							console.log(error)
-						dialog.find('.bootbox-body').html('<div class="progress"></div>'+
-									'<hr><div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">An error occured while attempting to complete process. Contact Database Team</i></div>');
-						});
-	}
-
-	function getInstructed(value){
-		var process = value.value;
-
-		var url = '{{ route('bulking.getInstructed',['process'=>":process"]) }}';
-
-		url = url.replace(':process', process);
-
-		var dialog = bootbox.dialog({
-			onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
-				backdrop: true,
-			closeButton: true,
-			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-		});
-		$.ajax({
-		url: url,
-		type: 'GET',
-		dataType: "json",
-		}).success(function(response) {
-
-						
-							console.log(response)
-		var html = '';
-
-		var st_net_weight = 0;
-		var st_bags = 0;
-		var st_pockets = 0
-
-		$.each( response, function( key, value ) {
-			//console.log(value)
-			st_net_weight += parseInt(value.st_net_weight);
-			st_bags += parseInt(value.st_bags);
-			st_pockets += parseInt(value.st_pockets);
-
-			html = html+'<tr>'
-			html = html+'<td>'+value.st_outturn+'</td>';
-			html = html+'<td>'+value.st_mark+'</td>';
-			html = html+'<td>'+value.mt_name+'</td>';
-			html = html+'<td>'+value.st_net_weight+'</td>';
-			html = html+'<td>'+value.st_bags+'</td>';
-			html = html+'<td>'+value.st_pockets+'</td>';
-			html = html+'</tr>';
-			});         	 
-
-
-			html = html+'<tr>'
-			html = html+'<td></td>';
-			html = html+'<td></td>';
-			html = html+'<td></td>';
-			html = html+'<td>'+st_net_weight+'</td>';
-			html = html+'<td>'+st_bags+'</td>';
-			html = html+'<td>'+st_pockets+'</td>';
-			html = html+'</tr>';
-		
-			$('#tabledata').html(html)
-			getResults(process)
-							dialog.modal('hide')	
-						}).error(function(error) {
-							console.log(error)
-						dialog.find('.bootbox-body').html('<div class="progress"></div>'+
-									'<hr><div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">An error occured while attempting to complete process. Contact Database Team</i></div>');
-						});
-	}
-	function getResults(value){
-		var process = value;
-		var coffee_grower = $('#grower');
-		console.log(process)
-		var url = '{{ route('bulking.getResults',['process'=>":process"]) }}';
-		url = url.replace(':process', process);
-
-		var dialog = bootbox.dialog({
-			onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
-				backdrop: true,
-			closeButton: true,
-			message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-		});
 				$.ajax({
 				url: url,
 				type: 'GET',
 				dataType: "json",
 				}).success(function(response) {
 
+						console.log(response)
+						
+				var sel_body = '';
+				$.each( response, function( key, value ) {
+					sel_body = sel_body+'<option value="'+value.id+'">'+value.loc_row+'</option>';
+					});         	 
 				
-							
-		var html = '';
-		$.each( response, function( key, value ) {
-			console.log(value)
+					$('#loc_row').append(sel_body)
 
-
-			$("#grower").val(value.cgr_id).change();
-			$("#material").val(value.mt_id).change();
-			// coffee_grower.val(value.cgr_id).prop('selected', true);
-
-			html = html+'<tr>'
-			html = html+'<td>'+value.st_outturn+'</td>';
-			html = html+'<td>'+value.st_mark+'</td>';
-			html = html+'<td>'+value.mt_name+'</td>';
-			html = html+'<td>'+value.st_net_weight+'</td>';
-			html = html+'<td>'+value.st_bags+'</td>';
-			html = html+'<td>'+value.st_pockets+'</td>';
-			html = html+'<td>'+value.agt_name+'</td>';
-			html = html+'<td>'+value.row+'</td>';
-			html = html+'<td>'+value.col+'</td>';
-			html = html+'<td>'+value.btc_zone+'</td>';
-			html = html+'</tr>'
-			});   
-
-
-
-
-			$('#tabledataresult').html(html)
-
-							dialog.modal('hide')	
-						}).error(function(error) {
-							console.log(error)
+					var selcol_body = '';
+				$.each( response, function( key, value ) {
+					selcol_body = selcol_body+'<option value="'+value.id+'">'+value.loc_column+'</option>';
+					});         	 
+				
+					$('#loc_col').append(selcol_body)
+						dialog.modal('hide')	
+					}).error(function(error) {
+						console.log(error)
 						dialog.find('.bootbox-body').html('<div class="progress"></div>'+
 									'<hr><div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">An error occured while attempting to complete process. Contact Database Team</i></div>');
-						});
-
+				});
 	}
+	function printResults(){
+		var ref_no = $('#ref_no').val();
+		var url = '{{ route('bulking.printResults',['ref_no'=>":ref_no"]) }}';
+		url = url.replace(':ref_no', ref_no);
+		alert(url);
+	}
+</script>
+
+<script type="text/javascript">
+	var autosubmit = <?php echo json_encode($autosubmit); ?>;
+	var teams = null;
+
+	var teamcount = 0;
+
+	$( "#outturns_in_instruction" ).click(function(event){
+		event.preventDefault();
+	})
+
+	$( "#batchdetails" ).click(function(event){
+		event.preventDefault();
+	})
+
+
+	teams = JSON.parse(teams);
+	$(document).ready(function (){ 
+		// if(autosubmit){
+		// 	$( "#processingresultsform" ).submit();
+		// }
+		$('#ref_no').select2();
+		$('#grower').select2();
+	});
+
+
 	function fetchWeight()
 	{
 		var weigh_scales = $('#weigh_scales').val();
@@ -1286,8 +1293,6 @@ teams = JSON.parse(teams)
 
 	}
 
-
-
 	function checkIfReset()
 	{
 		var weigh_scales = $('#weigh_scales').val();
@@ -1311,8 +1316,6 @@ teams = JSON.parse(teams)
 		}).error(function(error) {
 			console.log(error)
 		});  
-
-
 	}
 
 	$( "#submitbatch" ).on('click', function(){
@@ -1452,7 +1455,7 @@ teams = JSON.parse(teams)
 			}
 
 		event.preventDefault();
-	})
+	});
 
 	$("#processingresultsform").validate({
 			rules: {
@@ -1545,78 +1548,71 @@ teams = JSON.parse(teams)
 
 				return
 			}
-		});
+	});
 
-		// propose username by combining first- and lastname
-		// $("#username").focus(function() {
-		// 	var firstname = $("#firstname").val();
-		// 	var lastname = $("#lastname").val();
-		// 	if (firstname && lastname && !this.value) {
-		// 		this.value = firstname + "." + lastname;
-		// 	}
-		// });
-		function saveResult(){
-			//post
-			var url = '{{ route('bulking.saveCleanBulkResult') }}';
-				console.log(url)
-				var country = $('[name="country"]').val();
-				var outt_season = $('[name="Bulking_season"]').val();
-				var ref_no = $('[name="ref_no"]').val();
-				var batch_weight = $('[name="batch_weight"]').val();
-				var bags = $('[name="batch_bags"]').val();
-				var pockets = $('[name="pockets"]').val();
-				var row = $('[name="row"]').val();
-				var column = $('[name="column"]').val();
-				var zone = $('[name="zone"]').val();
-				var warehouse = $('[name="warehouse"]').val();
-				
-				var grower = $('[name="grower"]').val();
-				var material = $('[name="material"]').val();
-				
-				var formdata = { country: country, outt_season: outt_season,ref_no: ref_no, grower: grower, weight : batch_weight, material: material , new_row: row, new_column: column, new_zone : zone, warehouse : warehouse , bags : bags , pockets : pockets }
 
-				var dialog = bootbox.dialog({
-					onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
-  					backdrop: true,
-					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
-				});
+	function saveResult(){
+		//post
+		var url = '{{ route('bulking.saveCleanBulkResult') }}';
+			console.log(url)
+			var country = $('[name="country"]').val();
+			var outt_season = $('[name="Bulking_season"]').val();
+			var ref_no = $('[name="ref_no"]').val();
+			var batch_weight = $('[name="batch_weight"]').val();
+			var bags = $('[name="batch_bags"]').val();
+			var pockets = $('[name="pockets"]').val();
+			var row = $('[name="row"]').val();
+			var column = $('[name="column"]').val();
+			var zone = $('[name="zone"]').val();
+			var warehouse = $('[name="warehouse"]').val();
+			
+			var grower = $('[name="grower"]').val();
+			var material = $('[name="material"]').val();
+			
+			var formdata = { country: country, outt_season: outt_season,ref_no: ref_no, grower: grower, weight : batch_weight, material: material , new_row: row, new_column: column, new_zone : zone, warehouse : warehouse , bags : bags , pockets : pockets }
 
-				var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');		
-				let data = {_token: CSRF_TOKEN, data: formdata, }
-				console.log(JSON.stringify(data))
-				$.ajax({
-					method: "POST",
-					url: url,
-					data: data,
-					dataType: 'json',
-					}).done(function(response) {
+			var dialog = bootbox.dialog({
+				onEscape: function() { console.log("Escape. We are escaping, we are the escapers, meant to escape, does that make us escarpments!"); },
+					backdrop: true,
+				message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
+			});
+
+			var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');		
+			let data = {_token: CSRF_TOKEN, data: formdata, }
+			console.log(JSON.stringify(data))
+			$.ajax({
+				method: "POST",
+				url: url,
+				data: data,
+				dataType: 'json',
+				}).done(function(response) {
+					
+					if(response.updated) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
+						getResults(ref_no);
+					} else if(response.inserted) {
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
+						getResults(ref_no);
 						
-						if(response.updated) {
-							dialog.find('.bootbox-body').html('<div class="text-center" style="color: purple"><i class="fa fa-exclamation-triangle fa-2x">  Updated</i></div>');
-							getResults(ref_no);
-						} else if(response.inserted) {
-							dialog.find('.bootbox-body').html('<div class="text-center" style="color: green"><i class="fa fa-check fa-2x">  Saved</i></div>');
-							getResults(ref_no);
-							
-							//location.reload();
-						}else if(response.error) {
-							var msg = '';
-							$.each(response.errormsgs, function( index, value ) {
-							msg = msg +'<br>'+ value;
-						})
-							dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">'+msg +'</i></div>');
-							
-						}
-					}).error(function(error) {
-						console.error(error)
-						// var msg = '';
-						// $.each(response.errormsgs, function( index, value ) {
-						// 	msg = msg + value;
-						// })
-						// dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">'+msg +'</i></div>');
-						// closeBootBox();
-				});
-		}
+						//location.reload();
+					}else if(response.error) {
+						var msg = '';
+						$.each(response.errormsgs, function( index, value ) {
+						msg = msg +'<br>'+ value;
+					})
+						dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">'+msg +'</i></div>');
+						
+					}
+				}).error(function(error) {
+					console.error(error)
+					// var msg = '';
+					// $.each(response.errormsgs, function( index, value ) {
+					// 	msg = msg + value;
+					// })
+					// dialog.find('.bootbox-body').html('<div class="text-center" style="color: red"><i class="fa fa-exclamation-triangle fa-2x">'+msg +'</i></div>');
+					// closeBootBox();
+			});
+	}
 
 	$( "#generatechargesbtn" ).click(function(event){
 		event.preventDefault();
