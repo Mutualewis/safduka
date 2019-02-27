@@ -928,10 +928,9 @@ class CleanBulkingController extends Controller {
             $stock_warehouse = StockWarehouse::where('st_bulk_id', $stock_id)->get();
             if ($stock_warehouse != null) {
                 foreach ($stock_warehouse  as $key => $value) {
-
-                    $st_bags_instructed += $value->st_bags;
-                    $st_pockets_instructed += $value->st_pockets;
                     $st_net_weight_instructed += $value->st_net_weight;
+                    $st_bags_instructed += $value->st_bags;
+                    $st_pockets_instructed += ($value->st_net_weight%60);
 
                 }
             }
@@ -940,15 +939,22 @@ class CleanBulkingController extends Controller {
             $st_mark = $stockview->st_mark; 
             $mt_name = $stockview->mt_name;
             $instruction_number = $stockview->pbk_reference_name;
-            $st_bags_results = $stockview->st_bags;
-            $st_pockets_results = $stockview->st_pockets;
+            $instruction_number_clean = $stockview->stid;
+
+
             $st_net_weight_results = $stockview->st_net_weight;
+
+            $st_bags_results = floor($st_net_weight_results/60);
+            $st_pockets_results = ($st_net_weight_results%60);
+
+
             $st_gross = $stockview->st_gross;
             $certification = null;
             $pkg_name = $stockview->pkg_name;
             $st_bulk_gain = 0;
             $st_bulk_loss = 0;
             $sample = $stockview->st_sample;
+
             $location = $stockview->wr_name.'-'.$stockview->loc_row.$stockview->loc_column.$stockview->btc_zone; 
             
             $creation_date = $stockview->date;
@@ -956,12 +962,12 @@ class CleanBulkingController extends Controller {
 
 
 
-            if ($st_gross > $st_net_weight_instructed) {
-                $st_bulk_gain = $st_gross - $st_net_weight_instructed;
+            if ( ($st_net_weight_results + $sample) > $st_net_weight_instructed) {
+                $st_bulk_gain = ($st_net_weight_results + $sample) - $st_net_weight_instructed;
                 $st_bulk_loss = 0;
             } else {
                 $st_bulk_gain = 0;
-                $st_bulk_loss = $st_net_weight_instructed - $st_gross;
+                $st_bulk_loss = $st_net_weight_instructed - ($st_net_weight_results + $sample);
             } 
 
             $user_details = User::where('id', $stockview->usr_id)->first();
@@ -974,7 +980,7 @@ class CleanBulkingController extends Controller {
             $user_name = $person_details->per_fname. ' '. $person_details->per_sname; 
 
 
-            $pdf = PDF::loadView('pdf.print_clean_results', compact('st_outturn','st_mark', 'mt_name', 'instruction_number', 'st_bags_instructed', 'st_pockets_instructed', 'st_net_weight_instructed', 'certification', 'pkg_name', 'st_bags_results', 'st_pockets_results', 'st_net_weight_results', 'st_gross', 'st_bulk_gain', 'st_bulk_loss', 'user_name', 'sample', 'location', 'creation_date'));
+            $pdf = PDF::loadView('pdf.print_clean_results', compact('st_outturn','st_mark', 'mt_name', 'instruction_number', 'st_bags_instructed', 'st_pockets_instructed', 'st_net_weight_instructed', 'certification', 'pkg_name', 'st_bags_results', 'st_pockets_results', 'st_net_weight_results', 'st_gross', 'st_bulk_gain', 'st_bulk_loss', 'user_name', 'sample', 'location', 'creation_date', 'instruction_number_clean'));
 
             return $pdf->stream('print_clean_results.pdf');
 

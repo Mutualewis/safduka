@@ -15,7 +15,7 @@
 
 	    <div style="text-align: center; margin-top: 0.5cm;">
 		    <h2>
-		   		<?php echo strtoupper("Warehouse"); ?> - CLEAN BULKING RESULTS &nbsp;&nbsp;&nbsp;&nbsp; <?php echo 'CBR-'.$instruction_number; ?>
+		   		<?php echo strtoupper("Warehouse"); ?> - CLEAN BULKING RESULTS &nbsp;&nbsp;&nbsp;&nbsp; <?php echo 'CBR-'.$instruction_number_clean; ?>
 
 		    </h2>
 	    </div>
