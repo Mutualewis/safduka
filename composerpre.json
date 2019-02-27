@@ -6,7 +6,7 @@
     "type": "project",
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "5.4.*",
+        "laravel/framework": "5.2.*",
         "niklasravnsborg/laravel-pdf": "^1.1",
         "mgallegos/laravel-jqgrid": "dev-master",
         "nayjest/grids": "^1.3",
@@ -28,8 +28,8 @@
         "view-components/view-components": "^0.26.6",
         "doctrine/dbal": "^2.5",
         "league/fractal": "^0.17.0",
-        "zofe/rapyd": "~2.6",
-        "spatie/laravel-activitylog": "~2.6",
+        "zofe/rapyd": "^2.6",
+        "spatie/laravel-activitylog": "^2.6",
         "infyomlabs/laravel-generator": "5.2.x-dev",
         "infyomlabs/adminlte-templates": "5.2.x-dev"
     },
