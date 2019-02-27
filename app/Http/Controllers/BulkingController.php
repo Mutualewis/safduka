@@ -508,12 +508,12 @@ class BulkingController extends Controller {
                 $refid = StockMill::where('st_outturn', $ref_no)->first();
                 if($refid !=null){
                 $refid = $refid->id;
-                $stockview = StockViewALL::select('*')->where('st_bulk_id', $refid)->orWhereNull('bulked_by')->orderByRaw(DB::raw("FIELD(st_bulk_id, '$refid') DESC"));
+                $stockview = StockViewALLMill::select('*')->where('st_bulk_id', $refid)->orWhereNull('bulked_by')->orderByRaw(DB::raw("FIELD(st_bulk_id, '$refid') DESC"));
                 }else{
-                    $stockview = StockViewALL::select('*')->whereNull('bulked_by');
+                    $stockview = StockViewALLMill::select('*')->whereNull('bulked_by');
                 }
             } else {
-                $stockview = StockViewALL::select('*')->whereNull('bulked_by');
+                $stockview = StockViewALLMill::select('*')->whereNull('bulked_by');
             }
 
         } else {
