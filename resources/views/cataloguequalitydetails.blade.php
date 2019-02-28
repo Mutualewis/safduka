@@ -120,7 +120,6 @@
 		$comments = $qdetails->qltyd_comments;
 	}
 
-
 ?>
     <div class="col-md-12">
 	        <form role="form" method="POST" action="cataloguequalitydetails">
@@ -498,7 +497,7 @@
 
 						            <div class="form-group col-md-12">
 										<label>Comments</label>
-										<textarea class="form-control" rows="3" id="comments" name="comments" value = "{{ old('comments') }}" style="text-transform:uppercase; font-size: 15px; font-weight: bold;"><?php echo htmlspecialchars($comments); ?></textarea>
+										<textarea class="form-control" rows="3" id="comments" name="comments" value = "" style="text-transform:uppercase; font-size: 15px; font-weight: bold;"></textarea>
 						            </div>
 						        </div>	 
 
@@ -1259,9 +1258,9 @@
 					}
 
 
-					if (obj.overall_comments != null) {
+					if (obj.qltyd_comments != null) {
 
-						document.getElementById('comments').value = obj.overall_comments; 
+						document.getElementById('comments').value = obj.qltyd_comments; 
 
 					} else {
 
@@ -1291,7 +1290,7 @@ document.getElementById('ml').value = null;
 
 			} else {
 
-				document.getElementById('comments').value = null;
+				//document.getElementById('comments').value = null;
 
 				// document.getElementById('process').value =  0;
 
