@@ -385,3 +385,6 @@ Route::group(['middleware' => ['auth', 'countrysession']], function()
 
 
 
+
+
+Route::resource('products', 'ProductController');

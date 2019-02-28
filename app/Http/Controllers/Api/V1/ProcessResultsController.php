@@ -344,7 +344,12 @@ class ProcessResultsController extends Controller
         $outturnresultssum = null;
         
         $qdetails = quality_details::where('outt_id', $outt_id)->first();
-        
+        if($qdetails !=null){
+            $qadetails = QualityAnalysis::where('qltyd_id', $qid)->get();
+            if($qadetails ==null){
+               $qdetails = null; 
+            }
+        }
         if($qdetails !=null){
             $mc = $qdetails->mc;
             $ml = $qdetails->ml;
