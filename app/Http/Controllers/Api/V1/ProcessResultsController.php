@@ -219,7 +219,7 @@ class ProcessResultsController extends Controller
 
             Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
 
-                $message->to('jane.nyambura@nkg.coffee', 'Discrepancy : MILLING LOSS DMP')->subject('Discrepancy');
+                $message->to('jane.nyambura@nkg.coffee', 'Discrepancy : MILLING LOSS DMP ')->subject('Discrepancy : MILLING LOSS DMP ' .$outturn_details->st_outturn);
 
                 $message->cc('lewis.mutua@nkg.coffee');
                 $message->cc('john.gachunga@nkg.coffee');
@@ -388,7 +388,8 @@ class ProcessResultsController extends Controller
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
         
-                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy ')
+                        ->subject('Discrepancy SCR18 - Milling Loss '.$outturn_details->st_outturn);
         
                         $message->cc('lewis.mutua@nkg.coffee');
                         $message->cc('john.gachunga@nkg.coffee');
@@ -404,7 +405,8 @@ class ProcessResultsController extends Controller
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
         
-                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')
+                        ->subject('Discrepancy SCR16 - Milling Loss '.$outturn_details->st_outturn);
         
                         $message->cc('lewis.mutua@nkg.coffee');
                         $message->cc('john.gachunga@nkg.coffee');
@@ -420,7 +422,8 @@ class ProcessResultsController extends Controller
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
         
-                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')
+                        ->subject('Discrepancy SCR14 - Milling Loss '.$outturn_details->st_outturn);
         
                         $message->cc('lewis.mutua@nkg.coffee');
                         $message->cc('john.gachunga@nkg.coffee');
