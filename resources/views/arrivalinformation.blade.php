@@ -972,7 +972,6 @@
 		url_grns = url_grns.replace(':warehouse', warehouse);
 		grn_number.val('');
 		
-		alert(url_grns);
 
 		$.ajax({
 		url: url_grns,
@@ -1053,7 +1052,6 @@
 
 		var url="{{ route('arrivalinformation.reSetWeight',['weigh_scales'=>":weigh_scales"]) }}";
 		url = url.replace(':weigh_scales', weigh_scales);
-		alert(url);
 
 		$.ajax({
 		url: url,

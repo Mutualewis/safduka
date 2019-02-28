@@ -751,6 +751,7 @@ class CleanBulkingController extends Controller {
 
                 Activity::log('Inserted Provisional Bulk information with prid ' . $prid . ' prc ' . $prc . ' ref_no ' . $ref_no . ' weight_in ' . $weight_in );
             }
+
             if ($tobeprocessed != null) {
                
                 foreach ($tobeprocessed as $key => $value) {
@@ -855,7 +856,7 @@ class CleanBulkingController extends Controller {
         $growers = coffeegrower::all(['id', 'cgr_grower', 'cgr_code', 'cgr_mark']);
         $packaging = Packaging::all(['id', 'pkg_name', 'pkg_description']);
 
-        $bulkinstructions = StockWarehouse::whereNotNull('st_is_bulk')->orderBy('st_outturn')->get();
+        $bulkinstructions = StockWarehouse::whereNotNull('st_is_bulk')->whereNull('dp_id')->orderBy('st_outturn')->get();
         
         $sale_status = sale_status::all(['id', 'sst_name']);
         $warehouse = agent::where('agtc_id', 4)->orWhere('agtc_id', 1)->get();
@@ -999,6 +1000,7 @@ class CleanBulkingController extends Controller {
                 ->leftJoin('provisional_allocation_prall as prall', 'st.id', '=', "prall.st_wr_id" )
                 ->leftJoin('material_mt as mt', 'st.mt_id', '=', 'mt.id')
                 ->where('st.st_bulk_id', '=', $process)
+                ->groupBy('st.id')
                 ->get();
 
             }
@@ -1242,7 +1244,7 @@ class CleanBulkingController extends Controller {
             $user_data = Auth::user();
             $user = $user_data->id;
 
-            $prdetails = ProvisionalBulk::where('st_wr_id', $ref_no)->first();
+            $prdetails = StockWarehouse::where('id', $ref_no)->first();
 
             $grower_details = coffeegrower::where('id', $grower)->first();
             $mark = $grower_details->cgr_mark;
@@ -1260,7 +1262,7 @@ class CleanBulkingController extends Controller {
 
             if ($prdetails != null) {
 
-                $outturn = $prdetails->pbk_instruction_number;
+                $outturn = $prdetails->st_outturn;
                 $material_id = $material;
                 $warehouse_id = $warehouse;
 

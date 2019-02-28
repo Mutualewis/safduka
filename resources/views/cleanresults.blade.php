@@ -1446,7 +1446,6 @@
 				url = url.replace(':grower', grower);
 				url = url.replace(':sample', sample);
 
-				alert(url);
 
 				var dialog = bootbox.alert({
 					message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> Processing...</div>'
