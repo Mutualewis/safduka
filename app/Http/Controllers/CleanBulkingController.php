@@ -1242,7 +1242,7 @@ class CleanBulkingController extends Controller {
             $user_data = Auth::user();
             $user = $user_data->id;
 
-            $prdetails = ProvisionalBulk::where('st_wr_id', $ref_no)->first();
+            $prdetails = StockWarehouse::where('id', $ref_no)->first();
 
             $grower_details = coffeegrower::where('id', $grower)->first();
             $mark = $grower_details->cgr_mark;
@@ -1260,7 +1260,7 @@ class CleanBulkingController extends Controller {
 
             if ($prdetails != null) {
 
-                $outturn = $prdetails->pbk_instruction_number;
+                $outturn = $prdetails->st_outturn;
                 $material_id = $material;
                 $warehouse_id = $warehouse;
 

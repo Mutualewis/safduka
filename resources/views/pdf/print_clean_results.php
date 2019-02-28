@@ -10,7 +10,7 @@
 
     <body>
 	    <div style="text-align: center; border-bottom: 1px solid #000000; font-weight: bold; font-size: 13pt; margin-bottom: -20px;">
-    		<img src="<?php echo $_SERVER["DOCUMENT_ROOT"] . '/images/logocombinedik.png'; ?>" width="206mm" />
+    		<img src="<?php echo $_SERVER["DOCUMENT_ROOT"] . '/images/logocombined.png'; ?>" width="206mm" />
 	    </div>
 
 	    <div style="text-align: center; margin-top: 0.5cm;">

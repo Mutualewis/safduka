@@ -46,6 +46,7 @@ use Ngea\Stock;
 use Ngea\StockStatus;
 use Ngea\StockView;
 use Ngea\StockViewALL;
+use Ngea\StockViewALLMill;
 use Ngea\SalesContract;
 use Ngea\transporters;
 use Ngea\User;

@@ -176,10 +176,10 @@ return [
         Way\Generators\GeneratorsServiceProvider::class,
         Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
-        Laracasts\Flash\FlashServiceProvider::class,
-        Prettus\Repository\Providers\RepositoryServiceProvider::class,
-        \InfyOm\Generator\InfyOmGeneratorServiceProvider::class,
-        \InfyOm\AdminLTETemplates\AdminLTETemplatesServiceProvider::class, 
+        // Laracasts\Flash\FlashServiceProvider::class,
+        // Prettus\Repository\Providers\RepositoryServiceProvider::class,
+        // \InfyOm\Generator\InfyOmGeneratorServiceProvider::class,
+        // \InfyOm\AdminLTETemplates\AdminLTETemplatesServiceProvider::class, 
     ],
 
     /*
@@ -239,7 +239,7 @@ return [
         'Form'  => 'Collective\Html\FormFacade',
         'HTML'  => 'Collective\Html\HtmlFacade',
         'Grids'     => 'Nayjest\Grids\Grids',
-        'Flash'     => Laracasts\Flash\Flash::class,
+        // 'Flash'     => Laracasts\Flash\Flash::class,
         
         'Activity' => 'Spatie\Activitylog\ActivitylogFacade',
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
