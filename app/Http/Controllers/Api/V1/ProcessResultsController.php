@@ -388,12 +388,12 @@ class ProcessResultsController extends Controller
                 $scr14variance = abs(($scr14output_weight/ $output_weight*100)-$scr14);
 
                 if($scr18variance>2){
-                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR18-".$outturn_details->st_outturn, "difference"=>$scr18variance);    
+                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SC.18-".$outturn_details->st_outturn, "difference"=>$scr18variance);    
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) use ($outturn_details){
         
                         $message->to('jane.nyambura@nkg.coffee', 'Discrepancy ')
-                        ->subject('Discrepancy SCR18 - Milling Loss '.$outturn_details->st_outturn);
+                        ->subject('Discrepancy SC.18 - Milling Loss '.$outturn_details->st_outturn);
         
                         $message->cc('lewis.mutua@nkg.coffee');
                         $message->cc('john.gachunga@nkg.coffee');
@@ -405,12 +405,12 @@ class ProcessResultsController extends Controller
             
                 }
                 if($scr16variance>2){
-                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR16-".$outturn_details->st_outturn, "difference"=>$scr16variance);    
+                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SC.16-".$outturn_details->st_outturn, "difference"=>$scr16variance);    
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) use ($outturn_details){
         
                         $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')
-                        ->subject('Discrepancy SCR16 - Milling Loss '.$outturn_details->st_outturn);
+                        ->subject('Discrepancy SC.16 - Milling Loss '.$outturn_details->st_outturn);
         
                         $message->cc('lewis.mutua@nkg.coffee');
                         $message->cc('john.gachunga@nkg.coffee');
@@ -422,12 +422,12 @@ class ProcessResultsController extends Controller
             
                 }
                 if($scr14variance>2){
-                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR14-".$outturn_details->st_outturn, "difference"=>$scr14variance);    
+                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SC.14-".$outturn_details->st_outturn, "difference"=>$scr14variance);    
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) use ($outturn_details){
         
                         $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')
-                        ->subject('Discrepancy SCR14 - Milling Loss '.$outturn_details->st_outturn);
+                        ->subject('Discrepancy SC.14 - Milling Loss '.$outturn_details->st_outturn);
         
                         $message->cc('lewis.mutua@nkg.coffee');
                         $message->cc('john.gachunga@nkg.coffee');
@@ -514,12 +514,12 @@ class ProcessResultsController extends Controller
                 $scr14variance = abs(($scr14output_weight/ $output_weight*100)-$scr14);
 
                 if($scr18variance>2){
-                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR18-".$outturn_details->st_outturn, "difference"=>$scr18variance);    
+                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SC.18-".$outturn_details->st_outturn, "difference"=>$scr18variance);    
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) use ($outturn_details){
         
                         $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')
-                        ->subject('Discrepancy SCR18 - Milling Loss '.$outturn_details->st_outturn);
+                        ->subject('Discrepancy SC.18 - Milling Loss '.$outturn_details->st_outturn);
         
                         $message->cc('lewis.mutua@nkg.coffee');
                         $message->cc('john.gachunga@nkg.coffee');
@@ -531,12 +531,12 @@ class ProcessResultsController extends Controller
             
                 }
                 if($scr16variance>2){
-                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR16-".$outturn_details->st_outturn, "difference"=>$scr16variance);    
+                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SC.16-".$outturn_details->st_outturn, "difference"=>$scr16variance);    
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) use ($outturn_details){
         
                         $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')
-                        ->subject('Discrepancy SCR16 - Milling Loss '.$outturn_details->st_outturn);
+                        ->subject('Discrepancy SC.16 - Milling Loss '.$outturn_details->st_outturn);
         
                         $message->cc('lewis.mutua@nkg.coffee');
                         $message->cc('john.gachunga@nkg.coffee');
@@ -548,12 +548,12 @@ class ProcessResultsController extends Controller
             
                 }
                 if($scr14variance>2){
-                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR14-".$outturn_details->st_outturn, "difference"=>$scr14variance);    
+                    $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SC.14-".$outturn_details->st_outturn, "difference"=>$scr14variance);    
 
                     Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) use ($outturn_details){
         
                         $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')
-                        ->subject('Discrepancy SCR14 - Milling Loss '.$outturn_details->st_outturn);
+                        ->subject('Discrepancy SC.14 - Milling Loss '.$outturn_details->st_outturn);
         
                         $message->cc('lewis.mutua@nkg.coffee');
                         $message->cc('john.gachunga@nkg.coffee');
