@@ -802,6 +802,7 @@ class GRNSController extends Controller {
                 $stock_item_id = $stock_details->id;
                 $stock_outt_id = $stock_details->outt_id;
                 $net_weight_batch = $batch_kilograms - $tare_batch;
+                $net_weight_batch = round($net_weight_batch);
                 $bags_batch = floor($net_weight_batch/60);
                 $pockets_batch = floor($net_weight_batch % 60);
                 $coffee_details = NULL;
@@ -863,7 +864,6 @@ class GRNSController extends Controller {
                 } else {
 
                     $preious_batch = Batch::where('st_id', $stock_item_id)->get();
-
                     $btid = Batch::insertGetId (
                     ['st_id' => $stock_item_id, 'btc_weight' => $batch_kilograms, 'btc_tare' => $tare_batch, 'btc_net_weight' => $net_weight_batch, 'btc_packages' => $packages_batch, 'btc_bags' => $bags_batch, 'btc_pockets' => $pockets_batch, 'ws_id' => $weigh_scales, 'btc_pallet_kgs' => $pallet_kgs]);
 
@@ -881,9 +881,9 @@ class GRNSController extends Controller {
                         }
 
                     }
-
                     $bags_batch = floor($net_weight_batch/60);
-                    $pockets_batch = floor($net_weight_batch % 60);         
+                    $pockets_batch = floor($net_weight_batch % 60); 
+
                     StockWarehouse::where('id', '=', $stock_item_id)
                                 ->update([ 'pkg_id' => $packaging, 'st_net_weight' => $net_weight_batch ,'st_tare' => $tare_batch, 'st_bags' => $bags_batch, 'st_pockets' => $pockets_batch, 'st_gross' => $batch_kilograms, 'st_packages' => $packages_batch]);
 
@@ -925,6 +925,7 @@ class GRNSController extends Controller {
             } 
             Grn::where('id', '=', $grn_id)
                     ->update(['gr_confirmed_by' => $user]);
+
             if($package_diffrence == NULL || $package_diffrence > 0){
 
                 $data = array('name'=>"Admin Department", "threshold_name"=>$threshold_name, "identifier"=>"GRN-".$grn_number, "diffrence"=>$package_diffrence);    
@@ -969,7 +970,7 @@ class GRNSController extends Controller {
                 $prts_packages = 0;
                 $prts_bags = $value->prts_bags;
                 $prts_pockets = $value->prts_pockets;
-                if ($prts_pockets != null || $prts_pockets > 0) {
+                if ($prts_pockets != null && $prts_pockets > 0) {
                     $prts_packages = $prts_bags + 1;
                 } else {
                     $prts_packages = $prts_bags;
@@ -977,7 +978,6 @@ class GRNSController extends Controller {
                 $sum_prts_packages += $prts_packages;
                 $sum_st_packages += $value->st_packages;
             }
-
             
 
             $diffrence = abs($sum_prts_packages - $sum_st_packages);
