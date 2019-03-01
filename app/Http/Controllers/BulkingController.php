@@ -606,12 +606,13 @@ class BulkingController extends Controller {
 
                     Activity::log('Inserted parchment bulk ' . $st_bulk_id . ' outturn ' . $ref_no);
                 }else{
+                    $st_details = StockMill::where('id', '=', $st_bulk_id)->first();
                     StockMill::where('id', '=', $st_bulk_id)
                     ->update([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages,'mt_id'=>$material, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $material, 'st_is_bulk' => 1]);
                     Outturns::where('st_outturn', '=', $ref_no)
                     ->update([ 'cgr_id' => $grower, 'csn_id' => $season, 'st_outturn' => $ref_no, 'st_mark' => $mark, 'st_packages'=>$batch_packages,'mt_id'=>$material, 'st_name' => $ref_no,'st_net_weight' => $weight_in, 'st_bags' => $stock_bags, 'st_pockets' => $stock_pockets, 'usr_id' => $user, 'pty_id' => $material, 'st_is_bulk' => 1]);
                     StockMill::where('id', '=', $st_bulk_id)
-                    ->update([ 'outt_id' => $st_outt_bulk_id]);
+                    ->update([ 'outt_id' => $st_details->outt_id]);
 
                  Activity::log('Updated parchment bulk ' . $st_bulk_id . ' st_outturn ' . $ref_no);
                 }
