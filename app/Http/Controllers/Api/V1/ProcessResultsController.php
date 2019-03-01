@@ -217,7 +217,7 @@ class ProcessResultsController extends Controller
 
             $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss ", "identifier"=>"DMP-Milling Loss".$outturn_details->st_outturn, "difference"=>$mlvariance);    
 
-            Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
+            Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message)  use ($outturn_details) {
 
                 $message->to('jane.nyambura@nkg.coffee', 'Discrepancy : MILLING LOSS DMP ')->subject('Discrepancy : MILLING LOSS DMP ' .$outturn_details->st_outturn);
 
@@ -249,6 +249,7 @@ class ProcessResultsController extends Controller
                 
             DB::rollback();
             $errormessages[] = $e->getMessage();
+            $errormessages[] = $e->getLine();
             return response()->json([
                 'message' => $errormessages
             ])
@@ -266,7 +267,7 @@ class ProcessResultsController extends Controller
         $outturnresultssum = null;
 
         $qdetails = quality_details::where('outt_id', $outt_id)->first();
-        
+       
         if($qdetails !=null){
             $mc = $qdetails->mc;
             $ml = $qdetails->ml;
@@ -283,6 +284,7 @@ class ProcessResultsController extends Controller
                 $mloutput = abs(($net_input_weight - $output_weight)/$net_input_weight);
                 $mlvariance = $mloutput*100 - $ml;
                 return $mlvariance;
+               
                 }else{
                     return null;
                 }
@@ -307,8 +309,10 @@ class ProcessResultsController extends Controller
                     $st_net_weight = $stock_mill_details->st_net_weight;
                     $sumkilos += $st_net_weight;
                     $quality_ml_details = quality_details::where('st_mill_id', $value)->first();
+                    $weighted_ml =null;
                     if($quality_ml_details != null)
-                    $mc = $quality_ml_details->ml;{
+                    {
+                    $mc = $quality_ml_details->ml;
                     $weighted_ml = $mc*$st_net_weight;
                     }
                     $sumweightedml += $weighted_ml;
@@ -386,7 +390,7 @@ class ProcessResultsController extends Controller
                 if($scr18variance>2){
                     $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR18-".$outturn_details->st_outturn, "difference"=>$scr18variance);    
 
-                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
+                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) use ($outturn_details){
         
                         $message->to('jane.nyambura@nkg.coffee', 'Discrepancy ')
                         ->subject('Discrepancy SCR18 - Milling Loss '.$outturn_details->st_outturn);
@@ -403,7 +407,7 @@ class ProcessResultsController extends Controller
                 if($scr16variance>2){
                     $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR16-".$outturn_details->st_outturn, "difference"=>$scr16variance);    
 
-                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
+                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) use ($outturn_details){
         
                         $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')
                         ->subject('Discrepancy SCR16 - Milling Loss '.$outturn_details->st_outturn);
@@ -420,7 +424,7 @@ class ProcessResultsController extends Controller
                 if($scr14variance>2){
                     $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR14-".$outturn_details->st_outturn, "difference"=>$scr14variance);    
 
-                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
+                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) use ($outturn_details){
         
                         $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')
                         ->subject('Discrepancy SCR14 - Milling Loss '.$outturn_details->st_outturn);
@@ -512,9 +516,10 @@ class ProcessResultsController extends Controller
                 if($scr18variance>2){
                     $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR18-".$outturn_details->st_outturn, "difference"=>$scr18variance);    
 
-                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
+                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) use ($outturn_details){
         
-                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')
+                        ->subject('Discrepancy SCR18 - Milling Loss '.$outturn_details->st_outturn);
         
                         $message->cc('lewis.mutua@nkg.coffee');
                         $message->cc('john.gachunga@nkg.coffee');
@@ -528,9 +533,10 @@ class ProcessResultsController extends Controller
                 if($scr16variance>2){
                     $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR16-".$outturn_details->st_outturn, "difference"=>$scr16variance);    
 
-                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
+                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) use ($outturn_details){
         
-                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')
+                        ->subject('Discrepancy SCR16 - Milling Loss '.$outturn_details->st_outturn);
         
                         $message->cc('lewis.mutua@nkg.coffee');
                         $message->cc('john.gachunga@nkg.coffee');
@@ -544,9 +550,10 @@ class ProcessResultsController extends Controller
                 if($scr14variance>2){
                     $data = array('name'=>"Admin Department", "threshold_name"=>"Milling Loss", "identifier"=>"SCR14-".$outturn_details->st_outturn, "difference"=>$scr14variance);    
 
-                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) {
+                    Mail::send(['text'=>'maildiscrepancydmp'], $data, function($message) use ($outturn_details){
         
-                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')->subject('Discrepancy');
+                        $message->to('jane.nyambura@nkg.coffee', 'Discrepancy')
+                        ->subject('Discrepancy SCR14 - Milling Loss '.$outturn_details->st_outturn);
         
                         $message->cc('lewis.mutua@nkg.coffee');
                         $message->cc('john.gachunga@nkg.coffee');
