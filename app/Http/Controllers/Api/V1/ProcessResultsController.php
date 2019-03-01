@@ -267,7 +267,7 @@ class ProcessResultsController extends Controller
         $outturnresultssum = null;
 
         $qdetails = quality_details::where('outt_id', $outt_id)->first();
-       
+        
         if($qdetails !=null){
             $mc = $qdetails->mc;
             $ml = $qdetails->ml;
@@ -277,12 +277,14 @@ class ProcessResultsController extends Controller
             $output_weight = DB::table('process_results_prts')
                 ->where('outt_id', $outt_id)
                 ->sum(DB::Raw('prts_bags*60+prts_pockets'));
+            
             if($output_weight != null){
                 $outturn_details = Outturns::where('id', '=', $outt_id)->first();
                 if($outturn_details != null){
                 $net_input_weight = $outturn_details->st_net_weight-$empty_bag_weight;
                 $mloutput = abs(($net_input_weight - $output_weight)/$net_input_weight);
                 $mlvariance = $mloutput*100 - $ml;
+                
                 return $mlvariance;
                
                 }else{
@@ -295,13 +297,14 @@ class ProcessResultsController extends Controller
             //get quality for related outturns
             //get quality using stock mill
             $outt_mill_details = StockMill::where('outt_id', $outt_id)->get();
-
+            
 				$sum_net_kilos = 0;
 				$st_ids = [];
 				foreach($outt_mill_details as $key => $valuestmill){
 					$sum_net_kilos += $valuestmill->st_net_weight;
 					$st_ids[] = $valuestmill->id;
                 }
+                
                 $sumkilos = 0;
 				$sumweightedml = 0;
                 foreach($st_ids as $key => $value){
@@ -329,6 +332,7 @@ class ProcessResultsController extends Controller
                 $net_input_weight = $outturn_details->st_net_weight-$empty_bag_weight;
                 $mloutput = abs(($net_input_weight - $output_weight)/$net_input_weight);
                 $mlvariance = $mloutput*100 - $outt_ml;
+                
                 return $mlvariance;
                 }else{
                     return null;
@@ -349,11 +353,12 @@ class ProcessResultsController extends Controller
         
         $qdetails = quality_details::where('outt_id', $outt_id)->first();
         if($qdetails !=null){
-            $qadetails = QualityAnalysis::where('qltyd_id', $qid)->get();
+            $qadetails = QualityAnalysis::where('qltyd_id', $qid)->first();
             if($qadetails ==null){
                $qdetails = null; 
             }
         }
+       
         if($qdetails !=null){
             $mc = $qdetails->mc;
             $ml = $qdetails->ml;
@@ -362,9 +367,9 @@ class ProcessResultsController extends Controller
             $qadetails = QualityAnalysis::where('qltyd_id', $qid)->get();
             $outturn_details = Outturns::where('id', '=', $outt_id)->first();
 
-            $scr18 = QualityAnalysis::select('qanl_value')->where('acat_id', 1)->where('qltyd_id', $qid)->first();;
+            $scr18 = QualityAnalysis::select('qanl_value')->where('acat_id', 1)->where('qltyd_id', $qid)->first();
             $scr18 =  isset($scr18->qanl_value) ? $scr18->qanl_value :null;
-            $scr16 = QualityAnalysis::select('qanl_value')->where('acat_id', 2)->where('qltyd_id', $qid)->first();;
+            $scr16 = QualityAnalysis::select('qanl_value')->where('acat_id', 2)->where('qltyd_id', $qid)->first();
             $scr16 =  isset($scr16->qanl_value) ? $scr16->qanl_value :null;
             $scr14 = QualityAnalysis::select('qanl_value')->where('acat_id', 3)->where('qltyd_id', $qid)->first();
             $scr14 =  isset($scr14->qanl_value) ? $scr14->qanl_value :null;
@@ -382,6 +387,7 @@ class ProcessResultsController extends Controller
             $scr14output_weight = DB::table('process_results_prts')
                 ->where('outt_id', $outt_id)->whereIn('prt_id', [12, 14, 15])
                 ->sum(DB::Raw('prts_bags*60+prts_pockets'));
+                
             if($output_weight != null){
                 $scr18variance = abs(($scr18output_weight/ $output_weight*100)-$scr18);
                 $scr16variance = abs(($scr16output_weight/ $output_weight*100)-$scr16);
