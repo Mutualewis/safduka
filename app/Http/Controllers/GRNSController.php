@@ -669,6 +669,7 @@ class GRNSController extends Controller {
             $cid = session('maincountry');
             $user_data = Auth::user();
             $user = $user_data->id;
+            $outt_number = strtoupper($outt_number);
 
 
             $grn_details = Grn::where('gr_number', $grn_number)->where('ctr_id', $cid)->where('agt_id', $warehouse)->first(); 
