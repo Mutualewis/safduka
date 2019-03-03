@@ -91,7 +91,7 @@ class DispatchController extends Controller {
         $dispatch_queue = DB::table('stock_warehouse_st AS st')
             ->select('*', 'st.id as stid')
             ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
-            // ->whereNotNull('st.st_to_dispatch')
+            ->whereNull('st.dp_id')
             ->get(); 
 
         return View::make('movementdispatch', compact('Season', 'country', 'weighbridge_ticket', 'grn_number', 'expected_arrival', 'rates', 'teams', 'active_season', 'growers', 'items', 'millers', 'material', 'basket', 'packaging', 'warehouse', 'role', 'admin', 'timeout', 'dispatch_type', 'dispatch_queue'));    
