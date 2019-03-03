@@ -510,6 +510,10 @@
 		var agent_id = $('#agent_id').val();
 		var outt_number_search = $('#outt_number_search').val();
 
+		if (agent_id == '' || agent_id == null) {
+			agent_id= 5;
+		}
+
 		var url="{{ route('movementdispatch.addDispatch',['warehouse'=>":warehouse", 'grn_number'=>":grn_number", 'weighbridgeTK'=>":weighbridgeTK", 'outt_season'=>":outt_season", 'dispatch_type'=>":dispatch_type", 'agent_id'=>":agent_id", 'outt_number_search'=>":outt_number_search"]) }}";			
 		url = url.replace(':warehouse', warehouse);
 		url = url.replace(':grn_number', grn_number);
@@ -1083,17 +1087,21 @@
 			url: url,
 			type: 'GET',
 			}).success(function(response) {
-				var $label = $("<label>").text(response.agent_name);
-				$label.appendTo(agent_type);
-				$("<br>").appendTo(agent_type);
+				var label = $("<label>").text(response.agent_name);
+				agent_type.empty();   
 
-				var sel = $('<select id ="agent_id" name ="agent_id" width="100%" >').appendTo(agent_type);
-				sel.append($("<option>").attr('value','').text(''));
+				if (response.agent_name != null) {
+					label.appendTo(agent_type);
+					$("<br>").appendTo(agent_type);
 
-				$.each(response.dispatchType,function(key, value) 
-				{
-					sel.append($("<option>").attr('value',value["dtid"]).text(value["agt_name"]));
-				});	
+					var sel = $('<select id ="agent_id" name ="agent_id" width="100%" >').appendTo(agent_type);
+					sel.append($("<option>").attr('value','').text(''));
+
+					$.each(response.dispatchType,function(key, value) 
+					{
+						sel.append($("<option>").attr('value',value["dtid"]).text(value["agt_name"]));
+					});		
+				}
 
 			}).error(function(error) {
 				console.log(error)
@@ -1197,7 +1205,6 @@
 
 		var url="{{ route('movementdispatch.getGrower',['outt_number_select'=>":outt_number_select"] ) }}";			
 		url = url.replace(':outt_number_select', outt_number_select);
-
 
 		$.ajax({
 		url: url,
