@@ -1409,6 +1409,10 @@
 
 	}
 
+
+
+	
+
 	function getOuttturns(){
 		var weighbridgeTK = $('#weighbridgeTK').val();
 		var outt_number_div = $('#outt_number_div');

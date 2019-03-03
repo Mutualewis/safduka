@@ -428,6 +428,42 @@ class GRNSController extends Controller {
 
     
     }
+
+    public function getOuttturnsArrival($grn_number){
+        try {
+
+            $outturns = DB::table('process_results_prts AS prts')
+                ->select('csn_season', 'prts.id as prtsid', 'st.st_outturn as outturn')
+                ->leftJoin('outturns_outt AS outt', 'outt.id', '=', 'prts.outt_id')                
+                ->leftJoin('stock_mill_st AS st', 'outt.id', '=', 'st.outt_id')
+                ->leftJoin('grn_gr AS grm', 'grm.id', '=', 'st.grn_id')
+                ->leftJoin('material_mt AS mt', 'mt.id', '=', 'st.mt_id')
+                ->leftJoin('processing_results_type_prt AS prt', 'prt.id', '=', 'prts.prt_id')
+                ->leftJoin('stock_warehouse_st AS stw', 'stw.prts_id', '=', 'prts.id')
+                ->leftJoin('grn_gr AS gr', 'gr.id', '=', 'stw.grn_id')
+                ->leftJoin('coffee_seasons_csn AS csn', 'csn.id', '=', 'st.csn_id')
+                ->whereNull('gr.gr_confirmed_by')
+                ->where('gr.gr_number', $grn_number)
+                ->orWhereNull('gr.gr_number')
+                ->whereNull('gr.gr_confirmed_by')
+                ->orderBy('st.st_outturn')
+                ->orderBy('st.mt_id')
+                ->groupBy('st.st_outturn', 'st.csn_id')
+                ->get(); 
+
+            return json_encode($outturns);                    
+        
+        }catch (\PDOException $e) {
+            return response()->json([
+                'exists' => false,
+                'inserted' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+
+
+    }
+
     
     public function getOuttturns(){
         try {

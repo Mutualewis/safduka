@@ -1847,7 +1847,8 @@
 		var coffee_grower = $('#coffee_grower');
 		var to_dispatch = $('#to_dispatch');
 		var to_dispatch_label = $('#to_dispatch_label');
-		
+		var grn_number = $('#grn_number').val();	
+	
 
 		if (weighbridgeTK == 1) {
 			outt_number.hide();			
@@ -1855,6 +1856,10 @@
 			deliverydetails.hide();			
 			// batchdetails.hide();			
 			var url="{{ route('arrivalinformationgrns.getOuttturns') }}";
+			//var url="{{ route('arrivalinformationgrns.getOuttturnsArrival',['grn_number'=>":grn_number"]) }}";
+			//url = url.replace(':grn_number', grn_number);
+
+			//alert(grn_number);
 
 			var sel = $('<select id ="outt_number_select" name ="outt_number_select" width="100%" onchange="getMaterialsInOutturn()" >').appendTo(outt_number_div);
 			sel.append($("<option>").attr('value','').text(''));
