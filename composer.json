@@ -30,7 +30,12 @@
         "league/fractal": "^0.17.0",
         "zofe/rapyd": "2.2.2",
         "infyomlabs/laravel-generator": "5.2.x-dev",
-        "infyomlabs/adminlte-templates": "5.2.x-dev"
+        "infyomlabs/adminlte-templates": "5.2.x-dev",
+        "safaricom/mpesa": "^1.0",
+        "anouar/paypalpayment": ">=3.0",
+        "predis/predis": "^1.1",
+        "twilio/sdk": "^5.33",
+        "aloha/twilio": "^4.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

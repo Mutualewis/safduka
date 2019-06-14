@@ -1,0 +1,92 @@
+[14-06-2019 02:45:57] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 02:45:58] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 02:46:00] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 200
+[14-06-2019 02:46:00] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/payments/payment
+[14-06-2019 02:46:01] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 02:46:03] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 400
+[14-06-2019 02:46:03] PayPal\Core\PayPalHttpConnection : ERROR: Got Http response code 400 when accessing https://api.sandbox.paypal.com/v1/payments/payment. {"name":"VALIDATION_ERROR","details":[{"field":"payer.funding_instruments[0].credit_card","issue":"Expiration date cannot be in the past."}],"message":"Invalid request. See details.","information_link":"https://developer.paypal.com/docs/api/payments/#errors","debug_id":"e9f6309dd124b"}
+[14-06-2019 02:46:19] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 02:46:20] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 02:46:22] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 200
+[14-06-2019 02:46:22] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/payments/payment
+[14-06-2019 02:46:23] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 02:46:24] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 400
+[14-06-2019 02:46:24] PayPal\Core\PayPalHttpConnection : ERROR: Got Http response code 400 when accessing https://api.sandbox.paypal.com/v1/payments/payment. {"name":"VALIDATION_ERROR","details":[{"field":"payer.funding_instruments[0].credit_card","issue":"Expiration date cannot be in the past."}],"message":"Invalid request. See details.","information_link":"https://developer.paypal.com/docs/api/payments/#errors","debug_id":"5561480626633"}
+[14-06-2019 02:52:09] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 02:52:11] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 02:52:12] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 200
+[14-06-2019 02:52:12] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/payments/payment
+[14-06-2019 02:52:13] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 02:52:15] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 400
+[14-06-2019 02:52:15] PayPal\Core\PayPalHttpConnection : ERROR: Got Http response code 400 when accessing https://api.sandbox.paypal.com/v1/payments/payment. {"name":"VALIDATION_ERROR","details":[{"field":"payer.funding_instruments[0].credit_card","issue":"Expiration date cannot be in the past."}],"message":"Invalid request. See details.","information_link":"https://developer.paypal.com/docs/api/payments/#errors","debug_id":"b66e32ead9290"}
+[14-06-2019 03:02:55] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 03:02:56] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:02:57] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 200
+[14-06-2019 03:02:57] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/payments/payment
+[14-06-2019 03:02:58] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:03:00] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 400
+[14-06-2019 03:03:00] PayPal\Core\PayPalHttpConnection : ERROR: Got Http response code 400 when accessing https://api.sandbox.paypal.com/v1/payments/payment. {"name":"VALIDATION_ERROR","details":[{"field":"payer.funding_instruments[0].credit_card","issue":"Expiration date cannot be in the past."}],"message":"Invalid request. See details.","information_link":"https://developer.paypal.com/docs/api/payments/#errors","debug_id":"176cac75bcd8d"}
+[14-06-2019 03:03:51] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 03:03:52] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:03:54] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 200
+[14-06-2019 03:03:54] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/payments/payment
+[14-06-2019 03:03:55] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:03:56] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 400
+[14-06-2019 03:03:56] PayPal\Core\PayPalHttpConnection : ERROR: Got Http response code 400 when accessing https://api.sandbox.paypal.com/v1/payments/payment. {"name":"VALIDATION_ERROR","details":[{"field":"payer.funding_instruments[0].credit_card","issue":"Expiration date cannot be in the past."}],"message":"Invalid request. See details.","information_link":"https://developer.paypal.com/docs/api/payments/#errors","debug_id":"497915282d822"}
+[14-06-2019 03:04:16] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 03:04:17] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:04:19] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 200
+[14-06-2019 03:04:19] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/payments/payment
+[14-06-2019 03:04:20] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:04:22] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 400
+[14-06-2019 03:04:22] PayPal\Core\PayPalHttpConnection : ERROR: Got Http response code 400 when accessing https://api.sandbox.paypal.com/v1/payments/payment. {"name":"VALIDATION_ERROR","details":[{"field":"payer.funding_instruments[0].credit_card","issue":"Expiration date cannot be in the past."}],"message":"Invalid request. See details.","information_link":"https://developer.paypal.com/docs/api/payments/#errors","debug_id":"1f7253a0666ce"}
+[14-06-2019 03:05:48] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 03:05:49] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:05:51] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 200
+[14-06-2019 03:05:51] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/payments/payment
+[14-06-2019 03:05:51] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 03:05:52] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:05:52] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:05:54] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 400
+[14-06-2019 03:05:54] PayPal\Core\PayPalHttpConnection : ERROR: Got Http response code 400 when accessing https://api.sandbox.paypal.com/v1/payments/payment. {"name":"VALIDATION_ERROR","details":[{"field":"payer.funding_instruments[0].credit_card","issue":"Expiration date cannot be in the past."}],"message":"Invalid request. See details.","information_link":"https://developer.paypal.com/docs/api/payments/#errors","debug_id":"4a367e9f3be17"}
+[14-06-2019 03:05:54] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 200
+[14-06-2019 03:05:54] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/payments/payment
+[14-06-2019 03:05:55] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:05:57] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 400
+[14-06-2019 03:05:57] PayPal\Core\PayPalHttpConnection : ERROR: Got Http response code 400 when accessing https://api.sandbox.paypal.com/v1/payments/payment. {"name":"VALIDATION_ERROR","details":[{"field":"payer.funding_instruments[0].credit_card","issue":"Expiration date cannot be in the past."}],"message":"Invalid request. See details.","information_link":"https://developer.paypal.com/docs/api/payments/#errors","debug_id":"fb496bfb5b66d"}
+[14-06-2019 03:07:00] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 03:07:01] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:07:03] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 200
+[14-06-2019 03:07:03] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/payments/payment
+[14-06-2019 03:07:04] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:07:06] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 400
+[14-06-2019 03:07:06] PayPal\Core\PayPalHttpConnection : ERROR: Got Http response code 400 when accessing https://api.sandbox.paypal.com/v1/payments/payment. {"name":"VALIDATION_ERROR","details":[{"field":"payer.funding_instruments[0].credit_card","issue":"Expiration date cannot be in the past."}],"message":"Invalid request. See details.","information_link":"https://developer.paypal.com/docs/api/payments/#errors","debug_id":"5bb71cb1f8fc"}
+[14-06-2019 03:09:14] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 03:11:30] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 03:11:32] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:11:33] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 200
+[14-06-2019 03:11:33] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/payments/payment
+[14-06-2019 03:11:34] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:11:36] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 400
+[14-06-2019 03:11:36] PayPal\Core\PayPalHttpConnection : ERROR: Got Http response code 400 when accessing https://api.sandbox.paypal.com/v1/payments/payment. {"name":"VALIDATION_ERROR","details":[{"field":"payer.funding_instruments[0].credit_card","issue":"Expiration date cannot be in the past."}],"message":"Invalid request. See details.","information_link":"https://developer.paypal.com/docs/api/payments/#errors","debug_id":"8946e82b56b4f"}
+[14-06-2019 03:17:38] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 03:17:39] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:17:40] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 200
+[14-06-2019 03:17:40] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/payments/payment
+[14-06-2019 03:17:41] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:17:43] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 400
+[14-06-2019 03:17:43] PayPal\Core\PayPalHttpConnection : ERROR: Got Http response code 400 when accessing https://api.sandbox.paypal.com/v1/payments/payment. {"name":"VALIDATION_ERROR","details":[{"field":"payer.funding_instruments[0].credit_card","issue":"Expiration date cannot be in the past."}],"message":"Invalid request. See details.","information_link":"https://developer.paypal.com/docs/api/payments/#errors","debug_id":"e2795aa1d4ffb"}
+[14-06-2019 03:54:34] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 03:54:35] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:54:37] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 200
+[14-06-2019 03:54:37] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/payments/payment
+[14-06-2019 03:54:38] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:54:40] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 400
+[14-06-2019 03:54:40] PayPal\Core\PayPalHttpConnection : ERROR: Got Http response code 400 when accessing https://api.sandbox.paypal.com/v1/payments/payment. {"name":"VALIDATION_ERROR","details":[{"field":"payer.funding_instruments[0].credit_card","issue":"Expiration date cannot be in the past."}],"message":"Invalid request. See details.","information_link":"https://developer.paypal.com/docs/api/payments/#errors","debug_id":"d87eeff35096d"}
+[14-06-2019 03:56:01] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/oauth2/token
+[14-06-2019 03:56:02] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:56:04] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 200
+[14-06-2019 03:56:04] PayPal\Core\PayPalHttpConnection : INFO: POST https://api.sandbox.paypal.com/v1/payments/payment
+[14-06-2019 03:56:05] PayPal\Core\PayPalHttpConnection : INFO: Invalid or no certificate authority found - Retrying using bundled CA certs file
+[14-06-2019 03:56:06] PayPal\Core\PayPalHttpConnection : INFO: Response Status 	: 400
+[14-06-2019 03:56:06] PayPal\Core\PayPalHttpConnection : ERROR: Got Http response code 400 when accessing https://api.sandbox.paypal.com/v1/payments/payment. {"name":"VALIDATION_ERROR","details":[{"field":"payer.funding_instruments[0].credit_card","issue":"Expiration date cannot be in the past."}],"message":"Invalid request. See details.","information_link":"https://developer.paypal.com/docs/api/payments/#errors","debug_id":"622b04eb23d4a"}

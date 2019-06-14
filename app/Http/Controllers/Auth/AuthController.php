@@ -1,7 +1,6 @@
-<?php namespace Ngea\Http\Controllers\Auth;
+<?php namespace safduka\Http\Controllers\Auth;
 
-use Ngea\User;
-use Ngea\country;
+use safduka\User;
 use Auth;
 use Cookie;
 use Validator;
@@ -9,7 +8,7 @@ use Input;
 use Redirect;
 use Hash;
 use Illuminate\Http\Request;
-use Ngea\Http\Controllers\Controller;
+use safduka\Http\Controllers\Controller;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Registrar;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
@@ -54,40 +53,11 @@ class AuthController extends Controller {
 
     public function getLogin()
     {
-        $country = country::all(['id', 'ctr_name', 'ctr_initial']);
-        return view('auth.login',compact('country'));
+        return redirect('auth/login');
     }
 
     
-    public function postLogin(Request $request)
-    {
-
-        $this->validate($request, [
-            'usr_email' => 'required','country' => 'required', 'password' => 'required|min:3',
-        ]);
-        $country=Input::get('country');
-        $request->session()->put('maincountry', $country);
-        $countryname = country::Where('id', $country)->first();
-        $request->session()->put('countryname', $countryname->ctr_name);
-        $userdata = array(
-            'usr_email'     => Input::get('usr_email'),
-            'password'  => Input::get('password'),
-            'usr_active' => 1
-        );
-        // redirect the user back to the intended page
-        // or defaultpage if there isn't one
-        if (Auth::attempt($userdata, $request->has('usr_remember'))) {
-            return redirect()->intended('home');
-        }
-        return redirect('/auth/login')
-                    ->withInput($request->only('usr_email'))
-                    ->withErrors([
-                        'usr_email' => 'These credentials do not match our records.',
-                    ]);
-            
-
-    }
-
+  
     public function getLogout()
     {
         $this->logout();
