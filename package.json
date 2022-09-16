@@ -13,7 +13,7 @@
     "@casl/ability": "^2.1.0",
     "@casl/vue": "^0.2.0",
     "axios": "^0.18",
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^3.4.1",
     "cross-env": "^5.1.4",
     "jquery": "^3.2",
     "laravel-mix": "^2.1.1",
